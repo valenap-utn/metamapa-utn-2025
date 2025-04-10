@@ -1,0 +1,194 @@
+@startuml
+
+class Hecho{
+    - private String titulo
+    - private String descripcion
+    - private Categoria categoria
+    - private Float latitud
+    - private Float longitud
+    - private LocalDateTime fechaDelHecho
+    - private LocalDateTime fechaDeCarga
+    'para constructor LocalDateTime .now()
+    - private Origen origen //manual, dataset o contribuyente
+
+'    //en false por default
+    - private boolean fueEliminado
+
+'    //METODOS
+    + public admitirSolicitudEliminacion()
+}
+
+class HechoMultimedia{
+    - private ContenidoMultimedia contMedia
+}
+
+enum Categoria {
+    INCENDIOS
+}
+
+enum Origen {
+    MANUAL,
+    PORCONTRIBUYENTE
+}
+
+Hecho <|-- HechoMultimedia
+Hecho --> Categoria
+Hecho --> Origen
+'Futura supuesta clase (???)
+class ContenidoMultimedia {
+}
+
+HechoMultimedia --> ContenidoMultimedia
+
+interface Fuente <<interfaz>>{
+    + public void leerDataSets()
+}
+
+class FuenteEstatica{
+    - private Set<Hecho> hechos
+
+'leerDataSets() lee archivos .csv
+    + public Set<Hecho> extraerHechos() // llamar a leerDataSets() y deasarrollar
+    + public void agregarHecho()
+}
+
+FuenteEstatica ..|> Fuente
+Fuente ..> "*" Hecho
+
+class Coleccion{
+    - private String titulo
+    - private String descripcion
+    - private Fuente fuente
+    - private Criterio criterioPertenencia
+
+'    Memmoria para hechos eliminados
+
+    + public Set<Hecho> filtrarPorCriterio() //desde fuente.hechos
+}
+
+class Criterio{
+    - private Set<FiltroBusqueda> filtrosUsados
+
+    + public boolean filtrarPorCriterio(Hecho unHecho)
+}
+
+Coleccion --> Criterio
+Coleccion --> Fuente
+Criterio --> "*" FiltroBusqueda
+
+interface FiltroBusqueda {
+    + public boolean hechoCumple(Hecho unHecho)
+}
+
+class FiltroNombre {
+    - private String nombre
+
+    + public boolean hechoCumple(Hecho unHecho)
+}
+
+class FiltroDescripcion {
+    - private String descripcion
+
+    + public boolean hechoCumple(Hecho unHecho)
+}
+
+class FiltroCategoria {
+    - private Categoria categoria
+
+    + public boolean hechoCumple(Hecho unHecho)
+}
+
+class FiltroUbicacion {
+    - private float Latitud
+    - private float longitud
+
+    + public boolean hechoCumple(Hecho unHecho)
+}
+
+class FiltroFechaAcontecimiento {
+    - private LocalDateTime fechaAcontecimiento
+
+    + public boolean hechoCumple(Hecho unHecho)
+}
+
+class FiltroFechaCarga {
+    - private LocalDateTime fechaCarga
+
+    + public boolean hechoCumple(Hecho unHecho)
+}
+
+class FiltroOrigen {
+    - private Origen origen
+
+    + public boolean hechoCumple(Hecho unHecho)
+}
+
+class FiltroContenidoMultimedia {
+    - private ContenidoMultimedia contenido
+
+    + public boolean hechoCumple(Hecho unHecho)
+}
+
+FiltroNombre ..|> FiltroBusqueda
+FiltroCategoria ..|> FiltroBusqueda
+FiltroDescripcion ..|> FiltroBusqueda
+FiltroFechaAcontecimiento ..|> FiltroBusqueda
+FiltroFechaCarga ..|> FiltroBusqueda
+FiltroOrigen ..|> FiltroBusqueda
+FiltroContenidoMultimedia ..|> FiltroBusqueda
+FiltroUbicacion ..|> FiltroBusqueda
+
+FiltroCategoria --> Categoria
+FiltroOrigen --> Origen
+
+class Visitante{
+    + public void consultarColeccion()
+    + public Set<Hecho> consultarColeccionConFiltros(Coleccion unaColeccion, FiltroBusqueda unFiltro)
+}
+
+
+class Administrador{
+    - private String nombre //obligatorio
+    - private String apellido //opcional
+    - private Integer edad   // opc
+
+    + public crearColeccion()
+    + public importarHechos()
+    + public void etiquetarHecho(unHecho)
+'    + aceptarSolicitud()
+'       // aceptarSolicitud cambia hecho.fueEliminado() = true
+'    + rechazarSolicitud()
+    + evaluarSolicitudEliminacion(Solicitud solicitud)
+}
+
+
+class Solicitud {
+    - private Hecho hecho
+    - private enum estado //acep, rech, pend
+    - private String justificacion //min.500 charac
+}
+
+Solicitud --> Hecho
+
+' anonimo
+class Visualizador{
+
+}
+
+class Contribuyente{
+    - private String nombre //obligatorio
+    - private String apellido //opcional
+    - private Integer edad   // opc
+'    - private Set<Hecho> hechosCargados  // a consultar
+
+    + public void cargarHecho();
+    + public void solicitarEliminacion(Hecho unHecho)
+}
+
+Visualizador --|> Visitante
+Contribuyente --|> Visitante
+Administrador --|> Visitante
+Visitante ..> FiltroBusqueda
+Visitante ..> Coleccion
+
+@enduml
