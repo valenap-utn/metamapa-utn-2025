@@ -1,0 +1,62 @@
+@startuml
+'https://plantuml.com/use-case-diagram
+
+Administrador as Admin
+Contribuyente as Contrib
+Visualizador as Visual
+
+left to right direction
+:Admin: -- (Crear Colección)
+:Admin: -- (Revisar Hecho)
+:Admin: -- (Etiquetar Hecho)
+:Admin: -- (Aceptar Solicitud de Eliminación)
+:Admin: -- (Rechazar Solicitud de Eliminación)
+:Admin: -- (Consultar Hechos)
+
+
+'Constribuyentes pueden ser personas:
+' anónimas (visualizador) o identificadas (contribuyente)
+
+'Podriamos => consider tanto a
+'CONTRIBUYENTE como VISUALIZADOR ,
+' como ROLES de una clase PERSONA ???
+
+
+:Contrib: -- (Subir Hecho)
+:Contrib: -- (Cargar Origen)
+:Contrib: -- (Solicitar Eliminación de un Hecho)
+
+
+:Visual: -- (Navegar en una Colección)
+':Visual: -- (Utilizar Información)
+:Visual: -- (Subir Hecho)
+:Visual: -- (Crear Usuario)
+
+
+(Navegar en una Colección) <.. "<<extend>>" (Aplicar Filtro)
+
+
+
+(Seleccionar filtro de Búsqueda)
+
+(Consultar Colección)
+
+
+'Solo alguien específico puede
+(Eliminar Colección)
+
+
+'Requerimientos de dominio
+ '1. Como persona administradora, deseo crear una colección.
+
+ '2. Como persona administradora, deseo poder importar hechos desde un archivo CSV.
+
+ '3. Como persona visualizadora, deseo navegar todos los hechos disponibles de una colección.
+
+ '4. Como persona visualizadora, deseo navegar los hechos disponibles de una colección, aplicando filtros.
+
+ '5. Como persona contribuyente, deseo poder solicitar la eliminación de un hecho.
+
+ '6. Como persona administradora, deseo poder aceptar o rechazar la solicitud de eliminación de un hecho.
+
+@enduml
