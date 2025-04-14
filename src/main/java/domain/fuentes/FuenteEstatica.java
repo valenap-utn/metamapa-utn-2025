@@ -2,20 +2,21 @@ package domain.fuentes;
 
 import ar.edu.utn.frba.dds.Hecho;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
 public class FuenteEstatica implements Fuente {
-    private String pathCsv;
-
-    public FuenteEstatica(String pathCsv) {
-        this.pathCsv = pathCsv;
+    private ImportadorCSV importadorCSV;
+    public FuenteEstatica(ImportadorCSV importadorCSV) {
+        this.importadorCSV = importadorCSV;
     }
 
     @Override
     public Set<Hecho> obtenerHechos() {
-        // Supongamos que usamos OpenCSV o similar para la lectura
-        // Se omite la implementación de la lectura real por ahora
-        return new HashSet<>();
+        ListHechoDataset hechosDeDataset = this.importadorCSV.importarHechosDataset();
+        hechosDeDataset.borrarRepetidos();
+        Set<Hecho> hechos = hechosDeDataset.getHechosNuevos();
+        return hechos;
     }
 }

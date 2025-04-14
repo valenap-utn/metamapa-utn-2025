@@ -12,20 +12,19 @@ public class Hecho {
     private String titulo;
     private String descripcion;
     private String categoria;
-    private double latitud;
-    private double longitud;
+    private Ubicacion ubicacion;
     private LocalDate fechaAcontecimiento;
     private LocalDate fechaCarga;
+    private boolean esCargaManual;
     //private OrigenHecho origen; //TODO: ponerlo en clases como dijieron los ayudantes
     private boolean eliminado;
 
-    public Hecho(String titulo, String descripcion, String categoria, double latitud, double longitud,
+    public Hecho(String titulo, String descripcion, String categoria, Ubicacion ubicacion,
                  LocalDate fechaAcontecimiento) {
         this.titulo = titulo;
         this.descripcion = descripcion;
         this.categoria = categoria;
-        this.latitud = latitud;
-        this.longitud = longitud;
+        this.ubicacion = ubicacion;
         this.fechaAcontecimiento = fechaAcontecimiento;
        // this.origen = origen;
         this.fechaCarga = LocalDate.now();
