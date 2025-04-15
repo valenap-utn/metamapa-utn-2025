@@ -1,7 +1,10 @@
-package ar.edu.utn.frba.dds;
+package ar.edu.utn.frba.dds.domain.entities.colecciones;
 
-import domain.filtros.Criterio;
-import domain.fuentes.Fuente;
+import ar.edu.utn.frba.dds.domain.entities.colecciones.hechos.Hecho;
+import ar.edu.utn.frba.dds.domain.filtros.Criterio;
+import ar.edu.utn.frba.dds.domain.fuentes.Fuente;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -31,3 +34,4 @@ public class Coleccion {
     }
 
 }
+

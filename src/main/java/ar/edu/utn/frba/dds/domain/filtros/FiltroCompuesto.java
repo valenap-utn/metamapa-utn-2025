@@ -1,6 +1,6 @@
-package domain.filtros;
+package ar.edu.utn.frba.dds.domain.filtros;
 
-import ar.edu.utn.frba.dds.Hecho;
+import ar.edu.utn.frba.dds.domain.entities.colecciones.hechos.Hecho;
 
 import java.util.HashSet;
 import java.util.Set;

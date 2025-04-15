@@ -45,11 +45,20 @@ interface Fuente <<interfaz>>{
 }
 
 class FuenteEstatica{
+    - private ImportadorCSV importador
     - private Set<Hecho> hechos
 
-'leerDataSets() lee archivos .csv
-    + public Set<Hecho> extraerHechos() // llamar a leerDataSets() y deasarrollar
-    + public void agregarHecho()
+    + public void cargarHechos()
+    + public Set<Hecho> obtenerHechos()
+}
+
+class HechoValueObject {
+    - private String titulo
+    - private Categoria categoria
+    - private Ubicacion ubicacion
+    - private LocalDateTime fechaAcontecimiento
+
+    + boolean esIgualA(HechoValueObject unHecho)
 }
 
 FuenteEstatica ..|> Fuente
@@ -141,26 +150,6 @@ FiltroUbicacion ..|> FiltroBusqueda
 FiltroCategoria --> Categoria
 FiltroOrigen --> Origen
 
-class Visitante{
-    + public void consultarColeccion()
-    + public Set<Hecho> consultarColeccionConFiltros(Coleccion unaColeccion, FiltroBusqueda unFiltro)
-}
-
-
-class Administrador{
-    - private String nombre //obligatorio
-    - private String apellido //opcional
-    - private Integer edad   // opc
-
-    + public crearColeccion()
-    + public importarHechos()
-    + public void etiquetarHecho(unHecho)
-'    + aceptarSolicitud()
-'       // aceptarSolicitud cambia hecho.fueEliminado() = true
-'    + rechazarSolicitud()
-    + evaluarSolicitudEliminacion(Solicitud solicitud)
-}
-
 
 class Solicitud {
     - private Hecho hecho
@@ -170,25 +159,33 @@ class Solicitud {
 
 Solicitud --> Hecho
 
+class Usuario{
+    - private String nombre
+    - private String apellido
+    - private Integer edad
+    - private Rol rol
+}
+
+Usuario --> Rol
+
+interface Rol{
+
+}
+
+class Administrador extends Rol {
+
+}
+
 ' anonimo
-class Visualizador{
+class Visualizador extends Rol{
 
 }
 
-class Contribuyente{
-    - private String nombre //obligatorio
-    - private String apellido //opcional
-    - private Integer edad   // opc
-'    - private Set<Hecho> hechosCargados  // a consultar
+class Contribuyente extends Rol{
 
-    + public void cargarHecho();
-    + public void solicitarEliminacion(Hecho unHecho)
 }
 
-Visualizador --|> Visitante
-Contribuyente --|> Visitante
-Administrador --|> Visitante
-Visitante ..> FiltroBusqueda
-Visitante ..> Coleccion
+
+
 
 @enduml
