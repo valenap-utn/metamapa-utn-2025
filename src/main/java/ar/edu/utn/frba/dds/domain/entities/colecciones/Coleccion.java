@@ -14,6 +14,7 @@ public class Coleccion {
     private String descripcion;
     private Fuente fuente;
     private Criterio criterio;
+    private Set<Hecho> hechosAsociados;
 
     public Coleccion(String titulo, String descripcion, Fuente fuente, Criterio criterio) {
         this.titulo = titulo;
@@ -22,16 +23,7 @@ public class Coleccion {
         this.criterio = criterio;
     }
 
-    public Set<Hecho> hechos() {
-        Set<Hecho> todos = fuente.obtenerHechos();
-        Set<Hecho> filtrados = new HashSet<>();
-        for (Hecho h : todos) {
-            if (!h.estaEliminado() && h.perteneceACriterio(criterio)) {
-                filtrados.add(h);
-            }
-        }
-        return filtrados;
-    }
+
 
 }
 

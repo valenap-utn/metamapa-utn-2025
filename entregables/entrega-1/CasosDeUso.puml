@@ -8,10 +8,10 @@ Visualizador as Visual
 left to right direction
 :Admin: -- (Crear Colección)
 :Admin: -- (Revisar Hecho)
-:Admin: -- (Etiquetar Hecho)
+':Admin: -- (Etiquetar Hecho)
 :Admin: -- (Aceptar Solicitud de Eliminación)
 :Admin: -- (Rechazar Solicitud de Eliminación)
-:Admin: -- (Consultar Hechos)
+':Admin: -- (Consultar Hechos)
 
 
 'Constribuyentes pueden ser personas:
@@ -23,7 +23,7 @@ left to right direction
 
 
 :Contrib: -- (Subir Hecho)
-:Contrib: -- (Cargar Origen)
+':Contrib: -- (Cargar Origen)
 :Contrib: -- (Solicitar Eliminación de un Hecho)
 
 

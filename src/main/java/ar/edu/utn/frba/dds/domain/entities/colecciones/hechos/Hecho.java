@@ -1,6 +1,7 @@
 package ar.edu.utn.frba.dds.domain.entities.colecciones.hechos;
 
 import ar.edu.utn.frba.dds.domain.filtros.Criterio;
+import java.time.LocalDate;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,7 +11,7 @@ import java.time.LocalDateTime;
 @Getter
 public class Hecho {
     private HechoValueObject infoHecho;
-    private LocalDateTime fechaCarga;
+    private LocalDate fechaCarga;
     private boolean esCargaManual;
     private Origen origen; //(?TODO: ponerlo en clases como dijeron los ayudantes
     private boolean eliminado;
@@ -18,7 +19,7 @@ public class Hecho {
     public Hecho(HechoValueObject infoHecho, Origen origen) {
         this.infoHecho = infoHecho;
         this.origen = origen;
-        this.fechaCarga = LocalDateTime.now();
+        this.fechaCarga = LocalDate.now();
         this.eliminado = false;
     }
 
@@ -34,7 +35,7 @@ public class Hecho {
         return criterio.filtarPorCriterio(this);
     }
 
-    public LocalDateTime getFechaAcontecimiento() {
+    public LocalDate getFechaAcontecimiento() {
         return this.infoHecho.getFechaAcontecimiento();
     }
     public Categoria getCategoria() {

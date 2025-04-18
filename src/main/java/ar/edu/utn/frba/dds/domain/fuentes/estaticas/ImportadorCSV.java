@@ -1,11 +1,22 @@
 package ar.edu.utn.frba.dds.domain.fuentes.estaticas;
 
+import ar.edu.utn.frba.dds.domain.entities.colecciones.hechos.Categoria;
 import ar.edu.utn.frba.dds.domain.entities.colecciones.hechos.HechoValueObject;
 import ar.edu.utn.frba.dds.domain.entities.colecciones.hechos.ColeccionHechoValueObject;
 
+import ar.edu.utn.frba.dds.domain.entities.colecciones.hechos.Ubicacion;
+import com.opencsv.exceptions.CsvException;
+import java.io.IOException;
+import java.time.LocalDate;
+import java.time.chrono.ChronoLocalDate;
 import java.util.List;
+import lombok.Getter;
+import lombok.Setter;
 
+@Setter
+@Getter
 public class ImportadorCSV {
+
   private String pathCsv;
 
   public ImportadorCSV(String pathCsv) {
@@ -13,26 +24,39 @@ public class ImportadorCSV {
   }
 
   public ColeccionHechoValueObject importarHechosDataset() {
-    URL fileUrl = ImportadorCSV.class.getClassLoader().getResource("data.csv");
-
-    CSVReader reader = new CSVReader(new FileReader(fileUrl.getFile()));
-
-    List<String[]> filasCSV = reader.readAll();
-
-    return transformarfilasCSVAHechosValueObject(filasCSV);
+    List<FormatoFilaCSV> contenidoFilasCSV = obtenerContenidoDeFilasCSV();
+    return transformarfilasCSVAHechosValueObject(contenidoFilasCSV);
   }
 
-  public ColeccionHechoValueObject transformarfilasCSVAHechosValueObject(List<String[]> filasCSV) {
-    ColeccionHechoValueObject coleccionHechos = new ColeccionHechoValueObject();
-    //TODO: Logica de parsear los datos de String a los diversos datos
-    for(String[] filaCSV : filasCSV) {
-      coleccionHechos.agregarHechosDataset(new HechoValueObject(
-          filasCSV.get(0),
-          filasCSV.get(1),
-          filasCSV.get(2),
-          filasCSV.get(3)
-      ));
+  private List<FormatoFilaCSV> obtenerContenidoDeFilasCSV()  {
+    List<FormatoFilaCSV> filasCSV;
+    LectorFilaCSV lector = new LectorFilaCSV();
+    try {
+      filasCSV = lector.obtenerFilasCSV(this.getPathCsv());
+    } catch (IOException excepcionIO) {
+      throw new RuntimeException(excepcionIO);
+    } catch (CsvException excepcionCSV) {
+      throw new RuntimeException(excepcionCSV);
     }
+    return filasCSV;
+  }
+
+
+  public ColeccionHechoValueObject transformarfilasCSVAHechosValueObject(List<FormatoFilaCSV> filasCSV) {
+    ColeccionHechoValueObject coleccionHechos = new ColeccionHechoValueObject();
+
+    for(FormatoFilaCSV filaCSV : filasCSV) {
+      coleccionHechos.agregarHechosDataset(new HechoValueObject(
+              filaCSV.getTitulo(), //Titulo
+              filaCSV.getDescripcion(),
+              new Categoria(filaCSV.getCategoria()),
+              new Ubicacion(
+                      Float.parseFloat(filaCSV.getLongitud()),
+                      Float.parseFloat(filaCSV.getLatitud())),
+              LocalDate.parse(filaCSV.getFechaAcontecimiento())
+               ));
+    }
+    return coleccionHechos;
   }
 
 }
