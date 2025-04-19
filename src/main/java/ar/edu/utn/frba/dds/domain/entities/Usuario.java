@@ -54,4 +54,9 @@ public class Usuario {
         .build();
   }
 
+  public Rol getRol() {
+    return this.rol;
+  }
+
+
 }

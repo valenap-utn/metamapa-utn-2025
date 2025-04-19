@@ -22,7 +22,6 @@ public class Solicitud {
     }
 
     public void aceptar() {
-
         this.estado = Estado.ACEPTADA;
     }
 
