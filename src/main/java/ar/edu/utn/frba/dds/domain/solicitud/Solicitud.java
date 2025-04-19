@@ -28,7 +28,7 @@ public class Solicitud {
 
     public void rechazar() {
         if (this.estado != Estado.PENDIENTE) {
-            throw new IllegalStateException("Unicamente se pueden rechazar solicitudes pendientes");
+            throw new IllegalStateException("Unicamente se pueden rechazar las solicitudes pendientes");
         }
         this.estado = Estado.RECHAZADA;
     }
