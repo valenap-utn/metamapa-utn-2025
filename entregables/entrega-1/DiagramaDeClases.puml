@@ -22,8 +22,9 @@ class HechoMultimedia{
     - private ContenidoMultimedia contMedia
 }
 
-enum Categoria {
-    INCENDIOS
+class Categoria {
+    -private String nombre;
+    +public boolean esIgualA(Categoria);
 }
 
 enum Origen {
@@ -61,7 +62,33 @@ class HechoValueObject {
     + boolean esIgualA(HechoValueObject unHecho)
 }
 
+class ColeccionHechoValueObject {
+    -private List<HechoValueObject> hechosDataset;
+    + public void borrarRepetidos()
+    + public Set<Hechos> getHechos();
+}
+
+class ImportadorCSV {
+    -private String pathCSV;
+    +public ColeccionHechoValueObject importarHechosDataset();
+}
+
+class LectorFilaCSV {
+    +public List<FormatoFilaCSV> obtenerFilasCSV(String rutaArchivo);
+}
+
+class FormatoFilaCSV {
+    -private List<String> filaCSV;
+    +public String getFechaAcontecimiento();
+    +public String getTitulo();
+    +public String getDescripcion();
+}
+
 FuenteEstatica ..|> Fuente
+FuenteEstatica ..> ColeccionHechoValueObject
+ColeccionHechoValueObject --> "*" HechoValueObject
+ImportadorCSV ..> LectorFilaCSV
+LectorFilaCSV ..> "*" FormatoFilaCSV
 Fuente ..> "*" Hecho
 
 class Coleccion{
