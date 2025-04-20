@@ -2,10 +2,12 @@ package ar.edu.utn.frba.dds.domain.entities.colecciones.hechos;
 
 import ar.edu.utn.frba.dds.domain.filtros.Criterio;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
 
 @Setter
 @Getter
@@ -13,14 +15,16 @@ public class Hecho {
     private HechoValueObject infoHecho;
     private LocalDate fechaCarga;
     private boolean esCargaManual;
-    private Origen origen; //(?TODO: ponerlo en clases como dijeron los ayudantes
+    private Origen origen;
     private boolean eliminado;
+    private Set<String> etiquetas;
 
     public Hecho(HechoValueObject infoHecho, Origen origen) {
         this.infoHecho = infoHecho;
         this.origen = origen;
         this.fechaCarga = LocalDate.now();
         this.eliminado = false;
+        this.etiquetas = new HashSet<>();
     }
 
     public boolean estaEliminado() {
@@ -29,6 +33,10 @@ public class Hecho {
 
     public void marcarComoEliminado() {
         this.eliminado = true;
+    }
+
+    public void agregarEtiquetas(String ... etiquetas) {
+        this.etiquetas.addAll(List.of(etiquetas));
     }
 
     public boolean perteneceACriterio(Criterio criterio) {
