@@ -25,8 +25,9 @@ public class ColeccionHechoValueObject {
   public void borrarRepetidos() {
     Map<String, HechoValueObject> hechosUnicos = new LinkedHashMap<>();
 
-    for (HechoValueObject h : this.hechosDataset) {
-      hechosUnicos.putIfAbsent(h.getTitulo(), h); // No pisa si ya estaba
+    for (HechoValueObject hecho : this.hechosDataset) {
+      hechosUnicos.remove(hecho.getTitulo());
+      hechosUnicos.put(hecho.getTitulo(), hecho);
     }
 
     this.hechosDataset = hechosUnicos.values().stream().toList();
