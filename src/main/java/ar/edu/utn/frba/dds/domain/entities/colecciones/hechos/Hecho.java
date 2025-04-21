@@ -1,6 +1,5 @@
 package ar.edu.utn.frba.dds.domain.entities.colecciones.hechos;
 
-import ar.edu.utn.frba.dds.domain.filtros.Criterio;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
@@ -47,5 +46,13 @@ public class Hecho {
 
     public Ubicacion getUbicacion() {
         return this.infoHecho.getUbicacion();
+    }
+
+    public String getDescripcion() {
+        return this.infoHecho.getDescripcion();
+    }
+
+    public String getTitulo() {
+        return this.infoHecho.getTitulo();
     }
 }

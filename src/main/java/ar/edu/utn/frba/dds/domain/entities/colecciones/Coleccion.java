@@ -3,17 +3,15 @@ package ar.edu.utn.frba.dds.domain.entities.colecciones;
 import ar.edu.utn.frba.dds.domain.entities.colecciones.hechos.Hecho;
 import ar.edu.utn.frba.dds.domain.filtros.Criterio;
 import ar.edu.utn.frba.dds.domain.filtros.Filtro;
-import ar.edu.utn.frba.dds.domain.filtros.FiltroNoEstaEliminado;
 import ar.edu.utn.frba.dds.domain.fuentes.Fuente;
-import java.util.Arrays;
+import ar.edu.utn.frba.dds.utils.FoldlDeFunciones;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.HashSet;
 import java.util.Set;
 
+@Setter
 @Getter
 public class Coleccion {
     private String titulo;
@@ -31,21 +29,12 @@ public class Coleccion {
 
 
     public Set<Hecho> busquedaCon(Filtro ... filtros) {
-        Set<Hecho> hechos = this.getHechos();
-        return List.of(filtros).stream().reduce( this.getHechos(),
-                (hechos, filtro) -> this.aplicarFiltro(hechos, filtro),
-                (unosHechos, otrosHechos) -> this.aplicarHechos(unosHechos, otrosHechos)
-        );
+        return FoldlDeFunciones.foldl(this.getHechos(), List.of(filtros));
     }
 
 
-
-
-
     public Set<Hecho> getHechos() {
-        FiltroNoEstaEliminado filtro = new FiltroNoEstaEliminado();
-        return
-                filtro.filtrarHechos(this.fuente.obtenerHechos());
+        return this.criterio.getHechosFiltrados(this.fuente.obtenerHechos());
     }
 
 }
