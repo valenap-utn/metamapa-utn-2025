@@ -5,7 +5,7 @@ import ar.edu.utn.frba.dds.domain.entities.colecciones.hechos.Hecho;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-public abstract class FiltroPorFecha implements Filtro{
+public abstract class FiltroPorFecha extends Filtro{
   private LocalDate desde;
   private LocalDate hasta;
 

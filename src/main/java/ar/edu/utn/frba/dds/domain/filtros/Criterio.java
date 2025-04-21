@@ -3,17 +3,20 @@ package ar.edu.utn.frba.dds.domain.filtros;
 import ar.edu.utn.frba.dds.domain.entities.colecciones.hechos.Hecho;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class Criterio {
-    private Set<Filtro> filtrosUsados;
+    private Set<Filtro> filtros;
 
     public Criterio() {
-        filtrosUsados = new HashSet<>();
+        filtros = new HashSet<>();
     }
 
-    public boolean filtarPorCriterio(Hecho hecho) {
-        //TODO: el comportamiento de esta funcion
-        return true; //esta puesto para que no de error nomas
+    public void agregarCriterios(Filtro ... filtros) {
+        this.filtros.addAll(List.of(filtros));
+    }
+    public boolean hechoCumple(Hecho hecho) {
+        return filtros.stream().allMatch(f -> f.hechoCumple(hecho));
     }
 }

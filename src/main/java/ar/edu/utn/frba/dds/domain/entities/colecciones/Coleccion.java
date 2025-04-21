@@ -3,7 +3,10 @@ package ar.edu.utn.frba.dds.domain.entities.colecciones;
 import ar.edu.utn.frba.dds.domain.entities.colecciones.hechos.Hecho;
 import ar.edu.utn.frba.dds.domain.filtros.Criterio;
 import ar.edu.utn.frba.dds.domain.filtros.Filtro;
+import ar.edu.utn.frba.dds.domain.filtros.FiltroNoEstaEliminado;
 import ar.edu.utn.frba.dds.domain.fuentes.Fuente;
+import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,30 +20,33 @@ public class Coleccion {
     private String descripcion;
     private Fuente fuente;
     private Criterio criterio;
-    private Set<Hecho> hechosAsociados;
+
 
     public Coleccion(String titulo, String descripcion, Fuente fuente, Criterio criterio) {
         this.titulo = titulo;
         this.descripcion = descripcion;
         this.fuente = fuente;
         this.criterio = criterio;
-        this.hechosAsociados = new HashSet<>();
     }
 
 
-    public Set<Hecho> getHechosFiltradosSegun(Filtro unFiltro) {
-        return this.hechosAsociados.stream().filter(
-                hecho ->
-                unFiltro.hechoCumple(hecho))
-                .collect(Collectors.toSet());
+    public Set<Hecho> busquedaCon(Filtro ... filtros) {
+        Set<Hecho> hechos = this.getHechos();
+        return List.of(filtros).stream().reduce( this.getHechos(),
+                (hechos, filtro) -> this.aplicarFiltro(hechos, filtro),
+                (unosHechos, otrosHechos) -> this.aplicarHechos(unosHechos, otrosHechos)
+        );
     }
 
-    public void cargarHechos() {
-        this.hechosAsociados = fuente.obtenerHechos()
-                .stream().filter( hecho -> !hecho.estaEliminado())
-                .collect(Collectors.toSet());
-    }
 
+
+
+
+    public Set<Hecho> getHechos() {
+        FiltroNoEstaEliminado filtro = new FiltroNoEstaEliminado();
+        return
+                filtro.filtrarHechos(this.fuente.obtenerHechos());
+    }
 
 }
 

@@ -9,14 +9,21 @@ import lombok.Getter;
 import lombok.Setter;
 
 
-@Setter
-@Getter
+
 public class Hecho {
+    @Setter
+    @Getter
     private HechoValueObject infoHecho;
+    @Setter
+    @Getter
     private LocalDate fechaCarga;
-    private boolean esCargaManual;
+    @Setter
+    @Getter
     private Origen origen;
+    @Setter
+    @Getter
     private boolean eliminado;
+    @Getter
     private Set<String> etiquetas;
 
     public Hecho(HechoValueObject infoHecho, Origen origen) {
@@ -27,20 +34,8 @@ public class Hecho {
         this.etiquetas = new HashSet<>();
     }
 
-    public boolean estaEliminado() {
-        return eliminado;
-    }
-
-    public void marcarComoEliminado() {
-        this.eliminado = true;
-    }
-
     public void agregarEtiquetas(String ... etiquetas) {
         this.etiquetas.addAll(List.of(etiquetas));
-    }
-
-    public boolean perteneceACriterio(Criterio criterio) {
-        return criterio.filtarPorCriterio(this);
     }
 
     public LocalDate getFechaAcontecimiento() {
@@ -48,5 +43,9 @@ public class Hecho {
     }
     public Categoria getCategoria() {
         return this.infoHecho.getCategoria();
+    }
+
+    public Ubicacion getUbicacion() {
+        return this.infoHecho.getUbicacion();
     }
 }

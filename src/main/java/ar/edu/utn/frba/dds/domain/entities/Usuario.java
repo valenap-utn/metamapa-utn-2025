@@ -1,6 +1,7 @@
 package ar.edu.utn.frba.dds.domain.entities;
 
 import ar.edu.utn.frba.dds.domain.entities.roles.Rol;
+import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
@@ -11,7 +12,7 @@ import lombok.NoArgsConstructor;
 public class Usuario {
   private String nombre;
   private String apellido;
-  private Integer edad;
+  private LocalDate fechaDeNacimiento;
   private Rol rol;
 
   public Usuario of(Rol rol){
@@ -20,7 +21,7 @@ public class Usuario {
         .rol(rol)
         .nombre(null)
         .apellido(null)
-        .edad(null)
+        .fechaDeNacimiento(null)
         .build();
   }
 
@@ -30,7 +31,7 @@ public class Usuario {
         .rol(rol)
         .nombre(nombre)
         .apellido(null)
-        .edad(null)
+        .fechaDeNacimiento(null)
         .build();
   }
 
@@ -40,18 +41,22 @@ public class Usuario {
         .rol(rol)
         .nombre(nombre)
         .apellido(apellido)
-        .edad(null)
+        .fechaDeNacimiento(null)
         .build();
   }
 
-  public Usuario of(Rol rol, String nombre, String apellido, Integer edad){
+  public Usuario of(Rol rol, String nombre, String apellido, LocalDate fechaDeNacimiento){
     return Usuario
         .builder()
         .rol(rol)
         .nombre(nombre)
         .apellido(apellido)
-        .edad(edad)
+        .fechaDeNacimiento(fechaDeNacimiento)
         .build();
+  }
+
+  public Integer getEdad() {
+    return LocalDate.now().getYear() - this.fechaDeNacimiento.getYear();
   }
 
   public Rol getRol() {

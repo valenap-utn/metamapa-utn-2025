@@ -16,7 +16,7 @@ public class HechoValueObject {
   private Ubicacion ubicacion;
   private LocalDate fechaAcontecimiento;
 
-  public HechoValueObject of(String titulo, String descripcion, LocalDate fechaAcontecimiento, Categoria categoria, Ubicacion ubicacion) {
+  public static HechoValueObject of(String titulo, String descripcion, LocalDate fechaAcontecimiento, Categoria categoria, Ubicacion ubicacion) {
     return HechoValueObject
             .builder()
             .titulo(titulo)
@@ -27,7 +27,8 @@ public class HechoValueObject {
             .build();
   }
 
-  public HechoValueObject(String titulo, String descripcion, Categoria categoria, Ubicacion ubicacion, LocalDate fechaAcontecimiento) {
+  public HechoValueObject(String titulo, String descripcion, Categoria categoria,
+                          Ubicacion ubicacion, LocalDate fechaAcontecimiento) {
     this.titulo = titulo;
     this.descripcion = descripcion;
     this.categoria = categoria;
