@@ -2,12 +2,14 @@ package ar.edu.utn.frba.dds;
 
 import ar.edu.utn.frba.dds.domain.entities.colecciones.hechos.Categoria;
 import ar.edu.utn.frba.dds.domain.entities.colecciones.hechos.ColeccionHechoValueObject;
+import ar.edu.utn.frba.dds.domain.entities.colecciones.hechos.Hecho;
 import ar.edu.utn.frba.dds.domain.entities.colecciones.hechos.HechoValueObject;
 import ar.edu.utn.frba.dds.domain.entities.colecciones.hechos.Ubicacion;
 import ar.edu.utn.frba.dds.domain.fuentes.estaticas.ImportadorCSV;
 import ar.edu.utn.frba.dds.utils.ConfigReader;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.Set;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -21,11 +23,11 @@ public class ImportadorCSVTest {
   @BeforeEach
   public void init() throws IOException {
     this.lectorConfigs = new ConfigReader("ArchivosCSV.properties");
-    this.importador = new ImportadorCSV( this.lectorConfigs.getProperty("PATH") + "/desastres_tecnologicos_argentina.csv");
+    this.importador = new ImportadorCSV( this.lectorConfigs.getProperty("PATH") + "/CSVParaPruebas.csv");
   }
 
   @Test
-  @DisplayName("Se busca una prueba sencilla para ver si puede importar 4 filas de un csv y logra transformarlas bien")
+  @DisplayName("Se busca una prueba sencilla para ver si puede importar 1 fila de un csv y logra transformarlas bien")
   public void probarfuncionalidadImportacion() {
     this.hechosValueObjectObtenidos = this.importador.importarHechosDataset();
     ColeccionHechoValueObject coleccionNueva = new ColeccionHechoValueObject();

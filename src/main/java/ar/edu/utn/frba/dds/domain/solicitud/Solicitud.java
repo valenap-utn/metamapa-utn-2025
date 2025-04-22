@@ -7,11 +7,15 @@ import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter
-@Setter
+
 public class Solicitud {
+    @Getter
+    @Setter
     private Hecho hecho;
+    @Getter
+    @Setter
     private String justificacion;
+    @Getter
     private Estado estado;
 
     public Solicitud(Hecho hecho, String justificacion) {
@@ -23,4 +27,10 @@ public class Solicitud {
         this.estado = Estado.PENDIENTE;
     }
 
+    public void setEstado(Estado unEstado) {
+        if(unEstado == Estado.ACEPTADA){
+            this.hecho.setEliminado(true);
+        }
+        this.estado = unEstado;
+    }
 }

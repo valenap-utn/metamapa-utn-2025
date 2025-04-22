@@ -1,25 +1,16 @@
 @startuml
 
 class Hecho{
-    - private String titulo
-    - private String descripcion
-    - private Categoria categoria
-    - private Float latitud
-    - private Float longitud
-    - private LocalDateTime fechaDelHecho
-    - private LocalDateTime fechaDeCarga
+    - private HechoValueObject infoHecho
+    - private boolean tieneContenidoMultimedia
+    - private LocalDate fechaDeCarga
+    - private boolean eliminado
     'para constructor LocalDateTime .now()
-    - private Origen origen //manual, dataset o contribuyente
-
-'    //en false por default
-    - private boolean fueEliminado
+    - private Origen origen
+    - private Set<String> etiquetas
 
 '    //METODOS
     + public admitirSolicitudEliminacion()
-}
-
-class HechoMultimedia{
-    - private ContenidoMultimedia contMedia
 }
 
 class Categoria {
@@ -32,14 +23,9 @@ enum Origen {
     PORCONTRIBUYENTE
 }
 
-Hecho <|-- HechoMultimedia
 Hecho --> Categoria
 Hecho --> Origen
-'Futura supuesta clase (???)
-class ContenidoMultimedia {
-}
-
-HechoMultimedia --> ContenidoMultimedia
+Hecho --> HechoValueObject
 
 interface Fuente <<interfaz>>{
     + public void leerDataSets()
@@ -90,6 +76,7 @@ ColeccionHechoValueObject --> "*" HechoValueObject
 ImportadorCSV ..> LectorFilaCSV
 LectorFilaCSV ..> "*" FormatoFilaCSV
 Fuente ..> "*" Hecho
+FuenteEstatica --> ImportadorCSV
 
 class Coleccion{
     - private String titulo
@@ -103,79 +90,87 @@ class Coleccion{
 }
 
 class Criterio{
-    - private Set<FiltroBusqueda> filtrosUsados
+    - private Set<Filtro> filtrosUsados
 
     + public boolean filtrarPorCriterio(Hecho unHecho)
 }
 
 Coleccion --> Criterio
 Coleccion --> Fuente
-Criterio --> "*" FiltroBusqueda
+Criterio --> "*" Filtro
 
-interface FiltroBusqueda {
-    + public boolean hechoCumple(Hecho unHecho)
+abstract class Filtro {
+    + public Set<Hecho> apply(Set<Hecho> hechos)
+    * protected boolean hechoCumple(Hecho unHecho)
 }
 
-class FiltroNombre {
-    - private String nombre
-
-    + public boolean hechoCumple(Hecho unHecho)
+class FiltroPorTitulo {
+   * protected String obtenerUnTipoString(Hecho unHecho)
 }
 
-class FiltroDescripcion {
-    - private String descripcion
-
-    + public boolean hechoCumple(Hecho unHecho)
+class FiltroPorDescripcion {
+* protected String obtenerUnTipoString(Hecho unHecho)
 }
+
+abstract class FiltroPorString {
+    - private String cadenaAComparar
+    * protected boolean hechoCumple(Hecho unHecho)
+    * protected String obtenerUnTipoString(Hecho unHecho)
+}
+
+FiltroPorTitulo --|> FiltroPorString
+FiltroPorDescripcion --|> FiltroPorString
 
 class FiltroCategoria {
     - private Categoria categoria
 
-    + public boolean hechoCumple(Hecho unHecho)
+    * protected boolean hechoCumple(Hecho unHecho)
 }
 
 class FiltroUbicacion {
-    - private float Latitud
-    - private float longitud
+    - private Ubicacion ubicacion
 
-    + public boolean hechoCumple(Hecho unHecho)
+    # protected boolean hechoCumple(Hecho unHecho)
 }
 
 class FiltroFechaAcontecimiento {
-    - private LocalDateTime fechaAcontecimiento
-
-    + public boolean hechoCumple(Hecho unHecho)
+    # protected LocalDate obtenerUnTipoFecha(Hecho unHecho)
 }
 
-class FiltroFechaCarga {
-    - private LocalDateTime fechaCarga
 
-    + public boolean hechoCumple(Hecho unHecho)
+abstract class FiltroPorFecha {
+    -private LocalDate desde
+    -private LocalDate hasta
+    # protected boolean hechoCumple(Hecho hecho)
+    # protected LocalDate obtenerUnTipoFecha(Hecho unHecho)
+}
+
+FiltroFechaAcontecimiento --|> FiltroPorFecha
+FiltroPorFechaCarga --|> FiltroPorFecha
+
+
+class FiltroPorFechaCarga {
+    *protected LocalDate obtenerUnTipoFecha(Hecho unHecho)
 }
 
 class FiltroOrigen {
     - private Origen origen
 
-    + public boolean hechoCumple(Hecho unHecho)
+    # protected boolean hechoCumple(Hecho unHecho)
 }
 
 class FiltroContenidoMultimedia {
-    - private ContenidoMultimedia contenido
+    - private boolean tieneContenidoMultimedia
 
-    + public boolean hechoCumple(Hecho unHecho)
+    # protected boolean hechoCumple(Hecho unHecho)
 }
 
-FiltroNombre ..|> FiltroBusqueda
-FiltroCategoria ..|> FiltroBusqueda
-FiltroDescripcion ..|> FiltroBusqueda
-FiltroFechaAcontecimiento ..|> FiltroBusqueda
-FiltroFechaCarga ..|> FiltroBusqueda
-FiltroOrigen ..|> FiltroBusqueda
-FiltroContenidoMultimedia ..|> FiltroBusqueda
-FiltroUbicacion ..|> FiltroBusqueda
-
-FiltroCategoria --> Categoria
-FiltroOrigen --> Origen
+FiltroCategoria --|> Filtro
+FiltroPorFecha --|> Filtro
+FiltroPorString --|> Filtro
+FiltroOrigen --|> Filtro
+FiltroContenidoMultimedia --|> Filtro
+FiltroUbicacion --|> Filtro
 
 
 class Solicitud {

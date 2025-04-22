@@ -22,11 +22,15 @@ public class Hecho {
     @Setter
     @Getter
     private boolean eliminado;
+    @Setter
+    @Getter
+    private boolean tieneContenidoMultimedia;
     @Getter
     private Set<String> etiquetas;
 
     public Hecho(HechoValueObject infoHecho, Origen origen) {
         this.infoHecho = infoHecho;
+        this.tieneContenidoMultimedia = false;
         this.origen = origen;
         this.fechaCarga = LocalDate.now();
         this.eliminado = false;
