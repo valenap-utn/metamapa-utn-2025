@@ -18,7 +18,7 @@ al resto de componentes.
 Al realizar el requerimiento de importación de un CSV nos dimos
 cuenta de que podrían importarse más tipos de archivos, incluso a
 una DB, pero a su vez no sabríamos como es la interfaz respectiva,
-por lo cual modificamos delegamos la importación del CSV y hacemos
+por lo cual modificamos/delegamos la importación del CSV y hacemos
 que nos entregue una estructura intermedia llamada HechoValueObject.
 Como el importador devuelve una colección, nos dimos cuenta de que
 había cierto comportamiento en esta colección que no debía estar en
@@ -32,8 +32,4 @@ el archivo y transformarlo en una lista de strings para luego cargarlo en
 un formato de filas csv que usaremos; y la clase FormatoFilaCSV que es un 
 value Object que se encarga de facilitar la creación de un HechoValueObject
 y además recae en él entender como se leen los campos de cada fila del CSV leído.
-
-
-
-
 

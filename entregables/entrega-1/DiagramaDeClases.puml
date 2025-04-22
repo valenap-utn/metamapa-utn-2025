@@ -5,7 +5,6 @@ class Hecho{
     - private boolean tieneContenidoMultimedia
     - private LocalDate fechaDeCarga
     - private boolean eliminado
-    'para constructor LocalDateTime .now()
     - private Origen origen
     - private Set<String> etiquetas
 
@@ -23,9 +22,18 @@ enum Origen {
     PORCONTRIBUYENTE
 }
 
+enum Estado{
+    ACEPTADA,
+    RECHAZADA,
+    PENDIENTE
+}
+
 Hecho --> Categoria
 Hecho --> Origen
 Hecho --> HechoValueObject
+
+
+' FUENTES y HECHOS
 
 interface Fuente <<interfaz>>{
     + public void leerDataSets()
@@ -49,10 +57,13 @@ class HechoValueObject {
 }
 
 class ColeccionHechoValueObject {
-    -private List<HechoValueObject> hechosDataset;
+    - private List<HechoValueObject> hechosDataset;
     + public void borrarRepetidos()
     + public Set<Hechos> getHechos();
 }
+
+
+' IMPORTADOR CSV
 
 class ImportadorCSV {
     -private String pathCSV;
@@ -84,59 +95,38 @@ class Coleccion{
     - private Fuente fuente
     - private Criterio criterioPertenencia
 
-'    Memmoria para hechos eliminados
+'    Memoria para hechos eliminados
 
-    + public Set<Hecho> filtrarPorCriterio() //desde fuente.hechos
+    public Set<Hecho> busquedaCon(Filtro ... filtros)
 }
 
 class Criterio{
-    - private Set<Filtro> filtrosUsados
+    - private Set<Filtro> filtros
 
-    + public boolean filtrarPorCriterio(Hecho unHecho)
+    +  public Set<Hecho> getHechosFiltrados(Set<Hecho> hechos)
 }
 
 Coleccion --> Criterio
 Coleccion --> Fuente
 Criterio --> "*" Filtro
 
+
+'FILTROS
+
 abstract class Filtro {
     + public Set<Hecho> apply(Set<Hecho> hechos)
-    * protected boolean hechoCumple(Hecho unHecho)
+    # protected boolean hechoCumple(Hecho unHecho)
 }
 
-class FiltroPorTitulo {
-   * protected String obtenerUnTipoString(Hecho unHecho)
-}
-
-class FiltroPorDescripcion {
-* protected String obtenerUnTipoString(Hecho unHecho)
-}
-
-abstract class FiltroPorString {
-    - private String cadenaAComparar
-    * protected boolean hechoCumple(Hecho unHecho)
-    * protected String obtenerUnTipoString(Hecho unHecho)
-}
-
-FiltroPorTitulo --|> FiltroPorString
-FiltroPorDescripcion --|> FiltroPorString
-
-class FiltroCategoria {
+class FiltroPorCategoria {
     - private Categoria categoria
-
-    * protected boolean hechoCumple(Hecho unHecho)
-}
-
-class FiltroUbicacion {
-    - private Ubicacion ubicacion
 
     # protected boolean hechoCumple(Hecho unHecho)
 }
 
-class FiltroFechaAcontecimiento {
-    # protected LocalDate obtenerUnTipoFecha(Hecho unHecho)
+class FiltroPorDescripcion {
+# protected String obtenerUnTipoString(Hecho unHecho)
 }
-
 
 abstract class FiltroPorFecha {
     -private LocalDate desde
@@ -145,13 +135,37 @@ abstract class FiltroPorFecha {
     # protected LocalDate obtenerUnTipoFecha(Hecho unHecho)
 }
 
-FiltroFechaAcontecimiento --|> FiltroPorFecha
-FiltroPorFechaCarga --|> FiltroPorFecha
-
+class FiltroPorFechaAcontecimiento {
+    # protected LocalDate obtenerUnTipoFecha(Hecho unHecho)
+}
 
 class FiltroPorFechaCarga {
-    *protected LocalDate obtenerUnTipoFecha(Hecho unHecho)
+    # protected LocalDate obtenerUnTipoFecha(Hecho unHecho)
 }
+
+abstract class FiltroPorString {
+    - private String cadenaAComparar
+    # protected boolean hechoCumple(Hecho unHecho)
+    # protected String obtenerUnTipoString(Hecho unHecho)
+}
+
+class FiltroPorTitulo {
+   # protected String obtenerUnTipoString(Hecho unHecho)
+}
+
+class FiltroUbicacion {
+    - private Ubicacion ubicacion
+
+    # protected boolean hechoCumple(Hecho unHecho)
+}
+
+FiltroPorTitulo --|> FiltroPorString
+FiltroPorDescripcion --|> FiltroPorString
+
+
+FiltroPorFechaAcontecimiento --|> FiltroPorFecha
+FiltroPorFechaCarga --|> FiltroPorFecha
+
 
 class FiltroOrigen {
     - private Origen origen
@@ -165,7 +179,7 @@ class FiltroContenidoMultimedia {
     # protected boolean hechoCumple(Hecho unHecho)
 }
 
-FiltroCategoria --|> Filtro
+FiltroPorCategoria --|> Filtro
 FiltroPorFecha --|> Filtro
 FiltroPorString --|> Filtro
 FiltroOrigen --|> Filtro
@@ -175,11 +189,13 @@ FiltroUbicacion --|> Filtro
 
 class Solicitud {
     - private Hecho hecho
-    - private enum estado //acep, rech, pend
-    - private String justificacion //min.500 charac
+    - private Estado estado
+    - private String justificacion
 }
 
+
 Solicitud --> Hecho
+Solicitud --> Estado
 
 class Usuario{
     - private String nombre
@@ -206,8 +222,5 @@ class Visualizador extends Rol{
 class Contribuyente extends Rol{
 
 }
-
-
-
 
 @enduml
