@@ -4,7 +4,7 @@ import ar.edu.utn.frba.dds.domain.entities.colecciones.hechos.Hecho;
 import ar.edu.utn.frba.dds.domain.entities.colecciones.hechos.Ubicacion;
 import java.time.LocalDate;
 
-public class FiltroUbicacion  extends Filtro{
+public class FiltroUbicacion  implements Filtro{
   private Ubicacion ubicacion;
   public FiltroUbicacion(Ubicacion ubicacion) {
     this.ubicacion = ubicacion;

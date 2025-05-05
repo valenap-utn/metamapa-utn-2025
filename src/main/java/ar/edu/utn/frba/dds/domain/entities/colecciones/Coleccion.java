@@ -17,24 +17,33 @@ public class Coleccion {
     private String titulo;
     private String descripcion;
     private Fuente fuente;
-    private Criterio criterio;
+    private List<Filtro> criteriosDePertenencia;
 
 
-    public Coleccion(String titulo, String descripcion, Fuente fuente, Criterio criterio) {
+    public Coleccion(String titulo, String descripcion, Fuente fuente) {
         this.titulo = titulo;
         this.descripcion = descripcion;
         this.fuente = fuente;
-        this.criterio = criterio;
+        this.criteriosDePertenencia = new ArrayList<>();
     }
 
-
+    /* Posiblemente se elimine
     public Set<Hecho> busquedaCon(Filtro ... filtros) {
         return FoldlDeFunciones.foldl(this.getHechos(), List.of(filtros));
     }
-
+    */
+    public void agregarCriterios(Filtro ... filtros) {
+        this.criteriosDePertenencia.addAll(List.of(filtros));
+    }
 
     public Set<Hecho> getHechos() {
-        return this.criterio.getHechosFiltrados(this.fuente.obtenerHechos());
+        return this.fuente.obtenerHechos().stream()
+                .filter(this::cumpleTodosLosCriterios)
+                .collect(Collectors.toSet());
+    }
+
+    private boolean cumpleTodosLosCriterios(Hecho hecho) {
+        return this.criteriosDePertenencia.stream().allMatch(Filtro::hechoCumple)
     }
 
 }

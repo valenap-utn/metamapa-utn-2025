@@ -18,6 +18,13 @@
     <maven.compiler.target>17</maven.compiler.target>
   </properties>
 
+  <modules>
+    <module>servicioAgregador</module>
+    <module>servicioFuenteEstatica</module>
+    <module>servicioFuenteDinamica</module>
+    <module>servicioFuenteProxy</module>
+  </modules>
+
   <dependencies>
     <dependency>
       <groupId>org.junit.jupiter</groupId>

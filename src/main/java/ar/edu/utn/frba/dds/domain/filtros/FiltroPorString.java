@@ -4,7 +4,7 @@ import ar.edu.utn.frba.dds.domain.entities.colecciones.hechos.Hecho;
 import lombok.Getter;
 
 @Getter
-public abstract class FiltroPorString extends Filtro {
+public abstract class FiltroPorString implements Filtro {
   private String cadenaAcomparar;
 
   public FiltroPorString(String cadenaAcomparar) {
