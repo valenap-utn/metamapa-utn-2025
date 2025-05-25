@@ -1,15 +1,20 @@
 package ar.edu.utn.frba.dds.servicioAgregador.controllers;
 
+import ar.edu.utn.frba.dds.servicioAgregador.model.DTOs.ColeccionDTOInput;
+import ar.edu.utn.frba.dds.servicioAgregador.model.DTOs.ColeccionDTOOutput;
+import ar.edu.utn.frba.dds.servicioAgregador.model.DTOs.HechoValueObject;
 import ar.edu.utn.frba.dds.servicioAgregador.services.IColeccionService;
-import org.springframework.stereotype.Controller;
+import java.util.List;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/colecciones")
-public class ColeccionController implements IColeccionController{
+@RequestMapping("api/colecciones")
+public class ColeccionController {
   private IColeccionService coleccionService;
 
   public ColeccionController(IColeccionService coleccionService) {
@@ -17,9 +22,23 @@ public class ColeccionController implements IColeccionController{
   }
 
 
+  @PostMapping
+  public ColeccionDTOOutput crearColeccion(@RequestBody ColeccionDTOInput coleccion ) {
+    try {
+      return this.coleccionService.crearColeccion(coleccion);
+    } catch (Exception e) {
+      System.out.println(e.getMessage());
+      return null;
+    }
+  }
+
   @GetMapping
-  @Override
-  public void crearColeccion(@RequestBody Coleccion coleccion ) {
-    this.coleccionService.crearColeccion(coleccion);
+  public List<ColeccionDTOOutput> getColecciones(){
+    return this.coleccionService.getAllColecciones();
+  }
+
+  @GetMapping("/{id}/hechos")
+  public List<HechoValueObject> getHechos(@PathVariable Long id) {
+    return this.coleccionService.getHechosPorColeccion(id);
   }
 }
