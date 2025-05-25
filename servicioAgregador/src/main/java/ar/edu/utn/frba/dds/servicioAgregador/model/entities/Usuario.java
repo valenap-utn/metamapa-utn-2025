@@ -1,6 +1,7 @@
-package ar.edu.utn.frba.dds.domain.entities;
+package ar.edu.utn.frba.dds.servicioAgregador.model.entities;
 
-import ar.edu.utn.frba.dds.domain.entities.roles.Rol;
+import ar.edu.utn.frba.dds.servicioAgregador.model.entities.roles.Permiso;
+import ar.edu.utn.frba.dds.servicioAgregador.model.entities.roles.Rol;
 import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,7 +16,7 @@ public class Usuario {
   private LocalDate fechaDeNacimiento;
   private Rol rol;
 
-  public Usuario of(Rol rol){
+  public static Usuario of(Rol rol){
     return Usuario
         .builder()
         .rol(rol)
@@ -25,7 +26,7 @@ public class Usuario {
         .build();
   }
 
-  public Usuario of(Rol rol, String nombre){
+  public static Usuario of(Rol rol, String nombre){
     return Usuario
         .builder()
         .rol(rol)
@@ -35,7 +36,7 @@ public class Usuario {
         .build();
   }
 
-  public Usuario of(Rol rol, String nombre, String apellido){
+  public static Usuario of(Rol rol, String nombre, String apellido){
     return Usuario
         .builder()
         .rol(rol)
@@ -45,7 +46,7 @@ public class Usuario {
         .build();
   }
 
-  public Usuario of(Rol rol, String nombre, String apellido, LocalDate fechaDeNacimiento){
+  public static Usuario of(Rol rol, String nombre, String apellido, LocalDate fechaDeNacimiento){
     return Usuario
         .builder()
         .rol(rol)
@@ -59,9 +60,8 @@ public class Usuario {
     return LocalDate.now().getYear() - this.fechaDeNacimiento.getYear();
   }
 
-  public Rol getRol() {
-    return this.rol;
+
+  public boolean tienePermisoDe(Permiso permiso) {
+    return this.rol.tienePermisoDe(permiso);
   }
-
-
 }
