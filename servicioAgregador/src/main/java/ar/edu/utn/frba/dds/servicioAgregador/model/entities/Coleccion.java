@@ -2,6 +2,7 @@ package ar.edu.utn.frba.dds.servicioAgregador.model.entities;
 
 
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.filtros.Filtro;
+import ar.edu.utn.frba.dds.servicioAgregador.model.entities.filtros.FiltroNoEstaEliminado;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -27,6 +28,7 @@ public class Coleccion {
         this.descripcion = descripcion;
         this.fuentes = new ArrayList<>();
         this.criteriosDePertenencia = new ArrayList<>();
+        this.criteriosDePertenencia.add(new FiltroNoEstaEliminado());
     }
 
     public void agregarCriterios(Filtro ... filtros) {

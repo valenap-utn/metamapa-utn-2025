@@ -5,11 +5,14 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 
-
+@NoArgsConstructor
+@AllArgsConstructor
 public class Hecho {
     @Setter
     @Getter
@@ -39,7 +42,10 @@ public class Hecho {
     @Getter
     private boolean tieneContenidoMultimedia;
     @Getter
-    private Set<String> etiquetas;
+    private final Set<String> etiquetas = new HashSet<>();
+    public Hecho() {
+        this.eliminado = false;
+    }
 
     public Hecho(HechoValueObject infoHecho, Origen origen) {
         this.titulo = infoHecho.getTitulo();
@@ -51,7 +57,6 @@ public class Hecho {
         this.origen = origen;
         this.fechaCarga = LocalDate.now();
         this.eliminado = false;
-        this.etiquetas = new HashSet<>();
     }
 
     public void agregarEtiquetas(String ... etiquetas) {

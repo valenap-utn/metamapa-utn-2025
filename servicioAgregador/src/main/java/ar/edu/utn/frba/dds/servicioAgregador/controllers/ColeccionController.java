@@ -38,7 +38,7 @@ public class ColeccionController {
   }
 
   @GetMapping("/{id}/hechos")
-  public List<HechoValueObject> getHechos(@PathVariable Long id) {
-    return this.coleccionService.getHechosPorColeccion(id);
+  public List<HechoValueObject> getHechos(@PathVariable String idColeccion) {
+    return this.coleccionService.getHechosPorColeccion(idColeccion);
   }
 }

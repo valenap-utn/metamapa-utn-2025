@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.Set;
 
 public interface IColeccionRepository {
-  public Coleccion crearColeccion(Coleccion coleccion);
-  public Coleccion findById(Long id);
+  public Coleccion save(Coleccion coleccion);
+  public Coleccion findById(String id);
 
   Set<Coleccion> findAll();
 }

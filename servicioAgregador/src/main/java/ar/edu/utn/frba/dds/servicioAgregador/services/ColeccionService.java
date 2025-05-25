@@ -10,6 +10,7 @@ import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Usuario;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.roles.PermisoCrearColeccion;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IColeccionRepository;
+import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IHechoRepository;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IUserRepository;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,20 +18,25 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Service
+
 public class ColeccionService implements IColeccionService{
   private final IColeccionRepository coleccionRepository;
   private Map<Long, ConexionFuenteService> conexionFuentes;
-  private IUserRepository userRepository;
+  private final IUserRepository userRepository;
+  private final IHechoRepository hechoRepository;
 
-  public ColeccionService(IColeccionRepository coleccionRepository) {
+  public ColeccionService(IColeccionRepository coleccionRepository, IUserRepository userRepository, IHechoRepository hechoRepository) {
     this.coleccionRepository = coleccionRepository;
     this.conexionFuentes = new HashMap<>();
+    this.userRepository = userRepository;
+    this.hechoRepository = hechoRepository;
   }
 
   @Override
@@ -44,7 +50,7 @@ public class ColeccionService implements IColeccionService{
     Set<Fuente> fuentes =  coleccionInput.getFuentes().stream().map(this::toFuente).collect(Collectors.toSet());
     coleccionCreada.agregarFuentes(fuentes);
 
-    Coleccion coleccionGuardada = this.coleccionRepository.crearColeccion(coleccionCreada);
+    Coleccion coleccionGuardada = this.coleccionRepository.save(coleccionCreada);
     return this.toColeccionDTOOutput(coleccionGuardada);
   }
 
@@ -79,16 +85,14 @@ public class ColeccionService implements IColeccionService{
     Flux.fromIterable(fuentes)
             .flatMap(this::actualizarHechosFuente)
             .flatMap(fuente -> {
-              this.hechoRepository(fuente);
+              this.hechoRepository.save(fuente);
               return Mono.empty();
             });
   }
 
   private Mono<Fuente> actualizarHechosFuente(Fuente fuente) {
     ConexionFuenteService conexionFuenteService = this.conexionFuentes.get(fuente.getId());
-    Mono<Set<Hecho>> hechos = conexionFuenteService.actualizarHechosFuente();
-    fuente.agregarHechos(hechos);
-    return Mono.just(fuente);
+    return conexionFuenteService.actualizarHechosFuente(fuente);
   }
 
   @Override
@@ -98,10 +102,16 @@ public class ColeccionService implements IColeccionService{
   }
 
   @Override
-  public List<HechoValueObject> getHechosPorColeccion(Long idColeccion) {
+  public List<HechoValueObject> getHechosPorColeccion(String idColeccion) {
     Coleccion coleccion = this.coleccionRepository.findById(idColeccion);
+    coleccion.getFuentes().forEach(fuente -> this.getHechosFuente(fuente));
+    Set<Hecho> hechos = coleccion.getHechos();
+    return this.toConjuntoHechoDTO(hechos);
+  }
 
-    return null;
+  private void getHechoFuente(Fuente fuente) {
+   ConexionFuenteService conexion =  this.conexionFuentes.get(fuente.getId());
+   conexion.getHechosFuente(fuente);
   }
 
 }

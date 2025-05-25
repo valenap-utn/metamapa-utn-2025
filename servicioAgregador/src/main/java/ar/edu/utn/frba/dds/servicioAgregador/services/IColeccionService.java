@@ -11,5 +11,5 @@ public interface IColeccionService {
 
   public List<ColeccionDTOOutput> getAllColecciones();
 
-  public List<HechoValueObject> getHechosPorColeccion(Long idColeccion);
+  public List<HechoValueObject> getHechosPorColeccion(String idColeccion);
 }
