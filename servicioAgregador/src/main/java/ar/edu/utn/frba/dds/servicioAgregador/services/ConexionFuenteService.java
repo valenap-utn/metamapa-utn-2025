@@ -1,39 +1,51 @@
 package ar.edu.utn.frba.dds.servicioAgregador.services;
 
-import ar.edu.utn.frba.dds.servicioAgregador.model.DTOs.ConjuntoHechoDTO;
 import ar.edu.utn.frba.dds.servicioAgregador.model.DTOs.HechoDTO;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Fuente;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Origen;
-import java.util.Optional;
+import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IHechoRepository;
 import java.util.Set;
-import java.util.stream.Collectors;
+import lombok.Getter;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 public abstract class ConexionFuenteService {
   private WebClient webClient;
+  private final IHechoRepository hechoRepository;
 
-  public abstract void getHechosFuente(Fuente fuente);
-  public abstract Mono<Fuente> actualizarHechosFuente(Fuente fuente);
-
-  ConexionFuenteService(String baseUrl) {
-    this.webClient = WebClient.builder().baseUrl(baseUrl).build();
+  public void cargarHechosEnFuente(Fuente fuente){
+    Set<Hecho> hechos = this.hechoRepository.findByIDFuente(fuente.getId());
+    fuente.actualizarHechos(hechos);
+  }
+  public Mono<Fuente> actualizarHechosFuente(Fuente fuente) {
+    return this.setFuenteConHechosAPI(fuente);
   }
 
-  protected Mono<Fuente> setHechos(Fuente fuente) {
-    return this.mapearAMonoConjuntoHechoDTO(
+  ConexionFuenteService(String baseUrl, IHechoRepository hechoRepository) {
+    this.webClient = WebClient.builder().baseUrl(baseUrl).build();
+    this.hechoRepository = hechoRepository;
+  }
+
+  protected Mono<Fuente> setFuenteConHechosAPI(Fuente fuente) {
+    return this.mapAFuenteConHechos(
             webClient.get()
             .uri(uriBuilder -> uriBuilder.path("/hechos").build())
-            .retrieve()).map( response -> {
-              Set<Hecho> hechos = response.getHechos().stream().map(this::toHecho).collect(Collectors.toSet());
-              fuente.actualizarHechos(hechos);
-              return fuente;
-            });
+            .retrieve(), fuente);
   }
 
-  protected abstract Mono<ConjuntoHechoDTO> mapearAMonoConjuntoHechoDTO(WebClient.ResponseSpec retrieve);
+  protected abstract Mono<Fuente> mapAFuenteConHechos(WebClient.ResponseSpec retrieve, Fuente fuente);
 
-  protected abstract Hecho toHecho(HechoDTO hechoDTO);
+  protected Hecho toHecho(HechoDTO hechoDTO) {
+    Hecho hecho = new Hecho();
+    hecho.setTitulo(hechoDTO.getTitulo());
+    hecho.setDescripcion(hechoDTO.getDescripcion());
+    hecho.setCategoria(hechoDTO.getCategoria());
+    hecho.setUbicacion(hechoDTO.getUbicacion());
+    hecho.setFechaAcontecimiento(hechoDTO.getFechaAcontecimiento());
+    hecho.setFechaCarga(hechoDTO.getFechaCarga());
+    return this.completarHecho(hecho, hechoDTO);
+  }
 
+  protected abstract Hecho completarHecho(Hecho hecho, HechoDTO hechoDTO);
 }

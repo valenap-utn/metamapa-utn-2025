@@ -1,6 +1,6 @@
 package ar.edu.utn.frba.dds.servicioAgregador.services;
 
-import ar.edu.utn.frba.dds.servicioAgregador.model.DTOs.ConjuntoHechoDTO;
+import ar.edu.utn.frba.dds.servicioAgregador.model.DTOs.ConjuntoHechoDinamica;
 import ar.edu.utn.frba.dds.servicioAgregador.model.DTOs.ConjuntoHechoEstatica;
 import ar.edu.utn.frba.dds.servicioAgregador.model.DTOs.HechoDTO;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Fuente;
@@ -12,15 +12,15 @@ import java.util.stream.Collectors;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
-public class ConexionEstaticaService extends ConexionFuenteService{
+public class ConexionDinamicaService extends ConexionFuenteService{
 
-  public ConexionEstaticaService(String baseUrl, IHechoRepository hechoRepository) {
+  public ConexionDinamicaService(String baseUrl, IHechoRepository hechoRepository) {
     super(baseUrl, hechoRepository);
   }
 
   @Override
   protected Mono<Fuente> mapAFuenteConHechos(WebClient.ResponseSpec retrieve, Fuente fuente) {
-    return retrieve.bodyToMono(ConjuntoHechoEstatica.class).map(
+    return retrieve.bodyToMono(ConjuntoHechoDinamica.class).map(
             response -> {
               Set<Hecho> hechos = response.getHechos().stream().map(this::toHecho).collect(Collectors.toSet());
               fuente.actualizarHechos(hechos);
@@ -30,7 +30,9 @@ public class ConexionEstaticaService extends ConexionFuenteService{
 
   @Override
   protected Hecho completarHecho(Hecho hecho, HechoDTO hechoDTO) {
-    hecho.setOrigen(Origen.DATASET);
+    hecho.setOrigen(Origen.PORCONTRIBUYENTE);
     return hecho;
   }
+
+
 }

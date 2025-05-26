@@ -12,20 +12,16 @@ import ar.edu.utn.frba.dds.servicioAgregador.model.entities.roles.PermisoCrearCo
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IColeccionRepository;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IHechoRepository;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IUserRepository;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Service
-
 public class ColeccionService implements IColeccionService{
   private final IColeccionRepository coleccionRepository;
   private Map<Long, ConexionFuenteService> conexionFuentes;
@@ -104,14 +100,14 @@ public class ColeccionService implements IColeccionService{
   @Override
   public List<HechoValueObject> getHechosPorColeccion(String idColeccion) {
     Coleccion coleccion = this.coleccionRepository.findById(idColeccion);
-    coleccion.getFuentes().forEach(fuente -> this.getHechosFuente(fuente));
+    coleccion.getFuentes().forEach(this::cargarHechosEnFuente);
     Set<Hecho> hechos = coleccion.getHechos();
     return this.toConjuntoHechoDTO(hechos);
   }
 
-  private void getHechoFuente(Fuente fuente) {
+  private void cargarHechosEnFuente(Fuente fuente) {
    ConexionFuenteService conexion =  this.conexionFuentes.get(fuente.getId());
-   conexion.getHechosFuente(fuente);
+   conexion.cargarHechosEnFuente(fuente);
   }
 
 }
