@@ -1,13 +1,15 @@
 package ar.edu.utn.frba.dds.servicioFuenteEstatica.model.entities;
 
-import ar.edu.utn.frba.dds.domain.entities.colecciones.hechos.Hecho;
-import ar.edu.utn.frba.dds.domain.entities.colecciones.hechos.ColeccionHechoValueObject;
-import ar.edu.utn.frba.dds.domain.fuentes.Fuente;
+import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.dtos.HechoValueObject;
+import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.mappers.HechoMapper;
+import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.repositories.ImportadorCSV;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class FuenteEstatica implements Fuente {
+
     private ImportadorCSV importador;
     private Set<Hecho> hechosAsociados;
 
@@ -18,10 +20,16 @@ public class FuenteEstatica implements Fuente {
 
     @Override
     public Set<Hecho> obtenerHechos() {
-        if(this.hechosAsociados.isEmpty()){
-            ColeccionHechoValueObject hechosDeDataset = this.importador.importarHechosDataset();
-            hechosDeDataset.borrarRepetidos();
-            this.hechosAsociados = hechosDeDataset.getHechos();
+        if (this.hechosAsociados.isEmpty()) {
+            Set<String> titulosYaAgregados = new HashSet<>();
+
+            for (HechoValueObject hvo : this.importador.importarHechosDataset()) {
+                if (!titulosYaAgregados.contains(hvo.getTitulo())) {
+                    Hecho hecho = HechoMapper.toEntity(hvo, Origen.PORDATASET);
+                    this.hechosAsociados.add(hecho);
+                    titulosYaAgregados.add(hvo.getTitulo());
+                }
+            }
         }
         return this.hechosAsociados;
     }

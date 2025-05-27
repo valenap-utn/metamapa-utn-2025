@@ -1,61 +1,63 @@
 package ar.edu.utn.frba.dds.servicioFuenteEstatica.model.repositories;
 
-import ar.edu.utn.frba.dds.domain.entities.colecciones.hechos.Categoria;
-import ar.edu.utn.frba.dds.domain.entities.colecciones.hechos.HechoValueObject;
-import ar.edu.utn.frba.dds.domain.entities.colecciones.hechos.ColeccionHechoValueObject;
-
-import ar.edu.utn.frba.dds.domain.entities.colecciones.hechos.Ubicacion;
+import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.dtos.HechoValueObject;
+import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.entities.Categoria;
+import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.entities.Ubicacion;
 import com.opencsv.exceptions.CsvException;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
 
 @Setter
 @Getter
 public class ImportadorCSV {
 
-  private String pathCsv;
+  private final MultipartFile archivoCSV;
 
-  public ImportadorCSV(String pathCsv) {
-    this.pathCsv = pathCsv;
+  public ImportadorCSV(MultipartFile archivoCSV) {
+    this.archivoCSV = archivoCSV;
   }
 
-  public ColeccionHechoValueObject importarHechosDataset() {
-    List<FormatoFilaCSV> contenidoFilasCSV = obtenerContenidoDeFilasCSV();
-    return transformarfilasCSVAHechosValueObject(contenidoFilasCSV);
-  }
-
-  private List<FormatoFilaCSV> obtenerContenidoDeFilasCSV()  {
-    List<FormatoFilaCSV> filasCSV;
-    LectorFilaCSV lector = new LectorFilaCSV();
-    try {
-      filasCSV = lector.obtenerFilasCSV(this.getPathCsv());
-    } catch (IOException excepcionIO) {
-      throw new RuntimeException(excepcionIO);
-    } catch (CsvException excepcionCSV) {
-      throw new RuntimeException(excepcionCSV);
+  public Collection<HechoValueObject> importarHechosDataset(){
+    try{
+      LectorFilaCSV lector = new LectorFilaCSV();
+      return lector.leerHechosDesde(archivoCSV);
+    }catch(IOException e){
+      throw new RuntimeException("Error al importar hechos desde el archivo CSV",e);
     }
-    return filasCSV;
   }
 
-
-  public ColeccionHechoValueObject transformarfilasCSVAHechosValueObject(List<FormatoFilaCSV> filasCSV) {
-    ColeccionHechoValueObject coleccionHechos = new ColeccionHechoValueObject();
-
-    for(FormatoFilaCSV filaCSV : filasCSV) {
-      coleccionHechos.agregarHechosDataset(new HechoValueObject(
-              filaCSV.getTitulo(), //Titulo
-              filaCSV.getDescripcion(),
-              new Categoria(filaCSV.getCategoria()),
-              new Ubicacion(
-                      Float.parseFloat(filaCSV.getLongitud()),
-                      Float.parseFloat(filaCSV.getLatitud())),
-              LocalDate.parse(filaCSV.getFechaAcontecimiento())
-               ));
-    }
-    return coleccionHechos;
-  }
+//  public List<HechoValueObject> importarHechosDataset(){
+//    List<FormatoFilaCSV> contenidoFilasCSV = obtenerContenidoDeFilasCSV();
+//    return transformarfilasCSVAHechosValueObject(contenidoFilasCSV);
+//  }
+//
+//  private List<FormatoFilaCSV> obtenerContenidoDeFilasCSV(){
+//    try(Reader reader = new InputStreamReader(archivoCSV.getInputStream())){
+//      LectorFilaCSV lector = new LectorFilaCSV();
+//      return lector.obtenerFilasCSV(reader);
+//    }catch(IOException | CsvException e){
+//      throw new RuntimeException("Error leyendo el archivo CSV", e);
+//    }
+//  }
+//
+//  private List<HechoValueObject> transformarfilasCSVAHechosValueObject(List<FormatoFilaCSV> filasCSV){
+//    return filasCSV.stream().map(fila -> new HechoValueObject(
+//        fila.getTitulo(),
+//        fila.getDescripcion(),
+//        new Categoria(fila.getCategoria()),
+//        new Ubicacion(
+//            Float.parseFloat(fila.getLongitud()),
+//            Float.parseFloat(fila.getLatitud())
+//        ),
+//        LocalDate.parse(fila.getFechaAcontecimiento())
+//    )).toList();
+//  }
 
 }

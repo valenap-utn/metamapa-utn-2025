@@ -1,6 +1,6 @@
 package ar.edu.utn.frba.dds.servicioFuenteEstatica.model.repositories;
 
-import ar.edu.utn.frba.dds.utils.ReverseList;
+import ar.edu.utn.frba.dds.servicioFuenteEstatica.utils.ReverseList;
 import java.util.ArrayList;
 import java.util.List;
 

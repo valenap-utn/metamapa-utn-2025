@@ -8,8 +8,6 @@ import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
 
-
-
 public class Hecho {
     @Setter
     @Getter
