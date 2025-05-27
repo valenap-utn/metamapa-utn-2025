@@ -2,7 +2,9 @@ package ar.edu.utn.frba.dds.servicioAgregador.services;
 
 import ar.edu.utn.frba.dds.servicioAgregador.model.DTOs.ColeccionDTOInput;
 import ar.edu.utn.frba.dds.servicioAgregador.model.DTOs.ColeccionDTOOutput;
+import ar.edu.utn.frba.dds.servicioAgregador.model.DTOs.ConjuntoHechoProxy;
 import ar.edu.utn.frba.dds.servicioAgregador.model.DTOs.FuenteDTO;
+import ar.edu.utn.frba.dds.servicioAgregador.model.DTOs.HechoDTOProxy;
 import ar.edu.utn.frba.dds.servicioAgregador.model.DTOs.HechoValueObject;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Coleccion;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Fuente;
@@ -98,11 +100,21 @@ public class ColeccionService implements IColeccionService{
   }
 
   @Override
-  public List<HechoValueObject> getHechosPorColeccion(String idColeccion) {
+  public ConjuntoHechoProxy getHechosPorColeccion(String idColeccion) {
     Coleccion coleccion = this.coleccionRepository.findById(idColeccion);
     coleccion.getFuentes().forEach(this::cargarHechosEnFuente);
     Set<Hecho> hechos = coleccion.getHechos();
     return this.toConjuntoHechoDTO(hechos);
+  }
+
+  private ConjuntoHechoProxy toConjuntoHechoDTO(Set<Hecho> hechos) {
+    ConjuntoHechoProxy conjuntoDeHechos = new ConjuntoHechoProxy();
+    Set<HechoDTOProxy> hechosDTO =  hechos.stream().map(this::toHechoDTO);
+    conjuntoDeHechos.setHechos(hechosDTO);
+    return conjuntoDeHechos;
+  }
+
+  private Object toHechoDTO(Hecho hecho) {
   }
 
   private void cargarHechosEnFuente(Fuente fuente) {

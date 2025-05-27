@@ -1,14 +1,36 @@
 package ar.edu.utn.frba.dds.servicioAgregador.model.repositories;
 
+import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Coleccion;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Fuente;
+import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 
 public class HechoRepository implements IHechoRepository {
+  private final Map<Long, Map<Long, Hecho>> idsHechosPorFuente;
+
+  public HechoRepository() {
+    this.idsHechosPorFuente = new HashMap<>();
+  }
 
   @Override
   public Fuente save(Fuente fuente) {
-    return null;
+    Map<Long, Hecho> idsHechoFuente = this.idsHechosPorFuente.get(fuente.getId());
+    if (idsHechoFuente == null) {
+      idsHechoFuente = new HashMap<>();
+    }
+    Map<Long, Hecho> finalIdsHechoFuente = idsHechoFuente;
+    fuente.getHechos().forEach(hecho -> this.saveHecho(finalIdsHechoFuente, hecho));
   }
+
+  private void saveHecho(Map<Long, Hecho> idsHechoFuente, Hecho hecho) {
+    idsHechoFuente.put(hecho.getId(), hecho);
+  }
+
 
   @Override
   public Fuente findById(Long id) {
@@ -18,5 +40,11 @@ public class HechoRepository implements IHechoRepository {
   @Override
   public Set<Fuente> findAll() {
     return Set.of();
+  }
+
+  @Override
+  public Set<Hecho> findByIDFuente(Long idFuente) {
+    Map<Long, Hecho> idsHechoFuente = this.idsHechosPorFuente.get(idFuente);
+    return Set.of(idsHechoFuente.values());
   }
 }

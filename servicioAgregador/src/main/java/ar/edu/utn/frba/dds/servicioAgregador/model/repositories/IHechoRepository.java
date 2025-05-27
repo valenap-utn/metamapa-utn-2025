@@ -10,5 +10,5 @@ public interface IHechoRepository {
 
   Set<Fuente> findAll();
 
-  Set<Hecho> findByIDFuente(Long id);
+  Set<Hecho> findByIDFuente(Long idFuente);
 }

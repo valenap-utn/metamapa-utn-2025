@@ -7,13 +7,15 @@ import java.util.List;
 import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 
-@NoArgsConstructor
+
 @AllArgsConstructor
 public class Hecho {
+    @Getter
+    @Setter
+    private Long id;
     @Setter
     @Getter
     private String titulo;
