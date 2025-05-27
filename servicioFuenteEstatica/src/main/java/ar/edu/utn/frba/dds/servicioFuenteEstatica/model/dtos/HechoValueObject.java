@@ -1,7 +1,6 @@
 package ar.edu.utn.frba.dds.servicioFuenteEstatica.model.dtos;
 
 import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.entities.Categoria;
-import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.entities.Hecho;
 import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.entities.Ubicacion;
 import java.time.LocalDate;
 

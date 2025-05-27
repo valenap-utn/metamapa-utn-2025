@@ -5,7 +5,6 @@ import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.mappers.HechoMapper;
 import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.repositories.ImportadorCSV;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class FuenteEstatica implements Fuente {

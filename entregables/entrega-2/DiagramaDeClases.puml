@@ -1,0 +1,101 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+'CONTROLLERS
+class HechoController {
+    - HechoService hechoService
+    + HechoController(HechoService hechoService)
+    + ResponseEntity<List<HechoValueObject>> importarHechosDesdeCSV(@RequestParam("archivo") MultipartFile archivoCSV)
+}
+
+'DTOS
+class HechoValueObject {
+    - String titulo
+    - String descripcion
+    - Categoria categoria
+    - Ubicacion ubicacion
+    - LocalDate fechaAcontecimiento
+    + public boolean esIgualA(HechoValueObject unHecho)
+}
+
+'ENTITIES
+class Categoria {
+    - String nombre
+    + boolean esIgualA(Categoria categoria)
+}
+
+interface Fuente {
+    Set<Hecho> obtenerHechos()
+}
+
+class FuenteEstatica {
+    - ImportadorCSV importador
+    - Set<Hecho> hechosAsociados
+    + Set<Hecho> obtenerHechos()
+}
+
+class Hecho {
+    - String titulo;
+    - String descripcion;
+    - Categoria categoria;
+    - Ubicacion ubicacion;
+    - LocalDate fechaAcontecimiento
+    - LocalDate fechaCarga;
+    - Origen origen;
+    - boolean eliminado;
+    - boolean tieneContenidoMultimedia;
+    - Set<String> etiquetas;
+    + Hecho(HechoValueObject infoHecho, Origen origen)
+    + agregarEtiquetas(String ... etiquetas)
+}
+
+enum Origen {
+    CARGAMANUAL
+    PORCONTRIBUYENTE
+    PORDATASET
+}
+
+class Ubicacion {
+    - float longitud
+    - float latitud
+    + Ubicacion(float longitud, float latitud)
+}
+
+'MAPPERS
+class HechoMapper {
+    + HechoValueObject toValueObject(Hecho hecho)
+    + Hecho toEntity(HechoValueObject vo, Origen origen)
+}
+
+'REPOSITORIES
+class FormatoFilaCSV {
+    List<String> filaCSV
+    + FormatoFilaCSV()
+    + agregarCampos(String ... campos)
+    + String getTitulo()
+    + String getDescripcion()
+    + String getCategoria()
+    + String getLatitud()
+    + String getLongitud()
+    + String getFechaAcontecimiento()
+    + String formatoISOFecha(String unaCadena, String otraCadena)
+}
+
+class ImportadorCSV {
+    - MultipartFile archivoCSV
+    + ImportadorCSV(MultipartFile archivoCSV)
+    + Collection<HechoValueObject> importarHechosDataset()
+}
+
+class LectorFilaCSV {
+    - HechoValueObject convertirAFilaHecho(String[] filaCSV)
+    - LocalDate parsearFecha(String fechaDDMMYYYY)
+    + Collection<HechoValueObject> leerHechosDesde(MultipartFile archivoCSV) throws IOException
+}
+
+'SERVICIES
+class HechoService {
+    + Set<HechoValueObject> importarDesdeArchivo(MultipartFile archivo)
+}
+
+@enduml

@@ -17,9 +17,6 @@ import java.util.stream.Collectors;
 public class HechoService {
   public Set<HechoValueObject> importarDesdeArchivo(MultipartFile archivo){
     try{
-//      ImportadorCSV importador = new ImportadorCSV(archivo);
-//      FuenteEstatica fuenteEstatica = new FuenteEstatica(importador);
-//      return fuenteEstatica.obtenerHechos();
       Fuente fuente = new FuenteEstatica(new ImportadorCSV(archivo));
       Set<Hecho> hechos = fuente.obtenerHechos();
 
