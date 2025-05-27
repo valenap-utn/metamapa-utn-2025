@@ -1,30 +1,46 @@
 @startuml
 'https://plantuml.com/deployment-diagram
 
-actor actor
-actor/ "actor/"
-agent agent
-artifact artifact
-boundary boundary
-card card
-circle circle
-cloud cloud
-collections collections
-component component
-control control
-database database
-entity entity
-file file
-folder folder
-frame frame
-interface interface
-label label
-node node
-package package
-queue queue
-rectangle rectangle
-stack stack
-storage storage
-usecase usecase
-usecase/ "usecase/"
+actor usuario
+
+node servicioAgregador {
+component ColeccionService
+component ColeccionController
+component ConexionFuenteService
+component ColeccionRepository
+}
+
+ColeccionController -(0- ColeccionService
+ColeccionService -(0- ConexionFuenteService
+ConexionFuenteService -(0- ColeccionRepository
+usuario -(0- ColeccionController
+
+
+node servicioFuenteDinamica {
+component HechoControllerDinamica
+component HechoServiceDinamica
+component HechoRepositoryDinamica
+}
+node servicioFuenteEstatica {
+component HechoControllerEstatica
+component HechoServiceEstatica
+component HechoRepositoryEstatica
+}
+node servicioFuenteProxy {
+component HechoControllerProxy
+component HechoServiceProxy
+}
+
+
+component InstanciaMetaMapa
+
+HechoServiceProxy -(0- InstanciaMetaMapa
+
+
+ConexionFuenteService -(0- servicioFuenteDinamica
+ConexionFuenteService -(0- servicioFuenteEstatica
+ConexionFuenteService -(0- servicioFuenteProxy
+
+
+
 @enduml

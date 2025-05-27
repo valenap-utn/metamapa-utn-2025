@@ -7,6 +7,7 @@ import lombok.Data;
 
 @Data
 public class HechoDTOEstatica  implements HechoDTO{
+  private Long id;
   private String titulo;
   private String descripcion;
   private Categoria categoria;

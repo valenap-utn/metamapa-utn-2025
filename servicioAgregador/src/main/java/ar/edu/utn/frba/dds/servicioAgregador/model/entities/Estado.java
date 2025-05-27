@@ -4,5 +4,4 @@ public enum Estado {
     ACEPTADA,
     RECHAZADA,
     PENDIENTE
-
 }

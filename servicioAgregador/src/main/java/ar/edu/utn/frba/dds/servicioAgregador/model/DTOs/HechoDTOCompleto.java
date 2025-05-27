@@ -8,7 +8,8 @@ import java.util.Set;
 import lombok.Data;
 
 @Data
-public class HechoDTOProxy implements HechoDTO {
+public class HechoDTOCompleto implements HechoDTO {
+  private Long id;
   private String titulo;
   private String descripcion;
   private Categoria categoria;

@@ -1,4 +1,4 @@
-package ar.edu.utn.frba.dds.utils;
+package utils;
 
 import java.util.ArrayList;
 import java.util.List;

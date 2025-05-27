@@ -3,23 +3,25 @@ package ar.edu.utn.frba.dds.servicioAgregador.services;
 import ar.edu.utn.frba.dds.servicioAgregador.model.DTOs.HechoDTO;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Fuente;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
-import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Origen;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IHechoRepository;
 import java.util.Set;
-import lombok.Getter;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 public abstract class ConexionFuenteService {
-  private WebClient webClient;
+  private final WebClient webClient;
   private final IHechoRepository hechoRepository;
 
   public void cargarHechosEnFuente(Fuente fuente){
     Set<Hecho> hechos = this.hechoRepository.findByIDFuente(fuente.getId());
     fuente.actualizarHechos(hechos);
   }
-  public Mono<Fuente> actualizarHechosFuente(Fuente fuente) {
-    return this.setFuenteConHechosAPI(fuente);
+  public Mono<Void> actualizarHechosFuente(Fuente fuente) {
+    Mono<Fuente> fuenteActualizada = this.setFuenteConHechosAPI(fuente);
+    return fuenteActualizada.map(fuenteMono -> {
+      this.hechoRepository.saveHechosDeFuente(fuenteMono);
+      return Mono.empty();
+    }).then();
   }
 
   ConexionFuenteService(String baseUrl, IHechoRepository hechoRepository) {

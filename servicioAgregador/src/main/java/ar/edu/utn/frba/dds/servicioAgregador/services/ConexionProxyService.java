@@ -24,8 +24,8 @@ public class ConexionProxyService extends ConexionFuenteService{
   }
 
   @Override
-  public Mono<Fuente> actualizarHechosFuente(Fuente fuente) {
-    return Mono.just(fuente);
+  public Mono<Void> actualizarHechosFuente(Fuente _fuente) {
+    return Mono.empty();
   }
 
   @Override

@@ -7,10 +7,10 @@ loop Actualizacion Colecciones (cada 1 hora)
     activate ColeccionScheduler
     ColeccionScheduler -> ColeccionService: actualizarColecciones()
     activate ColeccionService
-    ColeccionService -> FuenteRepository: getFuentes()
-    activate FuenteRepository
+    ColeccionService -> ColeccionRepository: findAll()
+    activate ColeccionRepository
     loop Por cada fuente que haya traido
-        FuenteRepository --> ColeccionService: List<Fuente>
+        ColeccionRepository --> ColeccionService: Set<Coleccion>
         ColeccionService -> Fuente: servicioPorTipoFuente(ColeccionService)
         activate Fuente
         Fuente -> ColeccionService: ColeccionService.pediAlServicioSegunEsteTipoFuente()

@@ -5,5 +5,5 @@ import lombok.Data;
 
 @Data
 public class ConjuntoHechoProxy {
-  Set<HechoDTOProxy> hechos;
+  Set<HechoDTOCompleto> hechos;
 }

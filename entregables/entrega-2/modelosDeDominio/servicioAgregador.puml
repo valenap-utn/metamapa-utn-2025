@@ -1,0 +1,170 @@
+@startuml
+
+class Hecho{
+    - String titulo
+    - Categoria categoria
+    - Ubicacion ubicacion
+    - LocalDateTime fechaAcontecimiento
+    - boolean tieneContenidoMultimedia
+    - LocalDate fechaDeCarga
+    - boolean eliminado
+    - Origen origen
+    - Set<String> etiquetas
+}
+
+class Categoria {
+    -private String nombre;
+    +public boolean esIgualA(Categoria);
+}
+
+enum Origen {
+    MANUAL,
+    PORCONTRIBUYENTE
+}
+
+enum Estado{
+    ACEPTADA,
+    RECHAZADA,
+    PENDIENTE
+}
+
+Hecho --> Categoria
+Hecho --> Origen
+
+
+' FUENTES y HECHOS
+
+class Fuente {
+
+}
+
+
+
+Fuente --> "*" Hecho
+
+class Coleccion{
+    - private String titulo
+    - private String descripcion
+    - private List<Fuente> fuente
+    - private List<Filtro> criteriosPertenencia
+
+'    Memoria para hechos eliminados
+
+    public Set<Hecho> busquedaCon(Filtro ... filtros)
+}
+
+
+Coleccion --> Criterio
+Coleccion --> Fuente
+Criterio --> "*" Filtro
+
+
+'FILTROS
+
+abstract class Filtro {
+    + boolean hechoCumple(Hecho unHecho)
+}
+
+class FiltroPorCategoria {
+    - private Categoria categoria
+
+    # boolean hechoCumple(Hecho unHecho)
+}
+
+class FiltroPorDescripcion {
+# String obtenerUnTipoString(Hecho unHecho)
+}
+
+abstract class FiltroPorFecha {
+    -private LocalDate desde
+    -private LocalDate hasta
+    + boolean hechoCumple(Hecho hecho)
+    # LocalDate obtenerUnTipoFecha(Hecho unHecho)
+}
+
+class FiltroPorFechaAcontecimiento {
+    # LocalDate obtenerUnTipoFecha(Hecho unHecho)
+}
+
+class FiltroPorFechaCarga {
+    # LocalDate obtenerUnTipoFecha(Hecho unHecho)
+}
+
+abstract class FiltroPorString {
+    - String cadenaAComparar
+    + boolean hechoCumple(Hecho unHecho)
+    # String obtenerUnTipoString(Hecho unHecho)
+}
+
+class FiltroPorTitulo {
+   # String obtenerUnTipoString(Hecho unHecho)
+}
+
+class FiltroUbicacion {
+    - private Ubicacion ubicacion
+
+    + boolean hechoCumple(Hecho unHecho)
+}
+
+FiltroPorTitulo --|> FiltroPorString
+FiltroPorDescripcion --|> FiltroPorString
+
+
+FiltroPorFechaAcontecimiento --|> FiltroPorFecha
+FiltroPorFechaCarga --|> FiltroPorFecha
+
+
+class FiltroOrigen {
+    - private Origen origen
+
+    + boolean hechoCumple(Hecho unHecho)
+}
+
+class FiltroContenidoMultimedia {
+    - private boolean tieneContenidoMultimedia
+
+    + boolean hechoCumple(Hecho unHecho)
+}
+
+FiltroPorCategoria --|> Filtro
+FiltroPorFecha --|> Filtro
+FiltroPorString --|> Filtro
+FiltroOrigen --|> Filtro
+FiltroContenidoMultimedia --|> Filtro
+FiltroUbicacion --|> Filtro
+
+
+class Solicitud {
+    - Hecho hecho
+    - Estado estado
+    - Usuario usuario
+    - String justificacion
+}
+
+
+Solicitud --> Hecho
+Solicitud --> Estado
+Solicitud --> Usuario
+
+class Usuario{
+    - String nombre
+    - String apellido
+    - Integer edad
+    - Rol rol
+}
+
+Usuario --> Rol
+
+interface Rol{
+
+}
+
+class Administrador extends Rol {
+
+}
+
+class Contribuyente extends Rol{
+
+}
+
+@enduml

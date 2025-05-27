@@ -5,7 +5,7 @@ import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
 import java.util.Set;
 
 public interface IHechoRepository {
-  public Fuente save(Fuente fuente);
+  public Fuente saveHechosDeFuente(Fuente fuente);
   public Fuente findById(Long id);
 
   Set<Fuente> findAll();
