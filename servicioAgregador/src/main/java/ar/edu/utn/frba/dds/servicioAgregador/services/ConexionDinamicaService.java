@@ -21,9 +21,7 @@ public class ConexionDinamicaService extends ConexionFuenteService{
   protected Mono<Fuente> mapAFuenteConHechos(WebClient.ResponseSpec retrieve, Fuente fuente) {
     return retrieve.bodyToMono(ConjuntoHechoDinamica.class).map(
             response -> {
-              Set<Hecho> hechos = response.getHechos().stream().map(this::toHecho).collect(Collectors.toSet());
-              fuente.actualizarHechos(hechos);
-              return fuente;
+              return this.cargarHechosMapeadosEnFuente(response, fuente);
             });
   }
 

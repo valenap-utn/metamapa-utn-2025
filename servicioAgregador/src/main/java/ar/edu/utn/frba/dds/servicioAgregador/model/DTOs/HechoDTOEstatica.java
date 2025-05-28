@@ -6,7 +6,7 @@ import java.time.LocalDate;
 import lombok.Data;
 
 @Data
-public class HechoDTOEstatica  implements HechoDTO{
+public class HechoDTOEstatica  implements HechoDTO<HechoDTOEstatica>{
   private Long id;
   private String titulo;
   private String descripcion;

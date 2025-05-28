@@ -1,13 +1,11 @@
 package ar.edu.utn.frba.dds.servicioAgregador.services;
 
-import ar.edu.utn.frba.dds.servicioAgregador.model.DTOs.ConjuntoHechoProxy;
+import ar.edu.utn.frba.dds.servicioAgregador.model.DTOs.ConjuntoHechoCompleto;
 import ar.edu.utn.frba.dds.servicioAgregador.model.DTOs.HechoDTO;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Fuente;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.origenes.Origen;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IHechoRepository;
-import java.util.Set;
-import java.util.stream.Collectors;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
@@ -30,11 +28,9 @@ public class ConexionProxyService extends ConexionFuenteService{
 
   @Override
   protected Mono<Fuente> mapAFuenteConHechos(WebClient.ResponseSpec retrieve, Fuente fuente) {
-    return retrieve.bodyToMono(ConjuntoHechoProxy.class).map(
+    return retrieve.bodyToMono(ConjuntoHechoCompleto.class).map(
             response -> {
-              Set<Hecho> hechos = response.getHechos().stream().map(this::toHecho).collect(Collectors.toSet());
-              fuente.actualizarHechos(hechos);
-              return fuente;
+              return this.cargarHechosMapeadosEnFuente(response, fuente);
             });
   }
 

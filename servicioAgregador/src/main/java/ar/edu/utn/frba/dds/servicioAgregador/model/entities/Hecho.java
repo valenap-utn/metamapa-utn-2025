@@ -43,7 +43,7 @@ public class Hecho {
     private boolean eliminado;
     @Setter
     @Getter
-    private boolean tieneContenidoMultimedia;
+    private ContenidoMultimedia contenidoMultimedia;
     @Getter
     private final Set<String> etiquetas = new HashSet<>();
     public Hecho() {
@@ -56,7 +56,6 @@ public class Hecho {
         this.categoria = infoHecho.getCategoria();
         this.ubicacion = infoHecho.getUbicacion();
         this.fechaAcontecimiento = infoHecho.getFechaAcontecimiento();
-        this.tieneContenidoMultimedia = false;
         this.origen = origen;
         this.fechaCarga = LocalDate.now();
         this.eliminado = false;

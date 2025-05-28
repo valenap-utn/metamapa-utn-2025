@@ -1,8 +1,8 @@
 package ar.edu.utn.frba.dds.servicioAgregador.services;
 
-import ar.edu.utn.frba.dds.servicioAgregador.model.DTOs.ConjuntoHechoProxy;
+import ar.edu.utn.frba.dds.servicioAgregador.model.DTOs.ConjuntoHechoCompleto;
 
 public interface IHechoService {
 
-  ConjuntoHechoProxy findAll();
+  ConjuntoHechoCompleto findAll();
 }

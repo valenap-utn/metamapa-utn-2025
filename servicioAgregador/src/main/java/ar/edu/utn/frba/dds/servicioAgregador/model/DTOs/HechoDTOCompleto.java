@@ -8,7 +8,7 @@ import java.util.Set;
 import lombok.Data;
 
 @Data
-public class HechoDTOCompleto implements HechoDTO {
+public class HechoDTOCompleto implements HechoDTO<HechoDTOCompleto> {
   private Long id;
   private String titulo;
   private String descripcion;
