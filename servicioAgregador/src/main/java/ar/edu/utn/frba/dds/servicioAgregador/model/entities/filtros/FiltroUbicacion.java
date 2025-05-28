@@ -1,8 +1,8 @@
 package ar.edu.utn.frba.dds.servicioAgregador.model.entities.filtros;
 
-import ar.edu.utn.frba.dds.domain.entities.colecciones.hechos.Hecho;
-import ar.edu.utn.frba.dds.domain.entities.colecciones.hechos.Ubicacion;
-import java.time.LocalDate;
+
+import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
+import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Ubicacion;
 
 public class FiltroUbicacion  implements Filtro{
   private Ubicacion ubicacion;
@@ -11,7 +11,7 @@ public class FiltroUbicacion  implements Filtro{
   }
 
   @Override
-  protected boolean hechoCumple(Hecho unHecho){
+  public boolean hechoCumple(Hecho unHecho){
       return ubicacion.equals(unHecho.getUbicacion());
   }
 

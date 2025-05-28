@@ -4,7 +4,7 @@ import ar.edu.utn.frba.dds.servicioAgregador.model.DTOs.ConjuntoHechoProxy;
 import ar.edu.utn.frba.dds.servicioAgregador.model.DTOs.HechoDTO;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Fuente;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
-import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Origen;
+import ar.edu.utn.frba.dds.servicioAgregador.model.entities.origenes.Origen;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IHechoRepository;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -13,18 +13,18 @@ import reactor.core.publisher.Mono;
 
 public class ConexionProxyService extends ConexionFuenteService{
 
-  ConexionProxyService(String baseUrl, IHechoRepository hechoRepository) {
-    super(baseUrl, hechoRepository);
+  ConexionProxyService(String baseUrl) {
+    super(baseUrl);
   }
 
   @Override
-  public void cargarHechosEnFuente(Fuente fuente) {
+  public void cargarHechosEnFuente(Fuente fuente, IHechoRepository _hechoRepository) {
     Mono<Fuente> fuenteConEspera =  this.setFuenteConHechosAPI(fuente);
     fuenteConEspera.block();
   }
 
   @Override
-  public Mono<Void> actualizarHechosFuente(Fuente _fuente) {
+  public Mono<Void> actualizarHechosFuente(Fuente _fuente, IHechoRepository _hechoRepository) {
     return Mono.empty();
   }
 

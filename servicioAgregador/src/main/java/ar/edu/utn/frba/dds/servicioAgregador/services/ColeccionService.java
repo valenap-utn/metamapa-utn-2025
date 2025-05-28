@@ -11,6 +11,7 @@ import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Usuario;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.roles.PermisoCrearColeccion;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IColeccionRepository;
+import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IHechoRepository;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IUserRepository;
 import java.util.HashMap;
 import java.util.List;
@@ -26,12 +27,15 @@ public class ColeccionService implements IColeccionService{
   private final IColeccionRepository coleccionRepository;
   private final Map<Long, ConexionFuenteService> conexionFuentes;
   private final IUserRepository userRepository;
+  private final IHechoRepository hechoRepository;
 
   public ColeccionService(IColeccionRepository coleccionRepository,
-                          IUserRepository userRepository) {
+                          IUserRepository userRepository,
+                          IHechoRepository hechoRepository) {
     this.coleccionRepository = coleccionRepository;
     this.conexionFuentes = new HashMap<>();
     this.userRepository = userRepository;
+    this.hechoRepository = hechoRepository;
   }
 
   public void agregarConexionAFuente(Long idFuente, ConexionFuenteService conexionFuente) {
@@ -47,6 +51,7 @@ public class ColeccionService implements IColeccionService{
 
     Coleccion coleccionCreada = new Coleccion(coleccionInput.getNombre(), coleccionInput.getDescripcion());
     Set<Fuente> fuentes =  coleccionInput.getFuentes().stream().map(this::toFuente).collect(Collectors.toSet());
+    fuentes.forEach(this.hechoRepository::saveHechosDeFuente);
     coleccionCreada.agregarFuentes(fuentes);
 
     Coleccion coleccionGuardada = this.coleccionRepository.save(coleccionCreada);
@@ -90,7 +95,7 @@ public class ColeccionService implements IColeccionService{
 
   private Mono<Void> actualizarHechosPorFuente(Fuente fuente) {
     ConexionFuenteService conexionFuenteService = this.conexionFuentes.get(fuente.getId());
-    return conexionFuenteService.actualizarHechosFuente(fuente);
+    return conexionFuenteService.actualizarHechosFuente(fuente, this.hechoRepository);
   }
 
   @Override
@@ -122,7 +127,7 @@ public class ColeccionService implements IColeccionService{
 
   private void cargarHechosEnFuente(Fuente fuente) {
    ConexionFuenteService conexion =  this.conexionFuentes.get(fuente.getId());
-   conexion.cargarHechosEnFuente(fuente);
+   conexion.cargarHechosEnFuente(fuente, this.hechoRepository);
   }
 
 }

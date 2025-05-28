@@ -1,6 +1,7 @@
 package ar.edu.utn.frba.dds.servicioAgregador.model.entities;
 
 import ar.edu.utn.frba.dds.servicioAgregador.model.DTOs.HechoValueObject;
+import ar.edu.utn.frba.dds.servicioAgregador.model.entities.origenes.Origen;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;

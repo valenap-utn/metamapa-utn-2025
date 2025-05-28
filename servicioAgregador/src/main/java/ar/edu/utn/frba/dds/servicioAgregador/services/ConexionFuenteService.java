@@ -10,23 +10,21 @@ import reactor.core.publisher.Mono;
 
 public abstract class ConexionFuenteService {
   private final WebClient webClient;
-  private final IHechoRepository hechoRepository;
 
-  public void cargarHechosEnFuente(Fuente fuente){
-    Set<Hecho> hechos = this.hechoRepository.findByIDFuente(fuente.getId());
+  public void cargarHechosEnFuente(Fuente fuente, IHechoRepository hechoRepository) {
+    Set<Hecho> hechos = hechoRepository.findByIDFuente(fuente.getId());
     fuente.actualizarHechos(hechos);
   }
-  public Mono<Void> actualizarHechosFuente(Fuente fuente) {
+  public Mono<Void> actualizarHechosFuente(Fuente fuente, IHechoRepository hechoRepository) {
     Mono<Fuente> fuenteActualizada = this.setFuenteConHechosAPI(fuente);
     return fuenteActualizada.map(fuenteMono -> {
-      this.hechoRepository.saveHechosDeFuente(fuenteMono);
+      hechoRepository.saveHechosDeFuente(fuenteMono);
       return Mono.empty();
     }).then();
   }
 
-  ConexionFuenteService(String baseUrl, IHechoRepository hechoRepository) {
+  ConexionFuenteService(String baseUrl) {
     this.webClient = WebClient.builder().baseUrl(baseUrl).build();
-    this.hechoRepository = hechoRepository;
   }
 
   protected Mono<Fuente> setFuenteConHechosAPI(Fuente fuente) {

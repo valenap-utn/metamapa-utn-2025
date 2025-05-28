@@ -22,7 +22,7 @@ public class ColeccionRepository implements IColeccionRepository {
 
   @Override
   public Coleccion save(Coleccion coleccion) {
-    if(coleccion.getId().isEmpty()){
+    if(coleccion.getId() == null){
       Long id = this.idGenerator.getAndIncrement();
       coleccion.setId(id.toString());
       this.colecciones.put(id, coleccion);

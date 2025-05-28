@@ -1,6 +1,6 @@
 package ar.edu.utn.frba.dds.servicioAgregador.model.entities.filtros;
 
-import ar.edu.utn.frba.dds.domain.entities.colecciones.hechos.Hecho;
+import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
 import lombok.Getter;
 
 @Getter
@@ -11,7 +11,7 @@ public abstract class FiltroPorString implements Filtro {
     this.cadenaAcomparar = cadenaAcomparar;
   }
   @Override
-  protected boolean hechoCumple(Hecho unHecho) {
+  public boolean hechoCumple(Hecho unHecho) {
     return this.cadenaAcomparar.equalsIgnoreCase(this.obtenerUnTipoString(unHecho));
   }
 

@@ -4,6 +4,6 @@ import java.util.Set;
 import lombok.Data;
 
 @Data
-public class ConjuntoHechoEstatica implements ConjuntoHechoDTO{
+public class ConjuntoHechoEstatica {
   Set<HechoDTOEstatica> hechos;
 }

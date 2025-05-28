@@ -2,6 +2,7 @@ package ar.edu.utn.frba.dds.servicioAgregador.controllers;
 
 import ar.edu.utn.frba.dds.servicioAgregador.model.DTOs.ColeccionDTOInput;
 import ar.edu.utn.frba.dds.servicioAgregador.model.DTOs.ColeccionDTOOutput;
+import ar.edu.utn.frba.dds.servicioAgregador.model.DTOs.ConjuntoHechoProxy;
 import ar.edu.utn.frba.dds.servicioAgregador.model.DTOs.HechoValueObject;
 import ar.edu.utn.frba.dds.servicioAgregador.services.IColeccionService;
 import java.util.List;
@@ -38,7 +39,7 @@ public class ColeccionController {
   }
 
   @GetMapping("/{id}/hechos")
-  public List<HechoValueObject> getHechos(@PathVariable String idColeccion) {
+  public ConjuntoHechoProxy getHechos(@PathVariable String idColeccion) {
     return this.coleccionService.getHechosPorColeccion(idColeccion);
   }
 }

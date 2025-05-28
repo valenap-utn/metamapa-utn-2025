@@ -4,7 +4,7 @@ import ar.edu.utn.frba.dds.servicioAgregador.model.DTOs.ConjuntoHechoEstatica;
 import ar.edu.utn.frba.dds.servicioAgregador.model.DTOs.HechoDTO;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Fuente;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
-import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Origen;
+import ar.edu.utn.frba.dds.servicioAgregador.model.entities.origenes.Origen;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IHechoRepository;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -13,8 +13,8 @@ import reactor.core.publisher.Mono;
 
 public class ConexionEstaticaService extends ConexionFuenteService{
 
-  public ConexionEstaticaService(String baseUrl, IHechoRepository hechoRepository) {
-    super(baseUrl, hechoRepository);
+  public ConexionEstaticaService(String baseUrl) {
+    super(baseUrl);
   }
 
   @Override
