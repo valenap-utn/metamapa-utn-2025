@@ -9,25 +9,21 @@ import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.ColeccionReposit
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.HechoRepository;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.UserRepository;
 import ar.edu.utn.frba.dds.servicioAgregador.services.ColeccionService;
-import ar.edu.utn.frba.dds.servicioAgregador.services.ConexionDinamicaService;
-import ar.edu.utn.frba.dds.servicioAgregador.services.ConexionEstaticaService;
+import ar.edu.utn.frba.dds.servicioAgregador.services.ConexionEstaticaDinamicaService;
 import ar.edu.utn.frba.dds.servicioAgregador.services.ConexionProxyService;
 import java.util.List;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
-import org.springframework.boot.test.context.SpringBootTest;
 import reactor.core.publisher.Mono;
 
 //@SpringBootTest
 class ServicioAgregadorApplicationTests {
 	Coleccion coleccionPrueba;
 	Fuente fuentePrueba;
-	ConexionDinamicaService conexionDinamicaService;
-	ConexionEstaticaService conexionEstaticaService;
+	ConexionEstaticaDinamicaService conexionDinamicaService;
+	ConexionEstaticaDinamicaService conexionEstaticaService;
 	ConexionProxyService conexionProxyService;
 	ColeccionService coleccionService;
 	ColeccionRepository coleccionRepository;
@@ -37,8 +33,8 @@ class ServicioAgregadorApplicationTests {
 	@BeforeEach
 	public void init()  {
 		//this.lectorConfigs = new ConfigReader("ArchivosCSV.properties");
-		this.conexionDinamicaService = mock(ConexionDinamicaService.class);
-		this.conexionEstaticaService = mock(ConexionEstaticaService.class);
+		this.conexionDinamicaService = mock(ConexionEstaticaDinamicaService.class);
+		this.conexionEstaticaService = mock(ConexionEstaticaDinamicaService.class);
 		this.conexionProxyService = mock(ConexionProxyService.class);
 		this.coleccionRepository = new ColeccionRepository();
 		this.userRepository = new UserRepository();

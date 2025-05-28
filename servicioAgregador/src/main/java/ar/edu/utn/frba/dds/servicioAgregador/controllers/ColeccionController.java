@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Mono;
 
 @RestController
 @RequestMapping("api/colecciones")
@@ -38,7 +39,7 @@ public class ColeccionController {
   }
 
   @GetMapping("/{id}/hechos")
-  public ConjuntoHechoCompleto getHechos(@PathVariable String idColeccion) {
+  public Mono<ConjuntoHechoCompleto> getHechos(@PathVariable String idColeccion) {
     return this.coleccionService.getHechosPorColeccion(idColeccion);
   }
 }

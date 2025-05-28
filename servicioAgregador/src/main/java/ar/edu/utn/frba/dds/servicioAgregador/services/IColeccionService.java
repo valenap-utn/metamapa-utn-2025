@@ -12,5 +12,5 @@ public interface IColeccionService {
 
   public List<ColeccionDTOOutput> getAllColecciones();
 
-  public ConjuntoHechoCompleto getHechosPorColeccion(String idColeccion);
+  public Mono<ConjuntoHechoCompleto> getHechosPorColeccion(String idColeccion);
 }
