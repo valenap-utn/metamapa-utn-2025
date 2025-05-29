@@ -1,4 +1,4 @@
-package ar.edu.utn.frba.dds.servicioFuenteProxy.model.entities;
+package ar.edu.utn.frba.dds.servicioFuenteProxy.models.entities;
 
 import java.time.LocalDate;
 import java.util.HashSet;
