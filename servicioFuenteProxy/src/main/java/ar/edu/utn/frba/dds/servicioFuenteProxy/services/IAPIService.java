@@ -7,5 +7,5 @@ import java.util.List;
 
 // Client es el que se conecta a la fuente externa (API) para traer datos, y devuelve List<HechoInputDTO>, es decir, los datos "sin procesar"
 public interface IAPIService {
-    Mono<List<HechoInputDTO>> getAllHechosExternos(); // <-- se encarga de hacer la llamada al endpoint de login y devolver un Mono con el token
+    List<HechoInputDTO> getAllHechosExternos(); // <-- se encarga de hacer la llamada al endpoint de login y devolver un Mono con el token
 }

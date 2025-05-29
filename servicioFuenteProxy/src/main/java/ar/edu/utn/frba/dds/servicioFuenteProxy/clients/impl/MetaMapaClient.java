@@ -16,7 +16,7 @@ public class MetaMapaClient implements IAPIClient {
     @Override
     public List<HechoInputDTO> getAllHechosExternos() {
         return webClient.get()
-                .uri("hechosInputDTO") // <-- ruta de la API que devuelve los hechos
+                .uri("hechos") // <-- ruta de la API que devuelve los hechos
                 .retrieve() // respuesta
                 .bodyToMono(HechoInputDTO.class) // "recibi el Json y mapealo a una instancia de HechoInputDTOResponse"
                 .map(HechoInputDTO :: getHechosExternos) // accede al campo que le interesa. No quiere toda la respuesta sino solamente una parte.

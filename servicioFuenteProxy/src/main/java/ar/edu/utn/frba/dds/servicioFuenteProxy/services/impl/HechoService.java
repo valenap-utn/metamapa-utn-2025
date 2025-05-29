@@ -17,12 +17,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class HechoService implements IHechoService {
 
-    private final IAPIService clientService;
+    private final IAPIService apiService;
 
     @Override
     public List<HechoOutputDTO> transformarHechos(){
         //deberia asegurarme que el usuario que esta intentando recuperar todos los hechos tiene permisos para hacerlo
-        List<HechoInputDTO> hechos = this.clientService.obtenerHechosExternos();
+        List<HechoInputDTO> hechos = this.apiService.getAllHechosExternos();
         return hechos
                 .stream()
                 .map(this::transformarAOutputDTO)

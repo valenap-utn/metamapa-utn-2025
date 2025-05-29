@@ -2,11 +2,27 @@ package ar.edu.utn.frba.dds.servicioFuenteProxy.services.impl;
 
 import ar.edu.utn.frba.dds.servicioFuenteProxy.clients.IAPIClient;
 import ar.edu.utn.frba.dds.servicioFuenteProxy.clients.dtos.HechoInputDTO;
+import ar.edu.utn.frba.dds.servicioFuenteProxy.clients.impl.APIClient;
 import ar.edu.utn.frba.dds.servicioFuenteProxy.services.IAPIService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
+
+// ✅ Service (IAPIService, APIService)
+//
+//Responsabilidad: Coordina la lógica de negocio local.
+//
+//    Orquesta llamadas al client.
+//
+//    Aplica reglas de negocio (si las hay).
+//
+//    Transforma datos si es necesario (DTOs → entidades o viceversa).
+//
+//📍 No debería manejar peticiones HTTP ni saber cómo se implementa el client.
+//
+//🧠 Pensalo como: El cerebro que decide qué hacer con los datos.
 
 // flujo ideal:
 
@@ -21,11 +37,22 @@ import java.util.List;
 @Service
 public class APIService implements IAPIService {
 
-    public final IAPIClient apiClient;
+    private final List<IAPIClient> apiClients;
+
+    public APIService(List<IAPIClient> apiClients){
+        this.apiClients = apiClients;
+    }
 
     public List<HechoInputDTO> getAllHechosExternos(){
-        apiClient.getAllHechosExternos();
+        return apiClients
+                .stream()
+                .flatMap(client -> client
+                                .getAllHechosExternos()
+                                .stream())
+                .toList();
 
     }
 
+
 }
+

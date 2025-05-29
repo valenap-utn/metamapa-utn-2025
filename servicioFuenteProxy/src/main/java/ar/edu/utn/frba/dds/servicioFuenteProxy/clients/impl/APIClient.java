@@ -4,12 +4,26 @@ import ar.edu.utn.frba.dds.servicioFuenteProxy.clients.IAPIClient;
 import ar.edu.utn.frba.dds.servicioFuenteProxy.clients.dtos.APIResponse;
 import ar.edu.utn.frba.dds.servicioFuenteProxy.clients.dtos.HechoInputDTO;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.Map;
 
+// ✅ Client (IAPIClient y sus implementaciones)
+//
+//Responsabilidad: Comunicación con sistemas externos (otros servicios, APIs REST, etc).
+//
+//    Implementa el detalle técnico para consumir una API externa.
+//
+//    Devuelve DTOs o estructuras intermedias.
+//
+//📍 No debería tomar decisiones de negocio.
+//
+//🧠 Pensalo como: El que sabe cómo hablar con otros sistemas.
+
+@Component
 public class APIClient implements IAPIClient {
     private final WebClient webClient;
     private final String email;
