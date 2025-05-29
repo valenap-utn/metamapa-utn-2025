@@ -33,6 +33,7 @@ public abstract class APIFuenteClient {
 
   protected <R> Hecho toHecho(HechoDTO<R> hechoDTO) {
     Hecho hecho = new Hecho();
+    hecho.setId(hechoDTO.getId());
     hecho.setTitulo(hechoDTO.getTitulo());
     hecho.setDescripcion(hechoDTO.getDescripcion());
     hecho.setCategoria(hechoDTO.getCategoria());
