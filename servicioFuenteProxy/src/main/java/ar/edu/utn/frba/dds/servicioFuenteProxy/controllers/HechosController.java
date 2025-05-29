@@ -12,8 +12,10 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/hechos")
 public class HechosController {
-    @Autowired
-    private IHechoService hechoService;
+
+    private final IHechoService hechoService;
+
+    public HechosController(IHechoService hechoService) { this.hechoService = hechoService; }
 
     @GetMapping
     public List<HechoOutputDTO> obtenerHechosOutputDTO(){

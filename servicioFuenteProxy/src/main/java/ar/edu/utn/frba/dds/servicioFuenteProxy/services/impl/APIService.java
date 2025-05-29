@@ -43,6 +43,7 @@ public class APIService implements IAPIService {
         this.apiClients = apiClients;
     }
 
+    @Override
     public List<HechoInputDTO> getAllHechosExternos(){
         return apiClients
                 .stream()
@@ -53,12 +54,14 @@ public class APIService implements IAPIService {
 
     }
 
+    @Override
     public HechoInputDTO getHechoExternoById(Long id){
         return apiClients
                 .stream()
-                .flatMap( client -> client
-                        .getHechoExternoById(id)
-                        .stream());
+                .map( client -> client
+                        .getHechoExternoById(id))
+                .findFirst()
+                .orElse(null);
     }
 
 }

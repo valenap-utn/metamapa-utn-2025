@@ -12,8 +12,11 @@ public class MetaMapaClient implements IAPIClient {
     private final WebClient webClient;
 
     public MetaMapaClient(WebClient webClient) {
-        this.webClient = webClient;
+        this.webClient = WebClient.Builder
+                .baseUrl("https://41617578-2031-47e3-b2c6-9908748ca4d1.mock.pstmn.io/api")
+                .build();
     }
+
     @Override
     public List<HechoInputDTO> getAllHechosExternos() {
         return webClient

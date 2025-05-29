@@ -14,10 +14,13 @@ import java.util.List;
 
 
 @Service
-@RequiredArgsConstructor
 public class HechoService implements IHechoService {
 
     private final IAPIService apiService;
+
+    public HechoService(IAPIService apiService){
+        this.apiService = apiService;
+    }
 
     @Override
     public List<HechoOutputDTO> transformarHechos(){
