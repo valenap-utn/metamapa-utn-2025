@@ -2,10 +2,37 @@
 'https://plantuml.com/class-diagram
 
 'CONTROLLERS
-class HechoController {
+class HechoGlobalController {
+    - HechoRepository hechosRepository
+    + ResponseEntity<Set<Hecho>> getAll()
+    + ResponseEntity<Set<Hecho>> getByTitulo(@PathVariable("titulo") String titulo)
+    + ResponseEntity<Void> eliminarTodo()
+}
+
+class ColeccionHechoController {
     - HechoService hechoService
-    + HechoController(HechoService hechoService)
-    + ResponseEntity<List<HechoValueObject>> importarHechosDesdeCSV(@RequestParam("archivo") MultipartFile archivoCSV)
+    + ResponseEntity<String> importar(@RequestParam("archivo") MultipartFile archivo)
+    + ResponseEntity<Set<Hecho>> getByColeccion(@PathVariable String id)
+}
+
+'DAOS
+interface IHechosDAO {
+    Set<HechoValueObject> getAll(InputStream inputStream)
+}
+
+class DAOHechosCSV {
+    + Set<HechoValueObject> getAll(InputStream inputStream)
+    + HechoValueObject mapearDesdeCSV(HechoCSV fila)
+}
+
+class HechoCSV {
+    - String titulo;
+    - String descripcion;
+    - String nombre;
+    - String categoria;
+    - float latitud;
+    - float longitud;
+    - String fecha;
 }
 
 'DTOS
@@ -24,17 +51,17 @@ class Categoria {
     + boolean esIgualA(Categoria categoria)
 }
 
-interface Fuente {
-    Set<Hecho> obtenerHechos()
-}
-
-class FuenteEstatica {
-    - ImportadorCSV importador
-    - Set<Hecho> hechosAsociados
-    + Set<Hecho> obtenerHechos()
+class ColeccionHecho {
+    - UUID id
+    - LocalDate fechaCreacion
+    - Set<Hecho> hechos
+    + agregarHecho(Hecho hecho)
+    + UUID getId()
+    + Set<Hecho> getHechos
 }
 
 class Hecho {
+    - ColeccionHecho coleccion;
     - String titulo;
     - String descripcion;
     - Categoria categoria;
@@ -45,7 +72,7 @@ class Hecho {
     - boolean eliminado;
     - boolean tieneContenidoMultimedia;
     - Set<String> etiquetas;
-    + Hecho(HechoValueObject infoHecho, Origen origen)
+    + Hecho(HechoValueObject infoHecho, Origen origen, ColeccionHecho coleccion)
     + agregarEtiquetas(String ... etiquetas)
 }
 
@@ -61,41 +88,38 @@ class Ubicacion {
     + Ubicacion(float longitud, float latitud)
 }
 
-'MAPPERS
-class HechoMapper {
-    + HechoValueObject toValueObject(Hecho hecho)
-    + Hecho toEntity(HechoValueObject vo, Origen origen)
-}
-
 'REPOSITORIES
-class FormatoFilaCSV {
-    List<String> filaCSV
-    + FormatoFilaCSV()
-    + agregarCampos(String ... campos)
-    + String getTitulo()
-    + String getDescripcion()
-    + String getCategoria()
-    + String getLatitud()
-    + String getLongitud()
-    + String getFechaAcontecimiento()
-    + String formatoISOFecha(String unaCadena, String otraCadena)
+interface IHechoRepository {
+    Set<Hecho> findAll()
+    Set<Hecho> findAll(String coleccionID)
+    void saveAll(UUID coleccionID, Set<Hecho> hechos)
+    Optional<Set<Hecho>> buscarPorTitulo(String titulo)
+    Optional<Set<Hecho>> findByColeccion(String idColeccion)
+    void clear(String coleccionID)
+    void clear()
 }
 
-class ImportadorCSV {
-    - MultipartFile archivoCSV
-    + ImportadorCSV(MultipartFile archivoCSV)
-    + Collection<HechoValueObject> importarHechosDataset()
-}
-
-class LectorFilaCSV {
-    - HechoValueObject convertirAFilaHecho(String[] filaCSV)
-    - LocalDate parsearFecha(String fechaDDMMYYYY)
-    + Collection<HechoValueObject> leerHechosDesde(MultipartFile archivoCSV) throws IOException
+class HechoRepository {
+    - Map<String, Set<Hecho>> hechos = new HashMap<>()
+    + saveAll(UUID coleccionID, Set<Hecho> setHechos)
+    + Set<Hecho> findAll()
+    + Set<Hecho> findAll(String coleccionID)
+    + clear(String coleccionID)
+    + clear()
+    + Optional<Set<Hecho>> buscarPorTitulo(String titulo)
+    + Optional<Set<Hecho>> findByColeccion(String idColeccion)
 }
 
 'SERVICIES
 class HechoService {
-    + Set<HechoValueObject> importarDesdeArchivo(MultipartFile archivo)
+    - IHechosDAO hechosDAO;
+    - IHechoRepository hechosRepository;
+    - HechoRepository hechoRepository;
+    + ColeccionHecho importarDesdeCSV(MultipartFile archivo) throws IOException
+    + Set<Hecho> obtenerTodos()
+    + Optional<Set<Hecho>> buscarPorTitulo(String titulo)
+    + Optional<Set<Hecho>> buscarPorColeccion(String idColeccion)
+    + eliminarTodo()
 }
 
 @enduml
