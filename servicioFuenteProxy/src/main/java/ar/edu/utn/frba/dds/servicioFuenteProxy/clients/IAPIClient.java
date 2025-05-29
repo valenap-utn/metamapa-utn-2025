@@ -6,6 +6,7 @@ import reactor.core.publisher.Mono;
 import java.util.List;
 
 public interface IAPIClient {
-    List<HechoInputDTO> getAllHechosExternos();
+    public List<HechoInputDTO> getAllHechosExternos();
 
+    public HechoInputDTO getHechoExternoById(Long id);
 }

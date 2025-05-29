@@ -37,7 +37,7 @@ public class ClientController {
     }
 
     @GetMapping("/{id}")
-    public HechoInputDTO getHechosInputDTOById(@PathVariable Long id) {
+    public HechoInputDTO getHechoExternoById(@PathVariable Long id) {
         return APIService.getHechoExternoById(id);
     }
 }

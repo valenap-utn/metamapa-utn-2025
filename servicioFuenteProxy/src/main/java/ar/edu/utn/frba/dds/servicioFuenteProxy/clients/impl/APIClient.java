@@ -71,6 +71,7 @@ public class APIClient implements IAPIClient {
                 .block();
     }
 
+    @Override
      public HechoInputDTO getHechoExternoById(Long id){
         String token = login().block();
         return webClient

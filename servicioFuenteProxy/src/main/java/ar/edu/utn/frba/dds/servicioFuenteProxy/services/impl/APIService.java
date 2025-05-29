@@ -53,6 +53,13 @@ public class APIService implements IAPIService {
 
     }
 
+    public HechoInputDTO getHechoExternoById(Long id){
+        return apiClients
+                .stream()
+                .flatMap( client -> client
+                        .getHechoExternoById(id)
+                        .stream());
+    }
 
 }
 
