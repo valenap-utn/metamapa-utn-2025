@@ -122,4 +122,34 @@ class HechoService {
     + eliminarTodo()
 }
 
+'RELACIONES
+HechoService --> IHechosDAO
+HechoService --> IHechoRepository
+HechoService --> HechoRepository
+HechoService ..> ColeccionHecho
+HechoService ..> Hecho
+
+ColeccionHecho *-- Hecho
+
+Hecho --> ColeccionHecho
+Hecho --> Categoria
+Hecho --> Ubicacion
+Hecho --> Origen
+Hecho ..> HechoValueObject
+
+HechoValueObject --> Categoria
+HechoValueObject --> Ubicacion
+
+HechoGlobalController --> HechoRepository
+HechoGlobalController ..> Hecho
+
+ColeccionHechoController --> HechoService
+ColeccionHechoController ..> Hecho
+
+
+IHechosDAO <|.. DAOHechosCSV
+IHechosDAO --> HechoValueObject
+
+DAOHechosCSV --> HechoCSV
+
 @enduml
