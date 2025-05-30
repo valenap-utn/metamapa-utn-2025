@@ -7,7 +7,7 @@ import java.time.LocalDate;
 import lombok.Data;
 
 @Data
-public class HechoDTODinamica implements HechoDTO<HechoDTODinamica> {
+public class HechoDTODinamica implements HechoDTO {
   private Long id;
   private String titulo;
   private String descripcion;
