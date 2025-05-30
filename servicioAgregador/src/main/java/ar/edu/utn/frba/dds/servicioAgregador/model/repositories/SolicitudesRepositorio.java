@@ -14,7 +14,7 @@ public abstract class SolicitudesRepositorio implements ISolicitudRepository{
     }
 
     public boolean estaEliminado(Hecho hecho) {
-        //return solicitudes.stream().anyMatch(sol -> sol.getHecho().getTitulo().equals(hecho.getTitulo()) && sol.esAceptada());
+        return solicitudes.stream().anyMatch(sol -> sol.getHecho().getTitulo().equals(hecho.getTitulo()) && sol.esAceptada());
     }
 
     public List<Solicitud> listarSolicitudes() {

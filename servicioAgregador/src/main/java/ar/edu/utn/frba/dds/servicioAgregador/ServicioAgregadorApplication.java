@@ -25,24 +25,4 @@ public class ServicioAgregadorApplication {
 		this.detectorDeSpam = detectorDeSpam;
 	}
 
-	//obtenerHechosDisponibles();
-
-	public Solicitud crearSolicitud(Hecho hecho, Usuario user, String justificacion) {
-		if (!hecho.getOrigen().permiteSolicitud()) {
-			throw new IllegalArgumentException("No es posible solicitar eliminación de este hecho debido a su origen");
-		}
-
-		Solicitud solicitud = new Solicitud(hecho, user, justificacion);
-
-		//se decide modelar la deteccion del spam que se realice antes de agregar la solicitud al repositorio
-
-		if (detectorDeSpam.esSpam(justificacion)) {
-			solicitud.marcarComoSpam();
-		}
-
-		solicitudes.agregar(solicitud);
-		return solicitud;
-
-	}
-
 }

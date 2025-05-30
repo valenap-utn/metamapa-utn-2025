@@ -17,10 +17,4 @@ public interface ISolicitudRepository {
   boolean estaEliminado(Hecho hecho);
   public List<Solicitud> listarSolicitudes();
 
-
-
-
-
-
-
 }
