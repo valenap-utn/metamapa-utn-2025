@@ -25,7 +25,8 @@ enum Origen {
 enum Estado{
     ACEPTADA,
     RECHAZADA,
-    PENDIENTE
+    PENDIENTE,
+    SPAM
 }
 
 Hecho --> Categoria

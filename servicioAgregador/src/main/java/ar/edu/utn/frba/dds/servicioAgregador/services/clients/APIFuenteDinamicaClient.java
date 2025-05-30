@@ -5,6 +5,7 @@ import ar.edu.utn.frba.dds.servicioAgregador.model.DTOs.HechoDTO;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Fuente;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.origenes.Origen;
+import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
@@ -16,9 +17,7 @@ public class APIFuenteDinamicaClient extends APIFuenteClient{
   @Override
   protected Mono<Fuente> mapAFuenteConHechos(WebClient.ResponseSpec retrieve, Fuente fuente) {
     return retrieve.bodyToMono(ConjuntoHechoDinamica.class).map(
-            response -> {
-              return this.cargarHechosMapeadosEnFuente(response, fuente);
-            });
+            response -> this.cargarHechosMapeadosEnFuente(response, fuente));
   }
 
   @Override

@@ -4,5 +4,9 @@ public enum Origen {
   DATASET,
   PORCONTRIBUYENTE,
   CARGAMANUAL,
-  PROXY
+  PROXY;
+
+  public boolean permiteSolicitud() {
+    return true;
+  }
 }

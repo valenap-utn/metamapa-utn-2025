@@ -33,4 +33,30 @@ public class Solicitud {
         }
         this.estado = unEstado;
     }
+
+    public void aceptar() {
+        this.estado = Estado.ACEPTADA;
+    }
+
+    public void rechazar() {
+        this.estado = Estado.RECHAZADA;
+    }
+
+    public void marcarComoSpam() {
+        this.estado = Estado.SPAM;
+    }
+
+    public boolean esAceptada() {
+        return this.estado == Estado.ACEPTADA;
+    }
+
+    public boolean fueMarcadaComoSpam() {
+        return this.estado == Estado.SPAM;
+    }
+
+
+
+
+
+
 }

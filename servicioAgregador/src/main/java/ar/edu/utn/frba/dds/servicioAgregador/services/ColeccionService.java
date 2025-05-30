@@ -98,7 +98,10 @@ public class ColeccionService implements IColeccionService{
     return Mono.fromCallable(() -> this.coleccionRepository.findById(idColeccion))
             .flatMap(coleccion ->{
               coleccion.getFuentes().forEach(this::cargarHechosEnFuente);
-              Set<Hecho> hechos = coleccion.getHechos();
+              //set<Hecho> hechos = coleccion.getHechos();
+              Set<Hecho> hechos = coleccion.getHechos().stream()
+                      .filter(hecho -> !hecho.isEliminado())
+                      .collect(Collectors.toSet());
               return Mono.just(hechos);
             }).map(hechos -> this.mapperHechoOutput.toConjuntoHechoDTOOutput(hechos));
   }
