@@ -21,7 +21,7 @@ public abstract class APIFuenteClient {
   public Mono<Fuente> setFuenteConHechosAPI(Fuente fuente) {
     return this.mapAFuenteConHechos(
             webClient.get()
-                    .uri(uriBuilder -> uriBuilder.path("/hechos").build())
+                    .uri(uriBuilder -> uriBuilder.path("/api/hechos").build())
                     .retrieve(), fuente);
   }
 

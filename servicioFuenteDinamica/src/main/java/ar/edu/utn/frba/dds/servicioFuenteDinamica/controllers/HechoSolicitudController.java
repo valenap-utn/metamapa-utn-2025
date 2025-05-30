@@ -23,12 +23,12 @@ public class HechoSolicitudController {
     @Autowired
     private SolicitudServicio solicitudServicio;
 
-    @PostMapping
+    @PostMapping("/hechos")
     public ResponseEntity<Hecho> crearHecho(@RequestBody Hecho hecho, @RequestParam Optional<Long> usuarioId) {
         return ResponseEntity.ok(hechoServicio.crearHecho(hecho, usuarioId));
     }
 
-    @GetMapping
+    @GetMapping("/hechos")
     public List<HechoDTODinamica> obtenerHechosPublicos() {
         return hechoServicio.obtenerHechosPublicos().stream().map(this::toHechoDTO).toList();
     }
