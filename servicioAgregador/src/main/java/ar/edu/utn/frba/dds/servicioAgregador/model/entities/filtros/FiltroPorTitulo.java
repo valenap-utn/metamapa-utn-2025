@@ -1,6 +1,7 @@
 package ar.edu.utn.frba.dds.servicioAgregador.model.entities.filtros;
 
-import ar.edu.utn.frba.dds.domain.entities.colecciones.hechos.Hecho;
+
+import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
 
 public class FiltroPorTitulo extends FiltroPorString{
 

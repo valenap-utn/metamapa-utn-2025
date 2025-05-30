@@ -22,17 +22,17 @@ public class HechoSolicitudController {
     @Autowired
     private SolicitudServicio solicitudServicio;
 
-    @PostMapping("/crear")
+    @PostMapping("/hechos")
     public ResponseEntity<Hecho> crearHecho(@RequestBody Hecho hecho, @RequestParam Optional<Long> usuarioId) {
         return ResponseEntity.ok(hechoServicio.crearHecho(hecho, usuarioId));
     }
 
-    @GetMapping("/publicos")
+    @GetMapping("/hechos")
     public ResponseEntity<List<Hecho>> obtenerHechosPublicos() {
         return ResponseEntity.ok(hechoServicio.obtenerHechosPublicos());
     }
 
-    @PostMapping("/modificar/{id}")
+    @PutMapping("/hechos/{id}")
     public ResponseEntity<?> modificarHecho(@PathVariable Long id, @RequestBody Hecho nuevosDatos) {
         try {
             return ResponseEntity.ok(hechoServicio.modificarHecho(id, nuevosDatos));
@@ -41,18 +41,18 @@ public class HechoSolicitudController {
         }
     }
 
-    @PostMapping("/revisar/{id}")
+    @PostMapping("/hechos/{id}")
     public ResponseEntity<Hecho> revisarHecho(@PathVariable Long id, @RequestParam String estado, @RequestParam Optional<String> comentario) {
         return ResponseEntity.ok(hechoServicio.revisarHecho(id, estado, comentario));
     }
 
 
-    @PostMapping("/solicitud/crear")
+    @PostMapping("/solicitudes")
     public ResponseEntity<Solicitud> crearSolicitud(@RequestParam Long hechoId, @RequestParam Usuario usuario, @RequestParam String contenido) {
         return ResponseEntity.ok(solicitudServicio.crearSolicitud(hechoId, usuario, contenido));
     }
 
-    @PostMapping("/solicitud/procesar/{id}")
+    @PostMapping("/solicitudes/{id}")
     public ResponseEntity<Solicitud> procesarSolicitud(@PathVariable Long id, @RequestParam String estado, @RequestParam Optional<String> comentario) {
         return ResponseEntity.ok(solicitudServicio.procesarSolicitud(id, estado, comentario));
     }

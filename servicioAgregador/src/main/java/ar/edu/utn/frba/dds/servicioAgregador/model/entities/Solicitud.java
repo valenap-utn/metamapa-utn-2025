@@ -1,7 +1,5 @@
 package ar.edu.utn.frba.dds.servicioAgregador.model.entities;
 
-import ar.edu.utn.frba.dds.domain.entities.Usuario;
-import ar.edu.utn.frba.dds.domain.entities.colecciones.hechos.Hecho;
 
 import lombok.Getter;
 import lombok.Setter;

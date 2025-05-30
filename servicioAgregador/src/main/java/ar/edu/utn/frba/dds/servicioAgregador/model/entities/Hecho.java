@@ -1,19 +1,22 @@
 package ar.edu.utn.frba.dds.servicioAgregador.model.entities;
 
 import ar.edu.utn.frba.dds.servicioAgregador.model.DTOs.HechoValueObject;
+import ar.edu.utn.frba.dds.servicioAgregador.model.entities.origenes.Origen;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 
-@NoArgsConstructor
+
 @AllArgsConstructor
 public class Hecho {
+    @Getter
+    @Setter
+    private Long id;
     @Setter
     @Getter
     private String titulo;
@@ -40,7 +43,7 @@ public class Hecho {
     private boolean eliminado;
     @Setter
     @Getter
-    private boolean tieneContenidoMultimedia;
+    private ContenidoMultimedia contenidoMultimedia;
     @Getter
     private final Set<String> etiquetas = new HashSet<>();
     public Hecho() {
@@ -53,7 +56,6 @@ public class Hecho {
         this.categoria = infoHecho.getCategoria();
         this.ubicacion = infoHecho.getUbicacion();
         this.fechaAcontecimiento = infoHecho.getFechaAcontecimiento();
-        this.tieneContenidoMultimedia = false;
         this.origen = origen;
         this.fechaCarga = LocalDate.now();
         this.eliminado = false;

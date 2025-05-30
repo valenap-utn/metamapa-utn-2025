@@ -3,7 +3,6 @@ package ar.edu.utn.frba.dds.servicioAgregador.model.repositories;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Coleccion;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
@@ -23,7 +22,7 @@ public class ColeccionRepository implements IColeccionRepository {
 
   @Override
   public Coleccion save(Coleccion coleccion) {
-    if(coleccion.getId().isEmpty()){
+    if(coleccion.getId() == null){
       Long id = this.idGenerator.getAndIncrement();
       coleccion.setId(id.toString());
       this.colecciones.put(id, coleccion);

@@ -7,9 +7,11 @@ import lombok.Setter;
 @Getter
 public class Categoria {
   private String nombre;
+
   public Categoria(String nombre) {
     this.nombre = nombre;
   }
+
   public boolean esIgualA(Categoria categoria) {
     return this.nombre.equalsIgnoreCase(categoria.getNombre());
   }
