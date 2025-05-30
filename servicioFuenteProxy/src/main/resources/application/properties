@@ -1,3 +1,6 @@
-api.auth.email=ddsi@gmail.com
-api.auth.password=ddsi2025*
-api.base-url=https://api-ddsi.disilab.ar/public/api/
+api:
+    base-url: https://api-ddsi.disilab.ar/public/api/
+    base-url-meta-mapa: https://41617578-2031-47e3-b2c6-9908748ca4d1.mock.pstmn.io/api/
+    auth:
+        email: ddsi@gmail.com
+        password: ddsi2025*

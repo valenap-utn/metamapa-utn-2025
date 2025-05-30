@@ -1,19 +1,29 @@
 package ar.edu.utn.frba.dds.servicioFuenteProxy.clients.impl;
 
 import ar.edu.utn.frba.dds.servicioFuenteProxy.clients.IAPIClient;
+import ar.edu.utn.frba.dds.servicioFuenteProxy.clients.authentication.APIProperties;
 import ar.edu.utn.frba.dds.servicioFuenteProxy.clients.dtos.APIResponse;
 import ar.edu.utn.frba.dds.servicioFuenteProxy.clients.dtos.HechoInputDTO;
+import ar.edu.utn.frba.dds.servicioFuenteProxy.clients.dtos.MetaMapaResponse;
+import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
+import ar.edu.utn.frba.dds.servicioFuenteProxy.clients.authentication.APIProperties;
 
+
+@Component
 public class MetaMapaClient implements IAPIClient {
     private final WebClient webClient;
+    private final APIProperties apiProperties;
 
-    public MetaMapaClient(WebClient webClient) {
-        this.webClient = WebClient.Builder
-                .baseUrl("https://41617578-2031-47e3-b2c6-9908748ca4d1.mock.pstmn.io/api")
+
+    public MetaMapaClient(
+            WebClient.Builder webClientBuilder, APIProperties apiProperties) {
+        this.apiProperties = apiProperties;
+        this.webClient = webClientBuilder
+                .baseUrl(apiProperties.getBaseUrlMetaMapa())
                 .build();
     }
 
@@ -23,8 +33,8 @@ public class MetaMapaClient implements IAPIClient {
                 .get()
                 .uri("hechos") // <-- ruta de la API que devuelve los hechos
                 .retrieve() // respuesta
-                .bodyToMono(APIResponse.class) // "recibi el Json y mapealo a una instancia de HechoInputDTOResponse"
-                .map(APIResponse :: getData) // accede al campo que le interesa. No quiere toda la respuesta sino solamente una parte.
+                .bodyToMono(MetaMapaResponse.class) // "recibi el Json y mapealo a una instancia de HechoInputDTOResponse"
+                .map(MetaMapaResponse :: getHechos) // accede al campo que le interesa. No quiere toda la respuesta sino solamente una parte.
                 .block();
     }
 

@@ -1,10 +1,8 @@
 package ar.edu.utn.frba.dds.servicioFuenteProxy.services.impl;
 
 import ar.edu.utn.frba.dds.servicioFuenteProxy.clients.dtos.HechoInputDTO;
-import ar.edu.utn.frba.dds.servicioFuenteProxy.models.dtos.HechoOutputDTO;
 import ar.edu.utn.frba.dds.servicioFuenteProxy.services.IAPIService;
 import ar.edu.utn.frba.dds.servicioFuenteProxy.services.IHechoService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,21 +21,8 @@ public class HechoService implements IHechoService {
     }
 
     @Override
-    public List<HechoOutputDTO> transformarHechos(){
-        //deberia asegurarme que el usuario que esta intentando recuperar todos los hechos tiene permisos para hacerlo
-        List<HechoInputDTO> hechos = this.apiService.getAllHechosExternos();
-        return hechos
-                .stream()
-                .map(this::transformarAOutputDTO)
-                .toList();
-    }
-
-    //Metodo MAPPER
-    private HechoOutputDTO transformarAOutputDTO(HechoInputDTO hecho){
-        return new HechoOutputDTO(
-            hecho.getId()
-            //campos que correspondan
-        );
+    public List<HechoInputDTO> obtenerHechosExternos(){
+        return apiService.getAllHechosExternos();
     };
 }
 
