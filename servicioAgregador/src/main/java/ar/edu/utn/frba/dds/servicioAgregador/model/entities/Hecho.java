@@ -1,6 +1,7 @@
 package ar.edu.utn.frba.dds.servicioAgregador.model.entities;
 
 import ar.edu.utn.frba.dds.servicioAgregador.model.DTOs.HechoValueObject;
+import ar.edu.utn.frba.dds.servicioAgregador.model.entities.origenes.Origen;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
@@ -42,7 +43,7 @@ public class Hecho {
     private boolean eliminado;
     @Setter
     @Getter
-    private boolean tieneContenidoMultimedia;
+    private ContenidoMultimedia contenidoMultimedia;
     @Getter
     private final Set<String> etiquetas = new HashSet<>();
     public Hecho() {
@@ -55,7 +56,6 @@ public class Hecho {
         this.categoria = infoHecho.getCategoria();
         this.ubicacion = infoHecho.getUbicacion();
         this.fechaAcontecimiento = infoHecho.getFechaAcontecimiento();
-        this.tieneContenidoMultimedia = false;
         this.origen = origen;
         this.fechaCarga = LocalDate.now();
         this.eliminado = false;

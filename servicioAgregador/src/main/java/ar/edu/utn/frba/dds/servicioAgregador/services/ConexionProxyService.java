@@ -1,47 +1,30 @@
 package ar.edu.utn.frba.dds.servicioAgregador.services;
 
-import ar.edu.utn.frba.dds.servicioAgregador.model.DTOs.ConjuntoHechoProxy;
-import ar.edu.utn.frba.dds.servicioAgregador.model.DTOs.HechoDTO;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Fuente;
-import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
-import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Origen;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IHechoRepository;
-import java.util.Set;
-import java.util.stream.Collectors;
-import org.springframework.web.reactive.function.client.WebClient;
+import ar.edu.utn.frba.dds.servicioAgregador.services.clients.APIFuenteProxyClient;
+import lombok.Getter;
 import reactor.core.publisher.Mono;
 
-public class ConexionProxyService extends ConexionFuenteService{
+public class ConexionProxyService implements ConexionFuenteService{
+  @Getter
+  private final APIFuenteProxyClient apiClient;
 
-  ConexionProxyService(String baseUrl, IHechoRepository hechoRepository) {
-    super(baseUrl, hechoRepository);
+  ConexionProxyService(APIFuenteProxyClient apiClient) {
+    this.apiClient = apiClient;
   }
 
   @Override
-  public void cargarHechosEnFuente(Fuente fuente) {
-    Mono<Fuente> fuenteConEspera =  this.setFuenteConHechosAPI(fuente);
-    fuenteConEspera.block();
+  public Mono<Void> cargarHechosEnFuente(Fuente fuente, IHechoRepository _hechoRepository) {
+    return this.getApiClient().setFuenteConHechosAPI(fuente)
+            .map(fuenteMapeada -> {
+              return Mono.empty();
+            }).then();
   }
 
   @Override
-  public Mono<Void> actualizarHechosFuente(Fuente _fuente) {
+  public Mono<Void> actualizarHechosFuente(Fuente _fuente, IHechoRepository _hechoRepository) {
     return Mono.empty();
-  }
-
-  @Override
-  protected Mono<Fuente> mapAFuenteConHechos(WebClient.ResponseSpec retrieve, Fuente fuente) {
-    return retrieve.bodyToMono(ConjuntoHechoProxy.class).map(
-            response -> {
-              Set<Hecho> hechos = response.getHechos().stream().map(this::toHecho).collect(Collectors.toSet());
-              fuente.actualizarHechos(hechos);
-              return fuente;
-            });
-  }
-
-  @Override
-  protected Hecho completarHecho(Hecho hecho, HechoDTO hechoDTO) {
-    hecho.setOrigen(Origen.PROXY);
-    return hecho;
   }
 
 

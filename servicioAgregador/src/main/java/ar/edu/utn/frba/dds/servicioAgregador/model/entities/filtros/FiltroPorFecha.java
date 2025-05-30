@@ -1,9 +1,8 @@
 package ar.edu.utn.frba.dds.servicioAgregador.model.entities.filtros;
 
-import ar.edu.utn.frba.dds.domain.entities.colecciones.hechos.Hecho;
 
+import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 public abstract class FiltroPorFecha implements Filtro{
   private LocalDate desde;

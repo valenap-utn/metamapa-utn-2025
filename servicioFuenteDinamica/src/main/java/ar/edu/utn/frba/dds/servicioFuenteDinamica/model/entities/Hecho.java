@@ -7,7 +7,7 @@ import java.util.Set;
 
 import ar.edu.utn.frba.dds.servicioAgregador.model.DTOs.HechoValueObject;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Categoria;
-import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Origen;
+import ar.edu.utn.frba.dds.servicioAgregador.model.entities.origenes.Origen;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Ubicacion;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.enums.EstadoHecho;
 import lombok.Getter;

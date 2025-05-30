@@ -2,7 +2,7 @@ package ar.edu.utn.frba.dds.servicioAgregador.controllers;
 
 import ar.edu.utn.frba.dds.servicioAgregador.model.DTOs.ColeccionDTOInput;
 import ar.edu.utn.frba.dds.servicioAgregador.model.DTOs.ColeccionDTOOutput;
-import ar.edu.utn.frba.dds.servicioAgregador.model.DTOs.HechoValueObject;
+import ar.edu.utn.frba.dds.servicioAgregador.model.DTOs.ConjuntoHechoCompleto;
 import ar.edu.utn.frba.dds.servicioAgregador.services.IColeccionService;
 import java.util.List;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Mono;
 
 @RestController
 @RequestMapping("api/colecciones")
@@ -38,7 +39,7 @@ public class ColeccionController {
   }
 
   @GetMapping("/{id}/hechos")
-  public List<HechoValueObject> getHechos(@PathVariable String idColeccion) {
+  public Mono<ConjuntoHechoCompleto> getHechos(@PathVariable String idColeccion) {
     return this.coleccionService.getHechosPorColeccion(idColeccion);
   }
 }
