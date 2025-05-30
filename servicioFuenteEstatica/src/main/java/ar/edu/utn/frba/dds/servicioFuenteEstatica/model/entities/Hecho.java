@@ -2,10 +2,6 @@ package ar.edu.utn.frba.dds.servicioFuenteEstatica.model.entities;
 
 import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.dtos.HechoValueObject;
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -20,8 +16,8 @@ public class Hecho {
     @Setter @Getter private LocalDate fechaCarga;
     @Setter @Getter private Origen origen;
     @Setter @Getter private boolean eliminado;
-    @Setter @Getter private boolean tieneContenidoMultimedia;
-    @Getter private Set<String> etiquetas;
+//    @Setter @Getter private boolean tieneContenidoMultimedia;
+//    @Getter private Set<String> etiquetas;
 
     public Hecho(HechoValueObject infoHecho, Origen origen, ColeccionHecho coleccion) {
         this.coleccion = coleccion;
@@ -30,14 +26,14 @@ public class Hecho {
         this.categoria = infoHecho.getCategoria();
         this.ubicacion = infoHecho.getUbicacion();
         this.fechaAcontecimiento = infoHecho.getFechaAcontecimiento();
-        this.tieneContenidoMultimedia = false;
+//        this.tieneContenidoMultimedia = false;
         this.origen = origen;
         this.fechaCarga = LocalDate.now();
         this.eliminado = false;
-        this.etiquetas = new HashSet<>();
+//        this.etiquetas = new HashSet<>();
     }
 
-    public void agregarEtiquetas(String ... etiquetas) {
-        this.etiquetas.addAll(List.of(etiquetas));
-    }
+//    public void agregarEtiquetas(String ... etiquetas) {
+//        this.etiquetas.addAll(List.of(etiquetas));
+//    }
 }
