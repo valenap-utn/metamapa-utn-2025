@@ -10,12 +10,12 @@ import java.util.stream.Collectors;
 public class MapHechoOutput {
   public ConjuntoHechoCompleto toConjuntoHechoDTOOutput(Set<Hecho> hechos) {
     ConjuntoHechoCompleto conjuntoDeHechos = new ConjuntoHechoCompleto();
-    Set<HechoDTO<HechoDTOCompleto>> hechosDTO =  hechos.stream().map(this::toHechoDTO).collect(Collectors.toSet());
+    Set<HechoDTOCompleto> hechosDTO =  hechos.stream().map(this::toHechoDTO).collect(Collectors.toSet());
     conjuntoDeHechos.setHechos(hechosDTO);
     return conjuntoDeHechos;
   }
 
-  private HechoDTO<HechoDTOCompleto> toHechoDTO(Hecho hecho) {
+  private HechoDTOCompleto toHechoDTO(Hecho hecho) {
     HechoDTOCompleto hechoDTO = new HechoDTOCompleto();
     hechoDTO.setId(hecho.getId());
     hechoDTO.setEtiquetas(hecho.getEtiquetas());

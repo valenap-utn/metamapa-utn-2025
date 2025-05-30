@@ -4,19 +4,26 @@ import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Categoria;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.ContenidoMultimedia;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Ubicacion;
 import java.time.LocalDate;
-import java.util.Set;
 import lombok.Data;
 
 @Data
-public class HechoDTOCompleto implements HechoDTO {
+public class HechoDTOProxy implements HechoDTO {
   private Long id;
   private String titulo;
   private String descripcion;
-  private Categoria categoria;
-  private Ubicacion ubicacion;
+  private String categoria;
+  private Double latitud;
+  private Double longitud;
   private LocalDate fechaAcontecimiento;
   private LocalDate fechaCarga;
-  private Set<String> etiquetas;
-  private boolean eliminado;
-  private ContenidoMultimedia contenidoMultimedia;
+
+  @Override
+  public Ubicacion getUbicacion() {
+    return new Ubicacion(this.getLongitud().floatValue(), this.getLatitud().floatValue());
+  }
+
+  @Override
+  public Categoria getCategoria() {
+    return new Categoria(this.categoria);
+  }
 }

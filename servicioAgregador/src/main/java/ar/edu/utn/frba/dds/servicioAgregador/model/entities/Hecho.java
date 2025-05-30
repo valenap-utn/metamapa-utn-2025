@@ -7,12 +7,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
 
 
 @AllArgsConstructor
+@Builder
 public class Hecho {
     @Getter
     @Setter
@@ -40,7 +42,7 @@ public class Hecho {
     private Origen origen;
     @Setter
     @Getter
-    private boolean eliminado;
+    private boolean eliminado = false;
     @Setter
     @Getter
     private ContenidoMultimedia contenidoMultimedia;
@@ -50,16 +52,6 @@ public class Hecho {
         this.eliminado = false;
     }
 
-    public Hecho(HechoValueObject infoHecho, Origen origen) {
-        this.titulo = infoHecho.getTitulo();
-        this.descripcion = infoHecho.getDescripcion();
-        this.categoria = infoHecho.getCategoria();
-        this.ubicacion = infoHecho.getUbicacion();
-        this.fechaAcontecimiento = infoHecho.getFechaAcontecimiento();
-        this.origen = origen;
-        this.fechaCarga = LocalDate.now();
-        this.eliminado = false;
-    }
 
     public void agregarEtiquetas(String ... etiquetas) {
         this.etiquetas.addAll(List.of(etiquetas));

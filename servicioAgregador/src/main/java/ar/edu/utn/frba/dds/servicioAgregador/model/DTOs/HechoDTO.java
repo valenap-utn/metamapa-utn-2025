@@ -5,7 +5,7 @@ import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Categoria;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Ubicacion;
 import java.time.LocalDate;
 
-public interface HechoDTO<R> {
+public interface HechoDTO {
   Long getId();
 
   String getTitulo();

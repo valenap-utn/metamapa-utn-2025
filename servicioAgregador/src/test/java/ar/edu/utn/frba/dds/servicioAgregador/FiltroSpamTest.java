@@ -1,8 +1,10 @@
 package ar.edu.utn.frba.dds.servicioAgregador;
 
+import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.TFIDFCalculadoraPalabras;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.DetectorDeSpamBasico;
 import java.util.List;
+import java.util.function.DoubleSupplier;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
