@@ -37,8 +37,6 @@ public class SolicitudService {
         solicitud.aceptar();
         solicitud.getHecho().setEliminado(true);
         repo.save(solicitud);
-        hecho.save(solicitud.getHecho());
-
     }
 
 

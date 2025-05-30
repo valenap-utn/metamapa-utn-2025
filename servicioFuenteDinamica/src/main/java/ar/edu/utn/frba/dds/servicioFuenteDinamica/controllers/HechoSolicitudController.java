@@ -1,5 +1,6 @@
 package ar.edu.utn.frba.dds.servicioFuenteDinamica.controllers;
 
+import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos.HechoDTODinamica;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.Solicitud;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.Usuario;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.services.HechoServicio;
@@ -13,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/hechos")
+@RequestMapping("/api")
 public class HechoSolicitudController {
 
     @Autowired
@@ -22,15 +23,29 @@ public class HechoSolicitudController {
     @Autowired
     private SolicitudServicio solicitudServicio;
 
-    @PostMapping("/hechos")
+    @PostMapping
     public ResponseEntity<Hecho> crearHecho(@RequestBody Hecho hecho, @RequestParam Optional<Long> usuarioId) {
         return ResponseEntity.ok(hechoServicio.crearHecho(hecho, usuarioId));
     }
 
-    @GetMapping("/hechos")
-    public ResponseEntity<List<Hecho>> obtenerHechosPublicos() {
-        return ResponseEntity.ok(hechoServicio.obtenerHechosPublicos());
+    @GetMapping
+    public List<HechoDTODinamica> obtenerHechosPublicos() {
+        return hechoServicio.obtenerHechosPublicos().stream().map(this::toHechoDTO).toList();
     }
+
+    public HechoDTODinamica toHechoDTO(Hecho hecho) {
+        HechoDTODinamica hechoDTO = new HechoDTODinamica();
+        hechoDTO.setId(hecho.getId());
+        hechoDTO.setCategoria(hecho.getCategoria());
+        hechoDTO.setDescripcion(hecho.getDescripcion());
+        hechoDTO.setFechaCarga(hecho.getFechaCarga());
+        hechoDTO.setFechaAcontecimiento(hecho.getFechaAcontecimiento());
+        hechoDTO.setContenidoMultimedia(hecho.getContenidoMultimedia());
+        hechoDTO.setTitulo(hecho.getTitulo());
+        hechoDTO.setUbicacion(hecho.getUbicacion());
+        return hechoDTO;
+    }
+
 
     @PutMapping("/hechos/{id}")
     public ResponseEntity<?> modificarHecho(@PathVariable Long id, @RequestBody Hecho nuevosDatos) {

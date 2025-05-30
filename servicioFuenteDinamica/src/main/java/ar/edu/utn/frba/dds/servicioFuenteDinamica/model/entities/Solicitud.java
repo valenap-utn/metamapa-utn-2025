@@ -1,6 +1,6 @@
 package ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities;
 
-import ar.edu.utn.frba.dds.servicioFuenteDinamica.enums.EstadoSolicitud;
+import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.enums.EstadoSolicitud;
 import lombok.Getter;
 import lombok.Setter;
 

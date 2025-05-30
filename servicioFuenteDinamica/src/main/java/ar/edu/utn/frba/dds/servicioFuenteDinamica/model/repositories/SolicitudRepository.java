@@ -1,4 +1,4 @@
-package ar.edu.utn.frba.dds.servicioFuenteDinamica.repositories;
+package ar.edu.utn.frba.dds.servicioFuenteDinamica.model.repositories;
 
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.Solicitud;
 import org.springframework.stereotype.Repository;

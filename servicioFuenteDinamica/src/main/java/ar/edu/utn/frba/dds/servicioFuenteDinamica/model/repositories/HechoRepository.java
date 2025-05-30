@@ -1,6 +1,6 @@
-package ar.edu.utn.frba.dds.servicioFuenteDinamica.repositories;
+package ar.edu.utn.frba.dds.servicioFuenteDinamica.model.repositories;
 
-import ar.edu.utn.frba.dds.servicioFuenteDinamica.enums.EstadoHecho;
+import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.enums.EstadoHecho;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.Hecho;
 import org.springframework.stereotype.Repository;
 

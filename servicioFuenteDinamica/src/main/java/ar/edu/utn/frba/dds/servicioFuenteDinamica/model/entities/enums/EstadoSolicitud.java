@@ -1,4 +1,4 @@
-package ar.edu.utn.frba.dds.servicioFuenteDinamica.enums;
+package ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.enums;
 
 public enum EstadoSolicitud {
     EN_REVISION,

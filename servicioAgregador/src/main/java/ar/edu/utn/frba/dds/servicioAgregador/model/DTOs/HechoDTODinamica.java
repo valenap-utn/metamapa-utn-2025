@@ -15,6 +15,5 @@ public class HechoDTODinamica implements HechoDTO {
   private Ubicacion ubicacion;
   private LocalDate fechaAcontecimiento;
   private LocalDate fechaCarga;
-  private boolean eliminado;
   private ContenidoMultimedia contenidoMultimedia;
 }

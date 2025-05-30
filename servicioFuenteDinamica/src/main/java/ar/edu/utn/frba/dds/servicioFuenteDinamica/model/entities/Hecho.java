@@ -5,11 +5,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import ar.edu.utn.frba.dds.servicioAgregador.model.DTOs.HechoValueObject;
-import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Categoria;
-import ar.edu.utn.frba.dds.servicioAgregador.model.entities.origenes.Origen;
-import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Ubicacion;
-import ar.edu.utn.frba.dds.servicioFuenteDinamica.enums.EstadoHecho;
+
+import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.enums.EstadoHecho;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -17,7 +14,19 @@ import lombok.Setter;
 public class Hecho {
     @Setter
     @Getter
-    private HechoValueObject infoHecho;
+    private String titulo;
+    @Setter
+    @Getter
+    private String descripcion;
+    @Setter
+    @Getter
+    private Categoria categoria;
+    @Setter
+    @Getter
+    private Ubicacion ubicacion;
+    @Setter
+    @Getter
+    private LocalDate fechaAcontecimiento;
     @Setter
     @Getter
     private LocalDate fechaCarga;
@@ -29,7 +38,7 @@ public class Hecho {
     private boolean eliminado;
     @Setter
     @Getter
-    private boolean tieneContenidoMultimedia;
+    private ContenidoMultimedia contenidoMultimedia;
     @Getter
     private Set<String> etiquetas;
     @Getter
@@ -44,10 +53,7 @@ public class Hecho {
     @Getter
     private Long id;
 
-    public Hecho(HechoValueObject infoHecho, Origen origen) {
-        this.infoHecho = infoHecho;
-        this.tieneContenidoMultimedia = false;
-        this.origen = origen;
+    public Hecho(String titulo, String descripcion, Categoria categoria, Ubicacion ubicacion, LocalDate fechaAcontecimiento, Origen origen) {
         this.fechaCarga = LocalDate.now();
         this.eliminado = false;
         this.etiquetas = new HashSet<>();
@@ -57,22 +63,4 @@ public class Hecho {
         this.etiquetas.addAll(List.of(etiquetas));
     }
 
-    public LocalDate getFechaAcontecimiento() {
-        return this.infoHecho.getFechaAcontecimiento();
-    }
-    public Categoria getCategoria() {
-        return this.infoHecho.getCategoria();
-    }
-
-    public Ubicacion getUbicacion() {
-        return this.infoHecho.getUbicacion();
-    }
-
-    public String getDescripcion() {
-        return this.infoHecho.getDescripcion();
-    }
-
-    public String getTitulo() {
-        return this.infoHecho.getTitulo();
-    }
 }

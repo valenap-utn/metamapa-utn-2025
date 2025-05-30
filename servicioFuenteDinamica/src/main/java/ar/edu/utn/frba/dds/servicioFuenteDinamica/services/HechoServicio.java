@@ -1,8 +1,8 @@
 package ar.edu.utn.frba.dds.servicioFuenteDinamica.services;
 
-import ar.edu.utn.frba.dds.servicioFuenteDinamica.enums.EstadoHecho;
+import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.enums.EstadoHecho;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.Hecho;
-import ar.edu.utn.frba.dds.servicioFuenteDinamica.repositories.HechoRepository;
+import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.repositories.HechoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
