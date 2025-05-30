@@ -25,11 +25,24 @@ public class SolicitudService {
         //se decide modelar la deteccion del spam que se realice antes de agregar la solicitud al repositorio
         if (detectorDeSpam.esSpam(texto)) {
             solicitud.marcarComoSpam();
+            solicitud.rechazar();
         }
 
-        repo.agregar(solicitud);
+        repo.save(solicitud);
         return solicitud;
 
     }
+
+    public void aceptarSolicitud(Solicitud solicitud) {
+        solicitud.aceptar();
+        solicitud.getHecho().setEliminado(true);
+        repo.save(solicitud);
+        hecho.save(solicitud.getHecho());
+
+    }
+
+
+
+
 
 }
