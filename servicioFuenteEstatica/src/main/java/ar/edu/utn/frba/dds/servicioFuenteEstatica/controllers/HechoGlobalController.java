@@ -52,7 +52,7 @@ public class HechoGlobalController {
 
   public HechoDTOEstatica toHechoDTOEstatica(Hecho hecho) {
     HechoDTOEstatica dto = new HechoDTOEstatica();
-    dto.setId(hecho.getColeccion().getId().node());
+//    dto.setId(hecho.getColeccion().getId().node());
     dto.setTitulo(hecho.getTitulo());
     dto.setUbicacion(hecho.getUbicacion());
     dto.setDescripcion(hecho.getDescripcion());

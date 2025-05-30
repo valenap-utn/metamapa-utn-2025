@@ -25,31 +25,47 @@ public class HechoService {
     this.hechoRepository = hechoRepository;
   }
 
-  public ColeccionHecho importarDesdeCSV(MultipartFile archivo) throws IOException {
+  //Importar desde CSV a Set<Hecho>
+  public Set<Hecho> importarDesdeCSV(MultipartFile archivo) throws IOException {
     Set<HechoValueObject> hechosVO = hechosDAO.getAll(archivo.getInputStream());
 
-    ColeccionHecho coleccion = new ColeccionHecho();
     Set<Hecho> hechos = hechosVO.stream()
-        .map(unHvo -> new Hecho(unHvo, Origen.PORDATASET, coleccion))
+        .map(unHvo -> new Hecho(unHvo, Origen.PORDATASET))
         .collect(Collectors.toSet());
 
-    hechoRepository.saveAll(coleccion.getId(), hechos);
-    return coleccion;
+    hechoRepository.saveAll(hechos);
+    return hechos;
   }
 
   public Set<Hecho> obtenerTodos() {
     return hechoRepository.findAll();
   }
 
+  public Optional<Hecho> buscarPorID(String id) { return hechoRepository.findByID(id); }
+
   public Optional<Set<Hecho>> buscarPorTitulo(String titulo) {
     return hechoRepository.buscarPorTitulo(titulo);
-  }
-
-  public Optional<Set<Hecho>> buscarPorColeccion(String idColeccion) {
-    return hechoRepository.findByColeccion(idColeccion);
   }
 
   public void eliminarTodo() {
     hechoRepository.clear();
   }
+
+//  Importar desde CSV a Coleccion de Hecho (my error)
+//  public ColeccionHecho importarDesdeCSV(MultipartFile archivo) throws IOException {
+//    Set<HechoValueObject> hechosVO = hechosDAO.getAll(archivo.getInputStream());
+//
+//    ColeccionHecho coleccion = new ColeccionHecho();
+//    Set<Hecho> hechos = hechosVO.stream()
+//        .map(unHvo -> new Hecho(unHvo, Origen.PORDATASET, coleccion))
+//        .collect(Collectors.toSet());
+//
+//    hechoRepository.saveAll(coleccion.getId(), hechos);
+//    return coleccion;
+//  }
+
+  //(my error)
+//  public Optional<Set<Hecho>> buscarPorColeccion(String idColeccion) {
+//    return hechoRepository.findByColeccion(idColeccion);
+//  }
 }
