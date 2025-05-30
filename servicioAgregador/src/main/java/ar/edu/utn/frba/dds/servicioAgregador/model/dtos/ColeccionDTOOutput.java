@@ -1,12 +1,12 @@
-package ar.edu.utn.frba.dds.servicioAgregador.model.DTOs;
+package ar.edu.utn.frba.dds.servicioAgregador.model.dtos;
 
 import java.util.List;
 import lombok.Data;
 
 @Data
-public class ColeccionDTOInput {
+public class ColeccionDTOOutput {
+  private String id;
   private String nombre;
   private String descripcion;
-  private Long usuario;
   private List<FuenteDTO> fuentes;
 }

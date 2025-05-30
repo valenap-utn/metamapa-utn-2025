@@ -1,10 +1,8 @@
 package ar.edu.utn.frba.dds.servicioAgregador.services.clients;
 
-import ar.edu.utn.frba.dds.servicioAgregador.model.DTOs.ConjuntoHechoEstatica;
-import ar.edu.utn.frba.dds.servicioAgregador.model.DTOs.HechoDTO;
+import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.ConjuntoHechoEstatica;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Fuente;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
-import ar.edu.utn.frba.dds.servicioAgregador.model.entities.origenes.Origen;
 import ar.edu.utn.frba.dds.servicioAgregador.services.mappers.MapperAPIClient;
 import java.util.Set;
 import java.util.stream.Collectors;

@@ -1,8 +1,8 @@
 package ar.edu.utn.frba.dds.servicioAgregador.controllers;
 
-import ar.edu.utn.frba.dds.servicioAgregador.model.DTOs.ColeccionDTOInput;
-import ar.edu.utn.frba.dds.servicioAgregador.model.DTOs.ColeccionDTOOutput;
-import ar.edu.utn.frba.dds.servicioAgregador.model.DTOs.ConjuntoHechoCompleto;
+import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.ColeccionDTOInput;
+import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.ColeccionDTOOutput;
+import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.ConjuntoHechoCompleto;
 import ar.edu.utn.frba.dds.servicioAgregador.services.IColeccionService;
 import java.util.List;
 import org.springframework.web.bind.annotation.GetMapping;

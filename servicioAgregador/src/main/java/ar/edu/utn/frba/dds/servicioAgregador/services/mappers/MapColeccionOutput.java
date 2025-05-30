@@ -1,7 +1,7 @@
 package ar.edu.utn.frba.dds.servicioAgregador.services.mappers;
 
-import ar.edu.utn.frba.dds.servicioAgregador.model.DTOs.ColeccionDTOOutput;
-import ar.edu.utn.frba.dds.servicioAgregador.model.DTOs.FuenteDTO;
+import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.ColeccionDTOOutput;
+import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.FuenteDTO;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Coleccion;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Fuente;
 import java.util.stream.Collectors;

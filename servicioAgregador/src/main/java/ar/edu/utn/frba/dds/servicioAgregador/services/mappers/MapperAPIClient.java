@@ -1,9 +1,9 @@
 package ar.edu.utn.frba.dds.servicioAgregador.services.mappers;
 
-import ar.edu.utn.frba.dds.servicioAgregador.model.DTOs.HechoDTO;
-import ar.edu.utn.frba.dds.servicioAgregador.model.DTOs.HechoDTODinamica;
-import ar.edu.utn.frba.dds.servicioAgregador.model.DTOs.HechoDTOEstatica;
-import ar.edu.utn.frba.dds.servicioAgregador.model.DTOs.HechoDTOProxy;
+import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.HechoDTO;
+import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.HechoDTODinamica;
+import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.HechoDTOEstatica;
+import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.HechoDTOProxy;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho.HechoBuilder;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Ubicacion;

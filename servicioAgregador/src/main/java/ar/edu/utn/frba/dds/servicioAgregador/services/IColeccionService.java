@@ -1,8 +1,8 @@
 package ar.edu.utn.frba.dds.servicioAgregador.services;
 
-import ar.edu.utn.frba.dds.servicioAgregador.model.DTOs.ColeccionDTOInput;
-import ar.edu.utn.frba.dds.servicioAgregador.model.DTOs.ColeccionDTOOutput;
-import ar.edu.utn.frba.dds.servicioAgregador.model.DTOs.ConjuntoHechoCompleto;
+import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.ColeccionDTOInput;
+import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.ColeccionDTOOutput;
+import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.ConjuntoHechoCompleto;
 import java.util.List;
 import reactor.core.publisher.Mono;
 

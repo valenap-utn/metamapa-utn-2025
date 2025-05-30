@@ -1,15 +1,11 @@
 package ar.edu.utn.frba.dds.servicioAgregador.services.clients;
 
-import ar.edu.utn.frba.dds.servicioAgregador.model.DTOs.ConjuntoHechoCompleto;
-import ar.edu.utn.frba.dds.servicioAgregador.model.DTOs.ConjuntoHechoProxy;
-import ar.edu.utn.frba.dds.servicioAgregador.model.DTOs.HechoDTO;
+import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.ConjuntoHechoProxy;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Fuente;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
-import ar.edu.utn.frba.dds.servicioAgregador.model.entities.origenes.Origen;
 import ar.edu.utn.frba.dds.servicioAgregador.services.mappers.MapperAPIClient;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 

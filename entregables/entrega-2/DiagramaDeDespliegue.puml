@@ -2,7 +2,6 @@
 'https://plantuml.com/deployment-diagram
 
 actor usuario
-
 node servicioAgregador {
 component ColeccionService
 component ColeccionController
@@ -22,14 +21,15 @@ ConexionFuenteService -(0- APICLientEstatica
 ConexionFuenteService -(0- APICLientProxy
 
 node servicioFuenteDinamica {
-component HechoControllerDinamica
+component HechoSolicitudController
 component HechoServiceDinamica
 component HechoRepositoryDinamica
 }
 
-HechoControllerDinamica -(0 HechoServiceDinamica
+HechoSolicitudController -(0 HechoServiceDinamica
 HechoServiceDinamica -(0- HechoRepositoryDinamica
-
+actor contribuyente
+contribuyente -(0- HechoSolicitudController
 
 node servicioFuenteEstatica {
 component HechoControllerEstatica
@@ -58,10 +58,8 @@ APIClient -(0- APICatedra
 
 
 
-HechoServiceProxy -(0- InstanciaMetaMapa
-
 APICLientEstatica -(0- HechoControllerEstatica
-APICLientDinamica -(0- HechoControllerDinamica
+APICLientDinamica -(0- HechoSolicitudController
 APICLientProxy -(0- HechoControllerProxy
 
 

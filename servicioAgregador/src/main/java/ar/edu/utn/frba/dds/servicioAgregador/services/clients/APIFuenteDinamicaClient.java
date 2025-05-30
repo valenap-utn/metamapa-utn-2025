@@ -1,6 +1,6 @@
 package ar.edu.utn.frba.dds.servicioAgregador.services.clients;
 
-import ar.edu.utn.frba.dds.servicioAgregador.model.DTOs.ConjuntoHechoDinamica;
+import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.ConjuntoHechoDinamica;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Fuente;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
 import ar.edu.utn.frba.dds.servicioAgregador.services.mappers.MapperAPIClient;

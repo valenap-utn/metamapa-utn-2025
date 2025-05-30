@@ -1,4 +1,4 @@
-package ar.edu.utn.frba.dds.servicioAgregador.model.DTOs;
+package ar.edu.utn.frba.dds.servicioAgregador.model.dtos;
 
 import lombok.Data;
 

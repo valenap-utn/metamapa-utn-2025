@@ -1,27 +1,58 @@
 @startuml
 'https://plantuml.com/class-diagram
-
-abstract class AbstractList
-abstract AbstractCollection
-interface List
-interface Collection
-
-List <|-- AbstractList
-Collection <|-- AbstractCollection
-
-Collection <|- List
-AbstractCollection <|- AbstractList
-AbstractList <|-- ArrayList
-
-class ArrayList {
-Object[] elementData
-size()
+class Hecho{
+    - Long Id
+    - String titulo
+    - Categoria categoria
+    - Ubicacion ubicacion
+    - LocalDateTime fechaAcontecimiento
+    - ContenidoMultimedia contenidoMultimedia
+    - LocalDate fechaDeCarga
+    - boolean eliminado
+    - Origen origen
+    - Set<String> etiquetas
+    - EstadoHecho estadoHecho
+    - String comentarioRevision;
+    - String contenido;
 }
 
-enum TimeUnit {
-DAYS
-HOURS
-MINUTES
+enum EstadoHecho {
+    PENDIENTE_REVISION,
+    ACEPTADO,
+    ACEPTADO_CON_CAMBIOS,
+    RECHAZADO
 }
 
+Hecho --> EstadoHecho
+
+class Ubicacion {
+    - Float longitud
+    - Float latitud
+}
+
+Hecho --> Ubicacion
+
+
+class ContenidoMultimedia {
+    - String nombre
+    - String path
+}
+
+Hecho --> ContenidoMultimedia
+
+class Categoria {
+    -private String nombre;
+    +public boolean esIgualA(Categoria);
+}
+
+enum Origen {
+    DATASET,
+      PORCONTRIBUYENTE,
+      CARGAMANUAL,
+      PROXY
+}
+
+
+Hecho --> Categoria
+Hecho --> Origen
 @enduml

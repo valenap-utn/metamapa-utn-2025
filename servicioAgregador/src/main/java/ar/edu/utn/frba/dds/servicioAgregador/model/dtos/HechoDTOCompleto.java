@@ -1,13 +1,14 @@
-package ar.edu.utn.frba.dds.servicioAgregador.model.DTOs;
+package ar.edu.utn.frba.dds.servicioAgregador.model.dtos;
 
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Categoria;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.ContenidoMultimedia;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Ubicacion;
 import java.time.LocalDate;
+import java.util.Set;
 import lombok.Data;
 
 @Data
-public class HechoDTODinamica implements HechoDTO {
+public class HechoDTOCompleto implements HechoDTO {
   private Long id;
   private String titulo;
   private String descripcion;
@@ -15,5 +16,7 @@ public class HechoDTODinamica implements HechoDTO {
   private Ubicacion ubicacion;
   private LocalDate fechaAcontecimiento;
   private LocalDate fechaCarga;
+  private Set<String> etiquetas;
+  private boolean eliminado;
   private ContenidoMultimedia contenidoMultimedia;
 }
