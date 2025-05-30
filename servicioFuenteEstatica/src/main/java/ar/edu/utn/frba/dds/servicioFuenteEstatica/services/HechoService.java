@@ -18,12 +18,10 @@ import java.util.stream.Collectors;
 @Service
 public class HechoService {
   private final IHechosDAO hechosDAO;
-  private final IHechoRepository hechosRepository;
-  private final HechoRepository hechoRepository;
+  private final IHechoRepository hechoRepository;
 
-  public HechoService(IHechosDAO hechosDAO, IHechoRepository hechosRepository, HechoRepository hechoRepository) {
+  public HechoService(IHechosDAO hechosDAO, IHechoRepository hechoRepository) {
     this.hechosDAO = hechosDAO;
-    this.hechosRepository = hechosRepository;
     this.hechoRepository = hechoRepository;
   }
 

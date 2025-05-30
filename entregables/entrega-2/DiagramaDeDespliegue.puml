@@ -7,6 +7,9 @@ node servicioAgregador {
 component ColeccionService
 component ColeccionController
 component ConexionFuenteService
+component APICLientEstatica
+component APICLientDinamica
+component APICLientProxy
 component ColeccionRepository
 }
 
@@ -14,32 +17,52 @@ ColeccionController -(0- ColeccionService
 ColeccionService -(0- ConexionFuenteService
 ConexionFuenteService -(0- ColeccionRepository
 usuario -(0- ColeccionController
-
+ConexionFuenteService -(0- APICLientDinamica
+ConexionFuenteService -(0- APICLientEstatica
+ConexionFuenteService -(0- APICLientProxy
 
 node servicioFuenteDinamica {
 component HechoControllerDinamica
 component HechoServiceDinamica
 component HechoRepositoryDinamica
 }
+
+HechoControllerDinamica -(0 HechoServiceDinamica
+HechoServiceDinamica -(0- HechoRepositoryDinamica
+
+
 node servicioFuenteEstatica {
 component HechoControllerEstatica
 component HechoServiceEstatica
 component HechoRepositoryEstatica
 }
+HechoControllerEstatica -(0- HechoServiceEstatica
+HechoServiceEstatica -(0- HechoRepositoryEstatica
+
+
 node servicioFuenteProxy {
 component HechoControllerProxy
 component HechoServiceProxy
+component MetamapaClient
+component APIClient
 }
 
+HechoControllerProxy -(0- HechoServiceProxy
+HechoServiceProxy -(0- MetamapaClient
+HechoServiceProxy -(0- APIClient
 
 component InstanciaMetaMapa
+component APICatedra
+MetamapaClient -(0- InstanciaMetaMapa
+APIClient -(0- APICatedra
+
+
 
 HechoServiceProxy -(0- InstanciaMetaMapa
 
-
-ConexionFuenteService -(0- servicioFuenteDinamica
-ConexionFuenteService -(0- servicioFuenteEstatica
-ConexionFuenteService -(0- servicioFuenteProxy
+APICLientEstatica -(0- HechoControllerEstatica
+APICLientDinamica -(0- HechoControllerDinamica
+APICLientProxy -(0- HechoControllerProxy
 
 
 
