@@ -17,10 +17,4 @@ public interface IHechoRepository {
 
   void clear();
 
-
-  //Para Coleccion de Hechos
-  //  void saveAll(UUID coleccionID, Set<Hecho> hechos);
-  //  Set<Hecho> findAll(String coleccionID); // GET /colecciones/:identificador/hechos
-  //  Optional<Set<Hecho>> findByColeccion(String idColeccion); //(my error)
-  //  void clear(String coleccionID);
 }

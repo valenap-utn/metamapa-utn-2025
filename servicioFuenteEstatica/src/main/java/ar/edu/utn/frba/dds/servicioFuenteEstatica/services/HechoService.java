@@ -2,10 +2,8 @@ package ar.edu.utn.frba.dds.servicioFuenteEstatica.services;
 
 import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.daos.IHechosDAO;
 import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.dtos.HechoValueObject;
-import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.entities.ColeccionHecho;
 import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.entities.Hecho;
 import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.entities.Origen;
-import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.repositories.HechoRepository;
 import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.repositories.IHechoRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -51,21 +49,4 @@ public class HechoService {
     hechoRepository.clear();
   }
 
-//  Importar desde CSV a Coleccion de Hecho (my error)
-//  public ColeccionHecho importarDesdeCSV(MultipartFile archivo) throws IOException {
-//    Set<HechoValueObject> hechosVO = hechosDAO.getAll(archivo.getInputStream());
-//
-//    ColeccionHecho coleccion = new ColeccionHecho();
-//    Set<Hecho> hechos = hechosVO.stream()
-//        .map(unHvo -> new Hecho(unHvo, Origen.PORDATASET, coleccion))
-//        .collect(Collectors.toSet());
-//
-//    hechoRepository.saveAll(coleccion.getId(), hechos);
-//    return coleccion;
-//  }
-
-  //(my error)
-//  public Optional<Set<Hecho>> buscarPorColeccion(String idColeccion) {
-//    return hechoRepository.findByColeccion(idColeccion);
-//  }
 }

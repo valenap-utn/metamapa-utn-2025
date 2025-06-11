@@ -47,30 +47,4 @@ public class HechoRepository implements IHechoRepository {
     return Optional.ofNullable(hechoPorID.get(id));
   }
 
-
-
-  // Guardamos un conjunto de Hechos por colección
-//  private final Map<String, Set<Hecho>> hechos = new HashMap<>();
-
-  //  @Override
-//  public void saveAll(UUID coleccionID, Set<Hecho> setHechos) {
-//    hechos.put(coleccionID.toString(), setHechos);
-//  }
-
-  //  @Override
-//  public Set<Hecho> findAll(String coleccionID) {
-//    return hechos.getOrDefault(coleccionID, Set.of());
-//  }
-
-//  @Override
-//  public void clear(String coleccionID) {
-//    hechos.remove(coleccionID);
-//  }
-
-//  @Override
-//  public Optional<Set<Hecho>> findByColeccion(String idColeccion) {
-//    Set<Hecho> encontrados = hechos.getOrDefault(idColeccion, Set.of());
-//    return encontrados.isEmpty() ? Optional.empty() : Optional.of(encontrados);
-//  }
-
 }
