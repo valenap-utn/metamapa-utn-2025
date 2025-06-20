@@ -29,7 +29,7 @@ public class HechoServicio {
     }
 
     public Hecho modificarHecho(Long hechoId, Hecho nuevosDatos) {
-        Hecho hecho = (Hecho) hechoRepository.findById(hechoId).orElseThrow(() -> new RuntimeException("Hecho no encontrado"));
+        Hecho hecho = hechoRepository.findById(hechoId).orElseThrow(() -> new RuntimeException("Hecho no encontrado"));
         if (Duration.between(hecho.getFechaCarga(), LocalDateTime.now()).toDays() >= 7) {
             throw new IllegalStateException("Ya no se puede modificar el hecho.");
         }
@@ -38,7 +38,7 @@ public class HechoServicio {
     }
 
     public Hecho revisarHecho(Long id, String estadoStr, Optional<String> comentario) {
-        Hecho hecho = (Hecho) hechoRepository.findById(id).orElseThrow(() -> new RuntimeException("Hecho no encontrado"));
+        Hecho hecho = hechoRepository.findById(id).orElseThrow(() -> new RuntimeException("Hecho no encontrado"));
         EstadoHecho estado = EstadoHecho.valueOf(estadoStr);
         hecho.setEstadoHecho(estado);
         hecho.setComentarioRevision(comentario.orElse(null));

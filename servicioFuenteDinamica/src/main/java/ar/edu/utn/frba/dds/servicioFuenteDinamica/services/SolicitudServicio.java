@@ -22,7 +22,7 @@ public class SolicitudServicio {
     private HechoRepository hechoRepository;
 
     public Solicitud crearSolicitud(Long hechoId, Usuario usuario, String contenido) {
-        Hecho hecho = (Hecho) hechoRepository.findById(hechoId).orElseThrow(() -> new RuntimeException("Hecho no encontrado"));
+        Hecho hecho = hechoRepository.findById(hechoId).orElseThrow(() -> new RuntimeException("Hecho no encontrado"));
         Solicitud solicitud = new Solicitud(hecho, usuario, contenido);
         solicitud.setHecho(hecho);
         solicitud.setEstado(EstadoSolicitud.EN_REVISION);
@@ -30,7 +30,7 @@ public class SolicitudServicio {
     }
 
     public Solicitud procesarSolicitud(Long id, String estadoStr, Optional<String> justificacion) {
-        Solicitud solicitud = (Solicitud) solicitudRepository.findById(id).orElseThrow(() -> new RuntimeException("Solicitud no encontrada"));
+        Solicitud solicitud = solicitudRepository.findById(id).orElseThrow(() -> new RuntimeException("Solicitud no encontrada"));
         EstadoSolicitud estado = EstadoSolicitud.valueOf(estadoStr);
         solicitud.setEstado(estado);
         solicitud.setJustificacion(justificacion.orElse(null));
