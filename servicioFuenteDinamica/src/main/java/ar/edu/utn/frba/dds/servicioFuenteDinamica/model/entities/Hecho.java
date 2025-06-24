@@ -52,8 +52,11 @@ public class Hecho {
     @Setter
     @Getter
     private Long id;
+    @Setter
+    @Getter
+    private boolean esAnonimo;
 
-    public Hecho(String titulo, String descripcion, Categoria categoria, Ubicacion ubicacion, LocalDate fechaAcontecimiento, Origen origen) {
+    public Hecho() {
         this.fechaCarga = LocalDate.now();
         this.eliminado = false;
         this.etiquetas = new HashSet<>();

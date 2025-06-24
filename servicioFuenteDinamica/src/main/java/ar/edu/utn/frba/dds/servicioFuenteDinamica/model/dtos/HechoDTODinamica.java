@@ -1,7 +1,5 @@
 package ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos;
 
-
-
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.Categoria;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.ContenidoMultimedia;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.Ubicacion;
@@ -18,4 +16,6 @@ public class HechoDTODinamica  {
   private LocalDate fechaAcontecimiento;
   private LocalDate fechaCarga;
   private ContenidoMultimedia contenidoMultimedia;
+  private String contenido;
+  private boolean esAnonimo;
 }

@@ -29,11 +29,11 @@ public class SolicitudServicio {
         return solicitudRepository.save(solicitud);
     }
 
-    public Solicitud procesarSolicitud(Long id, String estadoStr, Optional<String> justificacion) {
+    public Solicitud procesarSolicitud(Long id, String estadoStr, String justificacion) {
         Solicitud solicitud = solicitudRepository.findById(id).orElseThrow(() -> new RuntimeException("Solicitud no encontrada"));
         EstadoSolicitud estado = EstadoSolicitud.valueOf(estadoStr);
         solicitud.setEstado(estado);
-        solicitud.setJustificacion(justificacion.orElse(null));
+        solicitud.setJustificacion(justificacion);
 
         if (estado != EstadoSolicitud.RECHAZADA) {
             Hecho hecho = solicitud.getHecho();

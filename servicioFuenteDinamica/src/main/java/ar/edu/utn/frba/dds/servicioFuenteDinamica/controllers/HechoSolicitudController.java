@@ -24,8 +24,8 @@ public class HechoSolicitudController {
     private SolicitudServicio solicitudServicio;
 
     @PostMapping("/hechos")
-    public ResponseEntity<Hecho> crearHecho(@RequestBody Hecho hecho, @RequestParam Optional<Long> usuarioId) {
-        return ResponseEntity.ok(hechoServicio.crearHecho(hecho, usuarioId));
+    public ResponseEntity<Hecho> crearHecho(@RequestBody HechoDTODinamica hecho) {
+        return ResponseEntity.ok(hechoServicio.crearHecho(hecho));
     }
 
     @GetMapping("/hechos")
@@ -48,7 +48,7 @@ public class HechoSolicitudController {
 
 
     @PutMapping("/hechos/{id}")
-    public ResponseEntity<?> modificarHecho(@PathVariable Long id, @RequestBody Hecho nuevosDatos) {
+    public ResponseEntity<?> modificarHecho(@PathVariable Long id, @RequestBody HechoDTODinamica nuevosDatos) {
         try {
             return ResponseEntity.ok(hechoServicio.modificarHecho(id, nuevosDatos));
         } catch (IllegalStateException e) {
@@ -57,7 +57,7 @@ public class HechoSolicitudController {
     }
 
     @PostMapping("/hechos/{id}")
-    public ResponseEntity<Hecho> revisarHecho(@PathVariable Long id, @RequestParam String estado, @RequestParam Optional<String> comentario) {
+    public ResponseEntity<Hecho> revisarHecho(@PathVariable Long id, @RequestParam String estado, @RequestParam String comentario) {
         return ResponseEntity.ok(hechoServicio.revisarHecho(id, estado, comentario));
     }
 
@@ -68,7 +68,7 @@ public class HechoSolicitudController {
     }
 
     @PostMapping("/solicitudes/{id}")
-    public ResponseEntity<Solicitud> procesarSolicitud(@PathVariable Long id, @RequestParam String estado, @RequestParam Optional<String> comentario) {
+    public ResponseEntity<Solicitud> procesarSolicitud(@PathVariable Long id, @RequestParam String estado, @RequestParam String comentario) {
         return ResponseEntity.ok(solicitudServicio.procesarSolicitud(id, estado, comentario));
     }
 }
