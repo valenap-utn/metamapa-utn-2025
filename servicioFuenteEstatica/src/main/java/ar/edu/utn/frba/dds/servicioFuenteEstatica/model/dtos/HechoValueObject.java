@@ -8,7 +8,6 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-
 @Builder
 public class HechoValueObject {
   private String titulo;

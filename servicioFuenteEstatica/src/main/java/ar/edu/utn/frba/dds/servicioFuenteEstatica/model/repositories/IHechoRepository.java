@@ -7,14 +7,14 @@ import java.util.Set;
 import java.util.UUID;
 
 public interface IHechoRepository {
+  // Para Hechos
+  void saveAll(Set<Hecho> hechos);
+
   Set<Hecho> findAll(); // GET /hechos
-  Set<Hecho> findAll(String coleccionID); // GET /colecciones/:identificador/hechos
-  void saveAll(UUID coleccionID, Set<Hecho> hechos);
 
   Optional<Set<Hecho>> buscarPorTitulo(String titulo);
-  Optional<Set<Hecho>> findByColeccion(String idColeccion);
+  Optional<Hecho> findByID(String id);
 
-  void clear(String coleccionID);
   void clear();
 
 }
