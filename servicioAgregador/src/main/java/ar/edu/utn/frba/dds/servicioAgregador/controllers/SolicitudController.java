@@ -1,12 +1,13 @@
 package ar.edu.utn.frba.dds.servicioAgregador.controllers;
 
+import ar.edu.utn.frba.dds.servicioAgregador.services.ISolicitudService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping('/api/solicitudes')
+@RequestMapping("/api/solicitudes")
 public class SolicitudController {
   private final ISolicitudService solicitudService;
 
