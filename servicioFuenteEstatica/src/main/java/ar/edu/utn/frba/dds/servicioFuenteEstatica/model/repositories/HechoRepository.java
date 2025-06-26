@@ -20,7 +20,7 @@ public class HechoRepository implements IHechoRepository {
 
   @Override
   public void saveAll(Set<Hecho> setHechos) {
-    setHechos.forEach(hecho -> hechoPorID.put(hecho.getID(), hecho));
+    setHechos.forEach(hecho -> hechoPorID.put(hecho.getId(), hecho));
   }
 
   @Override
