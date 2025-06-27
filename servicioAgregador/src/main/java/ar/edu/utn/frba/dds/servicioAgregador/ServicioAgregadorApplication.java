@@ -1,6 +1,7 @@
 package ar.edu.utn.frba.dds.servicioAgregador;
 
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.*;
+import ar.edu.utn.frba.dds.servicioAgregador.model.entities.deteccionDeSpam.DetectorDeSpam;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.SolicitudesRepositorio;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

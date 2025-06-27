@@ -1,9 +1,9 @@
 package ar.edu.utn.frba.dds.servicioAgregador.services;
 
 import ar.edu.utn.frba.dds.servicioAgregador.config.ColeccionDeDocumentosSpam;
-import ar.edu.utn.frba.dds.servicioAgregador.model.entities.DetectorDeSpam;
-import ar.edu.utn.frba.dds.servicioAgregador.model.entities.DetectorDeSpamBasico;
-import ar.edu.utn.frba.dds.servicioAgregador.model.entities.TFIDFCalculadoraPalabras;
+import ar.edu.utn.frba.dds.servicioAgregador.model.entities.deteccionDeSpam.DetectorDeSpam;
+import ar.edu.utn.frba.dds.servicioAgregador.model.entities.deteccionDeSpam.DetectorDeSpamBasico;
+import ar.edu.utn.frba.dds.servicioAgregador.model.entities.deteccionDeSpam.TFIDFCalculadoraPalabras;
 import org.springframework.stereotype.Component;
 
 @Component

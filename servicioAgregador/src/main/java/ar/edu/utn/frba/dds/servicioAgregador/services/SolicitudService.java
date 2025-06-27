@@ -1,6 +1,6 @@
 package ar.edu.utn.frba.dds.servicioAgregador.services;
 
-import ar.edu.utn.frba.dds.servicioAgregador.model.entities.DetectorDeSpam;
+import ar.edu.utn.frba.dds.servicioAgregador.model.entities.deteccionDeSpam.DetectorDeSpam;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Solicitud;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Usuario;

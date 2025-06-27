@@ -1,12 +1,10 @@
-package ar.edu.utn.frba.dds.servicioAgregador.model.entities;
+package ar.edu.utn.frba.dds.servicioAgregador.model.entities.deteccionDeSpam;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 import lombok.Getter;
 import lombok.Setter;
 
-public class DetectorDeSpamBasico implements DetectorDeSpam{
+public class DetectorDeSpamBasico implements DetectorDeSpam {
   private TFIDFCalculadoraPalabras calculadoraTFIDF;
   @Setter
   @Getter

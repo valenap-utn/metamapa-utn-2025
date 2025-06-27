@@ -1,4 +1,4 @@
-package ar.edu.utn.frba.dds.servicioAgregador.model.entities;
+package ar.edu.utn.frba.dds.servicioAgregador.model.entities.deteccionDeSpam;
 
 import ar.edu.utn.frba.dds.servicioAgregador.config.ColeccionDeDocumentosSpam;
 import java.util.ArrayList;

@@ -8,6 +8,7 @@ import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Coleccion;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Fuente;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Usuario;
+import ar.edu.utn.frba.dds.servicioAgregador.model.entities.origenes.Origen;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.roles.PermisoCrearColeccion;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IColeccionRepository;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IHechoRepository;
@@ -27,7 +28,7 @@ import reactor.core.publisher.Mono;
 @Service
 public class ColeccionService implements IColeccionService{
   private final IColeccionRepository coleccionRepository;
-  private final Map<Long, ConexionFuenteService> conexionFuentes;
+  private final Map<Origen, ConexionFuenteService> conexionFuentes;
   private final IUserRepository userRepository;
   private final IHechoRepository hechoRepository;
   @Setter
@@ -83,7 +84,7 @@ public class ColeccionService implements IColeccionService{
   }
 
   private Mono<Void> actualizarHechosPorFuente(Fuente fuente) {
-    ConexionFuenteService conexionFuenteService = this.conexionFuentes.get(fuente.getId());
+    ConexionFuenteService conexionFuenteService = this.conexionFuentes.get(fuente.getOrigen());
     return conexionFuenteService.actualizarHechosFuente(fuente, this.hechoRepository);
   }
 

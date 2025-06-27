@@ -1,12 +1,15 @@
 package ar.edu.utn.frba.dds.servicioAgregador.model.entities.origenes;
 
-public enum Origen {
-  DATASET,
-  PORCONTRIBUYENTE,
-  CARGAMANUAL,
-  PROXY;
 
-  public boolean permiteSolicitud() {
-    return true;
+import lombok.Getter;
+
+@Getter
+public class Origen {
+  private TipoOrigen tipo;
+  private String url;
+
+  public Origen(TipoOrigen tipo, String url) {
+    this.tipo = tipo;
+    this.url = url;
   }
 }

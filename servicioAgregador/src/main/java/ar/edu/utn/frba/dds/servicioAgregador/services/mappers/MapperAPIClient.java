@@ -8,18 +8,19 @@ import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho.HechoBuilder;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Ubicacion;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.origenes.Origen;
+import ar.edu.utn.frba.dds.servicioAgregador.model.entities.origenes.TipoOrigen;
 
 public class MapperAPIClient {
   public Hecho toHechoFrom(HechoDTOEstatica hechoDTO) {
     return crearHechoBasico(hechoDTO)
-            .origen(Origen.CARGAMANUAL)
+            .origen(new Origen(TipoOrigen.DATASET))
             .build();
   }
 
   public Hecho toHechoFrom(HechoDTODinamica hechoDTODinamica) {
     return crearHechoConCategoria(hechoDTODinamica)
             .contenidoMultimedia(hechoDTODinamica.getContenidoMultimedia())
-            .origen(Origen.PORCONTRIBUYENTE)
+            .origen(new Origen(TipoOrigen.PORCONTRIBUYENTE))
             .build();
   }
 
@@ -27,7 +28,7 @@ public class MapperAPIClient {
     return crearHechoBasico(hechoDTOProxy)
             .categoria(hechoDTOProxy.getCategoria())
             .ubicacion(new Ubicacion(hechoDTOProxy.getLongitud().floatValue(), hechoDTOProxy.getLatitud().floatValue()))
-            .origen(Origen.PROXY)
+            .origen(new Origen(TipoOrigen.PROXY))
             .build();
   }
 

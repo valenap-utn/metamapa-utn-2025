@@ -38,8 +38,8 @@ public class HechoRepository implements IHechoRepository {
   }
 
   @Override
-  public Set<Fuente> findAll() {
-    return Set.of();
+  public Set<Hecho> findAll() {
+    return this.idsHechosPorFuente.values()
   }
 
   @Override

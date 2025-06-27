@@ -35,8 +35,8 @@ public class Coleccion {
         this.criteriosDePertenencia.addAll(List.of(filtros));
     }
 
-    public Set<Hecho> getHechos() {
-        return this.fuentes.stream().flatMap(this::getHechosPorFuente).collect(Collectors.toSet());
+    public List<Hecho> getHechos() {
+        return this.fuentes.stream().flatMap(this::getHechosPorFuente).toList();
 
     }
 
