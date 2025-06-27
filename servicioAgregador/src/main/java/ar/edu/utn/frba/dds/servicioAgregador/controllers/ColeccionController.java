@@ -39,7 +39,7 @@ public class ColeccionController {
   }
 
   @GetMapping("/{id}/hechos")
-  public Mono<ConjuntoHechoCompleto> getHechos(@PathVariable String idColeccion) {
+  public ConjuntoHechoCompleto getHechos(@PathVariable String idColeccion) {
     return this.coleccionService.getHechosPorColeccion(idColeccion);
   }
 }

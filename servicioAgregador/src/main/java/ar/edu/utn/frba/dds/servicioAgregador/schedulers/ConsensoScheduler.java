@@ -13,10 +13,10 @@ public class ConsensoScheduler {
   }
 
   @Scheduled(cron = "0 0 3 * * *")
-  public void actualizarFuentes() {
-    coleccionService.actualizarHechosColecciones()
-            .doOnSuccess(v -> System.out.println("Salio bien la actualizacion"))
-            .doOnError(e -> System.out.println("Error en la actualizacion"))
-            .subscribe();
+  public void consensuarHechos() {
+    this.coleccionService.consensuarHechos()
+        .doOnSuccess(v -> System.out.println("Los hechos"))
+        .doOnError(e -> System.out.println("Error al consensuar hechos"))
+        .subscribe();
   }
 }

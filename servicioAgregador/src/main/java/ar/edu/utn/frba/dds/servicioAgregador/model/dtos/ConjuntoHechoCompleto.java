@@ -1,9 +1,9 @@
 package ar.edu.utn.frba.dds.servicioAgregador.model.dtos;
 
-import java.util.Set;
+import java.util.List;
 import lombok.Data;
 
 @Data
 public class ConjuntoHechoCompleto {
-  Set<HechoDTOCompleto> hechos;
+  List<HechoDTOCompleto> hechos;
 }

@@ -95,21 +95,20 @@ public class ColeccionService implements IColeccionService{
   }
 
   @Override
-  public Mono<ConjuntoHechoCompleto> getHechosPorColeccion(String idColeccion) {
-    return Mono.fromCallable(() -> this.coleccionRepository.findById(idColeccion))
-            .flatMap(coleccion ->{
-              coleccion.getFuentes().forEach(this::cargarHechosEnFuente);
-              //set<Hecho> hechos = coleccion.getHechos();
-              Set<Hecho> hechos = coleccion.getHechos().stream()
-                      .filter(hecho -> !hecho.isEliminado())
-                      .collect(Collectors.toSet());
-              return Mono.just(hechos);
-            }).map(hechos -> this.mapperHechoOutput.toConjuntoHechoDTOOutput(hechos));
+  public ConjuntoHechoCompleto getHechosPorColeccion(String idColeccion) {
+    Coleccion coleccion = this.coleccionRepository.findById(idColeccion);
+    coleccion.getFuentes().forEach(this::cargarHechosEnFuente);
+    List<Hecho> hechos = coleccion.getHechos().stream().filter(hecho -> !hecho.isEliminado()).toList();
+    return this.mapperHechoOutput.toConjuntoHechoDTOOutput(hechos);
   }
 
   private void cargarHechosEnFuente(Fuente fuente) {
    ConexionFuenteService conexion =  this.conexionFuentes.get(fuente.getId());
    conexion.cargarHechosEnFuente(fuente, this.hechoRepository).subscribe();
+  }
+
+  public Mono<Void> consensuarHechos() {
+    return Mono.empty();
   }
 
 }

@@ -49,7 +49,7 @@ public class HechoGlobalController {
   }
 
   @GetMapping
-  public ResponseEntity<Set<Hecho>> getAll() {
+  public ResponseEntity<Set<Hecho>> getAll() { /* ResponseEntity<ConjuntoHechoEstatica>*/
     return ResponseEntity.ok(hechoService.obtenerTodos());
   }
 
@@ -71,6 +71,22 @@ public class HechoGlobalController {
   public ResponseEntity<Void> eliminarTodo() {
     hechoService.eliminarTodo();
     return ResponseEntity.noContent().build();
+  }
+
+  public Set<HechoDTOEstatica> toSetHechoDTOEstatica(Set<Hecho> hechos) {
+    return hechos.stream().map(this::toHechoDTOEstatica).collect(Collectors.toSet());
+  }
+
+  public HechoDTOEstatica toHechoDTOEstatica(Hecho hecho) {
+    HechoDTOEstatica dto = new HechoDTOEstatica();
+    dto.setId(hecho.getId());
+    dto.setTitulo(hecho.getTitulo());
+    dto.setUbicacion(hecho.getUbicacion());
+    dto.setDescripcion(hecho.getDescripcion());
+    dto.setFechaAcontecimiento(hecho.getFechaAcontecimiento());
+    dto.setFechaCarga(hecho.getFechaCarga());
+    dto.setCategoria(hecho.getCategoria());
+    return dto;
   }
 }
 

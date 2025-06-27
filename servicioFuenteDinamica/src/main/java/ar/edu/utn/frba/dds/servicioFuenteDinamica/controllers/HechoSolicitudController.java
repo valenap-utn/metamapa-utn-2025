@@ -9,6 +9,7 @@ import ar.edu.utn.frba.dds.servicioFuenteDinamica.services.SolicitudServicio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,8 +25,8 @@ public class HechoSolicitudController {
     private SolicitudServicio solicitudServicio;
 
     @PostMapping("/hechos")
-    public ResponseEntity<Hecho> crearHecho(@RequestBody HechoDTODinamica hecho) {
-        return ResponseEntity.ok(hechoServicio.crearHecho(hecho));
+    public ResponseEntity<Hecho> crearHecho(@RequestBody HechoDTODinamica hecho, @RequestParam("contenidomultimedia") MultipartFile contenidoMultimedia) {
+        return ResponseEntity.ok(this.hechoServicio.crearHecho(hecho, contenidoMultimedia));
     }
 
     @GetMapping("/hechos")

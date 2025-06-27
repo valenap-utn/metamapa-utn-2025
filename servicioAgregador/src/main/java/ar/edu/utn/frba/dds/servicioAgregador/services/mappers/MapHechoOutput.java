@@ -3,13 +3,13 @@ package ar.edu.utn.frba.dds.servicioAgregador.services.mappers;
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.ConjuntoHechoCompleto;
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.HechoDTOCompleto;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
-import java.util.Set;
-import java.util.stream.Collectors;
+
+import java.util.List;
 
 public class MapHechoOutput {
-  public ConjuntoHechoCompleto toConjuntoHechoDTOOutput(Set<Hecho> hechos) {
+  public ConjuntoHechoCompleto toConjuntoHechoDTOOutput(List<Hecho> hechos) {
     ConjuntoHechoCompleto conjuntoDeHechos = new ConjuntoHechoCompleto();
-    Set<HechoDTOCompleto> hechosDTO =  hechos.stream().map(this::toHechoDTO).collect(Collectors.toSet());
+    List<HechoDTOCompleto> hechosDTO =  hechos.stream().map(this::toHechoDTO).toList();
     conjuntoDeHechos.setHechos(hechosDTO);
     return conjuntoDeHechos;
   }
