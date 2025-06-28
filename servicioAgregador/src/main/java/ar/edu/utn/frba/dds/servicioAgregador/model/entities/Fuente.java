@@ -10,13 +10,9 @@ import lombok.Setter;
 
 
 public class Fuente {
-    @Getter
-    private final Origen origen;
-    @Getter
-    @Setter
-    private String Tipo;
-    @Getter
-    private final Set<Hecho> hechos;
+    @Getter private final Origen origen;
+    @Getter @Setter private String Tipo;
+    @Getter private final Set<Hecho> hechos;
 
     public Fuente(Origen origen, String tipo) {
         this.origen = origen;
@@ -32,5 +28,18 @@ public class Fuente {
         this.hechos.clear();
         this.agregarHechos(hechos);
     }
+
+    //Métodos para comparar Hechos y poder hacer uso de ellos en los algoritmos de consenso
+    public boolean tieneHecho(Hecho hecho) {
+        return this.hechos.contains(hecho);
+    }
+
+    public boolean tieneOtroHechoConMismoNombrePeroDistintosAtributos(Hecho hecho) {
+        return this.hechos.stream()
+                        .anyMatch(h ->
+                            h.getTitulo().equals(hecho.getTitulo()) && !h.equals(hecho)
+                        );
+    }
+
 }
 

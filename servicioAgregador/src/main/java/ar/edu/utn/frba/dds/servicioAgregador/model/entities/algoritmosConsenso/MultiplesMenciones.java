@@ -4,6 +4,14 @@ import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.HechoRepository;
 
 public class MultiplesMenciones implements AlgoritmoConsenso {
+
+  private final HechoRepository hechoRepository;
+
+  public MultiplesMenciones(HechoRepository hechoRepository) {
+    this.hechoRepository = hechoRepository;
+  }
+
+  @Override
   public void consensuarHecho(Hecho hecho ) {
 //  Nos fijamos si el Hecho se encuentra en HechoRepository
 //    (podriamos hacer algun filter o algo parecido, como para después poder hacer un

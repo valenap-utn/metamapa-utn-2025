@@ -2,7 +2,7 @@ package ar.edu.utn.frba.dds.servicioAgregador.model.entities.algoritmosConsenso;
 
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
 
-public class MayoriaSimple {
+public class MayoriaSimple implements AlgoritmoConsenso {
   public void consensuarHecho(Hecho hecho) {
 //    Se fija si el Hecho se encuentra en FuenteEstatica
 //    Se fija si el Hecho se encuentra en FuenteDinamica
