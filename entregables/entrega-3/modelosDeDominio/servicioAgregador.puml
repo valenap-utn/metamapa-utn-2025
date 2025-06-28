@@ -81,13 +81,13 @@ Coleccion --> "*" Filtro
 'FILTROS
 
 abstract class Filtro {
-    + boolean hechoCumple(Hecho unHecho)
+    + hechoCumple(Hecho unHecho): boolean
 }
 
 class FiltroPorCategoria {
-    - Categoria categoria
+    - categoria: Categoria
 
-    + boolean hechoCumple(Hecho unHecho)
+    + hechoCumple(Hecho unHecho): boolean
 }
 
 class FiltroPorDescripcion {
@@ -95,34 +95,34 @@ class FiltroPorDescripcion {
 }
 
 abstract class FiltroPorFecha {
-    -LocalDate desde
-    -LocalDate hasta
-    + boolean hechoCumple(Hecho hecho)
-    # LocalDate obtenerUnTipoFecha(Hecho unHecho)
+    - desde: LocalDate
+    - hasta: LocalDate
+    + hechoCumple(Hecho hecho): boolean
+    # obtenerUnTipoFecha(Hecho unHecho): LocalDate
 }
 
 class FiltroPorFechaAcontecimiento {
-    # LocalDate obtenerUnTipoFecha(Hecho unHecho)
+    # obtenerUnTipoFecha(Hecho unHecho): LocalDate
 }
 
 class FiltroPorFechaCarga {
-    # LocalDate obtenerUnTipoFecha(Hecho unHecho)
+    # obtenerUnTipoFecha(Hecho unHecho): LocalDate
 }
 
 abstract class FiltroPorString {
-    - String cadenaAComparar
-    + boolean hechoCumple(Hecho unHecho)
-    # String obtenerUnTipoString(Hecho unHecho)
+    - cadenaAComparar: String
+    + hechoCumple(Hecho unHecho): boolean
+    # obtenerUnTipoString(Hecho unHecho): String
 }
 
 class FiltroPorTitulo {
-   # String obtenerUnTipoString(Hecho unHecho)
+   # obtenerUnTipoString(Hecho unHecho): String
 }
 
 class FiltroUbicacion {
-    - Ubicacion ubicacion
+    - ubicacion: Ubicacion
 
-    + boolean hechoCumple(Hecho unHecho)
+    + hechoCumple(Hecho unHecho): boolean
 }
 
 FiltroPorTitulo --|> FiltroPorString
@@ -134,15 +134,15 @@ FiltroPorFechaCarga --|> FiltroPorFecha
 
 
 class FiltroOrigen {
-    - Origen origen
+    - origen: Origen
 
-    + boolean hechoCumple(Hecho unHecho)
+    + hechoCumple(Hecho unHecho): boolean
 }
 
 class FiltroContenidoMultimedia {
-    - boolean tieneContenidoMultimedia
+    - tieneContenidoMultimedia: boolean
 
-    + boolean hechoCumple(Hecho unHecho)
+    + hechoCumple(Hecho unHecho): boolean
 }
 
 FiltroPorCategoria --|> Filtro
@@ -186,7 +186,36 @@ class Contribuyente extends Rol{
 
 }
 
+'DETECCION DE SPAM
 
+interface DetectorDeSpam {
+  + esSpam(String texto): boolean;
+}
+
+class DetectorDeSpamBasico implements DetectorDeSpam {
+  - calculadoraTFIDF: TFIDFCalculadoraPalabras;
+  - nivelImportanciaMinimo: Double;
+
+  + esSpam(String texto): boolean;
+
+  - esPalabraPocoImportante(List<String> documento, String palabra): boolean
+}
+
+class TFIDFCalculadoraPalabras {
+  - documentosSpam: List<List<String>> ;
+
+  - prepararDocumento(String documento): List<String>;
+
+  + calcularTFIDFDePalabra(List<String> documento, String palabra): Double;
+
+  - calcularTFPalabra(List<String> documento, String palabra): Double;
+
+  - cantRepeticionesPalabraEnDocumento(List<String> documento, String palabra): Long;
+
+  - calcularIDFPalabra(String palabra): Double;
+}
+
+DetectorDeSpamBasico --> TFIDFCalculadoraPalabras
 
 
 

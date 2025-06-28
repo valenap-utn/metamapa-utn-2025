@@ -103,12 +103,19 @@ public class ColeccionService implements IColeccionService{
   }
 
   private void cargarHechosEnFuente(Fuente fuente) {
-   ConexionFuenteService conexion =  this.conexionFuentes.get(fuente.getId());
+   ConexionFuenteService conexion =  this.conexionFuentes.get(fuente.getOrigen());
    conexion.cargarHechosEnFuente(fuente, this.hechoRepository).subscribe();
   }
 
   public Mono<Void> consensuarHechos() {
-    return Mono.empty();
+    Set<Coleccion> colecciones = this.coleccionRepository.findAll();
+    Flux.fromIterable(colecciones).flatMap(
+        coleccion -> {
+          coleccion.getFuentes().forEach(this::cargarHechosEnFuente);
+          coleccion.consensuarHechos(fuentes);
+          return Mono.empty();
+        }
+    ).then();
   }
 
 }

@@ -8,7 +8,7 @@ public interface IHechoRepository {
   public Fuente saveHechosDeFuente(Fuente fuente);
   public Fuente findById(Long id);
 
-  Set<Fuente> findAll();
+//  Set<Fuente> findAll();
 
   Set<Hecho> findByIDFuente(Long idFuente);
 }

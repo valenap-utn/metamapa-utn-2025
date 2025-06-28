@@ -2,6 +2,8 @@ package ar.edu.utn.frba.dds.servicioAgregador.model.repositories;
 
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Fuente;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
+
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -37,9 +39,14 @@ public class HechoRepository implements IHechoRepository {
     return null;
   }
 
-  @Override
-  public Set<Hecho> findAll() {
-    return this.idsHechosPorFuente.values()
+//  @Override
+//  public Set<Hecho> findAll() {
+//    return this.idsHechosPorFuente.values()
+//  }
+  public Set<Hecho> findAll(){
+    return this.idsHechosPorFuente.values().stream()
+        .flatMap(idsHechos -> idsHechos.values().stream())
+        .collect(Collectors.toSet());
   }
 
   @Override

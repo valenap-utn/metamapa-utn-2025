@@ -1,6 +1,8 @@
 package ar.edu.utn.frba.dds.servicioAgregador.model.entities;
 
 
+import ar.edu.utn.frba.dds.servicioAgregador.model.entities.algoritmosConsenso.AlgoritmoConsenso;
+import ar.edu.utn.frba.dds.servicioAgregador.model.entities.algoritmosConsenso.TodosConsensuados;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.filtros.Filtro;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.filtros.FiltroNoEstaEliminado;
 import java.util.ArrayList;
@@ -21,14 +23,19 @@ public class Coleccion {
     private String descripcion;
     private final List<Fuente> fuentes;
     private final List<Filtro> criteriosDePertenencia;
+    private AlgoritmoConsenso algoritmoConsenso;
 
-
-    public Coleccion(String titulo, String descripcion) {
+    public Coleccion(String titulo, String descripcion, AlgoritmoConsenso algoritmoConsenso) {
         this.titulo = titulo;
         this.descripcion = descripcion;
         this.fuentes = new ArrayList<>();
         this.criteriosDePertenencia = new ArrayList<>();
         this.criteriosDePertenencia.add(new FiltroNoEstaEliminado());
+
+        AlgoritmoConsenso algoritmoElegido = algoritmoConsenso;
+        if(algoritmoConsenso == null)
+            algoritmoElegido = new TodosConsensuados();
+        this.algoritmoConsenso = algoritmoElegido;
     }
 
     public void agregarCriterios(Filtro ... filtros) {
@@ -53,5 +60,8 @@ public class Coleccion {
         return this.criteriosDePertenencia.stream().allMatch(criterio -> criterio.hechoCumple(hecho));
     }
 
+    public void consensuarHechos(List<Fuente> fuentes) {
+        this.getHechos().stream().forEach(hecho -> this.getAlgoritmoConsenso().consensuarHecho(hecho, fuentes));
+    }
 }
 

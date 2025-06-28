@@ -47,6 +47,4 @@ public class TFIDFCalculadoraPalabras {
     }
     return Math.log10(this.documentosSpam.size() / cantDocusConPalabra.doubleValue());
   }
-
-
 }

@@ -2,10 +2,13 @@ package ar.edu.utn.frba.dds.servicioAgregador.model.entities.algoritmosConsenso;
 
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Fuente;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
-import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.HechoRepository;
 
 import java.util.List;
 
-public interface AlgoritmoConsenso {
-  boolean consensuarHecho(Hecho hecho, List<Fuente> fuentes);
+public class TodosConsensuados implements AlgoritmoConsenso {
+
+  @Override
+  public boolean consensuarHecho(Hecho hecho, List<Fuente> fuentes) {
+    return true;
+  }
 }

@@ -1,13 +1,17 @@
 package ar.edu.utn.frba.dds.servicioAgregador.model.entities.algoritmosConsenso;
 
+import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Fuente;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
 
+import java.util.List;
+
 public class Absoluta implements AlgoritmoConsenso {
-  public void consensuarHecho(Hecho hecho) {
-//    Se fija si el Hecho se encuentra en FuenteEstatica
-//    Se fija si el Hecho se encuentra en FuenteDinamica
-//    Se fija si el Hecho se encuentra en FuenteProxy
-//
-//    Si está en todas => el Hecho es CONSENSUADO
+  public boolean consensuarHecho(Hecho hecho, List<Fuente> fuentes) {
+    for(Fuente fuente : fuentes){
+      if(!fuente.tieneHecho(hecho)){
+        return false;
+      }
+    }
+    return true; //si todas lo tienen => consensuado
   }
 }
