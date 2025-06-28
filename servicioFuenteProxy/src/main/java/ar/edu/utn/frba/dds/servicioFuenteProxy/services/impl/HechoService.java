@@ -39,15 +39,17 @@ public class HechoService implements IHechoService {
                 .stream()
                 .flatMap(client -> client.getAllHechosExternos().stream()
                         .map(dto -> hechoMapper.toOutputDTO(dto, client.nombre())))
-                .filter( hecho -> hecho.getCategoria().equalsIgnoreCase(categoria))
-                .filter(hecho -> hecho.getLatitud().equals(latitud))
-                .filter(hecho -> hecho.getLongitud().equals(longitud))
-                .filter(hecho -> hecho.getFechaCarga().isAfter(fechaReporteDesde))
-                .filter(hecho -> hecho.getFechaCarga().isBefore(fechaReporteHasta))
-                .filter(hecho -> hecho.getFecha().isAfter(fechaAcontecimientoDesde))
-                .filter(hecho -> hecho.getFecha().isBefore(fechaAcontecimientoHasta))
+                .filter( hecho -> categoria == null || hecho.getCategoria().equalsIgnoreCase(categoria))
+                .filter(hecho -> latitud == null || hecho.getLatitud().equals(latitud))
+                .filter(hecho -> longitud == null || hecho.getLongitud().equals(longitud))
+                .filter(hecho -> fechaReporteDesde == null || hecho.getFechaCarga().isAfter(fechaReporteDesde))
+                .filter(hecho -> fechaReporteHasta == null || hecho.getFechaCarga().isBefore(fechaReporteHasta))
+                .filter(hecho -> fechaAcontecimientoDesde == null || hecho.getFecha().isAfter(fechaAcontecimientoDesde))
+                .filter(hecho -> fechaAcontecimientoHasta == null || hecho.getFecha().isBefore(fechaAcontecimientoHasta))
                 .toList();
     }
 }
+
+//TODO: encontrar una forma mas generica de recorrer los hechos segun criterio. Por ejemplo, que los filtros se reciban como una lista, y luego abstraer la parte que coincide: .filter(hecho -> hecho.algo)
 
 
