@@ -50,5 +50,6 @@ public class MetaMapaClient implements IAPIClient {
                 .bodyToMono(HechoInputDTO.class) // "recibi el Json y mapealo a una instancia de HechoInputDTOResponse"
                 .block();
     }
+
 }
 

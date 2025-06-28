@@ -6,6 +6,6 @@ import ar.edu.utn.frba.dds.servicioFuenteProxy.clients.dtos.output.HechoOutputDT
 import java.util.List;
 
 public interface IHechoService {
-    List<HechoOutputDTO> getAllHechosExternos(); // <-- se encarga de hacer la llamada al endpoint de login y devolver un Mono con el token
+    List<HechoOutputDTO> getHechosExternos(); // <-- se encarga de hacer la llamada al endpoint de login y devolver un Mono con el token
 
 }
