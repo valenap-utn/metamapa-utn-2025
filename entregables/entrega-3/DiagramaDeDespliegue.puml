@@ -1,66 +1,54 @@
 @startuml
 'https://plantuml.com/deployment-diagram
 
-actor usuario
-node servicioAgregador {
-component ColeccionService
-component ColeccionController
-component ConexionFuenteService
-component APICLientEstatica
-component APICLientDinamica
-component APICLientProxy
-component ColeccionRepository
-}
-
-ColeccionController -(0- ColeccionService
-ColeccionService -(0- ConexionFuenteService
-ConexionFuenteService -(0- ColeccionRepository
-usuario -(0- ColeccionController
-ConexionFuenteService -(0- APICLientDinamica
-ConexionFuenteService -(0- APICLientEstatica
-ConexionFuenteService -(0- APICLientProxy
-
-node servicioFuenteDinamica {
-component HechoSolicitudController
-component HechoServiceDinamica
-component HechoRepositoryDinamica
-}
-
-HechoSolicitudController -(0 HechoServiceDinamica
-HechoServiceDinamica -(0- HechoRepositoryDinamica
+actor visualizador
+actor administrador
 actor contribuyente
-contribuyente -(0- HechoSolicitudController
-
-node servicioFuenteEstatica {
-component HechoControllerEstatica
-component HechoServiceEstatica
-component HechoRepositoryEstatica
-}
-HechoControllerEstatica -(0- HechoServiceEstatica
-HechoServiceEstatica -(0- HechoRepositoryEstatica
-
-
-node servicioFuenteProxy {
-component HechoControllerProxy
-component HechoServiceProxy
-component MetamapaClient
-component APIClient
-}
-
-HechoControllerProxy -(0- HechoServiceProxy
-HechoServiceProxy -(0- MetamapaClient
-HechoServiceProxy -(0- APIClient
-
 component InstanciaMetaMapa
 component APICatedra
-MetamapaClient -(0- InstanciaMetaMapa
-APIClient -(0- APICatedra
+
+
+frame Metamapa {
+    node servicioAgregador {
+    component APIAdministrador
+    component APIVisualizador
+    component APIService
+    }
+    visualizador -(0- APIVisualizador
+    administrador -(0- APIAdministrador
+    APIAdministrador -(0- APIService
+    APIVisualizador -(0- APIService
+
+
+    node servicioFuenteDinamica {
+        component APIFuenteDinamica
+        database Hechos {
+        }
+    }
 
 
 
-APICLientEstatica -(0- HechoControllerEstatica
-APICLientDinamica -(0- HechoSolicitudController
-APICLientProxy -(0- HechoControllerProxy
+    contribuyente -(0- APIFuenteDinamica
+
+    node servicioFuenteEstatica {
+    component APIFuenteEstatica
+    }
+
+
+
+    node servicioFuenteProxy {
+    component APIFuenteProxy
+    }
+
+    APIService -(0- APIFuenteDinamica
+        APIService -(0- APIFuenteEstatica
+        APIService -(0- APIFuenteProxy
+
+    APIFuenteProxy -(0- InstanciaMetaMapa
+    APIFuenteProxy -(0- APICatedra
+
+}
+
 
 
 
