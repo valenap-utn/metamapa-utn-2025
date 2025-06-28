@@ -1,22 +1,25 @@
 package ar.edu.utn.frba.dds.servicioFuenteProxy.clients.impl;
 
+import ar.edu.utn.frba.dds.servicioFuenteProxy.clients.Fuente;
 import ar.edu.utn.frba.dds.servicioFuenteProxy.clients.IAPIClient;
 import ar.edu.utn.frba.dds.servicioFuenteProxy.clients.authentication.APIProperties;
-import ar.edu.utn.frba.dds.servicioFuenteProxy.clients.dtos.APIResponse;
-import ar.edu.utn.frba.dds.servicioFuenteProxy.clients.dtos.HechoInputDTO;
-import ar.edu.utn.frba.dds.servicioFuenteProxy.clients.dtos.MetaMapaResponse;
+import ar.edu.utn.frba.dds.servicioFuenteProxy.clients.dtos.input.HechoInputDTO;
+import ar.edu.utn.frba.dds.servicioFuenteProxy.clients.dtos.input.MetaMapaResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
 
 import java.util.List;
-import ar.edu.utn.frba.dds.servicioFuenteProxy.clients.authentication.APIProperties;
 
 
 @Component
 public class MetaMapaClient implements IAPIClient {
     private final WebClient webClient;
     private final APIProperties apiProperties;
+
+    @Override
+    public Fuente nombre() {
+        return Fuente.META_MAPA;
+    }
 
 
     public MetaMapaClient(

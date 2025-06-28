@@ -1,4 +1,4 @@
-package ar.edu.utn.frba.dds.servicioFuenteProxy.clients.dtos;
+package ar.edu.utn.frba.dds.servicioFuenteProxy.clients.dtos.input;
 
 import lombok.Data;
 
@@ -9,3 +9,4 @@ public class APIResponse {
     private List<HechoInputDTO> data; // solo me importa este
 
 }
+

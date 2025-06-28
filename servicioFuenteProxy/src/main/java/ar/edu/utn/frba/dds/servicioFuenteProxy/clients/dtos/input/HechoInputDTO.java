@@ -1,4 +1,4 @@
-package ar.edu.utn.frba.dds.servicioFuenteProxy.clients.dtos;
+package ar.edu.utn.frba.dds.servicioFuenteProxy.clients.dtos.input;
 
 import lombok.Data;
 
@@ -15,4 +15,5 @@ public class HechoInputDTO {
     private Double latitud;
     private Double longitud;
     private LocalDateTime fecha_hecho;
+    private LocalDateTime created_at;
 }

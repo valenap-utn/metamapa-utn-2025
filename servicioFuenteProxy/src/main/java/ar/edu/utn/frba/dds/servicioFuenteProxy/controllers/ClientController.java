@@ -1,9 +1,8 @@
 package ar.edu.utn.frba.dds.servicioFuenteProxy.controllers;
 
-import ar.edu.utn.frba.dds.servicioFuenteProxy.clients.dtos.HechoInputDTO;
-import ar.edu.utn.frba.dds.servicioFuenteProxy.services.impl.APIService;
+import ar.edu.utn.frba.dds.servicioFuenteProxy.clients.dtos.output.HechoOutputDTO;
+import ar.edu.utn.frba.dds.servicioFuenteProxy.services.impl.HechoService;
 import org.springframework.web.bind.annotation.*;
-import reactor.core.publisher.Mono;
 
 import java.util.List;
 
@@ -19,19 +18,17 @@ import java.util.List;
 
 @RestController
 public class ClientController {
-    private final APIService APIService;
+    private final HechoService hechoService;
 
-    public ClientController(APIService APIService) {
-        this.APIService = APIService;
+    public ClientController(HechoService hechoService) {
+        this.hechoService = hechoService;
     }
 
     @GetMapping
-    public List<HechoInputDTO> getAllHechosExternos(){
-        return APIService.getAllHechosExternos();
+    public List<HechoOutputDTO> getAllHechosExternos(){
+        return hechoService.getAllHechosExternos();
     }
 
     @GetMapping("/{id}")
-    public HechoInputDTO getHechoExternoById(@PathVariable Long id) {
-        return APIService.getHechoExternoById(id);
-    }
+    public HechoOutputDTO getHechoExternoById(@PathVariable Long id) { return hechoService.getHechoExternoById(id); }
 }

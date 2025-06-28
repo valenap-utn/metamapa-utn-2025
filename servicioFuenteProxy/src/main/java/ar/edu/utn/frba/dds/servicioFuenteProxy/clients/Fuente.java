@@ -1,4 +1,4 @@
-package ar.edu.utn.frba.dds.servicioFuenteProxy.clients.impl;
+package ar.edu.utn.frba.dds.servicioFuenteProxy.clients;
 
 public enum Fuente {
     DESASTRES_NATURALES,
