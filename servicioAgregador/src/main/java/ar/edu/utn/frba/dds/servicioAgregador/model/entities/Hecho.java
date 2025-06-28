@@ -4,6 +4,7 @@ import ar.edu.utn.frba.dds.servicioAgregador.model.entities.origenes.Origen;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,45 +16,45 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 public class Hecho {
-    @Getter
-    @Setter
-    private Long id;
-    @Setter
-    @Getter
-    private String titulo;
-    @Setter
-    @Getter
-    private String descripcion;
-    @Setter
-    @Getter
-    private Categoria categoria;
-    @Setter
-    @Getter
-    private Ubicacion ubicacion;
-    @Setter
-    @Getter
-    private LocalDate fechaAcontecimiento;
-    @Setter
-    @Getter
-    private LocalDate fechaCarga;
-    @Setter
-    @Getter
-    private Origen origen;
-    @Setter
-    @Getter
-    private boolean eliminado = false;
-    @Setter
-    @Getter
-    private ContenidoMultimedia contenidoMultimedia;
-    @Getter
-    private final Set<String> etiquetas = new HashSet<>();
+    @Getter @Setter private Long id;
+    @Setter @Getter private String titulo;
+    @Setter @Getter private String descripcion;
+    @Setter @Getter private Categoria categoria;
+    @Setter @Getter private Ubicacion ubicacion;
+    @Setter @Getter private LocalDate fechaAcontecimiento;
+    @Setter @Getter private LocalDate fechaCarga;
+    @Setter @Getter private Origen origen;
+    @Setter @Getter private boolean eliminado = false;
+    @Setter @Getter private ContenidoMultimedia contenidoMultimedia;
+    @Getter private final Set<String> etiquetas = new HashSet<>();
+
     public Hecho() {
         this.eliminado = false;
     }
-
 
     public void agregarEtiquetas(String ... etiquetas) {
         this.etiquetas.addAll(List.of(etiquetas));
     }
 
+    //Métodos de equals y hashCode sobreescritos para poder utilizar contains en clase Fuente
+    //en los métodos booleanos de comparación de Hechos y que utilice
+    //estos métodos de comparación
+    @Override
+    public boolean equals(Object o) { //2 Hecho son "iguales" si tienen mismo titulo y mismos atributos
+        if (this == o) return true; //mismo objeto
+        if (o == null || getClass() != o.getClass()) return false; //no es un Hecho
+
+        Hecho hecho = (Hecho) o;
+
+        return Objects.equals(titulo, hecho.titulo)
+            && Objects.equals(descripcion, hecho.descripcion)
+            && Objects.equals(categoria, hecho.categoria)
+            && Objects.equals(ubicacion, hecho.ubicacion)
+            && Objects.equals(fechaAcontecimiento, hecho.fechaAcontecimiento);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(titulo, descripcion, categoria, ubicacion, fechaAcontecimiento);
+    }
 }
