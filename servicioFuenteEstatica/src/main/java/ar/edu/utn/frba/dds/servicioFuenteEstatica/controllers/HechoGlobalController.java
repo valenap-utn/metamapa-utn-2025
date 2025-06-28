@@ -1,10 +1,7 @@
 package ar.edu.utn.frba.dds.servicioFuenteEstatica.controllers;
 
-import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.dtos.ConjuntoHechoEstatica;
 import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.dtos.HechoDTOEstatica;
 import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.entities.Hecho;
-import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.repositories.HechoRepository;
-import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.repositories.IHechoRepository;
 import ar.edu.utn.frba.dds.servicioFuenteEstatica.services.HechoService;
 
 import java.io.IOException;
@@ -30,12 +27,25 @@ import java.util.Set;
 @RequestMapping("/api/hechos")
 public class HechoGlobalController {
 
+  /* Manejo con HechoService, dado que el Controller no debe conocer directamente la persistencia,
+    sino la lógica de negocio que usa.
+    Si el Controller dependiera del Repository, tendría que meter lógica del Service acá y romperia
+    con el principio de responsabilidad única.
+    => Si mañana cambiara de un repo en memoria a una base de datos real
+                                                                   => mi controller ni se entera */
   private final HechoService hechoService;
 
   @Autowired
   public HechoGlobalController(HechoService hechoService) {
     this.hechoService = hechoService;
   }
+
+  /* Devuelven un ResponseEntity
+  * Y qué es el ResponseEntity? Qué hace?
+  *   Lo que hace ResponseEntity es en envolver la rta. y darle un HTTP status code claro
+  * Y para qué queremos eso?
+  *   Queremos eso dado que es mas RESTful y flexible
+  * */
 
   @PostMapping("/importar")
   public ResponseEntity<String> importar(@RequestParam("archivo") MultipartFile archivo) {
@@ -49,22 +59,20 @@ public class HechoGlobalController {
   }
 
   @GetMapping
-  public ResponseEntity<Set<Hecho>> getAll() { /* ResponseEntity<ConjuntoHechoEstatica>*/
-    return ResponseEntity.ok(hechoService.obtenerTodos());
+  public ResponseEntity<Set<HechoDTOEstatica>> getAll() {
+    Set<HechoDTOEstatica> todosLosHechos = hechoService.obtenerTodos().stream()
+                                              .map(this::toHechoDTOEstatica)
+                                              .collect(Collectors.toSet());
+    return todosLosHechos.isEmpty() ?
+        ResponseEntity.noContent().build() : ResponseEntity.ok(todosLosHechos);
   }
 
-  @GetMapping("/{id}")
-  public ResponseEntity<Hecho> getById(@PathVariable String id) {
-    return hechoService.buscarPorID(id)
-        .map(ResponseEntity::ok)
-        .orElse(ResponseEntity.notFound().build());
-  }
-
-  @GetMapping("/titulo/{titulo}")
-  public ResponseEntity<Set<Hecho>> getByTitulo(@PathVariable String titulo) {
-    return hechoService.buscarPorTitulo(titulo)
-        .map(ResponseEntity::ok)
-        .orElse(ResponseEntity.notFound().build());
+  @GetMapping("/{titulo}")
+  public ResponseEntity<Set<HechoDTOEstatica>> getByTitulo(@PathVariable("titulo") String titulo) {
+    Set<HechoDTOEstatica> encontrados = hechoService.buscarPorTitulo(titulo)
+                                            .map(this::toSetHechoDTOEstatica)
+                                            .orElse(new HashSet<>());
+    return encontrados.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(encontrados);
   }
 
   @DeleteMapping
