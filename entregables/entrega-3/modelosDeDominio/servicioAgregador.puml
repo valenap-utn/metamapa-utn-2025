@@ -32,12 +32,21 @@ class Categoria {
     +public boolean esIgualA(Categoria);
 }
 
-enum Origen {
+class Origen {
+    - TipoOrigen tipo
+    - String url
+}
+
+
+
+enum TipoOrigen {
     DATASET,
       PORCONTRIBUYENTE,
       CARGAMANUAL,
       PROXY
 }
+Origen --> TipoOrigen
+
 
 enum Estado{
     ACEPTADA,

@@ -14,7 +14,7 @@ public class MapHechoOutput {
     return conjuntoDeHechos;
   }
 
-  private HechoDTOCompleto toHechoDTO(Hecho hecho) {
+  public HechoDTOCompleto toHechoDTO(Hecho hecho) {
     HechoDTOCompleto hechoDTO = new HechoDTOCompleto();
     hechoDTO.setId(hecho.getId());
     hechoDTO.setEtiquetas(hecho.getEtiquetas());

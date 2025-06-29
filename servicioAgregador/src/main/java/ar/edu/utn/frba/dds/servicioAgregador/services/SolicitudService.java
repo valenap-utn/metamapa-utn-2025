@@ -1,32 +1,47 @@
 package ar.edu.utn.frba.dds.servicioAgregador.services;
 
+import ar.edu.utn.frba.dds.servicioAgregador.exceptions.SolicitudError;
+import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.SolicitudInputDTO;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.deteccionDeSpam.DetectorDeSpam;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Solicitud;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Usuario;
+import ar.edu.utn.frba.dds.servicioAgregador.model.entities.origenes.Origen;
+import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IHechoRepository;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.ISolicitudRepository;
+import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.UserRepository;
+import java.util.Map;
 import org.springframework.stereotype.Service;
 
 @Service
-public class SolicitudService {
+public class SolicitudService implements ISolicitudService {
     private final FactoryDetectorDeSpam detectorDeSpamFactory;
     private final ISolicitudRepository repo;
+    private final IHechoRepository hechoRepository;
+    private final UserRepository userRepository;
+    private final Map<Origen, ConexionFuenteService> conexionFuentes;
+    private final Map<Long, Long> idsHechosDeFuentes;
 
-    public SolicitudService(ISolicitudRepository repo, FactoryDetectorDeSpam detectorDeSpamFactory) {
+    public SolicitudService(ISolicitudRepository repo, FactoryDetectorDeSpam detectorDeSpamFactory, IHechoRepository hechoRepository, UserRepository userRepository, Map<Origen, ConexionFuenteService> conexionFuentes) {
         this.repo = repo;
         this.detectorDeSpamFactory = detectorDeSpamFactory;
+      this.hechoRepository = hechoRepository;
+      this.userRepository = userRepository;
+      this.conexionFuentes = conexionFuentes;
     }
 
-    public Solicitud crearSolicitud(Hecho hecho, Usuario user, String texto) {
-
-        Solicitud solicitud = new Solicitud(hecho, user, texto);
+    public Solicitud crearSolicitud(SolicitudInputDTO solicitudInput) {
+        Hecho hecho = this.hechoRepository.findById(solicitudInput.getIdHecho());
+        Usuario user = this.userRepository.findById(solicitudInput.getIdusuario());
+        Solicitud solicitud = new Solicitud(hecho, user, solicitudInput.getJustificacion());
         DetectorDeSpam detectorDeSpam = this.detectorDeSpamFactory.crearDetectorDeSpamBasico();
         //se decide modelar la deteccion del spam que se realice antes de agregar la solicitud al repositorio
-        if (detectorDeSpam.esSpam(texto)) {
+        if (detectorDeSpam.esSpam(solicitud.getJustificacion())) {
             solicitud.marcarComoSpam();
             solicitud.rechazar();
+            throw new SolicitudError("Justificacion Con Spam");
         } else {
-            //TODO: Enviar hecho indicando que no deben devolverlo más
+            this.conexionFuentes.get(hecho.getOrigen()).postEliminado(hecho, this.idsHechosDeFuentes.get(hecho.getId()));
         }
 
         repo.save(solicitud);

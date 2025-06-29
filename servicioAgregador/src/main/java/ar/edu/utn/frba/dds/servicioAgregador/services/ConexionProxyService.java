@@ -1,6 +1,7 @@
 package ar.edu.utn.frba.dds.servicioAgregador.services;
 
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Fuente;
+import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IHechoRepository;
 import ar.edu.utn.frba.dds.servicioAgregador.services.clients.APIFuenteProxyClient;
 import lombok.Getter;
@@ -25,6 +26,11 @@ public class ConexionProxyService implements ConexionFuenteService{
   @Override
   public Mono<Void> actualizarHechosFuente(Fuente _fuente, IHechoRepository _hechoRepository) {
     return Mono.empty();
+  }
+
+  @Override
+  public void postEliminado(Hecho hecho, Long idHecho) {
+    this.apiClient.postEliminado(hecho, idHecho);
   }
 
 

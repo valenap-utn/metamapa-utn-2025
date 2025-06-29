@@ -45,8 +45,8 @@ public class ColeccionService implements IColeccionService{
     this.hechoRepository = hechoRepository;
   }
 
-  public void agregarConexionAFuente(Long idFuente, ConexionFuenteService conexionFuente) {
-    this.conexionFuentes.put(idFuente, conexionFuente);
+  public void agregarConexionAFuente(Origen origenFuente, ConexionFuenteService conexionFuente) {
+    this.conexionFuentes.put(origenFuente, conexionFuente);
   }
 
   @Override
@@ -66,7 +66,7 @@ public class ColeccionService implements IColeccionService{
   }
 
   private Fuente toFuente(FuenteDTO fuenteInput) {
-    return new Fuente(fuenteInput.getId(), fuenteInput.getTipo());
+    return new Fuente(fuenteInput.getOrigen(), fuenteInput.getTipo());
   }
 
   @Override
@@ -109,7 +109,7 @@ public class ColeccionService implements IColeccionService{
 
   public Mono<Void> consensuarHechos() {
     Set<Coleccion> colecciones = this.coleccionRepository.findAll();
-    Flux.fromIterable(colecciones).flatMap(
+    return Flux.fromIterable(colecciones).flatMap(
         coleccion -> {
           coleccion.getFuentes().forEach(this::cargarHechosEnFuente);
           coleccion.consensuarHechos(fuentes);

@@ -1,6 +1,7 @@
 package ar.edu.utn.frba.dds.servicioAgregador.services;
 
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Fuente;
+import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IHechoRepository;
 import ar.edu.utn.frba.dds.servicioAgregador.services.clients.APIFuenteClient;
 import lombok.Getter;
@@ -23,6 +24,11 @@ public class ConexionEstaticaDinamicaService implements ConexionFuenteService {
       hechoRepository.saveHechosDeFuente(fuenteMono);
       return Mono.empty();
     }).then();
+  }
+
+  @Override
+  public void postEliminado(Hecho hecho, Long idHecho) {
+    apiClient.postEliminado(hecho, Long idHecho);
   }
 
   ConexionEstaticaDinamicaService(APIFuenteClient apiClient) {
