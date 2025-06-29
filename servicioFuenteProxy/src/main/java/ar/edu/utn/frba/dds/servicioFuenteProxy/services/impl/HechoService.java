@@ -1,11 +1,14 @@
 package ar.edu.utn.frba.dds.servicioFuenteProxy.services.impl;
-
+import org.springframework.web.util.UriBuilder;
 import ar.edu.utn.frba.dds.servicioFuenteProxy.clients.IAPIClient;
+import ar.edu.utn.frba.dds.servicioFuenteProxy.clients.dtos.input.HechoInputDTO;
+import ar.edu.utn.frba.dds.servicioFuenteProxy.clients.dtos.input.MetaMapaResponse;
 import ar.edu.utn.frba.dds.servicioFuenteProxy.clients.dtos.output.HechoMapper;
 import ar.edu.utn.frba.dds.servicioFuenteProxy.clients.dtos.output.HechoOutputDTO;
 import ar.edu.utn.frba.dds.servicioFuenteProxy.services.IHechoService;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -24,6 +27,35 @@ public class HechoService implements IHechoService {
         this.hechoMapper = hechoMapper;
     }
 
+
+    @Override
+    public List<HechoInputDTO> getHechosExternos(
+            String categoria,
+            LocalDate fechaReporteDesde,
+            LocalDate fechaReporteHasta,
+            LocalDate fechaAcontecimientoDesde,
+            LocalDate fechaAcontecimientoHasta,
+            String ubicacion
+    ) {
+        return webClient
+                .get()
+                .uri(UriHelper.buildHechosUri(
+                        categoria,
+                        fechaReporteDesde,
+                        fechaReporteHasta,
+                        fechaAcontecimientoDesde,
+                        fechaAcontecimientoHasta,
+                        ubicacion
+                ))
+                .retrieve()
+                .bodyToMono(MetaMapaResponse.class)
+                .map(MetaMapaResponse::getHechos)
+                .block();
+    }
+}
+
+
+    /*
     @Override
     public List<HechoOutputDTO> getHechosExternos(
             String categoria,
@@ -49,7 +81,7 @@ public class HechoService implements IHechoService {
                 .toList();
     }
 }
-
+*/
 //TODO: encontrar una forma mas generica de recorrer los hechos segun criterio. Por ejemplo, que los filtros se reciban como una lista, y luego abstraer la parte que coincide: .filter(hecho -> hecho.algo)
 
 
