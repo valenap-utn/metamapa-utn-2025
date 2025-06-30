@@ -6,7 +6,9 @@ import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.Usuario;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.services.HechoServicio;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.Hecho;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.services.SolicitudServicio;
+import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.repositories.HechoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,6 +22,9 @@ public class HechoSolicitudController {
 
     @Autowired
     private HechoServicio hechoServicio;
+
+    @Autowired
+    private HechoRepository hechoRepository;
 
     @Autowired
     private SolicitudServicio solicitudServicio;
@@ -47,7 +52,6 @@ public class HechoSolicitudController {
         return hechoDTO;
     }
 
-
     @PutMapping("/hechos/{id}")
     public ResponseEntity<?> modificarHecho(@PathVariable Long id, @RequestBody HechoDTODinamica nuevosDatos) {
         try {
@@ -62,6 +66,20 @@ public class HechoSolicitudController {
         return ResponseEntity.ok(hechoServicio.revisarHecho(id, estado, comentario));
     }
 
+    @PutMapping("/hechos/{id}/eliminado")
+    public ResponseEntity<?> marcarHechoComoEliminado(@PathVariable Long id) {
+        Optional<Hecho> hechoOpt = hechoRepository.findById(id);
+
+        if (hechoOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Hecho no encontrado");
+        }
+
+        Hecho hecho = hechoOpt.get();
+        hecho.setEliminado(true);
+        hechoRepository.save(hecho);
+
+        return ResponseEntity.ok("Hecho marcado como eliminado");
+    }
 
     @PostMapping("/solicitudes")
     public ResponseEntity<Solicitud> crearSolicitud(@RequestParam Long hechoId, @RequestParam Usuario usuario, @RequestParam String contenido) {

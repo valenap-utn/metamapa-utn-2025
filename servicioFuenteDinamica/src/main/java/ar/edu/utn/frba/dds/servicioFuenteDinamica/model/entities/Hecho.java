@@ -9,6 +9,7 @@ import java.util.Set;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.enums.EstadoHecho;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
 
 
 public class Hecho {
@@ -38,7 +39,7 @@ public class Hecho {
     private boolean eliminado;
     @Setter
     @Getter
-    private ContenidoMultimedia contenidoMultimedia;
+    private MultipartFile contenidoMultimedia;
     @Getter
     private Set<String> etiquetas;
     @Getter

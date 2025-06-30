@@ -10,8 +10,6 @@ import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.repositories.SolicitudRe
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Service
 public class SolicitudServicio {
 
