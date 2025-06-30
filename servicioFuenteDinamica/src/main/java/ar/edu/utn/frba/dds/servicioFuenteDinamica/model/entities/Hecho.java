@@ -13,49 +13,21 @@ import org.springframework.web.multipart.MultipartFile;
 
 
 public class Hecho {
-    @Setter
-    @Getter
-    private String titulo;
-    @Setter
-    @Getter
-    private String descripcion;
-    @Setter
-    @Getter
-    private Categoria categoria;
-    @Setter
-    @Getter
-    private Ubicacion ubicacion;
-    @Setter
-    @Getter
-    private LocalDate fechaAcontecimiento;
-    @Setter
-    @Getter
-    private LocalDate fechaCarga;
-    @Setter
-    @Getter
-    private Origen origen;
-    @Setter
-    @Getter
-    private boolean eliminado;
-    @Setter
-    @Getter
-    private MultipartFile contenidoMultimedia;
-    @Getter
-    private Set<String> etiquetas;
-    @Getter
-    @Setter
-    private EstadoHecho estadoHecho;
-    @Setter
-    private String comentarioRevision;
-    @Setter
-    @Getter
-    private String contenido;
-    @Setter
-    @Getter
-    private Long id;
-    @Setter
-    @Getter
-    private boolean esAnonimo;
+    @Setter @Getter private String titulo;
+    @Setter @Getter private String descripcion;
+    @Setter @Getter private Categoria categoria;
+    @Setter @Getter private Ubicacion ubicacion;
+    @Setter @Getter private LocalDate fechaAcontecimiento;
+    @Setter @Getter private LocalDate fechaCarga;
+    @Setter @Getter private Origen origen;
+    @Setter @Getter private boolean eliminado;
+    @Setter @Getter private MultipartFile contenidoMultimedia;
+    @Getter private Set<String> etiquetas;
+    @Getter @Setter private EstadoHecho estadoHecho;
+    @Setter private String comentarioRevision;
+    @Setter @Getter private String contenido;
+    @Setter @Getter private Long id;
+    @Setter @Getter private boolean esAnonimo;
 
     public Hecho() {
         this.fechaCarga = LocalDate.now();

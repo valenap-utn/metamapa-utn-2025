@@ -2,12 +2,14 @@ package ar.edu.utn.frba.dds.servicioAgregador.services;
 
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Fuente;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
+import ar.edu.utn.frba.dds.servicioAgregador.model.entities.origenes.Origen;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IHechoRepository;
 import ar.edu.utn.frba.dds.servicioAgregador.services.clients.APIFuenteClient;
 import lombok.Getter;
 import reactor.core.publisher.Mono;
 
 public class ConexionEstaticaDinamicaService implements ConexionFuenteService {
+  private Origen origen;
   @Getter
   private final APIFuenteClient apiClient;
 

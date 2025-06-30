@@ -8,7 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 public class Hecho {
-    @Setter @Getter private String id;
+    @Setter @Getter private Long id;
     @Setter @Getter private String titulo;
     @Setter @Getter private String descripcion;
     @Setter @Getter private Categoria categoria;
@@ -17,11 +17,9 @@ public class Hecho {
     @Setter @Getter private LocalDate fechaCarga;
     @Setter @Getter private Origen origen;
     @Setter @Getter private boolean eliminado;
-//    @Setter @Getter private boolean tieneContenidoMultimedia;
-//    @Getter private Set<String> etiquetas;
+
 
     public Hecho(HechoValueObject infoHecho, Origen origen) {
-        this.id = UUID.randomUUID().toString();
         this.titulo = infoHecho.getTitulo();
         this.descripcion = infoHecho.getDescripcion();
         this.categoria = infoHecho.getCategoria();

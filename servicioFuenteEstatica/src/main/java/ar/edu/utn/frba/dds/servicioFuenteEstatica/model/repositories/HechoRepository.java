@@ -1,7 +1,5 @@
 package ar.edu.utn.frba.dds.servicioFuenteEstatica.model.repositories;
 
-import static com.fasterxml.jackson.databind.type.LogicalType.Collection;
-
 import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.entities.Hecho;
 import org.springframework.stereotype.Repository;
 
@@ -10,22 +8,34 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.UUID;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 @Repository
 public class HechoRepository implements IHechoRepository {
-
-  private final Map<String , Hecho> hechoPorID = new HashMap<>();
+  private final AtomicLong idGenerador = new AtomicLong(1);
+  private final Map<Long , Hecho> hechoPorID = new HashMap<>();
 
   @Override
   public void saveAll(Set<Hecho> setHechos) {
-    setHechos.forEach(hecho -> hechoPorID.put(hecho.getId(), hecho));
+    setHechos.forEach(this::saveHecho);
   }
 
   @Override
+  public void saveHecho(Hecho hecho) {
+    Long id = hecho.getId();
+    if(id == null) {
+      id = idGenerador.getAndIncrement();
+    }
+    hechoPorID.put(id, hecho);
+    hecho.setId(id);
+  }
+
+
+  @Override
   public Set<Hecho> findAll() {
-    return new HashSet<>(hechoPorID.values());
+    return new HashSet<>(hechoPorID.values()).stream()
+        .filter(hecho -> !hecho.isEliminado()).collect(Collectors.toSet());
   }
 
   @Override
@@ -43,7 +53,7 @@ public class HechoRepository implements IHechoRepository {
   }
 
   @Override
-  public Optional<Hecho> findByID(String id) {
+  public Optional<Hecho> findByID(Long id) {
     return Optional.ofNullable(hechoPorID.get(id));
   }
 

@@ -5,6 +5,7 @@ import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -43,6 +44,7 @@ public class HechoRepository implements IHechoRepository {
 //  public Set<Hecho> findAll() {
 //    return this.idsHechosPorFuente.values()
 //  }
+  @Override
   public Set<Hecho> findAll(){
     return this.idsHechosPorFuente.values().stream()
         .flatMap(idsHechos -> idsHechos.values().stream())
@@ -52,6 +54,6 @@ public class HechoRepository implements IHechoRepository {
   @Override
   public Set<Hecho> findByIDFuente(Long idFuente) {
     Map<Long, Hecho> idsHechoFuente = this.idsHechosPorFuente.get(idFuente);
-    return idsHechoFuente.values().stream().collect(Collectors.toSet());
+    return new HashSet<>(idsHechoFuente.values());
   }
 }

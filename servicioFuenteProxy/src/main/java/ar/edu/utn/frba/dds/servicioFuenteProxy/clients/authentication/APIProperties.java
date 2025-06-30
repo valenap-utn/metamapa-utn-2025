@@ -1,6 +1,7 @@
 package ar.edu.utn.frba.dds.servicioFuenteProxy.clients.authentication;
 
 import lombok.Data;
+import lombok.Getter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 

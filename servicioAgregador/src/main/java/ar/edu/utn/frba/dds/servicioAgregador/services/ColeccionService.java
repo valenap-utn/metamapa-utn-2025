@@ -28,29 +28,31 @@ import reactor.core.publisher.Mono;
 @Service
 public class ColeccionService implements IColeccionService{
   private final IColeccionRepository coleccionRepository;
-  private final Map<Origen, ConexionFuenteService> conexionFuentes;
+  private final IFuenteRepository fuenteRepository;
+  private final IFuenteProxyRepository fuenteEstaticaDinamicaRepository;
   private final IUserRepository userRepository;
   private final IHechoRepository hechoRepository;
   @Setter
   private MapColeccionOutput mapperColeccionOutput;
   @Setter
   private MapHechoOutput mapperHechoOutput;
+  private FactoryAlgoritmo algoritmoFactory;
 
   public ColeccionService(IColeccionRepository coleccionRepository,
                           IUserRepository userRepository,
                           IHechoRepository hechoRepository) {
     this.coleccionRepository = coleccionRepository;
-    this.conexionFuentes = new HashMap<>();
     this.userRepository = userRepository;
     this.hechoRepository = hechoRepository;
   }
+
 
   public void agregarConexionAFuente(Origen origenFuente, ConexionFuenteService conexionFuente) {
     this.conexionFuentes.put(origenFuente, conexionFuente);
   }
 
   @Override
-  public ColeccionDTOOutput crearColeccion(ColeccionDTOInput coleccionInput) {
+  public ColeccionDTOOutput crearColeccion(ColeccionDTOInput coleccionInput, String algoritmo) {
     Usuario usuarioSolicitante = this.userRepository.findById(coleccionInput.getUsuario());
     if(!usuarioSolicitante.tienePermisoDe(new PermisoCrearColeccion())) {
       throw new RuntimeException("Se debe tener permisos de administrador");
@@ -58,7 +60,6 @@ public class ColeccionService implements IColeccionService{
 
     Coleccion coleccionCreada = new Coleccion(coleccionInput.getNombre(), coleccionInput.getDescripcion());
     Set<Fuente> fuentes =  coleccionInput.getFuentes().stream().map(this::toFuente).collect(Collectors.toSet());
-    fuentes.forEach(this.hechoRepository::saveHechosDeFuente);
     coleccionCreada.agregarFuentes(fuentes);
 
     Coleccion coleccionGuardada = this.coleccionRepository.save(coleccionCreada);

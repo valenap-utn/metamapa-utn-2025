@@ -9,14 +9,12 @@ import lombok.Getter;
 import lombok.Setter;
 
 
-public class Fuente {
+public abstract class Fuente {
     @Getter private final Origen origen;
-    @Getter @Setter private String Tipo;
     @Getter private final Set<Hecho> hechos;
 
-    public Fuente(Origen origen, String tipo) {
+    public Fuente(Origen origen) {
         this.origen = origen;
-        this.Tipo = tipo;
         this.hechos = new HashSet<>();
     }
 
@@ -41,5 +39,6 @@ public class Fuente {
                         );
     }
 
+    public abstract void postEliminado(Hecho hecho, Long idHecho);
 }
 

@@ -8,10 +8,11 @@ import java.util.Map;
 import java.util.Optional;
 
 @Repository
-public class SolicitudRepository {
+public class SolicitudRepository implements ISolicitudRepository {
     private final Map<Long, Solicitud> solicitudes = new HashMap<>();
     private long idActual = 1L;
 
+    @Override
     public Solicitud save(Solicitud solicitud) {
         if (solicitud.getId() == null) {
             solicitud.setId(idActual++);
@@ -20,6 +21,7 @@ public class SolicitudRepository {
         return solicitud;
     }
 
+    @Override
     public Optional<Solicitud> findById(Long id) {
         return Optional.ofNullable(solicitudes.get(id));
     }

@@ -31,9 +31,10 @@ public class ColeccionController {
 
 
   @PostMapping
-  public ResponseEntity<ColeccionDTOOutput> crearColeccion(@RequestBody ColeccionDTOInput coleccion ) {
+  public ResponseEntity<ColeccionDTOOutput> crearColeccion(@RequestBody ColeccionDTOInput coleccion,
+                                                            @RequestParam(required = false) String algoritmo) {
     try {
-      return ResponseEntity.status(HttpStatus.CREATED).body(this.coleccionService.crearColeccion(coleccion));
+      return ResponseEntity.status(HttpStatus.CREATED).body(this.coleccionService.crearColeccion(coleccion, algoritmo));
     } catch (Exception e) {
       return ResponseEntity.badRequest().build();
     }

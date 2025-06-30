@@ -7,6 +7,8 @@ import ar.edu.utn.frba.dds.servicioFuenteEstatica.services.HechoService;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.stream.Collectors;
+
+import ar.edu.utn.frba.dds.servicioFuenteEstatica.services.IHechoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -33,10 +36,10 @@ public class HechoGlobalController {
     con el principio de responsabilidad única.
     => Si mañana cambiara de un repo en memoria a una base de datos real
                                                                    => mi controller ni se entera */
-  private final HechoService hechoService;
+  private final IHechoService hechoService;
 
   @Autowired
-  public HechoGlobalController(HechoService hechoService) {
+  public HechoGlobalController(IHechoService hechoService) {
     this.hechoService = hechoService;
   }
 
@@ -47,10 +50,19 @@ public class HechoGlobalController {
   *   Queremos eso dado que es mas RESTful y flexible
   * */
 
+  @PutMapping("/{id}")
+  public ResponseEntity<HechoDTOEstatica> eliminarHecho(@PathVariable Long id ) {
+    HechoDTOEstatica hecho = this.hechoService.marcarEliminadoHecho(id);
+    if(hecho == null){
+      return ResponseEntity.notFound().build();
+    }
+    return ResponseEntity.ok(hecho);
+  }
+
   @PostMapping("/importar")
   public ResponseEntity<String> importar(@RequestParam("archivo") MultipartFile archivo) {
     try {
-      Set<Hecho> hechosImportados = hechoService.importarDesdeCSV(archivo);
+      Set<HechoDTOEstatica> hechosImportados = hechoService.importarDesdeCSV(archivo);
       return ResponseEntity.ok("Importación exitosa. Se importaron " + hechosImportados.size() + " hechos.");
     } catch (IOException e) {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -60,20 +72,11 @@ public class HechoGlobalController {
 
   @GetMapping
   public ResponseEntity<Set<HechoDTOEstatica>> getAll() {
-    Set<HechoDTOEstatica> todosLosHechos = hechoService.obtenerTodos().stream()
-                                              .map(this::toHechoDTOEstatica)
-                                              .collect(Collectors.toSet());
+    Set<HechoDTOEstatica> todosLosHechos = hechoService.obtenerTodos();
     return todosLosHechos.isEmpty() ?
         ResponseEntity.noContent().build() : ResponseEntity.ok(todosLosHechos);
   }
 
-  @GetMapping("/{titulo}")
-  public ResponseEntity<Set<HechoDTOEstatica>> getByTitulo(@PathVariable("titulo") String titulo) {
-    Set<HechoDTOEstatica> encontrados = hechoService.buscarPorTitulo(titulo)
-                                            .map(this::toSetHechoDTOEstatica)
-                                            .orElse(new HashSet<>());
-    return encontrados.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(encontrados);
-  }
 
   @DeleteMapping
   public ResponseEntity<Void> eliminarTodo() {
@@ -81,20 +84,5 @@ public class HechoGlobalController {
     return ResponseEntity.noContent().build();
   }
 
-  public Set<HechoDTOEstatica> toSetHechoDTOEstatica(Set<Hecho> hechos) {
-    return hechos.stream().map(this::toHechoDTOEstatica).collect(Collectors.toSet());
-  }
-
-  public HechoDTOEstatica toHechoDTOEstatica(Hecho hecho) {
-    HechoDTOEstatica dto = new HechoDTOEstatica();
-    dto.setId(hecho.getId());
-    dto.setTitulo(hecho.getTitulo());
-    dto.setUbicacion(hecho.getUbicacion());
-    dto.setDescripcion(hecho.getDescripcion());
-    dto.setFechaAcontecimiento(hecho.getFechaAcontecimiento());
-    dto.setFechaCarga(hecho.getFechaCarga());
-    dto.setCategoria(hecho.getCategoria());
-    return dto;
-  }
 }
 

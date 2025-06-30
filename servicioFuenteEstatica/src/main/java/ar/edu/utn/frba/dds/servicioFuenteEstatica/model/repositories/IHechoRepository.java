@@ -4,16 +4,17 @@ import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.entities.Hecho;
 
 import java.util.Optional;
 import java.util.Set;
-import java.util.UUID;
 
 public interface IHechoRepository {
   // Para Hechos
-  void saveAll(Set<Hecho> hechos);
+  void saveAll(Set<Hecho> setHechos);
+
+  void saveHecho(Hecho hecho);
 
   Set<Hecho> findAll(); // GET /hechos
 
   Optional<Set<Hecho>> buscarPorTitulo(String titulo);
-  Optional<Hecho> findByID(String id);
+  Optional<Hecho> findByID(Long id);
 
   void clear();
 

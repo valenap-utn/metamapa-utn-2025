@@ -7,7 +7,7 @@ import java.util.List;
 import reactor.core.publisher.Mono;
 
 public interface IColeccionService {
-  public ColeccionDTOOutput crearColeccion(ColeccionDTOInput coleccion);
+  public ColeccionDTOOutput crearColeccion(ColeccionDTOInput coleccion, String  algoritmo);
   public Mono<Void> actualizarHechosColecciones();
 
   public List<ColeccionDTOOutput> getAllColecciones();

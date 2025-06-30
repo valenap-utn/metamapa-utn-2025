@@ -36,12 +36,12 @@ public abstract class APIFuenteClient {
   }
 
   public void postEliminado(Hecho hecho, Long idHecho) {
-
     Hecho hechocopia = Hecho.builder().id(idHecho).categoria(hecho.getCategoria())
             .descripcion(hecho.getDescripcion()).fechaAcontecimiento(hecho.getFechaAcontecimiento())
             .eliminado(hecho.isEliminado()).fechaCarga(hecho.getFechaCarga()).build();
-    this.webClient.post().uri(uriBuilder -> uriBuilder.path("/api/eliminados").build())
+    this.webClient.put().uri("/api/hechos/{id}", idHecho)
             .bodyValue(this.mapHechoOutput.toHechoDTO(hechocopia));
+
   }
 
 }
