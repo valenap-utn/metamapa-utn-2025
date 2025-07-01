@@ -7,6 +7,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface IHechoService {
+
+    void marcarComoEliminado(Long id);
+
     List<HechoOutputDTO> getHechosExternos(
             String categoria,
             Double latitud,

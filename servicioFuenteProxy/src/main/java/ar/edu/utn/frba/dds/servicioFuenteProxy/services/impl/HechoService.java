@@ -1,5 +1,4 @@
 package ar.edu.utn.frba.dds.servicioFuenteProxy.services.impl;
-import org.springframework.web.util.UriBuilder;
 import ar.edu.utn.frba.dds.servicioFuenteProxy.clients.IAPIClient;
 import ar.edu.utn.frba.dds.servicioFuenteProxy.clients.dtos.input.HechoInputDTO;
 import ar.edu.utn.frba.dds.servicioFuenteProxy.clients.dtos.input.MetaMapaResponse;
@@ -10,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 // para ser usado localmente y entregados hacia el Controller, que luego los entregara al Servicio Agregador
@@ -21,41 +21,19 @@ public class HechoService implements IHechoService {
     private final List<IAPIClient> apiClients;
     private final HechoMapper hechoMapper;
 
+    private final List<Long> hechosEliminados = new ArrayList<>();
+
+    public void marcarComoEliminado(Long id) {
+        if(!hechosEliminados.contains(id)) {
+            hechosEliminados.add(id);
+        }
+    }
 
     public HechoService(List<IAPIClient> apiClients, HechoMapper hechoMapper) {
         this.apiClients = apiClients;
         this.hechoMapper = hechoMapper;
     }
 
-
-    @Override
-    public List<HechoInputDTO> getHechosExternos(
-            String categoria,
-            LocalDate fechaReporteDesde,
-            LocalDate fechaReporteHasta,
-            LocalDate fechaAcontecimientoDesde,
-            LocalDate fechaAcontecimientoHasta,
-            String ubicacion
-    ) {
-        return webClient
-                .get()
-                .uri(UriHelper.buildHechosUri(
-                        categoria,
-                        fechaReporteDesde,
-                        fechaReporteHasta,
-                        fechaAcontecimientoDesde,
-                        fechaAcontecimientoHasta,
-                        ubicacion
-                ))
-                .retrieve()
-                .bodyToMono(MetaMapaResponse.class)
-                .map(MetaMapaResponse::getHechos)
-                .block();
-    }
-}
-
-
-    /*
     @Override
     public List<HechoOutputDTO> getHechosExternos(
             String categoria,
@@ -71,7 +49,8 @@ public class HechoService implements IHechoService {
                 .stream()
                 .flatMap(client -> client.getAllHechosExternos().stream()
                         .map(dto -> hechoMapper.toOutputDTO(dto, client.nombre())))
-                .filter( hecho -> categoria == null || hecho.getCategoria().equalsIgnoreCase(categoria))
+                .filter( hecho ->!hechosEliminados.contains(hecho.getId()))
+                .filter(hecho -> categoria == null || hecho.getCategoria().equalsIgnoreCase(categoria))
                 .filter(hecho -> latitud == null || hecho.getLatitud().equals(latitud))
                 .filter(hecho -> longitud == null || hecho.getLongitud().equals(longitud))
                 .filter(hecho -> fechaReporteDesde == null || hecho.getFechaCarga().isAfter(fechaReporteDesde))
@@ -81,7 +60,6 @@ public class HechoService implements IHechoService {
                 .toList();
     }
 }
-*/
 //TODO: encontrar una forma mas generica de recorrer los hechos segun criterio. Por ejemplo, que los filtros se reciban como una lista, y luego abstraer la parte que coincide: .filter(hecho -> hecho.algo)
 
 

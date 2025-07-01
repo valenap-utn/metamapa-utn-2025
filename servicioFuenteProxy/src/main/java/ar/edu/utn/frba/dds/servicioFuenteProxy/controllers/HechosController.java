@@ -4,16 +4,15 @@ import ar.edu.utn.frba.dds.servicioFuenteProxy.clients.dtos.input.HechoInputDTO;
 import ar.edu.utn.frba.dds.servicioFuenteProxy.clients.dtos.output.HechoOutputDTO;
 import ar.edu.utn.frba.dds.servicioFuenteProxy.services.IHechoService;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/hechos")
+
+
 public class HechosController {
 
     private final IHechoService hechoService;
@@ -35,6 +34,10 @@ public class HechosController {
         );
     }
 
+    @PutMapping("/{id}/eliminar")
+    public void eliminarHecho(@PathVariable Long id) {
+        hechoService.marcarComoEliminado(id);
+    }
 
 
 }
