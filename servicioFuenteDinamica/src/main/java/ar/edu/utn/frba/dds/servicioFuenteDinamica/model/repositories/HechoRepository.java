@@ -1,5 +1,6 @@
 package ar.edu.utn.frba.dds.servicioFuenteDinamica.model.repositories;
 
+import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.enums.Estado;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.enums.EstadoHecho;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.Hecho;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.services.ISolicitudServicio;
@@ -17,9 +18,9 @@ public class HechoRepository implements IHechoRepository {
     private long idActual = 1L;
 
     @Override
-    public List<Hecho> findByEstadoIn(List<EstadoHecho> estados) {
+    public List<Hecho> findByEstadoIn(List<Estado> estados) {
         return hechos.values().stream()
-                .filter(hecho -> estados.contains(hecho.getEstadoHecho()))
+                .filter(hecho -> estados.contains(hecho.getEstado()))
                 .collect(Collectors.toList());
     }
 

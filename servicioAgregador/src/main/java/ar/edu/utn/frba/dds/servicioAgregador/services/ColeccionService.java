@@ -3,7 +3,7 @@ package ar.edu.utn.frba.dds.servicioAgregador.services;
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.ColeccionDTOInput;
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.ColeccionDTOOutput;
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.ConjuntoHechoCompleto;
-import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.FuenteDTO;
+import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.FiltroDTO;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Coleccion;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Fuente;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
@@ -16,9 +16,7 @@ import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IHechoRepository
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IUserRepository;
 import ar.edu.utn.frba.dds.servicioAgregador.services.mappers.MapColeccionOutput;
 import ar.edu.utn.frba.dds.servicioAgregador.services.mappers.MapHechoOutput;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.Setter;
@@ -96,15 +94,21 @@ public class ColeccionService implements IColeccionService{
   }
 
   @Override
-  public ConjuntoHechoCompleto getHechosPorColeccion(String idColeccion) {
+  public ConjuntoHechoCompleto getHechosPorColeccion(String idColeccion, FiltroDTO filtro) {
     Coleccion coleccion = this.coleccionRepository.findById(idColeccion);
-    coleccion.getFuentes().forEach(this::cargarHechosEnFuente);
+    coleccion.getFuentes().forEach(fuente -> this.cargarHechosEnFuente(fuente, filtro));
     List<Hecho> hechos = coleccion.getHechos().stream().filter(hecho -> !hecho.isEliminado()).toList();
     return this.mapperHechoOutput.toConjuntoHechoDTOOutput(hechos);
   }
 
-  private void cargarHechosEnFuente(Fuente fuente) {
-   fuente.cargarHechosEnFuente().subscribe();
+  private void cargarHechosEnFuente(Fuente fuente, FiltroDTO filtro) {
+    List<Hecho> hechos;
+    if(!filtro.getEntiemporeal()) {
+      hechos = this.hechoRepository.findByOrigen(fuente.getOrigen());
+    } else  {
+      hechos = fuente.getHechosEnTiempoReal(filtro);
+    }
+    fuente.actualizarHechos(hechos);
   }
 
   public Mono<Void> consensuarHechos() {

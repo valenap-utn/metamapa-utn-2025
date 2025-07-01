@@ -1,6 +1,8 @@
 package ar.edu.utn.frba.dds.servicioFuenteDinamica.services;
 
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos.HechoDTODinamica;
+import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.RevisarEstado;
+import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.enums.Estado;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.enums.EstadoHecho;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.Hecho;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.repositories.HechoRepository;
@@ -19,7 +21,7 @@ public class HechoServicio implements IHechoServicio {
 
     @Autowired
     private IHechoRepository hechoRepository;
-
+    private RevisarEstado revisadorHechosSolicitud;
     @Override
     public Hecho crearHecho(HechoDTODinamica input, MultipartFile contenidoMultimedia) {
         Hecho hecho = new Hecho();
@@ -29,13 +31,13 @@ public class HechoServicio implements IHechoServicio {
         if (!contenidoMultimedia.isEmpty()) {
             hecho.setContenidoMultimedia(contenidoMultimedia);
         }
-        hecho.setEstadoHecho(EstadoHecho.PENDIENTE_REVISION);
+        hecho.setEstado(Estado.EN_REVISION);
         return hechoRepository.save(hecho);
     }
 
     @Override
     public List<Hecho> obtenerHechosPublicos() {
-        return hechoRepository.findByEstadoIn(List.of(EstadoHecho.ACEPTADO, EstadoHecho.ACEPTADO_CON_CAMBIOS));
+        return hechoRepository.findByEstadoIn(List.of(Estado.ACEPTADA, Estado.ACEPTADA_CON_CAMBIOS));
     }
 
     @Override
@@ -53,9 +55,7 @@ public class HechoServicio implements IHechoServicio {
     @Override
     public Hecho revisarHecho(Long id, String estadoStr, String comentario) {
         Hecho hecho = hechoRepository.findById(id).orElseThrow(() -> new RuntimeException("Hecho no encontrado"));
-        EstadoHecho estado = EstadoHecho.valueOf(estadoStr);
-        hecho.setEstadoHecho(estado);
-        hecho.setComentarioRevision(comentario);
+        this.revisadorHechosSolicitud.revisar(hecho, estadoStr, comentario);
         return hechoRepository.save(hecho);
     }
 }

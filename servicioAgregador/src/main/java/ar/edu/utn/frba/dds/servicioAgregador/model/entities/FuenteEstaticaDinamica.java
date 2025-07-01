@@ -17,16 +17,16 @@ public class FuenteEstaticaDinamica extends Fuente {
     this.apiClient = apiClient;
   }
 
-  public Mono<Void> cargarHechosEnFuente((String categoria,
+  public List<Hecho> getHechosEnTiempoReal(String categoria,
                                          LocalDate fecha_reporte_desde,
                                          LocalDate fecha_reporte_hasta,
                                          LocalDate fecha_acontecimiento_desde,
                                          LocalDate fecha_acontecimiento_hasta,
                                          Float latitud,
-                                         Float longitud, List<Hecho> hechos) {
-    this.actualizarHechos(hechos);
+                                         Float longitud) {
     return Mono.empty();
   }
+
 
   public Mono<Fuente> actualizarHechosFuente() {
     return this.apiClient.setFuenteConHechosAPI(this);

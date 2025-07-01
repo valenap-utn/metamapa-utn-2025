@@ -3,6 +3,8 @@ package ar.edu.utn.frba.dds.servicioAgregador.model.repositories;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Fuente;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.origenes.Origen;
 import ar.edu.utn.frba.dds.servicioAgregador.services.ConexionFuenteService;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
@@ -25,5 +27,10 @@ public class FuenteRepository implements IFuenteRepository {
 
   public Fuente findByOrigen(Origen origen) {
     return this.fuentes.get(origen);
+  }
+
+  @Override
+  public List<Fuente> findAll() {
+    return this.fuentes.values().stream().toList();
   }
 }

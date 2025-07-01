@@ -1,6 +1,7 @@
 package ar.edu.utn.frba.dds.servicioAgregador.model.entities;
 
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.ConjuntoHechoProxy;
+import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.FiltroDTO;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.origenes.Origen;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IHechoRepository;
 import ar.edu.utn.frba.dds.servicioAgregador.services.mappers.MapHechoOutput;
@@ -28,13 +29,13 @@ public class FuenteProxy extends Fuente{
   }
 
   @Override
-  public Mono<Void> cargarHechosEnFuente(String categoria,
+  public Mono<Void> cargarHechosEnTiempoReal(String categoria,
                                          LocalDate fecha_reporte_desde,
                                          LocalDate fecha_reporte_hasta,
                                          LocalDate fecha_acontecimiento_desde,
                                          LocalDate fecha_acontecimiento_hasta,
                                          Float latitud,
-                                         Float longitud, List<Hecho> hechos) {
+                                         Float longitud) {
     return this.webClient.get()
         .uri(uriBuilder -> uriBuilder.path("/api/hechos")
             .queryParam("categoria", categoria)
@@ -54,8 +55,26 @@ public class FuenteProxy extends Fuente{
   }
 
   @Override
-  public Mono<Void> actualizarHechosFuente(Fuente _fuente, IHechoRepository _hechoRepository) {
-    return Mono.empty();
+  public Mono<Fuente> actualizarHechosFuente() {
+    return this.webClient.get()
+            .uri(uriBuilder -> uriBuilder.path("/api/hechos")
+                    .build())
+            .retrieve().bodyToMono(ConjuntoHechoProxy.class).map(
+                    response -> {
+                      Set<Hecho> hechos = response.getHechos().stream().map(this.getMapper()::toHechoFrom).collect(Collectors.toSet());
+                      this.actualizarHechos(hechos);
+                      return this;
+                    });
+  }
+
+  @Override
+  public Mono<Void> cargarHechosEnFuente() {
+    return null;
+  }
+
+  @Override
+  public List<Hecho> getHechosEnTiempoReal(FiltroDTO filtroDTO) {
+    return List.of();
   }
 
   @Override

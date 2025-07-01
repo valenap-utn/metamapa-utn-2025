@@ -1,14 +1,13 @@
 package ar.edu.utn.frba.dds.servicioAgregador.model.entities;
 
+import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.FiltroDTO;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.origenes.Origen;
-import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IHechoRepository;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import lombok.Getter;
-import lombok.Setter;
 import reactor.core.publisher.Mono;
 
 
@@ -43,13 +42,8 @@ public abstract class Fuente {
     }
 
     public abstract void postEliminado(Hecho hecho, Long idHecho);
-    public abstract Mono<Void> actualizarHechosFuente();
-    public abstract Mono<Void> cargarHechosEnFuente(String categoria,
-                                           LocalDate fecha_reporte_desde,
-                                           LocalDate fecha_reporte_hasta,
-                                           LocalDate fecha_acontecimiento_desde,
-                                           LocalDate fecha_acontecimiento_hasta,
-                                           Float latitud,
-                                           Float longitud, List<Hecho> hechos);
+    public abstract Mono<Fuente> actualizarHechosFuente();
+    public abstract Mono<Void> cargarHechosEnFuente();
+    public abstract List<Hecho> getHechosEnTiempoReal(FiltroDTO filtroDTO);
 }
 

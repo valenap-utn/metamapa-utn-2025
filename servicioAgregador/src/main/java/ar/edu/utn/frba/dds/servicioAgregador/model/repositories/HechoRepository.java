@@ -2,10 +2,12 @@ package ar.edu.utn.frba.dds.servicioAgregador.model.repositories;
 
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
 
+import ar.edu.utn.frba.dds.servicioAgregador.model.entities.origenes.Origen;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -24,6 +26,11 @@ public class HechoRepository implements IHechoRepository {
       hecho.setId(id);
     }
     this.idsHechos.put(id, hecho);
+  }
+
+  @Override
+  public List<Hecho> findByOrigen(Origen origen) {
+    return this.idsHechos.values().stream().filter(e -> e.getOrigen().equals(origen)).toList();
   }
 
 

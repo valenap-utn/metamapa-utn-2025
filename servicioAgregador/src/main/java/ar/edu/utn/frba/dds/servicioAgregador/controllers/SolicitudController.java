@@ -27,7 +27,7 @@ public class SolicitudController {
     } catch (SolicitudError se) {
       ErrorOutputDTO error = new ErrorOutputDTO();
       error.setMensaje(se.getMessage());
-      return ResponseEntity.badRequest().body(error);
+      return ResponseEntity.badRequest().build();
     }
   }
 

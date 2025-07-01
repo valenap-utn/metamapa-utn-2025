@@ -5,12 +5,14 @@ import ar.edu.utn.frba.dds.servicioAgregador.model.entities.roles.Rol;
 import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 public class Usuario {
+  @Getter
   private Long id;
   private String nombre;
   private String apellido;

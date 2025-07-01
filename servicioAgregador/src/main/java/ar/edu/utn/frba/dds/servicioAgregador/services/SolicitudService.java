@@ -8,7 +8,9 @@ import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Solicitud;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Usuario;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.origenes.Origen;
+import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IFuenteRepository;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IHechoRepository;
+import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IHechosExternosRepository;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.ISolicitudRepository;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.UserRepository;
 import java.util.Map;
@@ -20,18 +22,19 @@ public class SolicitudService implements ISolicitudService {
     private final ISolicitudRepository repo;
     private final IHechoRepository hechoRepository;
     private final UserRepository userRepository;
-    private final Map<Origen, ConexionFuenteService> conexionFuentes;
-    private final Map<Long, Long> idsHechosDeFuentes;
+    private final IFuenteRepository fuenteRepository;
+    private final IHechosExternosRepository idHechosExternos;
 
-    public SolicitudService(ISolicitudRepository repo, FactoryDetectorDeSpam detectorDeSpamFactory, IHechoRepository hechoRepository, UserRepository userRepository, Map<Origen, ConexionFuenteService> conexionFuentes) {
+    public SolicitudService(ISolicitudRepository repo, FactoryDetectorDeSpam detectorDeSpamFactory, IHechoRepository hechoRepository, UserRepository userRepository, Map<Origen, ConexionFuenteService> conexionFuentes, IHechosExternosRepository idHechosExternos) {
         this.repo = repo;
         this.detectorDeSpamFactory = detectorDeSpamFactory;
       this.hechoRepository = hechoRepository;
       this.userRepository = userRepository;
       this.conexionFuentes = conexionFuentes;
+      this.idHechosExternos = idHechosExternos;
     }
 
-    public Solicitud crearSolicitud(SolicitudInputDTO solicitudInput) {
+    public SolicitudOutputDTO crearSolicitud(SolicitudInputDTO solicitudInput) {
         Hecho hecho = this.hechoRepository.findById(solicitudInput.getIdHecho());
         Usuario user = this.userRepository.findById(solicitudInput.getIdusuario());
         Solicitud solicitud = new Solicitud(hecho, user, solicitudInput.getJustificacion());
@@ -42,11 +45,20 @@ public class SolicitudService implements ISolicitudService {
             solicitud.rechazar();
             throw new SolicitudError("Justificacion Con Spam");
         } else {
-            this.conexionFuentes.get(hecho.getOrigen()).postEliminado(hecho, this.idsHechosDeFuentes.get(hecho.getId()));
+            this.fuenteRepository.findByOrigen(hecho.getOrigen()).postEliminado(hecho, this.idHechosExternos.findIDFuente(hecho.getId()));
         }
 
         repo.save(solicitud);
-        return new SolicitudOutputDTO().setIdHecho();
+        return this.toSolicitudOutputDTO(solicitud);
+    }
+
+
+    private SolicitudOutputDTO toSolicitudOutputDTO(Solicitud solicitud) {
+        SolicitudOutputDTO solicitudOutputDTO = new SolicitudOutputDTO();
+        solicitudOutputDTO.setIdHecho(solicitud.getHecho().getId());
+        solicitudOutputDTO.setJustificacion(solicitud.getJustificacion());
+        solicitudOutputDTO.setIdusuario(solicitud.getUsuario().getId());
+        return solicitudOutputDTO;
     }
 
     public void aceptarSolicitud(Solicitud solicitud) {

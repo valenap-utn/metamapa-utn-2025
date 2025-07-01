@@ -1,11 +1,11 @@
 package ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities;
 
-import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.enums.EstadoSolicitud;
+import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.enums.Estado;
 import lombok.Getter;
 import lombok.Setter;
 
 
-public class Solicitud {
+public class Solicitud implements Revisable{
     @Getter
     @Setter
     private Hecho hecho;
@@ -14,7 +14,7 @@ public class Solicitud {
     private String justificacion;
     @Setter
     @Getter
-    private EstadoSolicitud estado;
+    private Estado estado;
     @Getter
     private Usuario usuario;
     @Getter
@@ -25,7 +25,11 @@ public class Solicitud {
         this.usuario = usuario;
         this.hecho = hecho;
         this.justificacion = justificacion;
-        this.estado = EstadoSolicitud.EN_REVISION;
+        this.estado = Estado.EN_REVISION;
     }
 
+    @Override
+    public void setComentarioRevision(String comentario) {
+        this.justificacion = comentario;
+    }
 }

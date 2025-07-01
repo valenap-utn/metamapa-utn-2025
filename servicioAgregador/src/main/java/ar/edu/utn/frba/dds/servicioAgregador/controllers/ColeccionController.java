@@ -3,6 +3,7 @@ package ar.edu.utn.frba.dds.servicioAgregador.controllers;
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.ColeccionDTOInput;
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.ColeccionDTOOutput;
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.ConjuntoHechoCompleto;
+import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.FiltroDTO;
 import ar.edu.utn.frba.dds.servicioAgregador.services.IColeccionService;
 
 import java.time.LocalDate;
@@ -58,12 +59,34 @@ public class ColeccionController {
                                          @RequestParam(required = false) @DateTimeFormat(pattern = "ddmmyyyy") LocalDate fecha_acontecimiento_hasta,
                                          @RequestParam(required = false) Float latitud,
                                          @RequestParam(required = false) Float longitud,
-                                                         @RequestParam(required = false) boolean curada) {
+                                                         @RequestParam(required = false) boolean curada,
+                                          @RequestParam(required = false) boolean entiemporeal) {
     try {
-      return ResponseEntity.ok(this.coleccionService.getHechosPorColeccion(id)) ;
+      FiltroDTO filtro = this.toFiltroDTO(categoria, fecha_reporte_desde, fecha_reporte_hasta, fecha_acontecimiento_desde, fecha_acontecimiento_hasta,
+              latitud, longitud, curada, entiemporeal);
+      return ResponseEntity.ok(this.coleccionService.getHechosPorColeccion(id, filtro)) ;
     } catch (Exception e) {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
 
   }
+
+  private FiltroDTO toFiltroDTO(String categoria, LocalDate fecha_reporte_desde, LocalDate fecha_reporte_hasta,
+                                LocalDate fecha_acontecimiento_desde, LocalDate fecha_acontecimiento_hasta,
+                                Float latitud, Float longitud, Boolean curada, Boolean entiemporeal) {
+    FiltroDTO filtro = new FiltroDTO();
+    filtro.setCategoria(categoria);
+    filtro.setFecha_reporte_desde(fecha_reporte_desde);
+    filtro.setFecha_reporte_hasta(fecha_reporte_hasta);
+    filtro.setFecha_acontecimiento_desde(fecha_acontecimiento_desde);
+    filtro.setFecha_acontecimiento_hasta(fecha_acontecimiento_hasta);
+    filtro.setLatitud(latitud);
+    filtro.setLongitud(longitud);
+    filtro.setCurada(curada);
+    filtro.setEntiemporeal(entiemporeal);
+    return  filtro;
+  }
+
 }
+
+
