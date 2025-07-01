@@ -11,6 +11,7 @@ import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Usuario;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.origenes.Origen;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.roles.PermisoCrearColeccion;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IColeccionRepository;
+import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IFuenteRepository;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IHechoRepository;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IUserRepository;
 import ar.edu.utn.frba.dds.servicioAgregador.services.mappers.MapColeccionOutput;
@@ -40,15 +41,19 @@ public class ColeccionService implements IColeccionService{
 
   public ColeccionService(IColeccionRepository coleccionRepository,
                           IUserRepository userRepository,
-                          IHechoRepository hechoRepository) {
+                          IHechoRepository hechoRepository,
+                          IFuenteRepository fuenteRepository,
+                          FactoryAlgoritmo algoritmoFactory) {
     this.coleccionRepository = coleccionRepository;
     this.userRepository = userRepository;
     this.hechoRepository = hechoRepository;
+    this.fuenteRepository = fuenteRepository;
+    this.algoritmoFactory = algoritmoFactory;
   }
 
 
-  public void agregarConexionAFuente(Origen origenFuente, ConexionFuenteService conexionFuente) {
-    this.conexionFuentes.put(origenFuente, conexionFuente);
+  public void agregarConexionAFuente(Origen origenFuente, Fuente fuente) {
+    this.fuenteRepository.save(origenFuente, fuente);
   }
 
   @Override
@@ -58,16 +63,12 @@ public class ColeccionService implements IColeccionService{
       throw new RuntimeException("Se debe tener permisos de administrador");
     }
 
-    Coleccion coleccionCreada = new Coleccion(coleccionInput.getNombre(), coleccionInput.getDescripcion());
+    Coleccion coleccionCreada = new Coleccion(coleccionInput.getNombre(), coleccionInput.getDescripcion(), this.algoritmoFactory.getAlgoritmo(algoritmo));
     Set<Fuente> fuentes =  coleccionInput.getFuentes().stream().map(this::toFuente).collect(Collectors.toSet());
     coleccionCreada.agregarFuentes(fuentes);
 
     Coleccion coleccionGuardada = this.coleccionRepository.save(coleccionCreada);
     return this.mapperColeccionOutput.toColeccionDTOOutput(coleccionGuardada);
-  }
-
-  private Fuente toFuente(FuenteDTO fuenteInput) {
-    return new Fuente(fuenteInput.getOrigen(), fuenteInput.getTipo());
   }
 
   @Override
@@ -85,8 +86,7 @@ public class ColeccionService implements IColeccionService{
   }
 
   private Mono<Void> actualizarHechosPorFuente(Fuente fuente) {
-    ConexionFuenteService conexionFuenteService = this.conexionFuentes.get(fuente.getOrigen());
-    return conexionFuenteService.actualizarHechosFuente(fuente, this.hechoRepository);
+    return fuente.actualizarHechosFuente();
   }
 
   @Override
@@ -104,15 +104,14 @@ public class ColeccionService implements IColeccionService{
   }
 
   private void cargarHechosEnFuente(Fuente fuente) {
-   ConexionFuenteService conexion =  this.conexionFuentes.get(fuente.getOrigen());
-   conexion.cargarHechosEnFuente(fuente, this.hechoRepository).subscribe();
+   fuente.cargarHechosEnFuente().subscribe();
   }
 
   public Mono<Void> consensuarHechos() {
     Set<Coleccion> colecciones = this.coleccionRepository.findAll();
+    List<Fuente> fuentes = this.fuenteRepository.findAll();
     return Flux.fromIterable(colecciones).flatMap(
         coleccion -> {
-          coleccion.getFuentes().forEach(this::cargarHechosEnFuente);
           coleccion.consensuarHechos(fuentes);
           return Mono.empty();
         }

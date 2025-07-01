@@ -3,6 +3,7 @@ package ar.edu.utn.frba.dds.servicioAgregador.model.entities;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.origenes.Origen;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IHechoRepository;
 import ar.edu.utn.frba.dds.servicioAgregador.services.clients.APIFuenteClient;
+import java.time.LocalDate;
 import lombok.Getter;
 import reactor.core.publisher.Mono;
 
@@ -16,7 +17,13 @@ public class FuenteEstaticaDinamica extends Fuente {
     this.apiClient = apiClient;
   }
 
-  public Mono<Void> cargarHechosEnFuente(List<Hecho> hechos) {
+  public Mono<Void> cargarHechosEnFuente((String categoria,
+                                         LocalDate fecha_reporte_desde,
+                                         LocalDate fecha_reporte_hasta,
+                                         LocalDate fecha_acontecimiento_desde,
+                                         LocalDate fecha_acontecimiento_hasta,
+                                         Float latitud,
+                                         Float longitud, List<Hecho> hechos) {
     this.actualizarHechos(hechos);
     return Mono.empty();
   }

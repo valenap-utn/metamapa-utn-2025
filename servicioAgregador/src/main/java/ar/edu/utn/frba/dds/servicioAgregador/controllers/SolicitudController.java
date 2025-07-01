@@ -3,6 +3,7 @@ package ar.edu.utn.frba.dds.servicioAgregador.controllers;
 import ar.edu.utn.frba.dds.servicioAgregador.exceptions.SolicitudError;
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.ErrorOutputDTO;
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.SolicitudInputDTO;
+import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.SolicitudOutputDTO;
 import ar.edu.utn.frba.dds.servicioAgregador.services.ISolicitudService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

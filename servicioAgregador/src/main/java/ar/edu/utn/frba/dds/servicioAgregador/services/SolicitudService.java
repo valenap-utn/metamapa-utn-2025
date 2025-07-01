@@ -2,6 +2,7 @@ package ar.edu.utn.frba.dds.servicioAgregador.services;
 
 import ar.edu.utn.frba.dds.servicioAgregador.exceptions.SolicitudError;
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.SolicitudInputDTO;
+import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.SolicitudOutputDTO;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.deteccionDeSpam.DetectorDeSpam;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Solicitud;
@@ -45,7 +46,7 @@ public class SolicitudService implements ISolicitudService {
         }
 
         repo.save(solicitud);
-        return solicitud;
+        return new SolicitudOutputDTO().setIdHecho();
     }
 
     public void aceptarSolicitud(Solicitud solicitud) {

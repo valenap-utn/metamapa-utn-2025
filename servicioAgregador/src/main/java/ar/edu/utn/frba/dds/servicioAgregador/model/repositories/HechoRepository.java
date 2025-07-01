@@ -1,59 +1,39 @@
 package ar.edu.utn.frba.dds.servicioAgregador.model.repositories;
 
-import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Fuente;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
 
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.concurrent.atomic.AtomicLong;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class HechoRepository implements IHechoRepository {
-  private final Map<Long, Map<Long, Hecho>> idsHechosPorFuente;
+  private final AtomicLong idGenerator = new AtomicLong(1);
+  private final Map<Long, Hecho> idsHechos;
 
   public HechoRepository() {
-    this.idsHechosPorFuente = new HashMap<>();
+    this.idsHechos = new HashMap<>();
   }
 
-  @Override
-  public Fuente saveHechosDeFuente(Fuente fuente) {
-    Map<Long, Hecho> idsHechoFuente = this.idsHechosPorFuente.get(fuente.getId());
-    if (idsHechoFuente == null) {
-      idsHechoFuente = new HashMap<>();
+  public void saveHecho(Hecho hecho) {
+    Long id = hecho.getId();
+    if(id == null) {
+      id = idGenerator.getAndIncrement();
+      hecho.setId(id);
     }
-    Map<Long, Hecho> finalIdsHechoFuente = idsHechoFuente;
-    fuente.getHechos().forEach(hecho -> this.saveHecho(finalIdsHechoFuente, hecho));
-    return fuente;
-  }
-
-  private void saveHecho(Map<Long, Hecho> idsHechoFuente, Hecho hecho) {
-    idsHechoFuente.put(hecho.getId(), hecho);
+    this.idsHechos.put(id, hecho);
   }
 
 
   @Override
-  public Fuente findById(Long id) {
-    return null;
-  }
-
-//  @Override
-//  public Set<Hecho> findAll() {
-//    return this.idsHechosPorFuente.values()
-//  }
-  @Override
-  public Set<Hecho> findAll(){
-    return this.idsHechosPorFuente.values().stream()
-        .flatMap(idsHechos -> idsHechos.values().stream())
-        .collect(Collectors.toSet());
+  public Hecho findById(Long id) {
+    return this.idsHechos.get(id);
   }
 
   @Override
-  public Set<Hecho> findByIDFuente(Long idFuente) {
-    Map<Long, Hecho> idsHechoFuente = this.idsHechosPorFuente.get(idFuente);
-    return new HashSet<>(idsHechoFuente.values());
+  public List<Hecho> findAll(){
+    return this.idsHechos.values().stream().toList();
   }
 }

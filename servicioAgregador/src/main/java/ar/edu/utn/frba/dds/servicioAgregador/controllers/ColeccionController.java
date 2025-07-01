@@ -57,7 +57,8 @@ public class ColeccionController {
                                          @RequestParam(required = false) @DateTimeFormat(pattern = "ddmmyyyy") LocalDate fecha_acontecimiento_desde,
                                          @RequestParam(required = false) @DateTimeFormat(pattern = "ddmmyyyy") LocalDate fecha_acontecimiento_hasta,
                                          @RequestParam(required = false) Float latitud,
-                                         @RequestParam(required = false) Float longitud) {
+                                         @RequestParam(required = false) Float longitud,
+                                                         @RequestParam(required = false) boolean curada) {
     try {
       return ResponseEntity.ok(this.coleccionService.getHechosPorColeccion(id)) ;
     } catch (Exception e) {

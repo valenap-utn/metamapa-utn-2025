@@ -5,6 +5,7 @@ import ar.edu.utn.frba.dds.servicioAgregador.model.entities.origenes.Origen;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IHechoRepository;
 import ar.edu.utn.frba.dds.servicioAgregador.services.mappers.MapHechoOutput;
 import ar.edu.utn.frba.dds.servicioAgregador.services.mappers.MapperAPIClient;
+import java.util.List;
 import lombok.Getter;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -33,7 +34,7 @@ public class FuenteProxy extends Fuente{
                                          LocalDate fecha_acontecimiento_desde,
                                          LocalDate fecha_acontecimiento_hasta,
                                          Float latitud,
-                                         Float longitud) {
+                                         Float longitud, List<Hecho> hechos) {
     return this.webClient.get()
         .uri(uriBuilder -> uriBuilder.path("/api/hechos")
             .queryParam("categoria", categoria)
