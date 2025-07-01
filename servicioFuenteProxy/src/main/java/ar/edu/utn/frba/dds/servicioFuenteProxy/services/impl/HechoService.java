@@ -49,7 +49,7 @@ public class HechoService implements IHechoService {
                 .stream()
                 .flatMap(client -> client.getAllHechosExternos().stream()
                         .map(dto -> hechoMapper.toOutputDTO(dto, client.nombre())))
-                .filter( hecho ->!hechosEliminados.contains(hecho.getId()))
+                .filter( hecho ->!hechosEliminados.contains(hecho.getId())) // si hay un if client.nombre().equalsIgnoreCase("Desastres Naturales") tiene que ir aca
                 .filter(hecho -> categoria == null || hecho.getCategoria().equalsIgnoreCase(categoria))
                 .filter(hecho -> latitud == null || hecho.getLatitud().equals(latitud))
                 .filter(hecho -> longitud == null || hecho.getLongitud().equals(longitud))

@@ -1,5 +1,6 @@
 package ar.edu.utn.frba.dds.servicioFuenteProxy.controllers;
 
+import ar.edu.utn.frba.dds.servicioFuenteProxy.clients.IAPIClient;
 import ar.edu.utn.frba.dds.servicioFuenteProxy.clients.dtos.input.HechoInputDTO;
 import ar.edu.utn.frba.dds.servicioFuenteProxy.clients.dtos.output.HechoOutputDTO;
 import ar.edu.utn.frba.dds.servicioFuenteProxy.services.IHechoService;
@@ -35,8 +36,11 @@ public class HechosController {
     }
 
     @PutMapping("/{id}/eliminar")
-    public void eliminarHecho(@PathVariable Long id) {
-        hechoService.marcarComoEliminado(id);
+    public void eliminarHecho(@PathVariable Long id, IAPIClient client) {
+        if(client.nombre().name().equals("DESASTRES_NATURALES")){
+            hechoService.marcarComoEliminado(id);
+        } else throw new UnsupportedOperationException("El cliente no admite solicitudes de eliminaciòn");
+
     }
 
 
