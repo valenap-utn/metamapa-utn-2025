@@ -8,7 +8,7 @@ import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Solicitud;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Usuario;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.origenes.Origen;
-import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IFuenteRepository;
+import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IFuenteEstaticaDinamicaRepository;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IHechoRepository;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IHechosExternosRepository;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.ISolicitudRepository;
@@ -22,7 +22,7 @@ public class SolicitudService implements ISolicitudService {
     private final ISolicitudRepository repo;
     private final IHechoRepository hechoRepository;
     private final UserRepository userRepository;
-    private final IFuenteRepository fuenteRepository;
+    private final IFuenteEstaticaDinamicaRepository fuenteRepository;
     private final IHechosExternosRepository idHechosExternos;
 
     public SolicitudService(ISolicitudRepository repo, FactoryDetectorDeSpam detectorDeSpamFactory, IHechoRepository hechoRepository, UserRepository userRepository, Map<Origen, ConexionFuenteService> conexionFuentes, IHechosExternosRepository idHechosExternos) {

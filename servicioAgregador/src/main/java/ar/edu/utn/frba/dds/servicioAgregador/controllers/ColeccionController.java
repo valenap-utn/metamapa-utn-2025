@@ -15,11 +15,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import reactor.core.publisher.Mono;
 
 @RestController
 @RequestMapping("api/colecciones")
@@ -32,14 +32,26 @@ public class ColeccionController {
 
 
   @PostMapping
-  public ResponseEntity<ColeccionDTOOutput> crearColeccion(@RequestBody ColeccionDTOInput coleccion,
-                                                            @RequestParam(required = false) String algoritmo) {
+  public ResponseEntity<ColeccionDTOOutput> crearColeccion(@RequestBody ColeccionDTOInput coleccion) {
     try {
-      return ResponseEntity.status(HttpStatus.CREATED).body(this.coleccionService.crearColeccion(coleccion, algoritmo));
+      return ResponseEntity.status(HttpStatus.CREATED).body(this.coleccionService.crearColeccion(coleccion));
     } catch (Exception e) {
       return ResponseEntity.badRequest().build();
     }
   }
+
+
+  @PutMapping("/{id}")
+  public ResponseEntity<ColeccionDTOOutput> cambiarAlgoritmoColeccion(@PathVariable String id, @RequestBody ColeccionDTOInput coleccion) {
+    try {
+      return ResponseEntity.status(HttpStatus.NO_CONTENT).body(this.coleccionService.cambiarAlgoritmo(coleccion, id));
+    } catch (Exception e) {
+      return ResponseEntity.badRequest().build();
+    }
+  }
+
+
+
 
   @GetMapping
   public ResponseEntity<List<ColeccionDTOOutput>> getColecciones(){
@@ -49,6 +61,10 @@ public class ColeccionController {
       return ResponseEntity.internalServerError().build();
     }
   }
+
+
+
+
 
   @GetMapping("/{id}/hechos")
   public ResponseEntity<ConjuntoHechoCompleto> getHechos(@PathVariable String id,
@@ -68,7 +84,6 @@ public class ColeccionController {
     } catch (Exception e) {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
-
   }
 
   private FiltroDTO toFiltroDTO(String categoria, LocalDate fecha_reporte_desde, LocalDate fecha_reporte_hasta,

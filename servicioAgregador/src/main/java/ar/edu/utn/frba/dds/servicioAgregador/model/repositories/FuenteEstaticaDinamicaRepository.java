@@ -2,20 +2,17 @@ package ar.edu.utn.frba.dds.servicioAgregador.model.repositories;
 
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Fuente;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.origenes.Origen;
-import ar.edu.utn.frba.dds.servicioAgregador.services.ConexionFuenteService;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 @Repository
-public class FuenteRepository implements IFuenteRepository {
+public class FuenteEstaticaDinamicaRepository implements IFuenteEstaticaDinamicaRepository {
   private final Map<Origen, Fuente> fuentes;
 
-  public FuenteRepository() {
+  public FuenteEstaticaDinamicaRepository() {
     this.fuentes = new HashMap<>();
   }
 

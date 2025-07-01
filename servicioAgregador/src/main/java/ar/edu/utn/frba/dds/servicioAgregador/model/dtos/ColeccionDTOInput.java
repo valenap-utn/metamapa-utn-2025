@@ -9,4 +9,5 @@ public class ColeccionDTOInput {
   private String descripcion;
   private Long usuario;
   private List<FuenteDTO> fuentes;
+  private String algoritmo;
 }

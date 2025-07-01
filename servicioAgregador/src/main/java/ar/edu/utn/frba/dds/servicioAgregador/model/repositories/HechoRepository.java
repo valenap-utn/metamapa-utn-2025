@@ -1,5 +1,6 @@
 package ar.edu.utn.frba.dds.servicioAgregador.model.repositories;
 
+import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.FiltroDTO;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
 
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.origenes.Origen;
@@ -33,6 +34,14 @@ public class HechoRepository implements IHechoRepository {
     return this.idsHechos.values().stream().filter(e -> e.getOrigen().equals(origen)).toList();
   }
 
+  @Override
+  public List<Hecho> findByOrigenWithFiltros(Origen origen, FiltroDTO filtro) {
+    return this.idsHechos.values().stream().filter(hecho -> hecho.getOrigen().equals(origen) && this.cumpleFiltros(hecho, filtro)).toList();
+  }
+
+  private boolean cumpleFiltros(Hecho hecho, FiltroDTO filtro) {
+    return hecho.getCategoria().equals(filtro.getCategoria());
+  }
 
   @Override
   public Hecho findById(Long id) {

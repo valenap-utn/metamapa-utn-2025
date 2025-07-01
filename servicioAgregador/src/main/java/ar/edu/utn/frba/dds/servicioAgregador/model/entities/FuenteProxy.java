@@ -28,34 +28,9 @@ public class FuenteProxy extends Fuente{
     this.mapHechoOutput = mapHechoOutput;
   }
 
-  @Override
-  public Mono<Void> cargarHechosEnTiempoReal(String categoria,
-                                         LocalDate fecha_reporte_desde,
-                                         LocalDate fecha_reporte_hasta,
-                                         LocalDate fecha_acontecimiento_desde,
-                                         LocalDate fecha_acontecimiento_hasta,
-                                         Float latitud,
-                                         Float longitud) {
-    return this.webClient.get()
-        .uri(uriBuilder -> uriBuilder.path("/api/hechos")
-            .queryParam("categoria", categoria)
-            .queryParam("fecha_reporte_desde", fecha_reporte_desde)
-            .queryParam("fecha_reporte_hasta", fecha_reporte_hasta)
-            .queryParam("fecha_acontecimiento_desde", fecha_acontecimiento_desde)
-            .queryParam("fecha_acontecimiento_hasta", fecha_acontecimiento_hasta)
-            .queryParam("latitud", latitud)
-            .queryParam("longitud", longitud)
-            .build())
-        .retrieve().bodyToMono(ConjuntoHechoProxy.class).map(
-        response -> {
-          Set<Hecho> hechos = response.getHechos().stream().map(this.getMapper()::toHechoFrom).collect(Collectors.toSet());
-          this.actualizarHechos(hechos);
-          return Mono.empty();
-        }).then();
-  }
 
   @Override
-  public Mono<Fuente> actualizarHechosFuente() {
+  public Mono<Void> actualizarHechosFuente() {
     return this.webClient.get()
             .uri(uriBuilder -> uriBuilder.path("/api/hechos")
                     .build())
@@ -63,18 +38,29 @@ public class FuenteProxy extends Fuente{
                     response -> {
                       Set<Hecho> hechos = response.getHechos().stream().map(this.getMapper()::toHechoFrom).collect(Collectors.toSet());
                       this.actualizarHechos(hechos);
-                      return this;
-                    });
+                      return Mono.empty();
+                    }).then();
   }
 
-  @Override
-  public Mono<Void> cargarHechosEnFuente() {
-    return null;
-  }
 
-  @Override
-  public List<Hecho> getHechosEnTiempoReal(FiltroDTO filtroDTO) {
-    return List.of();
+
+  public Mono<Void> cargarHechosEnTiempoReal(FiltroDTO filtroDTO) {
+    return this.webClient.get()
+            .uri(uriBuilder -> uriBuilder.path("/api/hechos")
+                    .queryParam("categoria", filtroDTO.getCategoria())
+                    .queryParam("fecha_reporte_desde", filtroDTO.getFecha_reporte_desde())
+                    .queryParam("fecha_reporte_hasta", filtroDTO.getFecha_reporte_hasta())
+                    .queryParam("fecha_acontecimiento_desde", filtroDTO.getFecha_acontecimiento_desde())
+                    .queryParam("fecha_acontecimiento_hasta", filtroDTO.getFecha_acontecimiento_hasta())
+                    .queryParam("latitud", filtroDTO.getLatitud())
+                    .queryParam("longitud", filtroDTO.getLongitud())
+                    .build())
+            .retrieve().bodyToMono(ConjuntoHechoProxy.class).map(
+                    response -> {
+                      Set<Hecho> hechos = response.getHechos().stream().map(this.getMapper()::toHechoFrom).collect(Collectors.toSet());
+                      this.actualizarHechos(hechos);
+                      return Mono.empty();
+                    }).then();
   }
 
   @Override

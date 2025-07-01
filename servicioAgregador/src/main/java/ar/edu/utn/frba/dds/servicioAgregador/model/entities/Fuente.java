@@ -42,8 +42,6 @@ public abstract class Fuente {
     }
 
     public abstract void postEliminado(Hecho hecho, Long idHecho);
-    public abstract Mono<Fuente> actualizarHechosFuente();
-    public abstract Mono<Void> cargarHechosEnFuente();
-    public abstract List<Hecho> getHechosEnTiempoReal(FiltroDTO filtroDTO);
+    public abstract Mono<Void> actualizarHechosFuente();
 }
 

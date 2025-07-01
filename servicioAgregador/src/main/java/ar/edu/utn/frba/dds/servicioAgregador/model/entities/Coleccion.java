@@ -61,7 +61,13 @@ public class Coleccion {
     }
 
     public void consensuarHechos(List<Fuente> fuentes) {
-        this.getHechos().stream().forEach(hecho -> this.getAlgoritmoConsenso().consensuarHecho(hecho, fuentes));
+        this.getHechos().stream().forEach(this::consensuarHecho);
+    }
+
+    private void consensuarHecho(Hecho hecho, List<Fuente> fuentes) {
+        if(this.getAlgoritmoConsenso().consensuarHecho(hecho, fuentes)){
+           hecho.agregarAlgoritmo(this.getAlgoritmoConsenso());
+        }
     }
 }
 

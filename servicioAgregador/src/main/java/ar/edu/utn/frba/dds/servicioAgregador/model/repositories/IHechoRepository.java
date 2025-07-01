@@ -1,5 +1,6 @@
 package ar.edu.utn.frba.dds.servicioAgregador.model.repositories;
 
+import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.FiltroDTO;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Fuente;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
 
@@ -15,4 +16,6 @@ public interface IHechoRepository {
 
   public void saveHecho(Hecho hecho);
   public List<Hecho> findByOrigen(Origen origen);
+
+  List<Hecho> findByOrigenWithFiltros(Origen origen, FiltroDTO filtro);
 }

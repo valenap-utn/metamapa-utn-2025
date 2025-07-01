@@ -1,7 +1,9 @@
 package ar.edu.utn.frba.dds.servicioAgregador.model.entities;
 
+import ar.edu.utn.frba.dds.servicioAgregador.model.entities.algoritmosConsenso.AlgoritmoConsenso;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.origenes.Origen;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -26,19 +28,18 @@ public class Hecho {
     @Setter @Getter private Origen origen;
     @Setter @Getter private boolean eliminado = false;
     @Setter @Getter private ContenidoMultimedia contenidoMultimedia;
+    @Getter List<AlgoritmoConsenso> algosAceptados;
     @Getter private final Set<String> etiquetas = new HashSet<>();
 
     public Hecho() {
         this.eliminado = false;
+        this.algosAceptados = new ArrayList<>();
     }
 
     public void agregarEtiquetas(String ... etiquetas) {
         this.etiquetas.addAll(List.of(etiquetas));
     }
 
-    //Métodos de equals y hashCode sobreescritos para poder utilizar contains en clase Fuente
-    //en los métodos booleanos de comparación de Hechos y que utilice
-    //estos métodos de comparación
     @Override
     public boolean equals(Object o) { //2 Hecho son "iguales" si tienen mismo titulo y mismos atributos
         if (this == o) return true; //mismo objeto
@@ -56,5 +57,13 @@ public class Hecho {
     @Override
     public int hashCode() {
         return Objects.hash(titulo, descripcion, categoria, ubicacion, fechaAcontecimiento);
+    }
+
+    public void agregarAlgoritmo(AlgoritmoConsenso algoritmoConsenso) {
+        this.algosAceptados.add(algoritmoConsenso);
+    }
+
+    public boolean estaCuradoPor(AlgoritmoConsenso algoritmoConsenso) {
+        return this.algosAceptados.contains(algoritmoConsenso);
     }
 }
