@@ -11,7 +11,6 @@ import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Usuario;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.origenes.Origen;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.roles.PermisoCrearColeccion;
-import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.FuenteProxyRepository;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IColeccionRepository;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IFuenteEstaticaDinamicaRepository;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IFuenteProxyRepository;
@@ -112,7 +111,7 @@ public class ColeccionService implements IColeccionService{
   @Override
   public ColeccionDTOOutput cambiarAlgoritmo(ColeccionDTOInput coleccionInput, String idColeccion) {
     Usuario usuarioSolicitante = this.userRepository.findById(coleccionInput.getUsuario());
-    if(!usuarioSolicitante.tienePermisoDe(new PermisoCambiarAlgoritmo())) {
+    if(!usuarioSolicitante.tienePermisoDe(new PermisoModificarColeccion())) {
       throw new RuntimeException("Se debe tener permisos de administrador");
     }
     Coleccion coleccion = this.coleccionRepository.findById(idColeccion);
