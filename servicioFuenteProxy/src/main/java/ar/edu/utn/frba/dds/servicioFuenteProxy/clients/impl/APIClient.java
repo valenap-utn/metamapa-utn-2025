@@ -1,9 +1,10 @@
 package ar.edu.utn.frba.dds.servicioFuenteProxy.clients.impl;
 
+import ar.edu.utn.frba.dds.servicioFuenteProxy.clients.Fuente;
 import ar.edu.utn.frba.dds.servicioFuenteProxy.clients.IAPIClient;
 import ar.edu.utn.frba.dds.servicioFuenteProxy.clients.authentication.APIProperties;
-import ar.edu.utn.frba.dds.servicioFuenteProxy.clients.dtos.APIResponse;
-import ar.edu.utn.frba.dds.servicioFuenteProxy.clients.dtos.HechoInputDTO;
+import ar.edu.utn.frba.dds.servicioFuenteProxy.clients.dtos.input.APIResponse;
+import ar.edu.utn.frba.dds.servicioFuenteProxy.clients.dtos.input.HechoInputDTO;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -27,6 +28,11 @@ import java.util.Map;
 public class APIClient implements IAPIClient {
     private final WebClient webClient;
     private final APIProperties apiProperties;
+
+    @Override
+    public Fuente nombre() {
+        return Fuente.DESASTRES_NATURALES;
+    }
 
 
     public APIClient(
