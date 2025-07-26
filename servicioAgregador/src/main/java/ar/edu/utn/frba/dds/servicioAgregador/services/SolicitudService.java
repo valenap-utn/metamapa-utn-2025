@@ -22,15 +22,13 @@ public class SolicitudService implements ISolicitudService {
     private final ISolicitudRepository repo;
     private final IHechoRepository hechoRepository;
     private final UserRepository userRepository;
-    private final IFuenteEstaticaDinamicaRepository fuenteRepository;
     private final IHechosExternosRepository idHechosExternos;
 
-    public SolicitudService(ISolicitudRepository repo, FactoryDetectorDeSpam detectorDeSpamFactory, IHechoRepository hechoRepository, UserRepository userRepository, Map<Origen, ConexionFuenteService> conexionFuentes, IHechosExternosRepository idHechosExternos) {
+    public SolicitudService(ISolicitudRepository repo, FactoryDetectorDeSpam detectorDeSpamFactory, IHechoRepository hechoRepository, UserRepository userRepository, IHechosExternosRepository idHechosExternos) {
         this.repo = repo;
         this.detectorDeSpamFactory = detectorDeSpamFactory;
       this.hechoRepository = hechoRepository;
       this.userRepository = userRepository;
-      this.conexionFuentes = conexionFuentes;
       this.idHechosExternos = idHechosExternos;
     }
 
@@ -44,8 +42,6 @@ public class SolicitudService implements ISolicitudService {
             solicitud.marcarComoSpam();
             solicitud.rechazar();
             throw new SolicitudError("Justificacion Con Spam");
-        } else {
-            this.fuenteRepository.findByOrigen(hecho.getOrigen()).postEliminado(hecho, this.idHechosExternos.findIDFuente(hecho.getId()));
         }
 
         repo.save(solicitud);
@@ -63,7 +59,10 @@ public class SolicitudService implements ISolicitudService {
 
     public void aceptarSolicitud(Solicitud solicitud) {
         solicitud.aceptar();
-        solicitud.getHecho().setEliminado(true);
+        Hecho hechoAEliminar = solicitud.getHecho();
+        hechoAEliminar.setEliminado(true);
+        ClientFuente client = FactoryClientFuente.getClientPorOrigen(hechoAEliminar.getOrigen());
+        client.postEliminado(hechoAEliminar, this.idHechosExternos.findIDFuente(hechoAEliminar.getId()));
         repo.save(solicitud);
     }
 

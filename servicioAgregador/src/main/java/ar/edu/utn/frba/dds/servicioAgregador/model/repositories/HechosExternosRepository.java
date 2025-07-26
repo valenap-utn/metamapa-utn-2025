@@ -1,10 +1,11 @@
 package ar.edu.utn.frba.dds.servicioAgregador.model.repositories;
 
-import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
+
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicLong;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public class HechosExternosRepository implements IHechosExternosRepository{
   private final Map<Long, Long> idsHechos;
 

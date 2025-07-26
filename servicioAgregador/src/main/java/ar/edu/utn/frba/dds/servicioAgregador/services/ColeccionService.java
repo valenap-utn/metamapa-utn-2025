@@ -10,6 +10,7 @@ import ar.edu.utn.frba.dds.servicioAgregador.model.entities.FuenteProxy;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Usuario;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.origenes.Origen;
+import ar.edu.utn.frba.dds.servicioAgregador.model.entities.origenes.TipoOrigen;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.roles.PermisoCrearColeccion;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IColeccionRepository;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IFuenteEstaticaDinamicaRepository;
@@ -19,6 +20,7 @@ import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IUserRepository;
 import ar.edu.utn.frba.dds.servicioAgregador.services.mappers.MapColeccionOutput;
 import ar.edu.utn.frba.dds.servicioAgregador.services.mappers.MapHechoOutput;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -30,8 +32,6 @@ import reactor.core.publisher.Mono;
 @Service
 public class ColeccionService implements IColeccionService{
   private final IColeccionRepository coleccionRepository;
-  private final IFuenteEstaticaDinamicaRepository fuenteRepository;
-  private final IFuenteProxyRepository fuenteProxyRepository;
   private final IUserRepository userRepository;
   private final IHechoRepository hechoRepository;
   @Setter
@@ -40,23 +40,16 @@ public class ColeccionService implements IColeccionService{
   private MapHechoOutput mapperHechoOutput;
   private FactoryAlgoritmo algoritmoFactory;
 
-  public ColeccionService(IColeccionRepository coleccionRepository, IFuenteProxyRepository fuenteProxyRepository,
+  public ColeccionService(IColeccionRepository coleccionRepository,
                           IUserRepository userRepository,
                           IHechoRepository hechoRepository,
-                          IFuenteEstaticaDinamicaRepository fuenteRepository,
                           FactoryAlgoritmo algoritmoFactory) {
     this.coleccionRepository = coleccionRepository;
-    this.fuenteProxyRepository = fuenteProxyRepository;
     this.userRepository = userRepository;
     this.hechoRepository = hechoRepository;
-    this.fuenteRepository = fuenteRepository;
     this.algoritmoFactory = algoritmoFactory;
   }
 
-
-  public void agregarConexionAFuente(Origen origenFuente, Fuente fuente) {
-    this.fuenteRepository.save(origenFuente, fuente);
-  }
 
   @Override
   public ColeccionDTOOutput crearColeccion(ColeccionDTOInput coleccionInput) {
@@ -66,8 +59,8 @@ public class ColeccionService implements IColeccionService{
     }
 
     Coleccion coleccionCreada = new Coleccion(coleccionInput.getNombre(), coleccionInput.getDescripcion(), this.algoritmoFactory.getAlgoritmo(coleccionInput.getAlgoritmo()));
-   // Set<Fuente> fuentes =  coleccionInput.getFuentes().stream().map(this::toFuente).collect(Collectors.toSet());
-   // coleccionCreada.agregarFuentes(fuentes);
+    Set<Fuente> fuentes =  coleccionInput.getFuentes().stream().map(this::toFuente).collect(Collectors.toSet());
+    coleccionCreada.agregarFuentes(fuentes);
 
     Coleccion coleccionGuardada = this.coleccionRepository.save(coleccionCreada);
     return this.mapperColeccionOutput.toColeccionDTOOutput(coleccionGuardada);
@@ -84,11 +77,11 @@ public class ColeccionService implements IColeccionService{
 
   private Mono<Void> actualizarHechosFuentes(List<Fuente> fuentes) {
     return Flux.fromIterable(fuentes)
-            .flatMap(this::actualizarHechosPorFuente).then();
-  }
+            .flatMap(fuente -> {
 
-  private Mono<Void> actualizarHechosPorFuente(Fuente fuente) {
-    return fuente.actualizarHechosFuente();
+              hechos.forEach(this.hechoRepository::saveHecho);
+              return Mono.empty();
+            }).then();
   }
 
   @Override
@@ -103,7 +96,7 @@ public class ColeccionService implements IColeccionService{
     coleccion.getFuentes().forEach(fuente -> this.cargarHechosEnFuente(fuente, filtro));
     List<Hecho> hechos = coleccion.getHechos();
     if(filtro.getCurada()){
-      hechos.stream().filter(hecho -> hecho.estaCuradoPor(coleccion.getAlgoritmoConsenso()));
+      hechos = hechos.stream().filter(hecho -> hecho.estaCuradoPor(coleccion.getAlgoritmoConsenso())).toList();
     }
     return this.mapperHechoOutput.toConjuntoHechoDTOOutput(hechos);
   }
@@ -119,23 +112,26 @@ public class ColeccionService implements IColeccionService{
     Coleccion coleccionGuardada = this.coleccionRepository.save(coleccion);
     return this.mapperColeccionOutput.toColeccionDTOOutput(coleccion);
   }
+  private List<Hecho> getHechosClient(Origen origen, FiltroDTO filtro) {
+    ClientFuente client = FactoryClientFuente.getClientPorOrigen(fuente.getOrigen());
+    return client.getHechos(filtro);
+  }
 
   private void cargarHechosEnFuente(Fuente fuente, FiltroDTO filtro) {
-    FuenteProxy fuenteProxy = this.fuenteProxyRepository.findByOrigen(fuente.getOrigen());
-    if(!filtro.getEntiemporeal() && fuenteProxy == null) {
-      List<Hecho> hechos = this.hechoRepository.findByOrigenWithFiltros(fuente.getOrigen(), filtro);
-      fuente.actualizarHechos(hechos);
+    List<Hecho> hechos = new ArrayList<>();
+    if(filtro.getEntiemporeal() &&  fuente.getOrigen().getTipo() == TipoOrigen.PROXY) {
+      hechos.addAll(this.getHechosClient(fuente.getOrigen(), filtro));
     } else {
-      fuenteProxy.cargarHechosEnTiempoReal(filtro);
-      fuente.actualizarHechos(fuenteProxy.getHechos());
+      hechos.addAll(this.hechoRepository.findByOrigen(fuente.getOrigen()));
     }
+    fuente.actualizarHechos(hechos);
   }
 
   public Mono<Void> consensuarHechos() {
     Set<Coleccion> colecciones = this.coleccionRepository.findAll();
-    List<Fuente> fuentes = new ArrayList<>();
-    fuentes.addAll( this.fuenteRepository.findAll());
-    fuentes.addAll(this.fuenteProxyRepository.findAll());
+    Set<Fuente> fuentes = new HashSet<>();
+    colecciones.forEach(coleccion -> fuentes.addAll(coleccion.getFuentes()));
+    fuentes.forEach(fuente -> fuente.actualizarHechos(this.hechoRepository.findByOrigen(fuente.getOrigen())));
     return Flux.fromIterable(colecciones).flatMap(
         coleccion -> {
           coleccion.consensuarHechos(fuentes);

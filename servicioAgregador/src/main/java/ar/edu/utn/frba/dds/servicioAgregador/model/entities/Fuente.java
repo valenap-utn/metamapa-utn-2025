@@ -11,7 +11,7 @@ import lombok.Getter;
 import reactor.core.publisher.Mono;
 
 
-public abstract class Fuente {
+public class Fuente {
     @Getter private final Origen origen;
     @Getter private final Set<Hecho> hechos;
 
@@ -41,7 +41,5 @@ public abstract class Fuente {
                         );
     }
 
-    public abstract void postEliminado(Hecho hecho, Long idHecho);
-    public abstract Mono<Void> actualizarHechosFuente();
 }
 

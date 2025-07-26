@@ -8,12 +8,11 @@ import ar.edu.utn.frba.dds.servicioAgregador.model.entities.filtros.FiltroNoEsta
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Set;
 import java.util.stream.Stream;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Set;
 
 @Setter
 @Getter
@@ -60,11 +59,11 @@ public class Coleccion {
         return this.criteriosDePertenencia.stream().allMatch(criterio -> criterio.hechoCumple(hecho));
     }
 
-    public void consensuarHechos(List<Fuente> fuentes) {
-        this.getHechos().stream().forEach(this::consensuarHecho);
+    public void consensuarHechos(Set<Fuente> fuentes) {
+        this.getHechos().forEach(hecho -> this.consensuarHecho(hecho, fuentes));
     }
 
-    private void consensuarHecho(Hecho hecho, List<Fuente> fuentes) {
+    private void consensuarHecho(Hecho hecho, Set<Fuente> fuentes) {
         if(this.getAlgoritmoConsenso().consensuarHecho(hecho, fuentes)){
            hecho.agregarAlgoritmo(this.getAlgoritmoConsenso());
         }
