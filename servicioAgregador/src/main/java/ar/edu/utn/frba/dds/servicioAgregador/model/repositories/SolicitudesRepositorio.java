@@ -5,11 +5,27 @@ import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Solicitud;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public abstract class SolicitudesRepositorio implements ISolicitudRepository{
+public class SolicitudesRepositorio implements ISolicitudRepository{
     List<Solicitud> solicitudes = new ArrayList<>();
+
+    @Override
+    public Solicitud save(Solicitud solicitud) {
+        return null;
+    }
+
+    @Override
+    public Solicitud findById(Long id) {
+        return null;
+    }
+
+    @Override
+    public Set<Solicitud> findAll() {
+        return Set.of();
+    }
 
     public void agregar(Solicitud solicitud) {
         solicitudes.add(solicitud);

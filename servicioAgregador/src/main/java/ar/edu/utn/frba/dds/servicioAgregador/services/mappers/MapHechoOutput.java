@@ -5,7 +5,9 @@ import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.HechoDTOCompleto;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
 
 import java.util.List;
+import org.springframework.stereotype.Component;
 
+@Component
 public class MapHechoOutput {
   public ConjuntoHechoCompleto toConjuntoHechoDTOOutput(List<Hecho> hechos) {
     ConjuntoHechoCompleto conjuntoDeHechos = new ConjuntoHechoCompleto();

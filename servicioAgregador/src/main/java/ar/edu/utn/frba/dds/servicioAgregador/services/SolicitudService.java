@@ -7,13 +7,11 @@ import ar.edu.utn.frba.dds.servicioAgregador.model.entities.deteccionDeSpam.Dete
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Solicitud;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Usuario;
-import ar.edu.utn.frba.dds.servicioAgregador.model.entities.origenes.Origen;
-import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IFuenteEstaticaDinamicaRepository;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IHechoRepository;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IHechosExternosRepository;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.ISolicitudRepository;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.UserRepository;
-import java.util.Map;
+import ar.edu.utn.frba.dds.servicioAgregador.services.clients.ClientFuente;
 import org.springframework.stereotype.Service;
 
 @Service

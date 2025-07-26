@@ -19,8 +19,8 @@ public class MapColeccionOutput {
 
   private FuenteDTO toFuenteDTO(Fuente fuente) {
     FuenteDTO fuenteDTO = new FuenteDTO();
-    fuenteDTO.setId(fuente.getId());
-    fuenteDTO.setTipo(fuente.getTipo());
+    fuenteDTO.setTipoOrigen(fuente.getOrigen().getTipo());
+    fuenteDTO.setUrl(fuente.getOrigen().getUrl());
     return fuenteDTO;
   }
 }

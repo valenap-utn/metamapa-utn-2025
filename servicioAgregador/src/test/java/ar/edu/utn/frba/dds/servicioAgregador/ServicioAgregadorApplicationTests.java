@@ -9,8 +9,6 @@ import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.ColeccionReposit
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.HechoRepository;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.UserRepository;
 import ar.edu.utn.frba.dds.servicioAgregador.services.ColeccionService;
-import ar.edu.utn.frba.dds.servicioAgregador.services.ConexionEstaticaDinamicaService;
-import ar.edu.utn.frba.dds.servicioAgregador.services.ConexionProxyService;
 import java.util.List;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

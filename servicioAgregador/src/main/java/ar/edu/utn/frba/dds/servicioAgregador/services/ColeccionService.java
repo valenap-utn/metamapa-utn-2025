@@ -4,19 +4,18 @@ import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.ColeccionDTOInput;
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.ColeccionDTOOutput;
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.ConjuntoHechoCompleto;
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.FiltroDTO;
+import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.FuenteDTO;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Coleccion;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Fuente;
-import ar.edu.utn.frba.dds.servicioAgregador.model.entities.FuenteProxy;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Usuario;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.origenes.Origen;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.origenes.TipoOrigen;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.roles.PermisoCrearColeccion;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IColeccionRepository;
-import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IFuenteEstaticaDinamicaRepository;
-import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IFuenteProxyRepository;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IHechoRepository;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IUserRepository;
+import ar.edu.utn.frba.dds.servicioAgregador.services.clients.ClientFuente;
 import ar.edu.utn.frba.dds.servicioAgregador.services.mappers.MapColeccionOutput;
 import ar.edu.utn.frba.dds.servicioAgregador.services.mappers.MapHechoOutput;
 import java.util.ArrayList;
@@ -38,7 +37,7 @@ public class ColeccionService implements IColeccionService{
   private MapColeccionOutput mapperColeccionOutput;
   @Setter
   private MapHechoOutput mapperHechoOutput;
-  private FactoryAlgoritmo algoritmoFactory;
+  private final FactoryAlgoritmo algoritmoFactory;
 
   public ColeccionService(IColeccionRepository coleccionRepository,
                           IUserRepository userRepository,
@@ -66,6 +65,10 @@ public class ColeccionService implements IColeccionService{
     return this.mapperColeccionOutput.toColeccionDTOOutput(coleccionGuardada);
   }
 
+  private Fuente toFuente(FuenteDTO fuente) {
+    return new Fuente(new Origen(fuente.getTipoOrigen(), fuente.getUrl()));
+  }
+
   @Override
   public Mono<Void> actualizarHechosColecciones() {
     return Flux.fromIterable(this.coleccionRepository.findAll())
@@ -78,7 +81,7 @@ public class ColeccionService implements IColeccionService{
   private Mono<Void> actualizarHechosFuentes(List<Fuente> fuentes) {
     return Flux.fromIterable(fuentes)
             .flatMap(fuente -> {
-
+              List<Hecho> hechos = this.getHechosClient(fuente.getOrigen(), null);
               hechos.forEach(this.hechoRepository::saveHecho);
               return Mono.empty();
             }).then();
@@ -113,7 +116,7 @@ public class ColeccionService implements IColeccionService{
     return this.mapperColeccionOutput.toColeccionDTOOutput(coleccion);
   }
   private List<Hecho> getHechosClient(Origen origen, FiltroDTO filtro) {
-    ClientFuente client = FactoryClientFuente.getClientPorOrigen(fuente.getOrigen());
+    ClientFuente client = FactoryClientFuente.getClientPorOrigen(origen);
     return client.getHechos(filtro);
   }
 
