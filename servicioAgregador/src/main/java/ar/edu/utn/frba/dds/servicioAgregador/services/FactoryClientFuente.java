@@ -13,11 +13,11 @@ import org.springframework.stereotype.Component;
 public class FactoryClientFuente {
 
 
-  public static ClientFuente getClientPorOrigen(Origen origen) {
+  public ClientFuente getClientPorOrigen(Origen origen) {
     return new ClientFuente(origen.getUrl(), mapperPorTipo(origen.getTipo()));
   }
 
-  private static MapperFuenteClient mapperPorTipo(TipoOrigen tipo) {
+  private MapperFuenteClient mapperPorTipo(TipoOrigen tipo) {
     if(tipo == TipoOrigen.DATASET){
       return new MapperFuenteEstatica();
     } else if(tipo == TipoOrigen.PROXY) {

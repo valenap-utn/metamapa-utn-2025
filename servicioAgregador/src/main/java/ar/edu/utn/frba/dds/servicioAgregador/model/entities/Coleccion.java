@@ -24,6 +24,11 @@ public class Coleccion {
     private final List<Filtro> criteriosDePertenencia;
     private AlgoritmoConsenso algoritmoConsenso;
 
+    public Coleccion() {
+        this.fuentes = new ArrayList<>();
+        this.criteriosDePertenencia = new ArrayList<>();
+    }
+
     public Coleccion(String titulo, String descripcion, AlgoritmoConsenso algoritmoConsenso) {
         this.titulo = titulo;
         this.descripcion = descripcion;

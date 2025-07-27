@@ -21,13 +21,15 @@ public class SolicitudService implements ISolicitudService {
     private final IHechoRepository hechoRepository;
     private final UserRepository userRepository;
     private final IHechosExternosRepository idHechosExternos;
-
-    public SolicitudService(ISolicitudRepository repo, FactoryDetectorDeSpam detectorDeSpamFactory, IHechoRepository hechoRepository, UserRepository userRepository, IHechosExternosRepository idHechosExternos) {
+    private final FactoryClientFuente clientFuenteFactory;
+    public SolicitudService(ISolicitudRepository repo, FactoryDetectorDeSpam detectorDeSpamFactory, IHechoRepository hechoRepository, UserRepository userRepository, IHechosExternosRepository idHechosExternos,
+                            FactoryClientFuente clientFuenteFactory) {
         this.repo = repo;
         this.detectorDeSpamFactory = detectorDeSpamFactory;
       this.hechoRepository = hechoRepository;
       this.userRepository = userRepository;
       this.idHechosExternos = idHechosExternos;
+      this.clientFuenteFactory = clientFuenteFactory;
     }
 
     public SolicitudOutputDTO crearSolicitud(SolicitudInputDTO solicitudInput) {
@@ -59,7 +61,7 @@ public class SolicitudService implements ISolicitudService {
         solicitud.aceptar();
         Hecho hechoAEliminar = solicitud.getHecho();
         hechoAEliminar.setEliminado(true);
-        ClientFuente client = FactoryClientFuente.getClientPorOrigen(hechoAEliminar.getOrigen());
+        ClientFuente client = this.clientFuenteFactory.getClientPorOrigen(hechoAEliminar.getOrigen());
         client.postEliminado(hechoAEliminar, this.idHechosExternos.findIDFuente(hechoAEliminar.getId()));
         repo.save(solicitud);
     }

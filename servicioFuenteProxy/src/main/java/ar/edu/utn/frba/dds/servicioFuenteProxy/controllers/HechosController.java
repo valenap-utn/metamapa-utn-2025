@@ -1,11 +1,8 @@
 package ar.edu.utn.frba.dds.servicioFuenteProxy.controllers;
 
-import ar.edu.utn.frba.dds.servicioFuenteProxy.clients.IAPIClient;
-import ar.edu.utn.frba.dds.servicioFuenteProxy.clients.dtos.input.HechoInputDTO;
 import ar.edu.utn.frba.dds.servicioFuenteProxy.clients.dtos.output.HechoOutputDTO;
 import ar.edu.utn.frba.dds.servicioFuenteProxy.services.IHechoService;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -37,8 +34,8 @@ public class HechosController {
     }
 
     @PutMapping("/{id}")
-    public void eliminarHecho(@PathVariable Long id, IAPIClient client) {
-        if(client.nombre().name().equals("DESASTRES_NATURALES")){
+    public void eliminarHecho(@PathVariable Long id, @RequestParam String clientNombre) {
+        if(clientNombre.equals("DESASTRES_NATURALES")){
             hechoService.marcarComoEliminado(id);
         } else throw new UnsupportedOperationException("El cliente no admite solicitudes de eliminaciòn");
     }

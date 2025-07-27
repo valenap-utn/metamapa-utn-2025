@@ -1,5 +1,8 @@
 package ar.edu.utn.frba.dds.servicioAgregador.services;
 
+import ar.edu.utn.frba.dds.servicioAgregador.exceptions.ColeccionNoEncontrada;
+import ar.edu.utn.frba.dds.servicioAgregador.exceptions.UsuarioNoEncontrado;
+import ar.edu.utn.frba.dds.servicioAgregador.exceptions.UsuarioSinPermiso;
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.ColeccionDTOInput;
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.ColeccionDTOOutput;
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.ConjuntoHechoCompleto;
@@ -38,23 +41,30 @@ public class ColeccionService implements IColeccionService{
   @Setter
   private MapHechoOutput mapperHechoOutput;
   private final FactoryAlgoritmo algoritmoFactory;
+  private final FactoryClientFuente clientFuenteFactory;
 
   public ColeccionService(IColeccionRepository coleccionRepository,
                           IUserRepository userRepository,
                           IHechoRepository hechoRepository,
-                          FactoryAlgoritmo algoritmoFactory) {
+                          FactoryAlgoritmo algoritmoFactory,
+                          FactoryClientFuente clientFuenteFactory) {
     this.coleccionRepository = coleccionRepository;
     this.userRepository = userRepository;
     this.hechoRepository = hechoRepository;
     this.algoritmoFactory = algoritmoFactory;
+    this.clientFuenteFactory = clientFuenteFactory;
   }
 
 
   @Override
   public ColeccionDTOOutput crearColeccion(ColeccionDTOInput coleccionInput) {
     Usuario usuarioSolicitante = this.userRepository.findById(coleccionInput.getUsuario());
+    if(usuarioSolicitante == null) {
+      throw new UsuarioNoEncontrado("El usuario con el identificador administrado no existe");
+    }
+
     if(!usuarioSolicitante.tienePermisoDe(new PermisoCrearColeccion())) {
-      throw new RuntimeException("Se debe tener permisos de administrador");
+      throw new UsuarioSinPermiso("Se debe tener permisos de administrador");
     }
 
     Coleccion coleccionCreada = new Coleccion(coleccionInput.getNombre(), coleccionInput.getDescripcion(), this.algoritmoFactory.getAlgoritmo(coleccionInput.getAlgoritmo()));
@@ -107,16 +117,24 @@ public class ColeccionService implements IColeccionService{
   @Override
   public ColeccionDTOOutput cambiarAlgoritmo(ColeccionDTOInput coleccionInput, String idColeccion) {
     Usuario usuarioSolicitante = this.userRepository.findById(coleccionInput.getUsuario());
-    if(!usuarioSolicitante.tienePermisoDe(new PermisoModificarColeccion())) {
-      throw new RuntimeException("Se debe tener permisos de administrador");
+    if(usuarioSolicitante == null) {
+      throw new UsuarioNoEncontrado("El usuario con el identificador administrado no existe");
     }
+
+    if(!usuarioSolicitante.tienePermisoDe(new PermisoModificarColeccion())) {
+      throw new UsuarioSinPermiso("Se debe tener permisos de administrador");
+    }
+
     Coleccion coleccion = this.coleccionRepository.findById(idColeccion);
+    if(coleccion == null) {
+      throw new ColeccionNoEncontrada("No existe la coleccion con el identificador enviado");
+    }
     coleccion.setAlgoritmoConsenso(this.algoritmoFactory.getAlgoritmo(coleccionInput.getAlgoritmo()));
     Coleccion coleccionGuardada = this.coleccionRepository.save(coleccion);
     return this.mapperColeccionOutput.toColeccionDTOOutput(coleccion);
   }
   private List<Hecho> getHechosClient(Origen origen, FiltroDTO filtro) {
-    ClientFuente client = FactoryClientFuente.getClientPorOrigen(origen);
+    ClientFuente client = this.clientFuenteFactory.getClientPorOrigen(origen);
     return client.getHechos(filtro);
   }
 

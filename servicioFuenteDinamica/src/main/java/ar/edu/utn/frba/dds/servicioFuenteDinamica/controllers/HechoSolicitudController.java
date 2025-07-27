@@ -86,7 +86,7 @@ public class HechoSolicitudController {
         return ResponseEntity.ok(solicitudServicio.crearSolicitud(hechoId, usuario, contenido));
     }
 
-    @PostMapping("/solicitudes/{id}")
+    @PutMapping("/solicitudes/{id}")
     public ResponseEntity<Solicitud> procesarSolicitud(@PathVariable Long id, @RequestParam String estado, @RequestParam String comentario) {
         return ResponseEntity.ok(solicitudServicio.procesarSolicitud(id, estado, comentario));
     }

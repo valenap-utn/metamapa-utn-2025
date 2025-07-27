@@ -9,8 +9,6 @@ import java.util.Set;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.web.multipart.MultipartFile;
-
 
 public class Hecho implements Revisable{
     @Setter @Getter private String titulo;
@@ -21,7 +19,7 @@ public class Hecho implements Revisable{
     @Setter @Getter private LocalDate fechaCarga;
     @Setter @Getter private Origen origen;
     @Setter @Getter private boolean eliminado;
-    @Setter @Getter private MultipartFile contenidoMultimedia;
+    @Setter @Getter private ContenidoMultimedia contenidoMultimedia;
     @Getter private final Set<String> etiquetas;
     @Getter @Setter private Estado estado;
     @Setter private String comentarioRevision;

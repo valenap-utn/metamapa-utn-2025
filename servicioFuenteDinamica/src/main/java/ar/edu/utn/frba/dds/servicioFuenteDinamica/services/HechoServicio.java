@@ -1,13 +1,12 @@
 package ar.edu.utn.frba.dds.servicioFuenteDinamica.services;
 
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos.HechoDTODinamica;
+import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.ContenidoMultimedia;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.RevisarEstado;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.enums.Estado;
-import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.enums.EstadoHecho;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.Hecho;
-import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.repositories.HechoRepository;
+import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.repositories.IMultimediaRepository;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.repositories.IHechoRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,9 +18,16 @@ import java.util.List;
 @Service
 public class HechoServicio implements IHechoServicio {
 
-    @Autowired
-    private IHechoRepository hechoRepository;
-    private RevisarEstado revisadorHechosSolicitud;
+    private final IHechoRepository hechoRepository;
+    private final IMultimediaRepository contentMultimediaRepository;
+    private final RevisarEstado revisadorHechosSolicitud;
+
+    public HechoServicio(IHechoRepository hechoRepository, IMultimediaRepository contentMultimediaRepository, RevisarEstado revisadorHechosSolicitud) {
+        this.hechoRepository = hechoRepository;
+        this.contentMultimediaRepository = contentMultimediaRepository;
+        this.revisadorHechosSolicitud = revisadorHechosSolicitud;
+    }
+
     @Override
     public Hecho crearHecho(HechoDTODinamica input, MultipartFile contenidoMultimedia) {
         Hecho hecho = new Hecho();
@@ -29,7 +35,8 @@ public class HechoServicio implements IHechoServicio {
         hecho.setEsAnonimo(input.isEsAnonimo());
         hecho.setFechaCarga(LocalDate.now());
         if (!contenidoMultimedia.isEmpty()) {
-            hecho.setContenidoMultimedia(contenidoMultimedia);
+            ContenidoMultimedia contMultimediaHecho = this.contentMultimediaRepository.saveFile(contenidoMultimedia);
+            hecho.setContenidoMultimedia(contMultimediaHecho);
         }
         hecho.setEstado(Estado.EN_REVISION);
         return hechoRepository.save(hecho);
