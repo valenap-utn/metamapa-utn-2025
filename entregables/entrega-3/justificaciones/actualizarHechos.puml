@@ -1,0 +1,34 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+== Inicio del escenario ==
+activate coleccionScheduler
+coleccionScheduler -> coleccionService: actualizarHechos()
+activate coleccionService
+coleccionService -> coleccionRepository: findAll()
+activate coleccionRepository
+coleccionRepository --> coleccionService: Set<Coleccion>
+activate Coleccion
+coleccionService -> Coleccion: getFuentes()
+Coleccion --> coleccionService: List<Fuente>
+    loop por cada fuente
+        coleccionService -> FactoryClientFuente: getClientPorFuente(origen)
+        activate FactoryClientFuente
+        note right: El origen lo tiene la fuente y este contiene la URL y el tipo de fuente
+        FactoryClientFuente --> coleccionService: ClientFuente
+        activate ClientFuente
+        coleccionService -> ClientFuente: getHechos()
+        ClientFuente -> MapperClient: getHechosMapeados()
+        MapperClient --> ClientFuente: List<Hecho>
+        ClientFuente --> coleccionService: List<Hecho>
+        loop por cada hecho
+            coleccionService -> hechoRepository: saveHecho(hecho)
+            hechoRepository --> coleccionRepository: void
+        end
+        deactivate ClientFuente
+        deactivate FactoryClientFuente
+    end
+
+@enduml

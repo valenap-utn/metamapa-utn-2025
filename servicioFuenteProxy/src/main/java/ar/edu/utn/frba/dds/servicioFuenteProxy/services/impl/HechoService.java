@@ -1,13 +1,12 @@
 package ar.edu.utn.frba.dds.servicioFuenteProxy.services.impl;
 import ar.edu.utn.frba.dds.servicioFuenteProxy.clients.IAPIClient;
-import ar.edu.utn.frba.dds.servicioFuenteProxy.clients.dtos.input.HechoInputDTO;
-import ar.edu.utn.frba.dds.servicioFuenteProxy.clients.dtos.input.MetaMapaResponse;
 import ar.edu.utn.frba.dds.servicioFuenteProxy.clients.dtos.output.HechoMapper;
 import ar.edu.utn.frba.dds.servicioFuenteProxy.clients.dtos.output.HechoOutputDTO;
+import ar.edu.utn.frba.dds.servicioFuenteProxy.exceptions.HechoYaEliminado;
 import ar.edu.utn.frba.dds.servicioFuenteProxy.services.IHechoService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,10 +22,17 @@ public class HechoService implements IHechoService {
 
     private final List<Long> hechosEliminados = new ArrayList<>();
 
-    public void marcarComoEliminado(Long id) {
-        if(!hechosEliminados.contains(id)) {
-            hechosEliminados.add(id);
+    public void marcarComoEliminado(Long id, String clientNombre) {
+        if(!clientNombre.equals("DESASTRES_NATURALES")){
+            throw new UnsupportedOperationException("El cliente no admite solicitudes de eliminaciòn");
         }
+
+        if(hechosEliminados.contains(id)) {
+            throw new HechoYaEliminado("El Hecho ya estaba eliminado");
+
+        }
+
+        hechosEliminados.add(id);
     }
 
     public HechoService(List<IAPIClient> apiClients, HechoMapper hechoMapper) {
