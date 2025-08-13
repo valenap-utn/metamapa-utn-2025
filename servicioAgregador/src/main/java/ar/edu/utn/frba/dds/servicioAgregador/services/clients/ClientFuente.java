@@ -22,6 +22,7 @@ public class ClientFuente {
     return WebClient.builder().baseUrl(baseUrl).build();
   }
 
+
   public List<Hecho> getHechos(FiltroDTO filtro) {
     WebClient.ResponseSpec respuesta = this.initWebClient().get()
             .uri(uriBuilder -> this.uriSegunSusFiltros(uriBuilder, filtro) )
