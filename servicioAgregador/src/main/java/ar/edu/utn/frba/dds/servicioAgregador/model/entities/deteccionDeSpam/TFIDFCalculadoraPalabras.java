@@ -41,10 +41,10 @@ public class TFIDFCalculadoraPalabras {
   }
 
   private Double calcularIDFPalabra(String palabra) {
-    Long cantDocusConPalabra = this.documentosSpam.stream().filter(documento -> this.cantRepeticionesPalabraEnDocumento(documento, palabra) > 0).count();
+    long cantDocusConPalabra = this.documentosSpam.stream().filter(documento -> this.cantRepeticionesPalabraEnDocumento(documento, palabra) > 0).count();
     if (cantDocusConPalabra  == 0) {
       cantDocusConPalabra = 1L;
     }
-    return Math.log10(this.documentosSpam.size() / cantDocusConPalabra.doubleValue());
+    return Math.log10(this.documentosSpam.size() / (double) cantDocusConPalabra);
   }
 }

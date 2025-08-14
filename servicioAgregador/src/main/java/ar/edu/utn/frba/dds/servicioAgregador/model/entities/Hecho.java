@@ -25,14 +25,14 @@ public class Hecho {
     @Setter @Getter private Ubicacion ubicacion;
     @Setter @Getter private LocalDate fechaAcontecimiento;
     @Setter @Getter private LocalDate fechaCarga;
-    @Setter @Getter private Origen origen;
+    @Setter @Getter private Origen origen ;
     @Setter @Getter private boolean eliminado = false;
     @Setter @Getter private ContenidoMultimedia contenidoMultimedia;
     @Getter List<AlgoritmoConsenso> algosAceptados;
     @Getter private final Set<String> etiquetas = new HashSet<>();
+    private Usuario usuario;
 
     public Hecho() {
-        this.eliminado = false;
         this.algosAceptados = new ArrayList<>();
     }
 
@@ -65,5 +65,9 @@ public class Hecho {
 
     public boolean estaCuradoPor(AlgoritmoConsenso algoritmoConsenso) {
         return this.algosAceptados.contains(algoritmoConsenso);
+    }
+
+    public Long getIdExterno() {
+        return this.origen.getIdExterno();
     }
 }

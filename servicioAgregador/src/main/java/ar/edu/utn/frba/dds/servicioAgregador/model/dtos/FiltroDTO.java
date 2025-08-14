@@ -1,9 +1,11 @@
 package ar.edu.utn.frba.dds.servicioAgregador.model.dtos;
 
 import java.time.LocalDate;
-import lombok.Data;
+import lombok.Builder;
+import lombok.Getter;
 
-@Data
+@Builder
+@Getter
 public class FiltroDTO {
   String categoria;
   LocalDate fecha_reporte_desde;

@@ -20,13 +20,14 @@ public class HechoRepository implements IHechoRepository {
     this.idsHechos = new HashMap<>();
   }
 
-  public void saveHecho(Hecho hecho) {
+  public Hecho saveHecho(Hecho hecho) {
     Long id = hecho.getId();
     if(id == null) {
       id = idGenerator.getAndIncrement();
       hecho.setId(id);
     }
     this.idsHechos.put(id, hecho);
+    return hecho;
   }
 
   @Override

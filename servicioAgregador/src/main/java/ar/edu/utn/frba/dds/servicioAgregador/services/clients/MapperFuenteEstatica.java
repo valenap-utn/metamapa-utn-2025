@@ -19,7 +19,7 @@ public class MapperFuenteEstatica extends MapperFuenteClient {
 
   private Hecho mapearHecho(HechoDTOEstatica hechoDTO, String url) {
     return this.crearHechoBasico(hechoDTO)
-            .origen(new Origen(TipoOrigen.DATASET, url))
+            .origen(Origen.builder().tipo(TipoOrigen.DATASET).url(url).idExterno(hechoDTO.getId()).build())
             .build();
   }
 }

@@ -19,7 +19,7 @@ public class MapperFuenteDinamica extends MapperFuenteClient {
   private Hecho mapearHecho(HechoDTODinamica hechoDTO, String url) {
     return this.crearHechoBasico(hechoDTO)
             .contenidoMultimedia(hechoDTO.getContenidoMultimedia())
-            .origen(new Origen(hechoDTO.getTipoOrigen(), url))
+            .origen(Origen.builder().tipo(hechoDTO.getTipoOrigen()).idExterno(hechoDTO.getId()).url(url).build())
             .build();
   }
 }

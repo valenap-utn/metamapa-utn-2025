@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Contribuyente implements Rol {
-  private List<Permiso> permisos;
+  private final List<Permiso> permisos;
   public Contribuyente() {
-    this.permisos = new ArrayList<Permiso>();
+    this.permisos = new ArrayList<>();
     this.permisos.add(new PermisoCrearColeccion());
   }
 

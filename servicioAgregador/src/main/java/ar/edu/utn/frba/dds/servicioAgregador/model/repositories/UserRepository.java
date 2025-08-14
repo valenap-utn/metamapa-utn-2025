@@ -28,6 +28,6 @@ public class UserRepository implements IUserRepository {
 
   @Override
   public Set<Usuario> findAll() {
-    return new HashSet<Usuario>(this.usuariosByID.values());
+    return new HashSet<>(this.usuariosByID.values());
   }
 }

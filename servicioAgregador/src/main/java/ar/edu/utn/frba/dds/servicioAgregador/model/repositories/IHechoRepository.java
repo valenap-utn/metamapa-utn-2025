@@ -1,21 +1,18 @@
 package ar.edu.utn.frba.dds.servicioAgregador.model.repositories;
 
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.FiltroDTO;
-import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Fuente;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
 
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.origenes.Origen;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 public interface IHechoRepository {
 
-  public List<Hecho> findAll();
-  public Hecho findById(Long id);
+  List<Hecho> findAll();
+  Hecho findById(Long id);
 
-  public void saveHecho(Hecho hecho);
-  public List<Hecho> findByOrigen(Origen origen);
+  Hecho saveHecho(Hecho hecho);
+  List<Hecho> findByOrigen(Origen origen);
 
   List<Hecho> findByOrigenWithFiltros(Origen origen, FiltroDTO filtro);
 }

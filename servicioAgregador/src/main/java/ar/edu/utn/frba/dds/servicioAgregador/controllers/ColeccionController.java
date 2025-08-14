@@ -5,12 +5,10 @@ import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.ConjuntoHechoCompleto;
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.FiltroDTO;
 import ar.edu.utn.frba.dds.servicioAgregador.services.IColeccionService;
 
-import ar.edu.utn.frba.dds.servicioAgregador.services.mappers.MapFiltroDTO;
 import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,10 +20,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("api/colecciones")
 public class ColeccionController {
   private final IColeccionService coleccionService;
-  private final MapFiltroDTO mapFiltroDTO;
-  public ColeccionController(IColeccionService coleccionService, MapFiltroDTO mapFiltroDTO) {
+  public ColeccionController(IColeccionService coleccionService) {
     this.coleccionService = coleccionService;
-    this.mapFiltroDTO = mapFiltroDTO;
   }
 
 
@@ -45,13 +41,19 @@ public class ColeccionController {
                                          @RequestParam(required = false) Float longitud,
                                                          @RequestParam(required = false) boolean curada,
                                           @RequestParam(required = false) boolean entiemporeal) {
-    try {
-      FiltroDTO filtro = this.mapFiltroDTO.toFiltroDTO(categoria, fecha_reporte_desde, fecha_reporte_hasta, fecha_acontecimiento_desde, fecha_acontecimiento_hasta,
-              latitud, longitud, curada, entiemporeal);
+      FiltroDTO filtro = FiltroDTO.builder()
+              .fecha_acontecimiento_desde(fecha_acontecimiento_desde)
+              .fecha_acontecimiento_hasta(fecha_acontecimiento_hasta)
+              .fecha_reporte_desde(fecha_reporte_desde)
+              .fecha_reporte_hasta(fecha_reporte_hasta)
+              .categoria(categoria)
+              .latitud(latitud)
+              .longitud(longitud)
+              .curada(curada)
+              .entiemporeal(entiemporeal)
+              .build();
+
       return ResponseEntity.ok(this.coleccionService.getHechosPorColeccion(id, filtro)) ;
-    } catch (Exception e) {
-      return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-    }
   }
 
 

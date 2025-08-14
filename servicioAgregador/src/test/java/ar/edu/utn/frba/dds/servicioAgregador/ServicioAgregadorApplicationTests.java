@@ -20,9 +20,7 @@ import reactor.core.publisher.Mono;
 class ServicioAgregadorApplicationTests {
 	Coleccion coleccionPrueba;
 	Fuente fuentePrueba;
-	ConexionEstaticaDinamicaService conexionDinamicaService;
-	ConexionEstaticaDinamicaService conexionEstaticaService;
-	ConexionProxyService conexionProxyService;
+
 	ColeccionService coleccionService;
 	ColeccionRepository coleccionRepository;
 	UserRepository userRepository;
@@ -41,14 +39,11 @@ class ServicioAgregadorApplicationTests {
 		this.coleccionPrueba = new Coleccion("Colección prueba", "Esto es una prueba");
 		this.fuentePrueba = new Fuente(2L, "Estatica");
 		this.coleccionPrueba.agregarFuentes(List.of(this.fuentePrueba));
-		this.coleccionService.agregarConexionAFuente(1L, this.conexionDinamicaService);
-		this.coleccionService.agregarConexionAFuente(2L, this.conexionEstaticaService);
-		this.coleccionService.agregarConexionAFuente(3L, this.conexionProxyService);
 		this.coleccionRepository.save(this.coleccionPrueba);
 	}
 
 	Mono<Void> llenarFuente(Fuente fuente) {
-		fuente.agregarHechos(List.of(new Hecho(), new Hecho()));
+		fuente.actualizarHechos(List.of(new Hecho(), new Hecho()));
 		return Mono.empty();
 	}
 

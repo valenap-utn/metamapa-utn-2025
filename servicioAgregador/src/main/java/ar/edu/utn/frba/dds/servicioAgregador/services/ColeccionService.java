@@ -17,6 +17,7 @@ import ar.edu.utn.frba.dds.servicioAgregador.model.entities.origenes.TipoOrigen;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.roles.PermisoCrearColeccion;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IColeccionRepository;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IHechoRepository;
+import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IHechosExternosRepository;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IUserRepository;
 import ar.edu.utn.frba.dds.servicioAgregador.services.clients.ClientFuente;
 import ar.edu.utn.frba.dds.servicioAgregador.services.mappers.MapColeccionOutput;
@@ -42,17 +43,20 @@ public class ColeccionService implements IColeccionService{
   private MapHechoOutput mapperHechoOutput;
   private final FactoryAlgoritmo algoritmoFactory;
   private final FactoryClientFuente clientFuenteFactory;
+  private final IHechosExternosRepository hechosExternosRepository;
 
   public ColeccionService(IColeccionRepository coleccionRepository,
                           IUserRepository userRepository,
                           IHechoRepository hechoRepository,
                           FactoryAlgoritmo algoritmoFactory,
-                          FactoryClientFuente clientFuenteFactory) {
+                          FactoryClientFuente clientFuenteFactory,
+                          IHechosExternosRepository hechosExternosRepository) {
     this.coleccionRepository = coleccionRepository;
     this.userRepository = userRepository;
     this.hechoRepository = hechoRepository;
     this.algoritmoFactory = algoritmoFactory;
     this.clientFuenteFactory = clientFuenteFactory;
+    this.hechosExternosRepository = hechosExternosRepository;
   }
 
 
@@ -76,7 +80,7 @@ public class ColeccionService implements IColeccionService{
   }
 
   private Fuente toFuente(FuenteDTO fuente) {
-    return new Fuente(new Origen(fuente.getTipoOrigen(), fuente.getUrl()));
+    return new Fuente(Origen.builder().url(fuente.getUrl()).tipo(fuente.getTipoOrigen()).build());
   }
 
   @Override
@@ -92,7 +96,8 @@ public class ColeccionService implements IColeccionService{
     return Flux.fromIterable(fuentes)
             .flatMap(fuente -> {
               List<Hecho> hechos = this.getHechosClient(fuente.getOrigen(), null);
-              hechos.forEach(this.hechoRepository::saveHecho);
+              hechos = hechos.stream().map(this.hechoRepository::saveHecho).toList();
+              hechos.forEach(this.hechosExternosRepository::save);
               return Mono.empty();
             }).then();
   }
@@ -131,7 +136,7 @@ public class ColeccionService implements IColeccionService{
     }
     coleccion.setAlgoritmoConsenso(this.algoritmoFactory.getAlgoritmo(coleccionInput.getAlgoritmo()));
     Coleccion coleccionGuardada = this.coleccionRepository.save(coleccion);
-    return this.mapperColeccionOutput.toColeccionDTOOutput(coleccion);
+    return this.mapperColeccionOutput.toColeccionDTOOutput(coleccionGuardada);
   }
   private List<Hecho> getHechosClient(Origen origen, FiltroDTO filtro) {
     ClientFuente client = this.clientFuenteFactory.getClientPorOrigen(origen);
@@ -143,7 +148,7 @@ public class ColeccionService implements IColeccionService{
     if(filtro.getEntiemporeal() &&  fuente.getOrigen().getTipo() == TipoOrigen.PROXY) {
       hechos.addAll(this.getHechosClient(fuente.getOrigen(), filtro));
     } else {
-      hechos.addAll(this.hechoRepository.findByOrigen(fuente.getOrigen()));
+      hechos.addAll(this.hechoRepository.findByOrigenWithFiltros(fuente.getOrigen(), filtro));
     }
     fuente.actualizarHechos(hechos);
   }

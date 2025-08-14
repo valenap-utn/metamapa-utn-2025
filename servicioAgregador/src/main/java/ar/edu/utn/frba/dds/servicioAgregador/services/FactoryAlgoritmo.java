@@ -10,13 +10,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class FactoryAlgoritmo {
   public AlgoritmoConsenso getAlgoritmo(String tipo) {
-    if(tipo.equals("mayoriaSimple"))
-      return new MayoriaSimple();
-    else if (tipo.equals("absoluta"))
-      return new Absoluta();
-    else if (tipo.equals("multiplesMenciones"))
-      return new MultiplesMenciones();
-    else
-      return new TodosConsensuados();
+    return switch (tipo) {
+      case "mayoriaSimple" -> new MayoriaSimple();
+      case "absoluta" -> new Absoluta();
+      case "multiplesMenciones" -> new MultiplesMenciones();
+      default -> new TodosConsensuados();
+    };
   }
 }

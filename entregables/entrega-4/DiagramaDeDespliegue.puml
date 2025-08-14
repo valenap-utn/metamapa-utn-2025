@@ -1,0 +1,55 @@
+@startuml
+'https://plantuml.com/deployment-diagram
+
+actor visualizador
+actor administrador
+actor contribuyente
+component InstanciaMetaMapa
+component APICatedra
+
+
+frame Metamapa {
+    node servicioAgregador {
+    component APIAdministrador
+    component APIVisualizador
+    component APIService
+    }
+    visualizador -(0- APIVisualizador
+    administrador -(0- APIAdministrador
+    APIAdministrador -(0- APIService
+    APIVisualizador -(0- APIService
+
+
+    node servicioFuenteDinamica {
+        component APIFuenteDinamica
+        database Hechos {
+        }
+    }
+
+
+
+    contribuyente -(0- APIFuenteDinamica
+
+    node servicioFuenteEstatica {
+    component APIFuenteEstatica
+    }
+
+
+
+    node servicioFuenteProxy {
+    component APIFuenteProxy
+    }
+
+    APIService -(0- APIFuenteDinamica
+        APIService -(0- APIFuenteEstatica
+        APIService -(0- APIFuenteProxy
+
+    APIFuenteProxy -(0- InstanciaMetaMapa
+    APIFuenteProxy -(0- APICatedra
+
+}
+
+
+
+
+@enduml

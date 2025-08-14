@@ -1,0 +1,232 @@
+@startuml
+
+class Hecho{
+    - String titulo
+    - Categoria categoria
+    - Ubicacion ubicacion
+    - LocalDateTime fechaAcontecimiento
+    - ContenidoMultimedia contenidoMultimedia
+    - LocalDate fechaDeCarga
+    - boolean eliminado
+    - Origen origen
+    - Set<String> etiquetas
+}
+
+class Ubicacion {
+    - Float longitud
+    - Float latitud
+}
+
+Hecho --> Ubicacion
+
+
+class ContenidoMultimedia {
+    - String nombre
+    - String path
+}
+
+Hecho --> ContenidoMultimedia
+
+class Categoria {
+    -private String nombre;
+    +public boolean esIgualA(Categoria);
+}
+
+class Origen {
+    - TipoOrigen tipo
+    - String url
+}
+
+
+
+enum TipoOrigen {
+    DATASET,
+      PORCONTRIBUYENTE,
+      CARGAMANUAL,
+      PROXY
+}
+Origen --> TipoOrigen
+
+
+enum Estado{
+    ACEPTADA,
+    RECHAZADA,
+    PENDIENTE
+}
+
+Hecho --> Categoria
+Hecho --> Origen
+
+
+' FUENTES y HECHOS
+
+class Fuente {
+    -Long id
+    -String tipo
+    -Set<Hecho> hechos
+}
+
+
+
+Fuente --> "*" Hecho
+
+class Coleccion{
+    - String titulo
+    - String descripcion
+    - List<Fuente> fuente
+    - List<Filtro> criteriosPertenencia
+
+
+
+    + void agregarCriterios(Filtro ... filtros)
+    + Set<Hecho> getHechos()
+    + void agregarFuentes(Collection<Fuente> fuentes)
+}
+
+Coleccion --> "*" Fuente
+Coleccion --> "*" Filtro
+
+
+'FILTROS
+
+abstract class Filtro {
+    + hechoCumple(Hecho unHecho): boolean
+}
+
+class FiltroPorCategoria {
+    - categoria: Categoria
+
+    + hechoCumple(Hecho unHecho): boolean
+}
+
+class FiltroPorDescripcion {
+# String obtenerUnTipoString(Hecho unHecho)
+}
+
+abstract class FiltroPorFecha {
+    - desde: LocalDate
+    - hasta: LocalDate
+    + hechoCumple(Hecho hecho): boolean
+    # obtenerUnTipoFecha(Hecho unHecho): LocalDate
+}
+
+class FiltroPorFechaAcontecimiento {
+    # obtenerUnTipoFecha(Hecho unHecho): LocalDate
+}
+
+class FiltroPorFechaCarga {
+    # obtenerUnTipoFecha(Hecho unHecho): LocalDate
+}
+
+abstract class FiltroPorString {
+    - cadenaAComparar: String
+    + hechoCumple(Hecho unHecho): boolean
+    # obtenerUnTipoString(Hecho unHecho): String
+}
+
+class FiltroPorTitulo {
+   # obtenerUnTipoString(Hecho unHecho): String
+}
+
+class FiltroUbicacion {
+    - ubicacion: Ubicacion
+
+    + hechoCumple(Hecho unHecho): boolean
+}
+
+FiltroPorTitulo --|> FiltroPorString
+FiltroPorDescripcion --|> FiltroPorString
+
+
+FiltroPorFechaAcontecimiento --|> FiltroPorFecha
+FiltroPorFechaCarga --|> FiltroPorFecha
+
+
+class FiltroOrigen {
+    - origen: Origen
+
+    + hechoCumple(Hecho unHecho): boolean
+}
+
+class FiltroContenidoMultimedia {
+    - tieneContenidoMultimedia: boolean
+
+    + hechoCumple(Hecho unHecho): boolean
+}
+
+FiltroPorCategoria --|> Filtro
+FiltroPorFecha --|> Filtro
+FiltroPorString --|> Filtro
+FiltroOrigen --|> Filtro
+FiltroContenidoMultimedia --|> Filtro
+FiltroUbicacion --|> Filtro
+
+
+class Solicitud {
+    - Hecho hecho
+    - Estado estado
+    - Usuario usuario
+    - String justificacion
+}
+
+
+Solicitud --> Hecho
+Solicitud --> Estado
+Solicitud --> Usuario
+
+class Usuario{
+    - String nombre
+    - String apellido
+    - Integer edad
+    - Rol rol
+}
+
+Usuario --> Rol
+
+interface Rol{
+
+}
+
+class Administrador extends Rol {
+
+}
+
+class Contribuyente extends Rol{
+
+}
+
+'DETECCION DE SPAM
+
+interface DetectorDeSpam {
+  + esSpam(String texto): boolean;
+}
+
+class DetectorDeSpamBasico implements DetectorDeSpam {
+  - calculadoraTFIDF: TFIDFCalculadoraPalabras;
+  - nivelImportanciaMinimo: Double;
+
+  + esSpam(String texto): boolean;
+
+  - esPalabraPocoImportante(List<String> documento, String palabra): boolean
+}
+
+class TFIDFCalculadoraPalabras {
+  - documentosSpam: List<List<String>> ;
+
+  - prepararDocumento(String documento): List<String>;
+
+  + calcularTFIDFDePalabra(List<String> documento, String palabra): Double;
+
+  - calcularTFPalabra(List<String> documento, String palabra): Double;
+
+  - cantRepeticionesPalabraEnDocumento(List<String> documento, String palabra): Long;
+
+  - calcularIDFPalabra(String palabra): Double;
+}
+
+DetectorDeSpamBasico --> TFIDFCalculadoraPalabras
+
+
+
+
+@enduml

@@ -1,4 +1,4 @@
-package ar.edu.utn.frba.dds.servicioFuenteProxy.exceptions;
+package ar.edu.utn.frba.dds.servicioFuenteDinamica.exceptions;
 
 public class ErrorDTO {
   String mensaje;
