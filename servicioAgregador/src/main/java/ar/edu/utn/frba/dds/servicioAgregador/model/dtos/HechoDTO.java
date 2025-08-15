@@ -3,6 +3,7 @@ package ar.edu.utn.frba.dds.servicioAgregador.model.dtos;
 
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Categoria;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Ubicacion;
+import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Usuario;
 import java.time.LocalDate;
 
 public interface HechoDTO {
@@ -19,4 +20,6 @@ public interface HechoDTO {
   LocalDate getFechaAcontecimiento();
 
   LocalDate getFechaCarga();
+
+  Long getIdUsuario();
 }

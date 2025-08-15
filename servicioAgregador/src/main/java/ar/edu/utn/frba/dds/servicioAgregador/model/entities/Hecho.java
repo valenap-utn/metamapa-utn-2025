@@ -70,4 +70,8 @@ public class Hecho {
     public Long getIdExterno() {
         return this.origen.getIdExterno();
     }
+
+  public Long getIdUsuario() {
+        return this.usuario.getId();
+  }
 }

@@ -19,6 +19,10 @@ public class Usuario {
   private LocalDate fechaDeNacimiento;
   private Rol rol;
 
+  public static Usuario of(Long id){
+    return Usuario.builder().id(id).build();
+  }
+
   public static Usuario of(Rol rol){
     return Usuario
         .builder()

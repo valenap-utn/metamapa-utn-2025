@@ -1,6 +1,7 @@
 package ar.edu.utn.frba.dds.servicioAgregador.model.repositories;
 
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.FiltroDTO;
+import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Categoria;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
 
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.origenes.Origen;
@@ -8,7 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.stream.Collectors;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -41,7 +41,7 @@ public class HechoRepository implements IHechoRepository {
   }
 
   private boolean cumpleFiltros(Hecho hecho, FiltroDTO filtro) {
-    return hecho.getCategoria().equals(filtro.getCategoria());
+    return hecho.getCategoria().equals(new Categoria(filtro.getCategoria()));
   }
 
   @Override

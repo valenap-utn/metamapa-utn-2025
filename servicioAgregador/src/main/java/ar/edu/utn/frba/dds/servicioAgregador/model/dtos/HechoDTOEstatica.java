@@ -14,4 +14,5 @@ public class HechoDTOEstatica  implements HechoDTO{
   private Ubicacion ubicacion;
   private LocalDate fechaAcontecimiento;
   private LocalDate fechaCarga;
+  private Long idUsuario;
 }

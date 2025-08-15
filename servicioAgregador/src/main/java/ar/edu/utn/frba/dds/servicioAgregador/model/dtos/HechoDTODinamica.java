@@ -18,4 +18,5 @@ public class HechoDTODinamica implements HechoDTO {
   private LocalDate fechaCarga;
   private ContenidoMultimedia contenidoMultimedia;
   private TipoOrigen tipoOrigen;
+  private Long idUsuario;
 }

@@ -10,6 +10,7 @@ class Hecho{
     - boolean eliminado
     - Origen origen
     - Set<String> etiquetas
+    - Usuario usuario
 }
 
 class Ubicacion {
@@ -35,6 +36,8 @@ class Categoria {
 class Origen {
     - TipoOrigen tipo
     - String url
+    - Long idHechoExterno
+    - String clientProxy
 }
 
 
@@ -61,11 +64,12 @@ Hecho --> Origen
 ' FUENTES y HECHOS
 
 class Fuente {
-    -Long id
-    -String tipo
-    -Set<Hecho> hechos
+    -Origen origen
+    -List<Hecho> hechos
+    + actualizarHechos(List<Hecho>)
 }
 
+Fuente --> Origen
 
 
 Fuente --> "*" Hecho
@@ -89,7 +93,7 @@ Coleccion --> "*" Filtro
 
 'FILTROS
 
-abstract class Filtro {
+interface Filtro {
     + hechoCumple(Hecho unHecho): boolean
 }
 
@@ -154,12 +158,12 @@ class FiltroContenidoMultimedia {
     + hechoCumple(Hecho unHecho): boolean
 }
 
-FiltroPorCategoria --|> Filtro
-FiltroPorFecha --|> Filtro
-FiltroPorString --|> Filtro
-FiltroOrigen --|> Filtro
-FiltroContenidoMultimedia --|> Filtro
-FiltroUbicacion --|> Filtro
+FiltroPorCategoria ..|> Filtro
+FiltroPorFecha ..|> Filtro
+FiltroPorString ..|> Filtro
+FiltroOrigen ..|> Filtro
+FiltroContenidoMultimedia ..|> Filtro
+FiltroUbicacion ..|> Filtro
 
 
 class Solicitud {
@@ -227,6 +231,27 @@ class TFIDFCalculadoraPalabras {
 DetectorDeSpamBasico --> TFIDFCalculadoraPalabras
 
 
+interface AlgoritmoConsenso {
+    + consensuarHecho(Hecho hecho, Collection<Fuente> fuentes): boolean
+}
 
+AlgoritmoConsenso ..> "usa" Hecho
+AlgoritmoConsenso ..>"usa *" Fuente
+
+class Absoluta implements AlgoritmoConsenso {
+    + consensuarHecho(Hecho hecho, Collection<Fuente> fuentes): boolean
+}
+
+class MayoriaSimple implements AlgoritmoConsenso {
+    + consensuarHecho(Hecho hecho, Collection<Fuente> fuentes): boolean
+}
+
+class MultiplesMenciones implements AlgoritmoConsenso {
+    + consensuarHecho(Hecho hecho, Collection<Fuente> fuentes): boolean
+}
+
+class TodosConsensuados implements AlgoritmoConsenso {
+    + consensuarHecho(Hecho hecho, Collection<Fuente> fuentes): boolean
+}
 
 @enduml

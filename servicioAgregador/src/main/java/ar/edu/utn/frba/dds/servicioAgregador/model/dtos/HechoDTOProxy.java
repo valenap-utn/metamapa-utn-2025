@@ -16,6 +16,7 @@ public class HechoDTOProxy implements HechoDTO {
   private LocalDate fechaAcontecimiento;
   private LocalDate fechaCarga;
   private String clientProxy;
+  private Long idUsuario;
 
   @Override
   public Ubicacion getUbicacion() {

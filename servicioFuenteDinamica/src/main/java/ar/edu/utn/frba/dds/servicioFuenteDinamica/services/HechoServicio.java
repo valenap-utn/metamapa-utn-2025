@@ -3,10 +3,12 @@ package ar.edu.utn.frba.dds.servicioFuenteDinamica.services;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos.HechoDTODinamica;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.ContenidoMultimedia;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.RevisarEstado;
+import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.Usuario;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.enums.Estado;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.Hecho;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.repositories.IMultimediaRepository;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.repositories.IHechoRepository;
+import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.repositories.IUserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -21,11 +23,13 @@ public class HechoServicio implements IHechoServicio {
     private final IHechoRepository hechoRepository;
     private final IMultimediaRepository contentMultimediaRepository;
     private final RevisarEstado revisadorHechosSolicitud;
+    private final IUserRepository userRepository;
 
-    public HechoServicio(IHechoRepository hechoRepository, IMultimediaRepository contentMultimediaRepository, RevisarEstado revisadorHechosSolicitud) {
+    public HechoServicio(IHechoRepository hechoRepository, IMultimediaRepository contentMultimediaRepository, RevisarEstado revisadorHechosSolicitud, IUserRepository userRepository) {
         this.hechoRepository = hechoRepository;
         this.contentMultimediaRepository = contentMultimediaRepository;
         this.revisadorHechosSolicitud = revisadorHechosSolicitud;
+      this.userRepository = userRepository;
     }
 
     @Override
@@ -34,6 +38,8 @@ public class HechoServicio implements IHechoServicio {
         hecho.setDescripcion(input.getDescripcion());
         hecho.setEsAnonimo(input.isEsAnonimo());
         hecho.setFechaCarga(LocalDate.now());
+        Usuario usuario = this.userRepository.findById(input.getIdUsuario());
+        hecho.setUsuario(usuario);
         if (!contenidoMultimedia.isEmpty()) {
             ContenidoMultimedia contMultimediaHecho = this.contentMultimediaRepository.saveFile(contenidoMultimedia);
             hecho.setContenidoMultimedia(contMultimediaHecho);

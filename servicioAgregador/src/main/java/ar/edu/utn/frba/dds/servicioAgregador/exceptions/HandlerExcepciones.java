@@ -27,4 +27,9 @@ public class HandlerExcepciones {
   public ResponseEntity<ErrorDTO> handleUsuarioSinPermiso(UsuarioSinPermiso error) {
     return ResponseEntity.status(403).body(new ErrorDTO(error.getMessage(), error.getTipoError()));
   }
+
+  @ExceptionHandler(value = SolicitudError.class)
+  public ResponseEntity<ErrorDTO> handleSolicitudError(SolicitudError error) {
+    return ResponseEntity.status(400).body(new ErrorDTO(error.getMessage(), error.getTipoError()));
+  }
 }

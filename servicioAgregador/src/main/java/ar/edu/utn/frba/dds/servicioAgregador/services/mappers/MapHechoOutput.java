@@ -28,6 +28,7 @@ public class MapHechoOutput {
     hechoDTO.setUbicacion(hecho.getUbicacion());
     hechoDTO.setTitulo(hecho.getTitulo());
     hechoDTO.setFechaAcontecimiento(hecho.getFechaAcontecimiento());
+    hechoDTO.setIdUsuario(hecho.getIdUsuario());
     return hechoDTO;
   }
 }

@@ -57,17 +57,24 @@ public class SolicitudService implements ISolicitudService {
         return solicitudOutputDTO;
     }
 
-    public void aceptarSolicitud(Solicitud solicitud) {
+    public SolicitudOutputDTO aceptarSolicitud(Long idSolicitud) {
+        Solicitud solicitud = this.repo.findById(idSolicitud);
         solicitud.aceptar();
         Hecho hechoAEliminar = solicitud.getHecho();
         hechoAEliminar.setEliminado(true);
         ClientFuente client = this.clientFuenteFactory.getClientPorOrigen(hechoAEliminar.getOrigen());
         client.postEliminado(hechoAEliminar, this.idHechosExternos.findIDFuente(hechoAEliminar.getId()));
         repo.save(solicitud);
+        return this.toSolicitudOutputDTO(solicitud);
     }
 
-
-
+    @Override
+    public SolicitudOutputDTO eliminarSolicitud(Long idSolicitud) {
+        Solicitud solicitud = this.repo.findById(idSolicitud);
+        solicitud.rechazar();
+        repo.save(solicitud);
+        return this.toSolicitudOutputDTO(solicitud);
+    }
 
 
 }

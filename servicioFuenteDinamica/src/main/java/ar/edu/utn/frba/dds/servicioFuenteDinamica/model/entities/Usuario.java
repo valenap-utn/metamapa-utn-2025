@@ -6,12 +6,15 @@ import java.time.LocalDate;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.roles.Rol;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Getter
 public class Usuario {
+    private Long id;
     private String nombre;
     private String apellido;
     private LocalDate fechaDeNacimiento;

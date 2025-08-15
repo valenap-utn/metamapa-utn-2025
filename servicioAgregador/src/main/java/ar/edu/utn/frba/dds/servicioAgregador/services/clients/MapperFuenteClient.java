@@ -2,6 +2,7 @@ package ar.edu.utn.frba.dds.servicioAgregador.services.clients;
 
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.HechoDTO;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
+import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Usuario;
 import java.util.List;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -10,12 +11,12 @@ public abstract class MapperFuenteClient {
 
   protected Hecho.HechoBuilder crearHechoBasico(HechoDTO hechoDTO) {
     return Hecho.builder()
-            .id(hechoDTO.getId())
             .titulo(hechoDTO.getTitulo())
             .descripcion(hechoDTO.getDescripcion())
             .fechaCarga(hechoDTO.getFechaCarga())
             .fechaAcontecimiento(hechoDTO.getFechaAcontecimiento())
             .categoria(hechoDTO.getCategoria())
-            .ubicacion(hechoDTO.getUbicacion());
+            .ubicacion(hechoDTO.getUbicacion())
+            .usuario(Usuario.of(hechoDTO.getIdUsuario()));
   }
 }

@@ -18,4 +18,5 @@ public class HechoDTODinamica  {
   private MultipartFile contenidoMultimedia;
   private String contenido;
   private boolean esAnonimo;
+  private Long idUsuario;
 }

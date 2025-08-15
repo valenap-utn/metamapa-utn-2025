@@ -26,6 +26,7 @@ public class Hecho implements Revisable{
     @Setter @Getter private String contenido;
     @Setter @Getter private Long id;
     @Setter @Getter private boolean esAnonimo;
+    @Setter private Usuario usuario;
 
     public Hecho() {
         this.fechaCarga = LocalDate.now();
