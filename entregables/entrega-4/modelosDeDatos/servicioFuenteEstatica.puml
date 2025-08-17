@@ -1,0 +1,19 @@
+@startuml
+'https://plantuml.com/class-diagram
+entity hecho{
+    * id INTEGER(11) <<PK>>
+
+}
+
+entity categoria {
+    * id INTEGER(11) <<PK>>
+    --
+    * nombre VARCHAR(50)
+}
+
+entity ubicacion {
+    * latitud NUMBER
+    * longitud NUMBER
+}
+
+@enduml

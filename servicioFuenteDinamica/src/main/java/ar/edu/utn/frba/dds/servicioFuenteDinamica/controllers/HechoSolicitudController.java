@@ -3,11 +3,10 @@ package ar.edu.utn.frba.dds.servicioFuenteDinamica.controllers;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos.HechoDTODinamica;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.Solicitud;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.Usuario;
-import ar.edu.utn.frba.dds.servicioFuenteDinamica.services.HechoServicio;
+import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.repositories.IHechoRepository;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.Hecho;
-import ar.edu.utn.frba.dds.servicioFuenteDinamica.services.SolicitudServicio;
-import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.repositories.HechoRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import ar.edu.utn.frba.dds.servicioFuenteDinamica.services.IHechoServicio;
+import ar.edu.utn.frba.dds.servicioFuenteDinamica.services.ISolicitudServicio;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,15 +18,15 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api")
 public class HechoSolicitudController {
+    private final IHechoServicio hechoServicio;
+    private final IHechoRepository hechoRepository;
+    private final ISolicitudServicio solicitudServicio;
 
-    @Autowired
-    private HechoServicio hechoServicio;
-
-    @Autowired
-    private HechoRepository hechoRepository;
-
-    @Autowired
-    private SolicitudServicio solicitudServicio;
+    public HechoSolicitudController(IHechoServicio hechoServicio, IHechoRepository hechoRepository, ISolicitudServicio solicitudServicio) {
+        this.hechoServicio = hechoServicio;
+        this.hechoRepository = hechoRepository;
+        this.solicitudServicio = solicitudServicio;
+    }
 
     @PostMapping("/hechos")
     public ResponseEntity<Hecho> crearHecho(@RequestBody HechoDTODinamica hecho, @RequestParam("contenidomultimedia") MultipartFile contenidoMultimedia) {

@@ -16,4 +16,5 @@ public class HechoInputDTO {
     private Double longitud;
     private LocalDateTime fecha_hecho;
     private LocalDateTime created_at;
+    private Long idUsuario;
 }

@@ -9,7 +9,7 @@ import java.util.Optional;
 import java.util.Set;
 
 public interface IHechoService {
-  public Set<HechoDTOEstatica> importarDesdeCSV(MultipartFile archivo) throws IOException;
+  public Set<HechoDTOEstatica> importarDesdeCSV(MultipartFile archivo, Long idUsuario) throws IOException;
 
   public Set<HechoDTOEstatica> obtenerTodos();
 

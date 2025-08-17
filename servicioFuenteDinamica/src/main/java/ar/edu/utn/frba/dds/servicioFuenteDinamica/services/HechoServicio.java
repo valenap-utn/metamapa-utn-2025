@@ -1,5 +1,7 @@
 package ar.edu.utn.frba.dds.servicioFuenteDinamica.services;
 
+import ar.edu.utn.frba.dds.servicioFuenteDinamica.exceptions.HechoNoEncontrado;
+import ar.edu.utn.frba.dds.servicioFuenteDinamica.exceptions.UsuarioSinPermiso;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos.HechoDTODinamica;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.ContenidoMultimedia;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.RevisarEstado;
@@ -39,6 +41,9 @@ public class HechoServicio implements IHechoServicio {
         hecho.setEsAnonimo(input.isEsAnonimo());
         hecho.setFechaCarga(LocalDate.now());
         Usuario usuario = this.userRepository.findById(input.getIdUsuario());
+        if(usuario == null) {
+            hecho.setEsAnonimo(true);
+        }
         hecho.setUsuario(usuario);
         if (!contenidoMultimedia.isEmpty()) {
             ContenidoMultimedia contMultimediaHecho = this.contentMultimediaRepository.saveFile(contenidoMultimedia);
@@ -55,7 +60,13 @@ public class HechoServicio implements IHechoServicio {
 
     @Override
     public Hecho modificarHecho(Long hechoId, HechoDTODinamica nuevosDatos) {
-        Hecho hecho = hechoRepository.findById(hechoId).orElseThrow(() -> new RuntimeException("Hecho no encontrado"));
+        Hecho hecho = hechoRepository.findById(hechoId).orElseThrow(() -> new HechoNoEncontrado("Hecho no encontrado"));
+        Usuario usuario = this.userRepository.findById(nuevosDatos.getIdUsuario());
+        if(!hecho.isEsAnonimo() && hecho.getUsuario() != usuario) {
+            throw new UsuarioSinPermiso("Solo puede modificar un hecho su autor");
+        }
+
+
         if (Duration.between(hecho.getFechaCarga(), LocalDateTime.now()).toDays() >= 7) {
             throw new IllegalStateException("Ya no se puede modificar el hecho.");
         }

@@ -22,4 +22,9 @@ public class HandlerExcepciones {
   public ResponseEntity<ErrorDTO> handleUsuarioSinPermiso(UsuarioSinPermiso error) {
     return ResponseEntity.status(403).body(new ErrorDTO(error.getMessage(), error.getTipoError()));
   }
+
+  @ExceptionHandler(value = HechoNoEncontrado.class)
+  public ResponseEntity<ErrorDTO> handleHechoNoEncontrado(HechoNoEncontrado error) {
+    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorDTO(error.getMessage(), error.getTipoError()));
+  }
 }

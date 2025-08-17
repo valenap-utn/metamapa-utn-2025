@@ -15,5 +15,5 @@ public class HechoOutputDTO {
     private LocalDateTime fecha;
     private LocalDateTime fechaCarga;
     private String fuente; // de qué API vino
-
+    private Long idUsuario;
 }

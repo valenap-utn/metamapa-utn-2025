@@ -1,0 +1,111 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+entity hecho {
+    * id INTEGER(11) <<PK>>
+    * categoria_id INTEGER(11) <<FK>>
+    * ubicacion_id INTEGER(11) <<FK>>
+    * contenidoMultimedia_id INTEGER(11) <<FK>>
+    * origen_id INTEGER(11) <<FK>>
+    * usuario_id INTEGER(11) <<FK>>
+    --
+    * titulo VARCHAR(50)
+    * descripcion VARCHAR(255)
+    * fechaAcontecimiento DATE
+    * fechaCarga DATE
+    * eliminado INTEGER(1)
+}
+
+entity etiqueta {
+    * id INTEGER(11) <<PK>>
+    * hecho_id INTEGER(11) <<FK>>
+    --
+    * descripcion VARCHAR(70)
+}
+
+
+entity usuario {
+    * id INTEGER(11) <<PK>>
+    --
+    * nombre VARCHAR(40)
+    * fecha_nacimiento DATETIME
+}
+
+
+
+entity hechos_algoritmo_consenso {
+    * algoritmo_consenso_id INTEGER(11) <<PK>> <<FK>>
+    * hecho_id INTEGER(11) <<PK>> <<FK>>
+    --
+}
+
+
+
+entity algoritmo_consenso {
+    * id INTEGER(11) <<PK>>
+    --
+    * nombre VARCHAR(60)
+}
+
+entity categoria {
+    * id INTEGER(11) <<PK>>
+    --
+    * nombre VARCHAR(60)
+}
+
+entity origen{
+    * id INTEGER(11) <<PK>>
+    --
+    * tipoOrigen VARCHAR(50)
+    * url VARCHAR(255)
+}
+
+entity coleccion {
+    * id VARCHAR(50) <<PK>>
+    * algoritmo_consenso_id <<FK>>
+    --
+    * titulo VARCHAR(50)
+    * descripcion TEXT
+    * List<Filtro> criteriosDePertenencia;
+}
+
+entity coleccion_criterio_pertenencia {
+    * criterio_pertenencia_id INTEGER(11) <<PK>> <<FK>>
+    * coleccion_id VARCHAR(50) <<PK>> <<FK>>
+    --
+}
+
+entity criterio_pertenencia {
+    * id INTEGER(11) <<PK>>
+    --
+    * nombre VARCHAR(30)
+}
+
+
+
+entity origen_fuente {
+    * origen_id INTEGER(11) <<PK>> <<FK>>
+    * coleccion_id VARCHAR(50) <<PK>> <<FK>>
+    --
+}
+
+entity contenido_multimedia {
+    * id INTEGER(11) <<PK>>
+    --
+    * url VARCHAR(255)
+    * descripcion TEXT
+}
+
+usuario ||--|{ hecho
+hecho ||--|{ etiqueta
+categoria ||--|{ hecho
+origen ||--|{ hecho
+hecho ||--|{ hechos_algoritmo_consenso
+algoritmo_consenso ||--|{ hechos_algoritmo_consenso
+coleccion ||--|{ origen_fuente
+origen ||--|{ origen_fuente
+coleccion ||--|{ coleccion_criterio_pertenencia
+criterio_pertenencia ||--|{ coleccion_criterio_pertenencia
+algoritmo_consenso ||--|{ coleccion
+contenido_multimedia ||--|{ hecho
+@enduml

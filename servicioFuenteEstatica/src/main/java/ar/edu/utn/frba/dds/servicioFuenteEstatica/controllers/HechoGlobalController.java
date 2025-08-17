@@ -1,12 +1,8 @@
 package ar.edu.utn.frba.dds.servicioFuenteEstatica.controllers;
 
 import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.dtos.HechoDTOEstatica;
-import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.entities.Hecho;
-import ar.edu.utn.frba.dds.servicioFuenteEstatica.services.HechoService;
 
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.stream.Collectors;
 
 import ar.edu.utn.frba.dds.servicioFuenteEstatica.services.IHechoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,9 +56,9 @@ public class HechoGlobalController {
   }
 
   @PostMapping("/importar")
-  public ResponseEntity<String> importar(@RequestParam("archivo") MultipartFile archivo) {
+  public ResponseEntity<String> importar(@RequestParam("archivo") MultipartFile archivo, @RequestParam Long idUsuario) {
     try {
-      Set<HechoDTOEstatica> hechosImportados = hechoService.importarDesdeCSV(archivo);
+      Set<HechoDTOEstatica> hechosImportados = hechoService.importarDesdeCSV(archivo, idUsuario);
       return ResponseEntity.ok("Importación exitosa. Se importaron " + hechosImportados.size() + " hechos.");
     } catch (IOException e) {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST)

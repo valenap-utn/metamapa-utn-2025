@@ -1,0 +1,13 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+entity hecho {
+}
+
+entity contenido_multimedia{
+}
+
+entity solicitud_hecho {
+}
+
+@enduml

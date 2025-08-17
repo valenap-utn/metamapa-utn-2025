@@ -15,4 +15,5 @@ public class HechoInputDTO {
     private Double latitud;
     private Double longitud;
     private LocalDateTime fecha_hecho;
+    private Long idUsuario;
 }
