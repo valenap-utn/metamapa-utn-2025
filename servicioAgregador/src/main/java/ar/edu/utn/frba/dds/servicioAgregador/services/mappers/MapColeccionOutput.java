@@ -5,7 +5,9 @@ import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.FuenteDTO;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Coleccion;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Fuente;
 import java.util.stream.Collectors;
+import org.springframework.stereotype.Component;
 
+@Component
 public class MapColeccionOutput {
 
   public ColeccionDTOOutput toColeccionDTOOutput(Coleccion coleccion) {

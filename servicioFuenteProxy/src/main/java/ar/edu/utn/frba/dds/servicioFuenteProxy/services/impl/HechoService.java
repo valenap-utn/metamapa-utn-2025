@@ -4,7 +4,6 @@ import ar.edu.utn.frba.dds.servicioFuenteProxy.clients.dtos.output.HechoMapper;
 import ar.edu.utn.frba.dds.servicioFuenteProxy.clients.dtos.output.HechoOutputDTO;
 import ar.edu.utn.frba.dds.servicioFuenteProxy.exceptions.HechoYaEliminado;
 import ar.edu.utn.frba.dds.servicioFuenteProxy.services.IHechoService;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -23,10 +22,6 @@ public class HechoService implements IHechoService {
     private final List<Long> hechosEliminados = new ArrayList<>();
 
     public void marcarComoEliminado(Long id, String clientNombre) {
-        if(!clientNombre.equals("DESASTRES_NATURALES")){
-            throw new UnsupportedOperationException("El cliente no admite solicitudes de eliminaciòn");
-        }
-
         if(hechosEliminados.contains(id)) {
             throw new HechoYaEliminado("El Hecho ya estaba eliminado");
 

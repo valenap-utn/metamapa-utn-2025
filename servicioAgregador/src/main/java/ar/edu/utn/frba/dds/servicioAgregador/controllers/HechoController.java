@@ -5,6 +5,7 @@ import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.FiltroDTO;
 import ar.edu.utn.frba.dds.servicioAgregador.services.IHechoService;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -14,6 +15,7 @@ import java.time.LocalDate;
 
 @RestController
 @RequestMapping("api/hechos")
+@CrossOrigin(origins = "http://localhost:3000/")
 public class HechoController {
   public IHechoService hechoService;
 

@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -46,7 +47,7 @@ public class HechoGlobalController {
   *   Queremos eso dado que es mas RESTful y flexible
   * */
 
-  @PutMapping("/{id}")
+  @PatchMapping("/{id}")
   public ResponseEntity<HechoDTOEstatica> eliminarHecho(@PathVariable Long id ) {
     HechoDTOEstatica hecho = this.hechoService.marcarEliminadoHecho(id);
     if(hecho == null){
@@ -55,7 +56,7 @@ public class HechoGlobalController {
     return ResponseEntity.ok(hecho);
   }
 
-  @PostMapping("/importar")
+  @PostMapping
   public ResponseEntity<String> importar(@RequestParam("archivo") MultipartFile archivo, @RequestParam Long idUsuario) {
     try {
       Set<HechoDTOEstatica> hechosImportados = hechoService.importarDesdeCSV(archivo, idUsuario);

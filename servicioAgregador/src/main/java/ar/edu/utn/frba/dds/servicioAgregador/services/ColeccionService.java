@@ -50,13 +50,17 @@ public class ColeccionService implements IColeccionService{
                           IHechoRepository hechoRepository,
                           FactoryAlgoritmo algoritmoFactory,
                           FactoryClientFuente clientFuenteFactory,
-                          IHechosExternosRepository hechosExternosRepository) {
+                          IHechosExternosRepository hechosExternosRepository,
+                          MapColeccionOutput mapperColeccionOutput,
+                          MapHechoOutput mapperHechoOutput) {
     this.coleccionRepository = coleccionRepository;
     this.userRepository = userRepository;
     this.hechoRepository = hechoRepository;
     this.algoritmoFactory = algoritmoFactory;
     this.clientFuenteFactory = clientFuenteFactory;
     this.hechosExternosRepository = hechosExternosRepository;
+    this.mapperColeccionOutput = mapperColeccionOutput;
+    this.mapperHechoOutput = mapperHechoOutput;
   }
 
 

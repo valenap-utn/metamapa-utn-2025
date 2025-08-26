@@ -12,4 +12,9 @@ public class HandlerExcepciones {
     System.out.println(ex.getMessage());
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorDTO("Error en el servidor", "Error Servidor"));
   }
+
+  @ExceptionHandler(value = HechoYaEliminado.class)
+  public ResponseEntity<ErrorDTO> handlerHechoYaEliminado(HechoYaEliminado error){
+    return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorDTO(error.getMessage(), error.getTipoError()));
+  }
 }

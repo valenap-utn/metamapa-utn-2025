@@ -11,11 +11,13 @@ import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 
 
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
 public class Hecho {
     @Getter @Setter private Long id;
@@ -28,13 +30,9 @@ public class Hecho {
     @Setter @Getter private Origen origen ;
     @Setter @Getter private boolean eliminado = false;
     @Setter @Getter private ContenidoMultimedia contenidoMultimedia;
-    @Getter List<AlgoritmoConsenso> algosAceptados;
+    @Getter private final List<AlgoritmoConsenso> algosAceptados = new ArrayList<>();
     @Getter private final Set<String> etiquetas = new HashSet<>();
     private Usuario usuario;
-
-    public Hecho() {
-        this.algosAceptados = new ArrayList<>();
-    }
 
     public void agregarEtiquetas(String ... etiquetas) {
         this.etiquetas.addAll(List.of(etiquetas));

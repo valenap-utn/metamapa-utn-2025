@@ -100,12 +100,22 @@ usuario ||--|{ hecho
 hecho ||--|{ etiqueta
 categoria ||--|{ hecho
 origen ||--|{ hecho
-hecho ||--|{ hechos_algoritmo_consenso
-algoritmo_consenso ||--|{ hechos_algoritmo_consenso
+hecho ||--o{ hechos_algoritmo_consenso
+algoritmo_consenso ||--o{ hechos_algoritmo_consenso
 coleccion ||--|{ origen_fuente
 origen ||--|{ origen_fuente
 coleccion ||--|{ coleccion_criterio_pertenencia
 criterio_pertenencia ||--|{ coleccion_criterio_pertenencia
 algoritmo_consenso ||--|{ coleccion
 contenido_multimedia ||--|{ hecho
+
+entity solicitud {
+    * id INTEGER(11) <<PK>>
+    --
+    * hecho_id INTEGER(11) <<FK>>
+    * justificacion TEXT
+    * estado VARCHAR(50)
+}
+
+solicitud |o--|| hecho
 @enduml

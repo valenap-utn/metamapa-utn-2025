@@ -38,20 +38,11 @@ public class HechosController {
         return ResponseEntity.ok().body(hechoOutputDTOS);
     }
 
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<?> eliminarHecho(@PathVariable Long id, @RequestParam String clientNombre) {
         hechoService.marcarComoEliminado(id, clientNombre);
         return ResponseEntity.ok().build();
     }
 
-    @ExceptionHandler(value = UnsupportedOperationException.class)
-    public ResponseEntity<ErrorDTO> exceptionHandler(UnsupportedOperationException error ){
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorDTO(error.getMessage()));
-    }
-
-    @ExceptionHandler(value = HechoYaEliminado.class)
-    public ResponseEntity<ErrorDTO> handlerHechoYaEliminado(HechoYaEliminado error){
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorDTO(error.getMessage()));
-    }
 }
 

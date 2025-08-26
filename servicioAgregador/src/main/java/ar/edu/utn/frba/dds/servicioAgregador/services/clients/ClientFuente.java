@@ -49,7 +49,7 @@ public class ClientFuente {
     Hecho hechocopia = Hecho.builder().id(idHecho).categoria(hecho.getCategoria())
             .descripcion(hecho.getDescripcion()).fechaAcontecimiento(hecho.getFechaAcontecimiento())
             .eliminado(hecho.isEliminado()).fechaCarga(hecho.getFechaCarga()).build();
-    this.initWebClient().put().uri("/api/hechos/{id}", idHecho);
+    this.initWebClient().patch().uri("/api/hechos/{id}", idHecho);
             //.bodyValue(this.mapHechoOutput.toHechoDTO(hechocopia));
 
   }

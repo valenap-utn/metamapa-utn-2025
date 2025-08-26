@@ -41,6 +41,8 @@ public class HechoRepository implements IHechoRepository {
   }
 
   private boolean cumpleFiltros(Hecho hecho, FiltroDTO filtro) {
+    if(filtro.getCategoria() == null)
+      return true;
     return hecho.getCategoria().equals(new Categoria(filtro.getCategoria()));
   }
 

@@ -51,7 +51,7 @@ public class HechoSolicitudController {
         return hechoDTO;
     }
 
-    @PutMapping("/hechos/{id}")
+    @PatchMapping("/hechos/{id}")
     public ResponseEntity<?> modificarHecho(@PathVariable Long id, @RequestBody HechoDTODinamica nuevosDatos) {
         try {
             return ResponseEntity.ok(hechoServicio.modificarHecho(id, nuevosDatos));
