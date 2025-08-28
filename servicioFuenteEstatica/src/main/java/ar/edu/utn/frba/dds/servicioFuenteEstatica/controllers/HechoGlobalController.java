@@ -57,21 +57,15 @@ public class HechoGlobalController {
   }
 
   @PostMapping
-  public ResponseEntity<String> importar(@RequestParam("archivo") MultipartFile archivo, @RequestParam Long idUsuario) {
-    try {
+  public ResponseEntity<String> importar(@RequestParam("archivo") MultipartFile archivo, @RequestParam("idUsuario") Long idUsuario) {
       Set<HechoDTOEstatica> hechosImportados = hechoService.importarDesdeCSV(archivo, idUsuario);
       return ResponseEntity.ok("Importación exitosa. Se importaron " + hechosImportados.size() + " hechos.");
-    } catch (IOException e) {
-      return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-          .body("Error al procesar el archivo CSV.");
-    }
   }
 
   @GetMapping
   public ResponseEntity<Set<HechoDTOEstatica>> getAll() {
     Set<HechoDTOEstatica> todosLosHechos = hechoService.obtenerTodos();
-    return todosLosHechos.isEmpty() ?
-        ResponseEntity.noContent().build() : ResponseEntity.ok(todosLosHechos);
+    return ResponseEntity.ok(todosLosHechos);
   }
 
 

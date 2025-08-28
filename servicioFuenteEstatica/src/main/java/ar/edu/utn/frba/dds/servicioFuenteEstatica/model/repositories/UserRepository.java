@@ -6,19 +6,24 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicLong;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class UserRepository implements IUserRepository {
   private final Map<Long, Usuario> usuariosByID;
-
+  private final AtomicLong idCounter = new AtomicLong(1);
   public UserRepository() {
     this.usuariosByID = new HashMap<>();
   }
 
   @Override
   public Usuario save(Usuario usuario) {
-    return this.usuariosByID.put(usuario.getId(), usuario);
+    Long id = usuario.getId();
+    if(id == null) {
+      id = idCounter.getAndIncrement();
+    }
+    return this.usuariosByID.put(id, usuario);
   }
 
   @Override

@@ -46,7 +46,7 @@ public class DAOHechosCSV implements IHechosDAO {
   }
 
   private HechoValueObject mapearDesdeCSV(HechoCSV fila) {
-    LocalDate fechaAcont = LocalDate.parse(fila.getFecha());
+    LocalDate fechaAcont = LocalDate.parse(fila.getFechaAcontecimiento());
     Categoria categoria = new Categoria(fila.getCategoria());
     Ubicacion ubicacion = new Ubicacion(fila.getLongitud(), fila.getLatitud());
     return HechoValueObject.of(fila.getTitulo(), fila.getDescripcion(), fechaAcont, categoria, ubicacion);

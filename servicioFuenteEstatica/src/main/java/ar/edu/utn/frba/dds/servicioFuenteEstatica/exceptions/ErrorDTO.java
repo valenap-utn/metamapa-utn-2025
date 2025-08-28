@@ -1,5 +1,8 @@
 package ar.edu.utn.frba.dds.servicioFuenteEstatica.exceptions;
 
+import lombok.Data;
+
+@Data
 public class ErrorDTO {
   String mensaje;
   String tipoError;

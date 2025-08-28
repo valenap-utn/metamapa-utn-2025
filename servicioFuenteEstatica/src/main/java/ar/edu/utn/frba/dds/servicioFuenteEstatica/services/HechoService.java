@@ -1,6 +1,8 @@
 package ar.edu.utn.frba.dds.servicioFuenteEstatica.services;
 
 import ar.edu.utn.frba.dds.servicioFuenteEstatica.exceptions.ArchivoVacioException;
+import ar.edu.utn.frba.dds.servicioFuenteEstatica.exceptions.ExcepcionIO;
+import ar.edu.utn.frba.dds.servicioFuenteEstatica.exceptions.HechoYaEstaEliminado;
 import ar.edu.utn.frba.dds.servicioFuenteEstatica.exceptions.UsuarioNoEncontrado;
 import ar.edu.utn.frba.dds.servicioFuenteEstatica.exceptions.UsuarioSinPermiso;
 import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.daos.IHechosDAO;
@@ -32,7 +34,7 @@ public class HechoService implements IHechoService {
   }
 
   //Importar desde CSV a Set<Hecho>
-  public Set<HechoDTOEstatica> importarDesdeCSV(MultipartFile archivo, Long idUsuario) throws IOException {
+  public Set<HechoDTOEstatica> importarDesdeCSV(MultipartFile archivo, Long idUsuario) {
     if(archivo.isEmpty()){
       throw new ArchivoVacioException("El archivo subido está vacío. Esto puede ser porque se ha subido incorrectamente o el archivo está corrupto");
     }
@@ -44,7 +46,13 @@ public class HechoService implements IHechoService {
     if(!usuario.tienePermisoDe(new PermisoSubidaArchivo(""))){
       throw new UsuarioSinPermiso("El usuario especificado no tiene permisos para subir archivos con hechos");
     }
-    Set<HechoValueObject> hechosVO = hechosDAO.getAll(archivo.getInputStream());
+    Set<HechoValueObject> hechosVO;
+    try {
+       hechosVO = hechosDAO.getAll(archivo.getInputStream());
+    } catch (IOException e) {
+      throw new ExcepcionIO(e.getMessage());
+    }
+
 
     Set<Hecho> hechos = hechosVO.stream()
         .map(unHvo -> new Hecho(unHvo, Origen.PORDATASET))
@@ -64,6 +72,9 @@ public class HechoService implements IHechoService {
     Hecho hecho = this.hechoRepository.findByID(idHecho).orElse(null);
     if(hecho == null)
       return null;
+    if(hecho.isEliminado()) {
+      throw new HechoYaEstaEliminado("El hecho de id: " + idHecho + " ya está eliminado!");
+    }
     hecho.setEliminado(true);
     this.hechoRepository.saveHecho(hecho);
     return this.toHechoDTOEstatica(hecho);
