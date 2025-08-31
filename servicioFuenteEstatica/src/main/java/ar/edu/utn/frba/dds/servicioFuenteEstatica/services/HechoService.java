@@ -58,6 +58,8 @@ public class HechoService implements IHechoService {
         .map(unHvo -> new Hecho(unHvo, Origen.PORDATASET))
         .collect(Collectors.toSet());
 
+    hechos.forEach(hecho -> hecho.setUsuario(usuario));
+
     hechoRepository.saveAll(hechos);
     return hechos.stream().map(this::toHechoDTOEstatica).collect(Collectors.toSet());
   }
@@ -93,6 +95,7 @@ public class HechoService implements IHechoService {
     dto.setFechaAcontecimiento(hecho.getFechaAcontecimiento());
     dto.setFechaCarga(hecho.getFechaCarga());
     dto.setCategoria(hecho.getCategoria());
+    dto.setIdUsuario(hecho.getIdUsuario());
     return dto;
   }
 }

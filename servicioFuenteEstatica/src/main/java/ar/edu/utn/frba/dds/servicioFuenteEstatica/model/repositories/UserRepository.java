@@ -22,6 +22,7 @@ public class UserRepository implements IUserRepository {
     Long id = usuario.getId();
     if(id == null) {
       id = idCounter.getAndIncrement();
+      usuario.setId(id);
     }
     return this.usuariosByID.put(id, usuario);
   }

@@ -5,6 +5,7 @@ import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
 import java.net.URI;
 import java.util.List;
 import lombok.Getter;
+import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriBuilder;
 
@@ -19,7 +20,13 @@ public class ClientFuente {
   }
 
   private WebClient initWebClient() {
-    return WebClient.builder().baseUrl(baseUrl).build();
+    return WebClient.builder().baseUrl(baseUrl)
+            .exchangeStrategies(ExchangeStrategies
+                    .builder()
+                    .codecs(codecs -> codecs
+                            .defaultCodecs()
+                            .maxInMemorySize(50 * 1024 * 1024))
+                    .build()).build();
   }
 
 

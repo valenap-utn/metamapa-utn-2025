@@ -37,9 +37,13 @@ public class HechoServicio implements IHechoServicio {
     @Override
     public Hecho crearHecho(HechoDTODinamica input, MultipartFile contenidoMultimedia) {
         Hecho hecho = new Hecho();
+        hecho.setCategoria(input.getCategoria());
+        hecho.setTitulo(input.getTitulo());
+        hecho.setContenido(input.getContenido());
         hecho.setDescripcion(input.getDescripcion());
-        hecho.setEsAnonimo(input.isEsAnonimo());
         hecho.setFechaCarga(LocalDate.now());
+        hecho.setUbicacion(input.getUbicacion());
+        hecho.setFechaAcontecimiento(input.getFechaAcontecimiento());
         Usuario usuario = this.userRepository.findById(input.getIdUsuario());
         if(usuario == null) {
             hecho.setEsAnonimo(true);
@@ -71,7 +75,6 @@ public class HechoServicio implements IHechoServicio {
             throw new IllegalStateException("Ya no se puede modificar el hecho.");
         }
         hecho.setDescripcion(nuevosDatos.getDescripcion());
-        hecho.setEsAnonimo(nuevosDatos.isEsAnonimo());
         hecho.setContenido(nuevosDatos.getContenido());
         return hechoRepository.save(hecho);
     }

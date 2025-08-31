@@ -1,5 +1,6 @@
 package ar.edu.utn.frba.dds.servicioFuenteEstatica.controllers;
 
+import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.dtos.ConjuntoHechoDTOEstatica;
 import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.dtos.HechoDTOEstatica;
 
 import java.io.IOException;
@@ -63,9 +64,11 @@ public class HechoGlobalController {
   }
 
   @GetMapping
-  public ResponseEntity<Set<HechoDTOEstatica>> getAll() {
+  public ResponseEntity<ConjuntoHechoDTOEstatica> getAll() {
     Set<HechoDTOEstatica> todosLosHechos = hechoService.obtenerTodos();
-    return ResponseEntity.ok(todosLosHechos);
+    ConjuntoHechoDTOEstatica conjuntoHechos = new ConjuntoHechoDTOEstatica();
+    conjuntoHechos.setHechos(todosLosHechos.stream().toList());
+    return ResponseEntity.ok(conjuntoHechos);
   }
 
 

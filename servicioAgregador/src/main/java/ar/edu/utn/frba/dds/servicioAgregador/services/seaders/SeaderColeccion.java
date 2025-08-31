@@ -61,7 +61,8 @@ public class SeaderColeccion {
     coleccion2.setTitulo("Terremotos");
     coleccion2.setDescripcion("Tiene los terremotos que ocurren cerca de la cordillera de los andes");
     coleccion2.setAlgoritmoConsenso(new MayoriaSimple());
-    coleccion2.agregarFuentes(List.of(fuenteProxy));
+    coleccion2.agregarFuentes(List.of(fuenteDinamica));
+    //coleccion2.agregarFuentes(List.of(fuenteProxy));
 
     this.coleccionRepository.save(coleccion);
     this.coleccionRepository.save(coleccion2);

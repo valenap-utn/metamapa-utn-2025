@@ -7,13 +7,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 public class Usuario {
   @Getter
-  private Long id;
+  @Setter private Long id;
   private String nombre;
   private String apellido;
   private LocalDate fechaDeNacimiento;

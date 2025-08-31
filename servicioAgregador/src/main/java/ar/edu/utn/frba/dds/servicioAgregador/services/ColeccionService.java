@@ -142,6 +142,9 @@ public class ColeccionService implements IColeccionService{
     Coleccion coleccionGuardada = this.coleccionRepository.save(coleccion);
     return this.mapperColeccionOutput.toColeccionDTOOutput(coleccionGuardada);
   }
+
+
+
   private List<Hecho> getHechosClient(Origen origen, FiltroDTO filtro) {
     ClientFuente client = this.clientFuenteFactory.getClientPorOrigen(origen);
     return client.getHechos(filtro);

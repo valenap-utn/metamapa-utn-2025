@@ -1,5 +1,6 @@
 package ar.edu.utn.frba.dds.servicioFuenteDinamica.exceptions;
 
+import java.util.Arrays;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -10,7 +11,18 @@ public class HandlerExcepciones {
   @ExceptionHandler(value = Exception.class)
   public ResponseEntity<ErrorDTO> exceptionHandler(Exception ex){
     System.out.println(ex.getMessage());
+    System.out.println(Arrays.toString(ex.getStackTrace()));
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorDTO("Error en el servidor", "Error Servidor"));
+  }
+
+  @ExceptionHandler(value = IllegalStateException.class)
+  public ResponseEntity<ErrorDTO> illegalStateExceptionHandler(IllegalStateException error){
+    return ResponseEntity.status(400).body(new ErrorDTO(error.getMessage(), "estado Ilegal"));
+  }
+
+  @ExceptionHandler(value = ArchivoYaExiste.class)
+  public ResponseEntity<ErrorDTO> handleArchivoYaExiste(ArchivoYaExiste error) {
+    return ResponseEntity.status(409).body(new ErrorDTO(error.getMessage(), error.getTipoError()));
   }
 
   @ExceptionHandler(value = UsuarioNoEncontrado.class)

@@ -34,18 +34,14 @@ entity usuario {
 
 
 entity hechos_algoritmo_consenso {
-    * algoritmo_consenso_id INTEGER(11) <<PK>> <<FK>>
-    * hecho_id INTEGER(11) <<PK>> <<FK>>
+    * algoritmo_consenso VARCHAR(80)
+    * hecho_id INTEGER(11) <<FK>>
     --
 }
 
 
 
-entity algoritmo_consenso {
-    * id INTEGER(11) <<PK>>
-    --
-    * nombre VARCHAR(60)
-}
+
 
 entity categoria {
     * id INTEGER(11) <<PK>>
@@ -62,8 +58,8 @@ entity origen{
 
 entity coleccion {
     * id VARCHAR(50) <<PK>>
-    * algoritmo_consenso_id <<FK>>
     --
+    * algoritmo_consenso VARCHAR(80)
     * titulo VARCHAR(50)
     * descripcion TEXT
     * List<Filtro> criteriosDePertenencia;
@@ -101,12 +97,10 @@ hecho ||--|{ etiqueta
 categoria ||--|{ hecho
 origen ||--|{ hecho
 hecho ||--o{ hechos_algoritmo_consenso
-algoritmo_consenso ||--o{ hechos_algoritmo_consenso
 coleccion ||--|{ origen_fuente
 origen ||--|{ origen_fuente
 coleccion ||--|{ coleccion_criterio_pertenencia
 criterio_pertenencia ||--|{ coleccion_criterio_pertenencia
-algoritmo_consenso ||--|{ coleccion
 contenido_multimedia ||--|{ hecho
 
 entity solicitud {

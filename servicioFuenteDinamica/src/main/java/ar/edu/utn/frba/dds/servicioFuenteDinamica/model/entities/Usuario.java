@@ -8,13 +8,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Getter
 public class Usuario {
-    private Long id;
+    @Setter private Long id;
     private String nombre;
     private String apellido;
     private LocalDate fechaDeNacimiento;
@@ -40,7 +41,7 @@ public class Usuario {
                 .build();
     }
 
-    public Usuario of(Rol rol, String nombre, String apellido){
+    public static Usuario of(Rol rol, String nombre, String apellido){
         return Usuario
                 .builder()
                 .rol(rol)

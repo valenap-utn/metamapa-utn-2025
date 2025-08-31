@@ -17,6 +17,5 @@ public class HechoDTODinamica  {
   private LocalDate fechaCarga;
   private ContenidoMultimedia contenidoMultimedia;
   private String contenido;
-  private boolean esAnonimo;
   private Long idUsuario;
 }

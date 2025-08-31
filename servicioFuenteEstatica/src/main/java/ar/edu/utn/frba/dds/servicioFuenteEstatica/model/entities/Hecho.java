@@ -17,6 +17,7 @@ public class Hecho {
     @Setter @Getter private LocalDate fechaCarga;
     @Setter @Getter private Origen origen;
     @Setter @Getter private boolean eliminado;
+    @Setter @Getter private Usuario usuario;
 
 
     public Hecho(HechoValueObject infoHecho, Origen origen) {
@@ -28,6 +29,10 @@ public class Hecho {
         this.origen = origen;
         this.fechaCarga = LocalDate.now();
         this.eliminado = false;
+    }
+
+    public Long getIdUsuario() {
+        return usuario.getId();
     }
 
 }

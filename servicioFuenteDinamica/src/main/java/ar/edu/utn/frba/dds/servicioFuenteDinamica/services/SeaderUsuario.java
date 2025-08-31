@@ -1,10 +1,11 @@
-package ar.edu.utn.frba.dds.servicioFuenteEstatica.services;
+package ar.edu.utn.frba.dds.servicioFuenteDinamica.services;
 
 
-import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.entities.Usuario;
-import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.entities.roles.Administrador;
-import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.entities.roles.Contribuyente;
-import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.repositories.IUserRepository;
+
+import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.Usuario;
+import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.roles.Administrador;
+import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.roles.Contribuyente;
+import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.repositories.IUserRepository;
 import org.springframework.stereotype.Service;
 
 @Service

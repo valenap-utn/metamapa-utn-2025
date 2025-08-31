@@ -1,5 +1,6 @@
 package ar.edu.utn.frba.dds.servicioFuenteDinamica.model.repositories;
 
+import ar.edu.utn.frba.dds.servicioFuenteDinamica.exceptions.ArchivoYaExiste;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.ContenidoMultimedia;
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
@@ -31,7 +32,7 @@ public class MultimediaRepository implements IMultimediaRepository {
       Files.copy(contenidoMultimedia.getInputStream(), direccionFinal);
     } catch (Exception e) {
       if (e instanceof FileAlreadyExistsException) {
-        throw new RuntimeException("El archivo ya existe.");
+        throw new ArchivoYaExiste("El archivo ya existe.");
       }
 
       throw new RuntimeException(e.getMessage());

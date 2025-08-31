@@ -15,4 +15,5 @@ public class HechoDTOEstatica {
   private Ubicacion ubicacion;
   private LocalDate fechaAcontecimiento;
   private LocalDate fechaCarga;
+  private Long idUsuario;
 }

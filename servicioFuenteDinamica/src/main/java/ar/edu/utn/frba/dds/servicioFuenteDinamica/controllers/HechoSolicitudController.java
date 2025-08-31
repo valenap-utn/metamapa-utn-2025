@@ -1,13 +1,15 @@
 package ar.edu.utn.frba.dds.servicioFuenteDinamica.controllers;
 
+import ar.edu.utn.frba.dds.servicioFuenteDinamica.exceptions.HechoNoEncontrado;
+import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos.ConjuntoHechoDTODinamica;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos.HechoDTODinamica;
+import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos.RevisionDTO;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.Solicitud;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.Usuario;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.repositories.IHechoRepository;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.Hecho;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.services.IHechoServicio;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.services.ISolicitudServicio;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -29,13 +31,16 @@ public class HechoSolicitudController {
     }
 
     @PostMapping("/hechos")
-    public ResponseEntity<Hecho> crearHecho(@RequestBody HechoDTODinamica hecho, @RequestParam("contenidomultimedia") MultipartFile contenidoMultimedia) {
-        return ResponseEntity.ok(this.hechoServicio.crearHecho(hecho, contenidoMultimedia));
+    public ResponseEntity<HechoDTODinamica> crearHecho(@RequestPart("hecho") HechoDTODinamica hecho, @RequestPart("contenidomultimedia") MultipartFile contenidoMultimedia) {
+        return ResponseEntity.ok(this.toHechoDTO(this.hechoServicio.crearHecho(hecho, contenidoMultimedia)));
     }
 
     @GetMapping("/hechos")
-    public List<HechoDTODinamica> obtenerHechosPublicos() {
-        return hechoServicio.obtenerHechosPublicos().stream().map(this::toHechoDTO).toList();
+    public ResponseEntity<ConjuntoHechoDTODinamica> obtenerHechosPublicos() {
+        List<HechoDTODinamica> hechos = hechoServicio.obtenerHechosPublicos().stream().map(this::toHechoDTO).toList();
+        ConjuntoHechoDTODinamica conjuntoHechos = new ConjuntoHechoDTODinamica();
+        conjuntoHechos.setHechos(hechos);
+        return ResponseEntity.ok(conjuntoHechos);
     }
 
     public HechoDTODinamica toHechoDTO(Hecho hecho) {
@@ -48,29 +53,26 @@ public class HechoSolicitudController {
         hechoDTO.setContenidoMultimedia(hecho.getContenidoMultimedia());
         hechoDTO.setTitulo(hecho.getTitulo());
         hechoDTO.setUbicacion(hecho.getUbicacion());
+        hechoDTO.setIdUsuario(hecho.getIdUsuario());
         return hechoDTO;
     }
 
-    @PatchMapping("/hechos/{id}")
+    @PutMapping("/hechos/{id}")
     public ResponseEntity<?> modificarHecho(@PathVariable Long id, @RequestBody HechoDTODinamica nuevosDatos) {
-        try {
             return ResponseEntity.ok(hechoServicio.modificarHecho(id, nuevosDatos));
-        } catch (IllegalStateException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
     }
 
-    @PostMapping("/hechos/{id}")
-    public ResponseEntity<Hecho> revisarHecho(@PathVariable Long id, @RequestParam String estado, @RequestParam String comentario) {
-        return ResponseEntity.ok(hechoServicio.revisarHecho(id, estado, comentario));
+    @PostMapping("/hechos/{id}/revisados")
+    public ResponseEntity<Hecho> revisarHecho(@PathVariable Long id, @RequestBody RevisionDTO revisionDTO) {
+        return ResponseEntity.ok(hechoServicio.revisarHecho(id, revisionDTO.getEstado(), revisionDTO.getComentario()));
     }
 
-    @PutMapping("/hechos/{id}/eliminado")
+    @PatchMapping("/hechos/{id}")
     public ResponseEntity<?> marcarHechoComoEliminado(@PathVariable Long id) {
         Optional<Hecho> hechoOpt = hechoRepository.findById(id);
 
         if (hechoOpt.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Hecho no encontrado");
+            throw new HechoNoEncontrado("Hecho de id: "+ id +" no encontrado");
         }
 
         Hecho hecho = hechoOpt.get();

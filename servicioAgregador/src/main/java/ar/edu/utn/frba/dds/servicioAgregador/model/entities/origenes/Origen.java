@@ -17,4 +17,8 @@ public class Origen {
   private  String url;
   private Long idExterno;
   private String nombreAPI;
+
+  public boolean esIgual(Origen o){
+    return tipo.equals(o.getTipo()) && url.equals(o.getUrl());
+  }
 }

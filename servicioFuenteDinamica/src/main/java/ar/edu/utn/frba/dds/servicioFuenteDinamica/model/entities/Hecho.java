@@ -38,4 +38,7 @@ public class Hecho implements Revisable{
         this.etiquetas.addAll(List.of(etiquetas));
     }
 
+    public Long getIdUsuario() {
+        return this.usuario != null ? this.usuario.getId(): null;
+    }
 }

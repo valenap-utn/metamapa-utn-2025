@@ -32,12 +32,12 @@ public class HechoRepository implements IHechoRepository {
 
   @Override
   public List<Hecho> findByOrigen(Origen origen) {
-    return this.idsHechos.values().stream().filter(e -> e.getOrigen().equals(origen)).toList();
+    return this.idsHechos.values().stream().filter(e -> e.getOrigen().esIgual(origen)).toList();
   }
 
   @Override
   public List<Hecho> findByOrigenWithFiltros(Origen origen, FiltroDTO filtro) {
-    return this.idsHechos.values().stream().filter(hecho -> hecho.getOrigen().equals(origen) && this.cumpleFiltros(hecho, filtro)).toList();
+    return this.idsHechos.values().stream().filter(hecho -> hecho.getOrigen().esIgual(origen) && this.cumpleFiltros(hecho, filtro)).toList();
   }
 
   private boolean cumpleFiltros(Hecho hecho, FiltroDTO filtro) {
