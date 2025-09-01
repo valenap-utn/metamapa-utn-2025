@@ -3,6 +3,7 @@ package ar.edu.utn.frba.dds.servicioFuenteDinamica.controllers;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.exceptions.HechoNoEncontrado;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos.ConjuntoHechoDTODinamica;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos.HechoDTODinamica;
+import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos.HechoDTOModificacionDinamica;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos.RevisionDTO;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.Solicitud;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.Usuario;
@@ -58,7 +59,7 @@ public class HechoSolicitudController {
     }
 
     @PutMapping("/hechos/{id}")
-    public ResponseEntity<?> modificarHecho(@PathVariable Long id, @RequestBody HechoDTODinamica nuevosDatos) {
+    public ResponseEntity<?> modificarHecho(@PathVariable Long id, @RequestBody HechoDTOModificacionDinamica nuevosDatos) {
             return ResponseEntity.ok(hechoServicio.modificarHecho(id, nuevosDatos));
     }
 

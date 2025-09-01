@@ -41,4 +41,8 @@ public class Hecho implements Revisable{
     public Long getIdUsuario() {
         return this.usuario != null ? this.usuario.getId(): null;
     }
+
+  public boolean tieneId(Long id) {
+      return this.id != null && this.id.equals(id);
+  }
 }

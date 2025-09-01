@@ -1,29 +1,31 @@
 package ar.edu.utn.frba.dds.servicioFuenteDinamica.services;
 
+import ar.edu.utn.frba.dds.servicioFuenteDinamica.exceptions.HechoNoEncontrado;
+import ar.edu.utn.frba.dds.servicioFuenteDinamica.exceptions.SolicitudNoEncontrada;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.RevisarEstado;
-import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.enums.EstadoHecho;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.enums.Estado;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.Hecho;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.Solicitud;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.Usuario;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.repositories.IHechoRepository;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.repositories.ISolicitudRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class SolicitudServicio implements ISolicitudServicio {
+    private final ISolicitudRepository solicitudRepository;
+    private final IHechoRepository hechoRepository;
+    private final RevisarEstado revisadorHechosSolicitud;
 
-    @Autowired
-    private ISolicitudRepository solicitudRepository;
-
-    @Autowired
-    private IHechoRepository hechoRepository;
-    private RevisarEstado revisadorHechosSolicitud;
+    public SolicitudServicio(ISolicitudRepository solicitudRepository, IHechoRepository hechoRepository, RevisarEstado revisadorHechosSolicitud) {
+      this.solicitudRepository = solicitudRepository;
+      this.hechoRepository = hechoRepository;
+      this.revisadorHechosSolicitud = revisadorHechosSolicitud;
+    }
 
     @Override
     public Solicitud crearSolicitud(Long hechoId, Usuario usuario, String contenido) {
-        Hecho hecho = hechoRepository.findById(hechoId).orElseThrow(() -> new RuntimeException("Hecho no encontrado"));
+        Hecho hecho = hechoRepository.findById(hechoId).orElseThrow(() -> new HechoNoEncontrado("Hecho no encontrado"));
         Solicitud solicitud = new Solicitud(hecho, usuario, contenido);
         solicitud.setHecho(hecho);
         solicitud.setEstado(Estado.EN_REVISION);
@@ -32,7 +34,7 @@ public class SolicitudServicio implements ISolicitudServicio {
 
     @Override
     public Solicitud procesarSolicitud(Long id, String estadoStr, String justificacion) {
-        Solicitud solicitud = solicitudRepository.findById(id).orElseThrow(() -> new RuntimeException("Solicitud no encontrada"));
+        Solicitud solicitud = solicitudRepository.findById(id).orElseThrow(() -> new SolicitudNoEncontrada("Solicitud no encontrada"));
         Estado estado = this.revisadorHechosSolicitud.revisar(solicitud, estadoStr, justificacion);
 
         if (estado != Estado.RECHAZADA) {

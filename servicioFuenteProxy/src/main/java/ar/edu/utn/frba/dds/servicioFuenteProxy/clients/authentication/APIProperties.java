@@ -3,11 +3,11 @@ package ar.edu.utn.frba.dds.servicioFuenteProxy.clients.authentication;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
 @Data
-@Configuration
+@Component
 @ConfigurationProperties(prefix = "api")
-
 public class APIProperties {
     private String baseUrl;
     private String baseUrlMetaMapa;

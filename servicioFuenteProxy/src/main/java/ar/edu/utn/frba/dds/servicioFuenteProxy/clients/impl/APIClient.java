@@ -3,6 +3,7 @@ package ar.edu.utn.frba.dds.servicioFuenteProxy.clients.impl;
 import ar.edu.utn.frba.dds.servicioFuenteProxy.clients.Fuente;
 import ar.edu.utn.frba.dds.servicioFuenteProxy.clients.IAPIClient;
 import ar.edu.utn.frba.dds.servicioFuenteProxy.clients.authentication.APIProperties;
+import ar.edu.utn.frba.dds.servicioFuenteProxy.clients.dtos.TokenResponse;
 import ar.edu.utn.frba.dds.servicioFuenteProxy.clients.dtos.input.APIResponse;
 import ar.edu.utn.frba.dds.servicioFuenteProxy.clients.dtos.input.HechoInputDTO;
 import org.springframework.stereotype.Component;
@@ -35,10 +36,9 @@ public class APIClient implements IAPIClient {
     }
 
 
-    public APIClient(
-            WebClient.Builder webClientBuilder, APIProperties apiProperties) {
+    public APIClient(APIProperties apiProperties) {
         this.apiProperties = apiProperties;
-        this.webClient = webClientBuilder
+        this.webClient = WebClient.builder()
                 .baseUrl(apiProperties.getBaseUrl())
                 .build();
     }
@@ -50,11 +50,11 @@ public class APIClient implements IAPIClient {
         );
 
         return webClient.post()
-                .uri("auth/login")
+                .uri("login")
                 .bodyValue(credentials)
                 .retrieve()
-                .bodyToMono(Map.class) // <-- convierte el json en un Map<String, Object>
-                .map(response -> (String) response.get("access_token")); // <-- busca el valor asociado a "access_token" y lo castea a un String, porque por defecto es un Object
+                .bodyToMono(TokenResponse.class) // <-- convierte el json en un Map<String, Object>
+                .map(response -> response.getData().getAccess_token()); // <-- busca el valor asociado a "access_token" y lo castea a un String, porque por defecto es un Object
     }
 
     @Override
