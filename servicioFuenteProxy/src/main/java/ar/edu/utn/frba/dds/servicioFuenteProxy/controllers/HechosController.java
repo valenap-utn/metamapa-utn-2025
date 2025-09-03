@@ -1,7 +1,9 @@
 package ar.edu.utn.frba.dds.servicioFuenteProxy.controllers;
 
+import ar.edu.utn.frba.dds.servicioFuenteProxy.clients.dtos.output.ConjuntoHechoProxy;
 import ar.edu.utn.frba.dds.servicioFuenteProxy.clients.dtos.output.HechoOutputDTO;
 import ar.edu.utn.frba.dds.servicioFuenteProxy.services.IHechoService;
+import java.util.HashSet;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +20,7 @@ public class HechosController {
     public HechosController(IHechoService hechoService) { this.hechoService = hechoService; }
 
     @GetMapping
-    public ResponseEntity<List<HechoOutputDTO>> obtenerHechos(
+    public ResponseEntity<ConjuntoHechoProxy> obtenerHechos(
         @RequestParam(required = false) String categoria,
         @RequestParam(required = false) Double latitud,
         @RequestParam(required = false) Double longitud,
@@ -30,7 +32,9 @@ public class HechosController {
         List<HechoOutputDTO> hechoOutputDTOS = this.hechoService.getHechosExternos(
                 categoria, latitud, longitud, fecha_reporte_desde, fecha_reporte_hasta, fecha_acontecimiento_desde, fecha_acontecimiento_hasta
         );
-        return ResponseEntity.ok().body(hechoOutputDTOS);
+        ConjuntoHechoProxy hechos = new ConjuntoHechoProxy();
+        hechos.setHechos(new HashSet<>(hechoOutputDTOS));
+        return ResponseEntity.ok().body(hechos);
     }
 
     @PatchMapping("/{id}")

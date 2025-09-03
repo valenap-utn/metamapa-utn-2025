@@ -2,7 +2,8 @@ package ar.edu.utn.frba.dds.servicioAgregador.model.dtos;
 
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Categoria;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Ubicacion;
-import java.time.LocalDate;
+
+import java.time.LocalDateTime;
 import lombok.Data;
 
 @Data
@@ -13,14 +14,21 @@ public class HechoDTOProxy implements HechoDTO {
   private String categoria;
   private Double latitud;
   private Double longitud;
-  private LocalDate fechaAcontecimiento;
-  private LocalDate fechaCarga;
-  private String clientProxy;
+  private LocalDateTime fecha;
+  private LocalDateTime fechaCarga;
+  private String fuente;
   private Long idUsuario;
 
   @Override
+  public LocalDateTime getFechaAcontecimiento() {
+    return this.fecha;
+  }
+
+  @Override
   public Ubicacion getUbicacion() {
-    return new Ubicacion(this.getLongitud().floatValue(), this.getLatitud().floatValue());
+    Float longitudUsada = this.longitud == null ? null : this.longitud.floatValue();
+    Float latitudUsada = this.latitud == null ? null : this.latitud.floatValue();
+    return new Ubicacion(longitudUsada, latitudUsada);
   }
 
   @Override

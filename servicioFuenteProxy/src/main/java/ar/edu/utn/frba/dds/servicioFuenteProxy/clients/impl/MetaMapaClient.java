@@ -3,6 +3,7 @@ package ar.edu.utn.frba.dds.servicioFuenteProxy.clients.impl;
 import ar.edu.utn.frba.dds.servicioFuenteProxy.clients.Fuente;
 import ar.edu.utn.frba.dds.servicioFuenteProxy.clients.IAPIClient;
 import ar.edu.utn.frba.dds.servicioFuenteProxy.clients.authentication.APIProperties;
+import ar.edu.utn.frba.dds.servicioFuenteProxy.clients.dtos.input.HechoDTOMetamapa;
 import ar.edu.utn.frba.dds.servicioFuenteProxy.clients.dtos.input.HechoInputDTO;
 import ar.edu.utn.frba.dds.servicioFuenteProxy.clients.dtos.input.MetaMapaResponse;
 import org.springframework.stereotype.Component;
@@ -36,8 +37,24 @@ public class MetaMapaClient implements IAPIClient {
                 .uri("hechos") // <-- ruta de la API que devuelve los hechos
                 .retrieve() // respuesta
                 .bodyToMono(MetaMapaResponse.class) // "recibi el Json y mapealo a una instancia de HechoInputDTOResponse"
-                .map(MetaMapaResponse :: getHechos) // accede al campo que le interesa. No quiere toda la respuesta sino solamente una parte.
+                .map(MetaMapaResponse :: getHechos)// accede al campo que le interesa. No quiere toda la respuesta sino solamente una parte.
+                .map( hechos -> hechos.stream().map(this::toHechoInputDTO).toList())
                 .block();
+
+    }
+
+    private HechoInputDTO toHechoInputDTO(HechoDTOMetamapa hechoDTOMetamapa) {
+        HechoInputDTO hechoInputDTO = new HechoInputDTO();
+        hechoInputDTO.setId(hechoDTOMetamapa.getId());
+        hechoInputDTO.setFecha_hecho(hechoDTOMetamapa.getFechaAcontecimiento());
+        hechoInputDTO.setCreated_at(hechoDTOMetamapa.getFechaCarga());
+        hechoInputDTO.setCategoria(hechoDTOMetamapa.getNombreCategoria());
+        hechoInputDTO.setLatitud(hechoDTOMetamapa.getLatitud());
+        hechoInputDTO.setLongitud(hechoDTOMetamapa.getLongitud());
+        hechoInputDTO.setDescripcion(hechoDTOMetamapa.getDescripcion());
+        hechoInputDTO.setTitulo(hechoDTOMetamapa.getTitulo());
+        hechoInputDTO.setIdUsuario(hechoDTOMetamapa.getIdUsuario());
+        return hechoInputDTO;
     }
 
     @Override

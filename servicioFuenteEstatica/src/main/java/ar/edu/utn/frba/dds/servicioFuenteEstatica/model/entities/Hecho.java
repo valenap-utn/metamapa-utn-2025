@@ -2,6 +2,7 @@ package ar.edu.utn.frba.dds.servicioFuenteEstatica.model.entities;
 
 import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.dtos.HechoValueObject;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import lombok.Getter;
@@ -13,8 +14,8 @@ public class Hecho {
     @Setter @Getter private String descripcion;
     @Setter @Getter private Categoria categoria;
     @Setter @Getter private Ubicacion ubicacion;
-    @Setter @Getter private LocalDate fechaAcontecimiento;
-    @Setter @Getter private LocalDate fechaCarga;
+    @Setter @Getter private LocalDateTime fechaAcontecimiento;
+    @Setter @Getter private LocalDateTime fechaCarga;
     @Setter @Getter private Origen origen;
     @Setter @Getter private boolean eliminado;
     @Setter @Getter private Usuario usuario;
@@ -27,7 +28,7 @@ public class Hecho {
         this.ubicacion = infoHecho.getUbicacion();
         this.fechaAcontecimiento = infoHecho.getFechaAcontecimiento();
         this.origen = origen;
-        this.fechaCarga = LocalDate.now();
+        this.fechaCarga = LocalDateTime.now();
         this.eliminado = false;
     }
 

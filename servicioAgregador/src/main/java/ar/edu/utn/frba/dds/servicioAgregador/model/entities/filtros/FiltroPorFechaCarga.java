@@ -2,14 +2,15 @@ package ar.edu.utn.frba.dds.servicioAgregador.model.entities.filtros;
 
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class FiltroPorFechaCarga extends FiltroPorFecha {
-    public FiltroPorFechaCarga(LocalDate desde, LocalDate hasta) {
+    public FiltroPorFechaCarga(LocalDateTime desde, LocalDateTime hasta) {
         super(desde, hasta);
     }
 
   @Override
-    protected LocalDate obtenerUnTipoFecha(Hecho unHecho){
+    protected LocalDateTime obtenerUnTipoFecha(Hecho unHecho){
         return unHecho.getFechaCarga();
     }
 }

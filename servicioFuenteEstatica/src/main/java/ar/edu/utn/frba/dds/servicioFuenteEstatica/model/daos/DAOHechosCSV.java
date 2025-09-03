@@ -5,13 +5,14 @@ import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.entities.Categoria;
 import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.entities.Ubicacion;
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import org.springframework.stereotype.Component; //bean
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -46,7 +47,7 @@ public class DAOHechosCSV implements IHechosDAO {
   }
 
   private HechoValueObject mapearDesdeCSV(HechoCSV fila) {
-    LocalDate fechaAcont = LocalDate.parse(fila.getFechaAcontecimiento());
+    LocalDateTime fechaAcont = LocalDate.parse(fila.getFechaAcontecimiento()).atStartOfDay();
     Categoria categoria = new Categoria(fila.getCategoria());
     Ubicacion ubicacion = new Ubicacion(fila.getLongitud(), fila.getLatitud());
     return HechoValueObject.of(fila.getTitulo(), fila.getDescripcion(), fechaAcont, categoria, ubicacion);

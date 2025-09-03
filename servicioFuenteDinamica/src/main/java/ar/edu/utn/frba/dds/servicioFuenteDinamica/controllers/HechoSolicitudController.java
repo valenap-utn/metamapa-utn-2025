@@ -32,7 +32,7 @@ public class HechoSolicitudController {
     }
 
     @PostMapping("/hechos")
-    public ResponseEntity<HechoDTODinamica> crearHecho(@RequestPart("hecho") HechoDTODinamica hecho, @RequestPart("contenidomultimedia") MultipartFile contenidoMultimedia) {
+    public ResponseEntity<HechoDTODinamica> crearHecho(@RequestPart("hecho") HechoDTODinamica hecho, @RequestPart(value = "contenidomultimedia", required = false) MultipartFile contenidoMultimedia) {
         return ResponseEntity.ok(this.toHechoDTO(this.hechoServicio.crearHecho(hecho, contenidoMultimedia)));
     }
 

@@ -9,7 +9,6 @@ import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Usuario;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.algoritmosConsenso.MayoriaSimple;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.algoritmosConsenso.TodosConsensuados;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.filtros.FiltroPorFechaCarga;
-import ar.edu.utn.frba.dds.servicioAgregador.model.entities.filtros.FiltroPorTitulo;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.origenes.Origen;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.origenes.TipoOrigen;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.roles.Contribuyente;
@@ -17,8 +16,8 @@ import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IColeccionReposi
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IHechoRepository;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IUserRepository;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -54,7 +53,7 @@ public class SeaderColeccion {
     coleccion.setTitulo("Desastres Naturales");
     coleccion.setDescripcion("Se muestran los desastres Naturales ocurridos en Buenos Aires, Argentina");
     coleccion.setAlgoritmoConsenso(new TodosConsensuados());
-    coleccion.agregarCriterios(new FiltroPorFechaCarga(LocalDate.of(2020, 1, 12), LocalDate.now()));
+    coleccion.agregarCriterios(new FiltroPorFechaCarga(LocalDate.of(2020, 1, 12).atStartOfDay(), LocalDateTime.now()));
     coleccion.agregarFuentes(List.of(fuenteDinamica, fuenteEstatica));
 
 
@@ -62,7 +61,7 @@ public class SeaderColeccion {
     coleccion2.setDescripcion("Tiene los terremotos que ocurren cerca de la cordillera de los andes");
     coleccion2.setAlgoritmoConsenso(new MayoriaSimple());
     coleccion2.agregarFuentes(List.of(fuenteDinamica));
-    //coleccion2.agregarFuentes(List.of(fuenteProxy));
+    coleccion2.agregarFuentes(List.of(fuenteProxy));
 
     this.coleccionRepository.save(coleccion);
     this.coleccionRepository.save(coleccion2);
@@ -75,8 +74,9 @@ public class SeaderColeccion {
     Hecho hecho = Hecho.builder()
             .titulo("Inundacion Bahia Blanca")
             .categoria(new Categoria("Inundacion"))
-            .fechaCarga(LocalDate.now())
-            .fechaAcontecimiento(LocalDate.of(2025, 3, 7))
+            .fechaCarga(LocalDateTime.now())
+
+            .fechaAcontecimiento(LocalDateTime.of(2025, 3, 7, 0, 0))
             .contenidoMultimedia(contenidoMultimedia)
             .origen(origenDinamica)
             .usuario(contribuyente)
@@ -84,10 +84,10 @@ public class SeaderColeccion {
 
     Hecho hecho2 = Hecho.builder().origen(origenDinamica)
             .contenidoMultimedia(contenidoMultimedia)
-            .fechaCarga(LocalDate.now())
+            .fechaCarga(LocalDateTime.now())
             .titulo("Bahia Blanca se inunda")
             .categoria(new Categoria("Inundacion"))
-            .fechaAcontecimiento(LocalDate.of(2025, 3, 7))
+            .fechaAcontecimiento(LocalDateTime.of(2025, 3, 7, 0 , 0))
             .usuario(contribuyente2)
             .origen(origenDinamica)
             .build();

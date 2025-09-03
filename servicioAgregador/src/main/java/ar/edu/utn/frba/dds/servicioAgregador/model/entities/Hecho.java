@@ -2,7 +2,7 @@ package ar.edu.utn.frba.dds.servicioAgregador.model.entities;
 
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.algoritmosConsenso.AlgoritmoConsenso;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.origenes.Origen;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -25,8 +25,8 @@ public class Hecho {
     @Setter @Getter private String descripcion;
     @Setter @Getter private Categoria categoria;
     @Setter @Getter private Ubicacion ubicacion;
-    @Setter @Getter private LocalDate fechaAcontecimiento;
-    @Setter @Getter private LocalDate fechaCarga;
+    @Setter @Getter private LocalDateTime fechaAcontecimiento;
+    @Setter @Getter private LocalDateTime fechaCarga;
     @Setter @Getter private Origen origen ;
     @Setter @Getter private boolean eliminado = false;
     @Setter @Getter private ContenidoMultimedia contenidoMultimedia;

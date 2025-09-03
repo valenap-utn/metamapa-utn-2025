@@ -3,7 +3,7 @@ package ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.Categoria;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.ContenidoMultimedia;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.Ubicacion;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import lombok.Data;
 
 @Data
@@ -13,8 +13,7 @@ public class HechoDTOModificacionDinamica {
   private String descripcion;
   private Categoria categoria;
   private Ubicacion ubicacion;
-  private LocalDate fechaAcontecimiento;
-  private LocalDate fechaCarga;
+  private LocalDateTime fechaAcontecimiento;
   private ContenidoMultimedia contenidoMultimedia;
   private String contenido;
   private Long idUsuario;

@@ -2,8 +2,8 @@ package ar.edu.utn.frba.dds.servicioFuenteEstatica.model.dtos;
 
 import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.entities.Categoria;
 import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.entities.Ubicacion;
-import java.time.LocalDate;
 
+import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -14,9 +14,9 @@ public class HechoValueObject {
   private String descripcion;
   private Categoria categoria;
   private Ubicacion ubicacion;
-  private LocalDate fechaAcontecimiento;
+  private LocalDateTime fechaAcontecimiento;
 
-  public static HechoValueObject of(String titulo, String descripcion, LocalDate fechaAcontecimiento, Categoria categoria, Ubicacion ubicacion) {
+  public static HechoValueObject of(String titulo, String descripcion, LocalDateTime fechaAcontecimiento, Categoria categoria, Ubicacion ubicacion) {
     return HechoValueObject
         .builder()
         .titulo(titulo)
@@ -28,7 +28,7 @@ public class HechoValueObject {
   }
 
   public HechoValueObject(String titulo, String descripcion, Categoria categoria,
-                          Ubicacion ubicacion, LocalDate fechaAcontecimiento) {
+                          Ubicacion ubicacion, LocalDateTime fechaAcontecimiento) {
     this.titulo = titulo;
     this.descripcion = descripcion;
     this.categoria = categoria;

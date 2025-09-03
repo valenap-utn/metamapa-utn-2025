@@ -1,7 +1,7 @@
 package ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities;
 
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.enums.Estado;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -15,8 +15,8 @@ public class Hecho implements Revisable{
     @Setter @Getter private String descripcion;
     @Setter @Getter private Categoria categoria;
     @Setter @Getter private Ubicacion ubicacion;
-    @Setter @Getter private LocalDate fechaAcontecimiento;
-    @Setter @Getter private LocalDate fechaCarga;
+    @Setter @Getter private LocalDateTime fechaAcontecimiento;
+    @Setter @Getter private LocalDateTime fechaCarga;
     @Setter @Getter private Origen origen;
     @Setter @Getter private boolean eliminado;
     @Setter @Getter private ContenidoMultimedia contenidoMultimedia;
@@ -29,7 +29,7 @@ public class Hecho implements Revisable{
     @Setter @Getter private Usuario usuario;
 
     public Hecho() {
-        this.fechaCarga = LocalDate.now();
+        this.fechaCarga = LocalDateTime.now();
         this.eliminado = false;
         this.etiquetas = new HashSet<>();
     }

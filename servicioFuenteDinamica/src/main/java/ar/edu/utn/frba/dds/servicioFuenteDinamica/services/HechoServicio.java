@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.Duration;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -47,7 +46,7 @@ public class HechoServicio implements IHechoServicio {
         hecho.setTitulo(input.getTitulo());
         hecho.setContenido(input.getContenido());
         hecho.setDescripcion(input.getDescripcion());
-        hecho.setFechaCarga(LocalDate.now());
+        hecho.setFechaCarga(LocalDateTime.now());
         hecho.setUbicacion(input.getUbicacion());
         hecho.setFechaAcontecimiento(input.getFechaAcontecimiento());
         Usuario usuario = this.userRepository.findById(input.getIdUsuario());
@@ -55,7 +54,7 @@ public class HechoServicio implements IHechoServicio {
             hecho.setEsAnonimo(true);
         }
         hecho.setUsuario(usuario);
-        if (!contenidoMultimedia.isEmpty()) {
+        if (contenidoMultimedia != null ) {
             ContenidoMultimedia contMultimediaHecho = this.contentMultimediaRepository.saveFile(contenidoMultimedia);
             hecho.setContenidoMultimedia(contMultimediaHecho);
         }
@@ -87,7 +86,6 @@ public class HechoServicio implements IHechoServicio {
         }
         hecho.setDescripcion(nuevosDatos.getDescripcion());
         hecho.setContenido(nuevosDatos.getContenido());
-        hecho.setFechaCarga(nuevosDatos.getFechaCarga());
         hecho.setFechaAcontecimiento(nuevosDatos.getFechaAcontecimiento());
         hecho.setCategoria(nuevosDatos.getCategoria());
         hecho.setTitulo(nuevosDatos.getTitulo());
