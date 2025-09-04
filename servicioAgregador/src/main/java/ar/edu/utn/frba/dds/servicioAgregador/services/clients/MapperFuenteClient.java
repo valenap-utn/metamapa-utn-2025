@@ -5,6 +5,7 @@ import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Usuario;
 import java.util.List;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.util.UriBuilder;
 
 public abstract class MapperFuenteClient {
   public abstract List<Hecho> toHechos(WebClient.ResponseSpec respuesta, String url);
@@ -19,4 +20,9 @@ public abstract class MapperFuenteClient {
             .ubicacion(hechoDTO.getUbicacion())
             .usuario(Usuario.of(hechoDTO.getIdUsuario()));
   }
+
+  public void modificarHechoParaEliminacion(Hecho hecho, UriBuilder uriBuilder) {
+  }
+
+  public abstract Hecho toHecho(WebClient.ResponseSpec responseDelete, String url);
 }

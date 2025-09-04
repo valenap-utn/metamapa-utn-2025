@@ -17,6 +17,13 @@ public class MapperFuenteDinamica extends MapperFuenteClient {
             response -> response.getHechos().stream().map(hecho -> this.mapearHecho(hecho, url)).toList()).block();
   }
 
+  @Override
+  public Hecho toHecho(WebClient.ResponseSpec responseDelete, String url) {
+    return responseDelete.bodyToMono(HechoDTODinamica.class).map(
+            hecho -> this.mapearHecho(hecho, url)
+    ).block();
+  }
+
   private Hecho mapearHecho(HechoDTODinamica hechoDTO, String url) {
     return this.crearHechoBasico(hechoDTO)
             .contenidoMultimedia(hechoDTO.getContenidoMultimedia())

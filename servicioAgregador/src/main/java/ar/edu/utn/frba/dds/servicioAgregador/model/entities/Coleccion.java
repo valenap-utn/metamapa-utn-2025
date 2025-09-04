@@ -42,8 +42,8 @@ public class Coleccion {
         this.algoritmoConsenso = algoritmoElegido;
     }
 
-    public void agregarCriterios(Filtro ... filtros) {
-        this.criteriosDePertenencia.addAll(List.of(filtros));
+    public void agregarCriterios(List<Filtro> filtros) {
+        this.criteriosDePertenencia.addAll(filtros);
     }
 
     public List<Hecho> getHechos() {
@@ -72,6 +72,16 @@ public class Coleccion {
         if(this.getAlgoritmoConsenso().consensuarHecho(hecho, fuentes)){
            hecho.agregarAlgoritmo(this.getAlgoritmoConsenso());
         }
+    }
+
+    public void actualizarFuentes(List<Fuente> fuentes) {
+        this.fuentes.clear();
+        this.fuentes.addAll(fuentes);
+    }
+
+    public void actualizarCriterios(List<Filtro> Criterios ) {
+        this.criteriosDePertenencia.clear();
+        this.criteriosDePertenencia.addAll(Criterios);
     }
 }
 

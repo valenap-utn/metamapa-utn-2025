@@ -6,7 +6,7 @@ import ar.edu.utn.frba.dds.servicioAgregador.services.IColeccionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -29,11 +29,14 @@ public class ColeccionAdminController {
       return ResponseEntity.status(HttpStatus.CREATED).body(this.coleccionService.crearColeccion(coleccion));
   }
 
-  @PatchMapping("/{id}")
-  public ResponseEntity<ColeccionDTOOutput> cambiarAlgoritmoColeccion(@PathVariable String id, @RequestBody ColeccionDTOInput coleccion) {
-      return ResponseEntity.status(HttpStatus.OK).body(this.coleccionService.cambiarAlgoritmo(coleccion, id));
+  @PutMapping("/{id}")
+  public ResponseEntity<ColeccionDTOOutput> cambiarColeccion(@PathVariable String id, @RequestBody ColeccionDTOInput coleccion) {
+      return ResponseEntity.status(HttpStatus.OK).body(this.coleccionService.cambiarColeccion(coleccion, id));
   }
 
-
+  @DeleteMapping("/{id}")
+  public ResponseEntity<ColeccionDTOOutput> eliminarColeccion(@PathVariable String id) {
+    return ResponseEntity.status(HttpStatus.NO_CONTENT).body(this.coleccionService.eliminarColeccion(id));
+  }
 
 }

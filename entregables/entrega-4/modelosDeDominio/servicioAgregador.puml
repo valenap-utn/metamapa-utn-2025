@@ -254,4 +254,13 @@ class TodosConsensuados implements AlgoritmoConsenso {
     + consensuarHecho(Hecho hecho, Collection<Fuente> fuentes): boolean
 }
 
+class Normalizador {
+    - analizadorDB: AnalizadorPorBaseDeDatos
+    - analizadorInSitu: AnalizadorInSitu
+    + normalizar(List<Hecho> hechos): List<Hecho>
+    - estandarizarFecha(Hecho);
+    - estandarizarUbicacion(Hecho)
+    - estandarizarCategoria(List<hecho> o hecho)
+    - estandarizarTitulo(Hecho)(?
+}
 @enduml

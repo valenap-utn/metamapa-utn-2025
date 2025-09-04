@@ -37,7 +37,7 @@ public class HechosController {
         return ResponseEntity.ok().body(hechos);
     }
 
-    @PatchMapping("/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> eliminarHecho(@PathVariable Long id, @RequestParam("clientNombre") String clientNombre) {
         hechoService.marcarComoEliminado(id, clientNombre);
         return ResponseEntity.ok().build();

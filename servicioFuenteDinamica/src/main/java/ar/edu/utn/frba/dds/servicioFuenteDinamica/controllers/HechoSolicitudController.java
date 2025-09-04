@@ -60,16 +60,16 @@ public class HechoSolicitudController {
 
     @PutMapping("/hechos/{id}")
     public ResponseEntity<?> modificarHecho(@PathVariable Long id, @RequestBody HechoDTOModificacionDinamica nuevosDatos) {
-            return ResponseEntity.ok(hechoServicio.modificarHecho(id, nuevosDatos));
+            return ResponseEntity.ok(this.toHechoDTO(hechoServicio.modificarHecho(id, nuevosDatos)));
     }
 
     @PostMapping("/hechos/{id}/revisados")
-    public ResponseEntity<Hecho> revisarHecho(@PathVariable Long id, @RequestBody RevisionDTO revisionDTO) {
-        return ResponseEntity.ok(hechoServicio.revisarHecho(id, revisionDTO.getEstado(), revisionDTO.getComentario()));
+    public ResponseEntity<HechoDTODinamica> revisarHecho(@PathVariable Long id, @RequestBody RevisionDTO revisionDTO) {
+        return ResponseEntity.ok(this.toHechoDTO(hechoServicio.revisarHecho(id, revisionDTO.getEstado(), revisionDTO.getComentario())));
     }
 
-    @PatchMapping("/hechos/{id}")
-    public ResponseEntity<?> marcarHechoComoEliminado(@PathVariable Long id) {
+    @DeleteMapping("/hechos/{id}")
+    public ResponseEntity<HechoDTODinamica> marcarHechoComoEliminado(@PathVariable Long id) {
         Optional<Hecho> hechoOpt = hechoRepository.findById(id);
 
         if (hechoOpt.isEmpty()) {
@@ -80,7 +80,7 @@ public class HechoSolicitudController {
         hecho.setEliminado(true);
         hechoRepository.save(hecho);
 
-        return ResponseEntity.ok("Hecho marcado como eliminado");
+        return ResponseEntity.ok(this.toHechoDTO(hecho));
     }
 
     @PostMapping("/solicitudes")

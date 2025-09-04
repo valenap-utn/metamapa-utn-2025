@@ -17,6 +17,13 @@ public class MapperFuenteEstatica extends MapperFuenteClient {
             response -> response.getHechos().stream().map(hecho -> this.mapearHecho(hecho, url)).toList()).block();
   }
 
+  @Override
+  public Hecho toHecho(WebClient.ResponseSpec responseDelete, String url) {
+    return responseDelete.bodyToMono(HechoDTOEstatica.class).map(
+            hecho -> this.mapearHecho(hecho, url)
+    ).block();
+  }
+
   private Hecho mapearHecho(HechoDTOEstatica hechoDTO, String url) {
     return this.crearHechoBasico(hechoDTO)
             .origen(Origen.builder().tipo(TipoOrigen.DATASET).url(url).idExterno(hechoDTO.getId()).build())

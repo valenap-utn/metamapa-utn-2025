@@ -13,7 +13,6 @@ public interface ISolicitudRepository {
   public Solicitud findById(Long id);
   Set<Solicitud> findAll();
 
-  void agregar(Solicitud solicitud);
   boolean estaEliminado(Hecho hecho);
   public List<Solicitud> listarSolicitudes();
 

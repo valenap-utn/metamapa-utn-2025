@@ -53,12 +53,16 @@ public class ClientFuente {
 
 
   public void postEliminado(Hecho hecho, Long idHecho) {
-    Hecho hechocopia = Hecho.builder().id(idHecho).categoria(hecho.getCategoria())
-            .descripcion(hecho.getDescripcion()).fechaAcontecimiento(hecho.getFechaAcontecimiento())
-            .eliminado(hecho.isEliminado()).fechaCarga(hecho.getFechaCarga()).build();
-    this.initWebClient().patch().uri("/api/hechos/{id}", idHecho);
-            //.bodyValue(this.mapHechoOutput.toHechoDTO(hechocopia));
-
+    WebClient.ResponseSpec responseDelete =this.initWebClient().delete().uri(uriBuilder -> this.construirDeleteHecho(uriBuilder, idHecho, hecho))
+            .retrieve();
+    this.mapper.toHecho(responseDelete, this.baseUrl);
   }
+
+  private URI construirDeleteHecho(UriBuilder uriBuilder, Long idHecho, Hecho hecho) {
+    UriBuilder uriAMedioConstruir = uriBuilder.path("/api/hechos/{id}");
+    this.mapper.modificarHechoParaEliminacion(hecho, uriAMedioConstruir);
+    return uriAMedioConstruir.build(idHecho);
+  }
+
 
 }

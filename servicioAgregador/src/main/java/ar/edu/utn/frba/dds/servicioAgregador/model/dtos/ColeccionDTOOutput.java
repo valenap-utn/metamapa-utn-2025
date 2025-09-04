@@ -9,4 +9,5 @@ public class ColeccionDTOOutput {
   private String nombre;
   private String descripcion;
   private List<FuenteDTO> fuentes;
+  private List<CriterioDTO> criterios;
 }

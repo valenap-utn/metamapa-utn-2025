@@ -1,8 +1,8 @@
 package ar.edu.utn.frba.dds.servicioAgregador.model.entities.filtros;
 
 
+import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.CriterioDTO;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class FiltroPorFechaAcontecimiento extends FiltroPorFecha {
@@ -13,5 +13,14 @@ public class FiltroPorFechaAcontecimiento extends FiltroPorFecha {
     @Override
     protected LocalDateTime obtenerUnTipoFecha(Hecho hecho) {
         return hecho.getFechaAcontecimiento();
+    }
+
+    @Override
+    public CriterioDTO toCriterioDTO() {
+        CriterioDTO criterioDTO = new CriterioDTO();
+        criterioDTO.setFechaAcontecimientoInicial(this.getDesde());
+        criterioDTO.setFechaAcontecimientoFinal(this.getHasta());
+        criterioDTO.setTipo("FECHAACONTECIMENTO");
+        return criterioDTO;
     }
 }

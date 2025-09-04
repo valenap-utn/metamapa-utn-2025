@@ -7,14 +7,15 @@ import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.ColeccionDTOInput;
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.ColeccionDTOOutput;
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.ConjuntoHechoCompleto;
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.FiltroDTO;
-import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.FuenteDTO;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Coleccion;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Fuente;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Usuario;
+import ar.edu.utn.frba.dds.servicioAgregador.model.entities.filtros.Filtro;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.origenes.Origen;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.origenes.TipoOrigen;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.roles.PermisoCrearColeccion;
+import ar.edu.utn.frba.dds.servicioAgregador.model.entities.roles.PermisoModificarColeccion;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IColeccionRepository;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IHechoRepository;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IHechosExternosRepository;
@@ -76,15 +77,13 @@ public class ColeccionService implements IColeccionService{
     }
 
     Coleccion coleccionCreada = new Coleccion(coleccionInput.getNombre(), coleccionInput.getDescripcion(), this.algoritmoFactory.getAlgoritmo(coleccionInput.getAlgoritmo()));
-    Set<Fuente> fuentes =  coleccionInput.getFuentes().stream().map(this::toFuente).collect(Collectors.toSet());
+    Set<Fuente> fuentes =  coleccionInput.getFuentes().stream().map(this.mapperColeccionOutput::toFuente).collect(Collectors.toSet());
     coleccionCreada.agregarFuentes(fuentes);
+    List<Filtro> filtros = coleccionInput.getCriterios().stream().map(this.mapperColeccionOutput::toCriterio).toList();
+    coleccionCreada.agregarCriterios(filtros);
 
     Coleccion coleccionGuardada = this.coleccionRepository.save(coleccionCreada);
     return this.mapperColeccionOutput.toColeccionDTOOutput(coleccionGuardada);
-  }
-
-  private Fuente toFuente(FuenteDTO fuente) {
-    return new Fuente(Origen.builder().url(fuente.getUrl()).tipo(fuente.getTipoOrigen()).build());
   }
 
   @Override
@@ -124,7 +123,7 @@ public class ColeccionService implements IColeccionService{
   }
 
   @Override
-  public ColeccionDTOOutput cambiarAlgoritmo(ColeccionDTOInput coleccionInput, String idColeccion) {
+  public ColeccionDTOOutput cambiarColeccion(ColeccionDTOInput coleccionInput, String idColeccion) {
     Usuario usuarioSolicitante = this.userRepository.findById(coleccionInput.getUsuario());
     if(usuarioSolicitante == null) {
       throw new UsuarioNoEncontrado("El usuario con el identificador administrado no existe");
@@ -138,11 +137,21 @@ public class ColeccionService implements IColeccionService{
     if(coleccion == null) {
       throw new ColeccionNoEncontrada("No existe la coleccion con el identificador enviado");
     }
+    coleccion.setDescripcion(coleccionInput.getDescripcion());
+    coleccion.setTitulo(coleccionInput.getNombre());
+    List<Fuente> fuentes = coleccionInput.getFuentes().stream().map(this.mapperColeccionOutput::toFuente).toList();
+    coleccion.actualizarFuentes(fuentes);
+    List<Filtro> filtros = coleccionInput.getCriterios().stream().map(this.mapperColeccionOutput::toCriterio).toList();
+    coleccion.actualizarCriterios(filtros);
     coleccion.setAlgoritmoConsenso(this.algoritmoFactory.getAlgoritmo(coleccionInput.getAlgoritmo()));
     Coleccion coleccionGuardada = this.coleccionRepository.save(coleccion);
     return this.mapperColeccionOutput.toColeccionDTOOutput(coleccionGuardada);
   }
 
+  @Override
+  public ColeccionDTOOutput eliminarColeccion(String id) {
+    return null;
+  }
 
 
   private List<Hecho> getHechosClient(Origen origen, FiltroDTO filtro) {

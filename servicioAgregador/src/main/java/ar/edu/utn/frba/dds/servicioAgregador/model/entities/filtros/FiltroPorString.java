@@ -1,11 +1,12 @@
 package ar.edu.utn.frba.dds.servicioAgregador.model.entities.filtros;
 
+import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.CriterioDTO;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
 import lombok.Getter;
 
 @Getter
 public abstract class FiltroPorString implements Filtro {
-  private String cadenaAcomparar;
+  private final String cadenaAcomparar;
 
   public FiltroPorString(String cadenaAcomparar) {
     this.cadenaAcomparar = cadenaAcomparar;
@@ -16,4 +17,5 @@ public abstract class FiltroPorString implements Filtro {
   }
 
   protected abstract String obtenerUnTipoString(Hecho unHecho);
+
 }

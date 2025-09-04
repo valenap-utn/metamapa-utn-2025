@@ -2,11 +2,13 @@ package ar.edu.utn.frba.dds.servicioAgregador.model.entities.filtros;
 
 
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
+import lombok.Getter;
 
 public abstract class FiltroPorFecha implements Filtro{
+  @Getter
   private final LocalDateTime desde;
+  @Getter
   private final LocalDateTime hasta;
 
   public FiltroPorFecha(LocalDateTime desde, LocalDateTime hasta) {

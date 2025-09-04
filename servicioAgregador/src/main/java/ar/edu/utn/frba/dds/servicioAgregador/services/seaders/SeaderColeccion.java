@@ -53,7 +53,7 @@ public class SeaderColeccion {
     coleccion.setTitulo("Desastres Naturales");
     coleccion.setDescripcion("Se muestran los desastres Naturales ocurridos en Buenos Aires, Argentina");
     coleccion.setAlgoritmoConsenso(new TodosConsensuados());
-    coleccion.agregarCriterios(new FiltroPorFechaCarga(LocalDate.of(2020, 1, 12).atStartOfDay(), LocalDateTime.now()));
+    coleccion.agregarCriterios(List.of(new FiltroPorFechaCarga(LocalDate.of(2020, 1, 12).atStartOfDay(), LocalDateTime.now())));
     coleccion.agregarFuentes(List.of(fuenteDinamica, fuenteEstatica));
 
 

@@ -1,6 +1,7 @@
 package ar.edu.utn.frba.dds.servicioAgregador.model.entities;
 
 
+import ar.edu.utn.frba.dds.servicioAgregador.exceptions.SolicitudError;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,10 +17,12 @@ public class Solicitud {
     private Estado estado;
     @Getter
     private Usuario usuario;
-
+    @Getter
+    @Setter
+    private Long id;
     public Solicitud(Hecho hecho, Usuario usuario, String justificacion) {
         if (justificacion.length() < 500) {
-            throw new IllegalArgumentException("La justificación debe tener como minimo 500 caracteres");
+            throw new SolicitudError("La justificación debe tener como minimo 500 caracteres");
         }
         this.usuario = usuario;
         this.hecho = hecho;
@@ -53,10 +56,4 @@ public class Solicitud {
     public boolean fueMarcadaComoSpam() {
         return this.estado == Estado.SPAM;
     }
-
-
-
-
-
-
 }

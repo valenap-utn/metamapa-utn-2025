@@ -3,18 +3,13 @@ package ar.edu.utn.frba.dds.servicioFuenteEstatica.controllers;
 import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.dtos.ConjuntoHechoDTOEstatica;
 import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.dtos.HechoDTOEstatica;
 
-import java.io.IOException;
-
 import ar.edu.utn.frba.dds.servicioFuenteEstatica.services.IHechoService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -48,7 +43,7 @@ public class HechoGlobalController {
   *   Queremos eso dado que es mas RESTful y flexible
   * */
 
-  @PatchMapping("/{id}")
+  @DeleteMapping("/{id}")
   public ResponseEntity<HechoDTOEstatica> eliminarHecho(@PathVariable Long id ) {
     HechoDTOEstatica hecho = this.hechoService.marcarEliminadoHecho(id);
     if(hecho == null){

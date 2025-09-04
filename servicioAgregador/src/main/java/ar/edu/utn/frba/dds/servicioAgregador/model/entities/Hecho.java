@@ -72,4 +72,8 @@ public class Hecho {
   public Long getIdUsuario() {
         return this.usuario.getId();
   }
+
+    public String getClientNombre() {
+        return this.origen.getNombreAPI();
+    }
 }

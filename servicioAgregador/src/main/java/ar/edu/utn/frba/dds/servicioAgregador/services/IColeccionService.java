@@ -8,12 +8,14 @@ import java.util.List;
 import reactor.core.publisher.Mono;
 
 public interface IColeccionService {
-  public ColeccionDTOOutput crearColeccion(ColeccionDTOInput coleccion);
-  public Mono<Void> actualizarHechosColecciones();
+  ColeccionDTOOutput crearColeccion(ColeccionDTOInput coleccion);
+  Mono<Void> actualizarHechosColecciones();
 
-  public List<ColeccionDTOOutput> getAllColecciones();
+  List<ColeccionDTOOutput> getAllColecciones();
 
-  public ConjuntoHechoCompleto getHechosPorColeccion(String idColeccion, FiltroDTO filtro);
+  ConjuntoHechoCompleto getHechosPorColeccion(String idColeccion, FiltroDTO filtro);
 
-  ColeccionDTOOutput cambiarAlgoritmo(ColeccionDTOInput coleccion, String idColeccion);
+  ColeccionDTOOutput cambiarColeccion(ColeccionDTOInput coleccion, String idColeccion);
+
+  ColeccionDTOOutput eliminarColeccion(String id);
 }
