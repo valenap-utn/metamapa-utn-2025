@@ -1,9 +1,12 @@
 package ar.edu.utn.frba.dds.servicioAgregador.model.entities.roles;
 
+import jakarta.persistence.DiscriminatorValue;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Contribuyente implements Rol {
+@DiscriminatorValue("CONTRIBUYENTE")
+public class Contribuyente extends Rol {
+
   private final List<Permiso> permisos;
   public Contribuyente() {
     this.permisos = new ArrayList<>();

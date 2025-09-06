@@ -15,4 +15,8 @@ public interface IHechoRepository {
   List<Hecho> findByOrigen(Origen origen);
 
   List<Hecho> findByOrigenWithFiltros(Origen origen, FiltroDTO filtro);
+
+  List<Hecho> findByNormalizado(boolean b);
+
+  List<Hecho> findByFullTextSearch(String titulo);
 }

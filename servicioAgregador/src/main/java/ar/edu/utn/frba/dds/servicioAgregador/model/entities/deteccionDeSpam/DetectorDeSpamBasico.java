@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 public class DetectorDeSpamBasico implements DetectorDeSpam {
-  private TFIDFCalculadoraPalabras calculadoraTFIDF;
+  private final TFIDFCalculadoraPalabras calculadoraTFIDF;
   @Setter
   @Getter
   private Double nivelImportanciaMinimo;

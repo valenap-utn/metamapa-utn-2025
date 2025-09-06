@@ -45,6 +45,7 @@ public class ColeccionService implements IColeccionService{
   private final FactoryAlgoritmo algoritmoFactory;
   private final FactoryClientFuente clientFuenteFactory;
   private final IHechosExternosRepository hechosExternosRepository;
+  private final VerificadorNormalizador verificadorNormalizador;
 
   public ColeccionService(IColeccionRepository coleccionRepository,
                           IUserRepository userRepository,
@@ -53,7 +54,7 @@ public class ColeccionService implements IColeccionService{
                           FactoryClientFuente clientFuenteFactory,
                           IHechosExternosRepository hechosExternosRepository,
                           MapColeccionOutput mapperColeccionOutput,
-                          MapHechoOutput mapperHechoOutput) {
+                          MapHechoOutput mapperHechoOutput, VerificadorNormalizador verificadorNormalizador) {
     this.coleccionRepository = coleccionRepository;
     this.userRepository = userRepository;
     this.hechoRepository = hechoRepository;
@@ -62,6 +63,7 @@ public class ColeccionService implements IColeccionService{
     this.hechosExternosRepository = hechosExternosRepository;
     this.mapperColeccionOutput = mapperColeccionOutput;
     this.mapperHechoOutput = mapperHechoOutput;
+    this.verificadorNormalizador = verificadorNormalizador;
   }
 
 
@@ -100,9 +102,20 @@ public class ColeccionService implements IColeccionService{
             .flatMap(fuente -> {
               List<Hecho> hechos = this.getHechosClient(fuente.getOrigen(), null);
               hechos = hechos.stream().map(this.hechoRepository::saveHecho).toList();
+              hechos.forEach(this::verSiNormalizar);
               hechos.forEach(this.hechosExternosRepository::save);
               return Mono.empty();
             }).then();
+  }
+
+  private void verSiNormalizar(Hecho hecho) {
+    Long idInterno =  this.hechosExternosRepository.findByIDExterno(hecho.getId());
+    if(idInterno != null) {
+      Hecho hechoExterno = this.hechoRepository.findById(idInterno);
+      if(this.verificadorNormalizador.estaNormalizado(hecho, hechoExterno)) {
+        hecho.marcarComoNormalizado();
+      }
+    }
   }
 
   @Override

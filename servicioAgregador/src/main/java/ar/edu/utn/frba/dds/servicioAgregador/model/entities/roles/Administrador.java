@@ -1,6 +1,9 @@
 package ar.edu.utn.frba.dds.servicioAgregador.model.entities.roles;
 
-public class Administrador implements Rol {
+import jakarta.persistence.DiscriminatorValue;
+
+@DiscriminatorValue("ADMINISTRADOR")
+public class Administrador extends Rol {
 
   @Override
   public boolean tienePermisoDe(Permiso permiso) {

@@ -40,6 +40,16 @@ public class HechoRepository implements IHechoRepository {
     return this.idsHechos.values().stream().filter(hecho -> hecho.getOrigen().esIgual(origen) && this.cumpleFiltros(hecho, filtro)).toList();
   }
 
+  @Override
+  public List<Hecho> findByNormalizado(boolean b) {
+    return this.idsHechos.values().stream().filter(Hecho::getNormalizado).toList();
+  }
+
+  @Override
+  public List<Hecho> findByFullTextSearch(String titulo) {
+    return List.of();
+  }
+
   private boolean cumpleFiltros(Hecho hecho, FiltroDTO filtro) {
     if(filtro.getCategoria() == null)
       return true;

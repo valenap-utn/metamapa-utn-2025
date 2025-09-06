@@ -2,6 +2,20 @@ package ar.edu.utn.frba.dds.servicioAgregador.model.entities;
 
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.algoritmosConsenso.AlgoritmoConsenso;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.origenes.Origen;
+import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.converters.AlgoritmoConsensoConverter;
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -15,24 +29,48 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 
-
+@Entity
+@Table(name = "hecho")
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 public class Hecho {
     @Getter @Setter private Long id;
+
+    @Column(nullable = false, name = "titulo")
     @Setter @Getter private String titulo;
     @Setter @Getter private String descripcion;
+
+    @ManyToOne
+    @JoinColumn(referencedColumnName = "id", nullable = false, name = "categoria_id")
     @Setter @Getter private Categoria categoria;
     @Setter @Getter private Ubicacion ubicacion;
+
+    @Column(name = "fecha_acontecimiento", nullable = false)
     @Setter @Getter private LocalDateTime fechaAcontecimiento;
+
+    @Column(name = "fecha_carga", nullable = false)
     @Setter @Getter private LocalDateTime fechaCarga;
-    @Setter @Getter private Origen origen ;
-    @Setter @Getter private boolean eliminado = false;
+
+    @ManyToOne
+    @JoinColumn(name = "origen_id", referencedColumnName = "id", nullable = false)
+    @Setter @Getter private Origen origen;
+
+    @Column(name = "eliminado", nullable = false)
+    @Setter @Getter private Boolean eliminado = false;
+
+    @Embedded
     @Setter @Getter private ContenidoMultimedia contenidoMultimedia;
+
+    @Convert(converter = AlgoritmoConsensoConverter.class)
     @Getter private final List<AlgoritmoConsenso> algosAceptados = new ArrayList<>();
     @Getter private final Set<String> etiquetas = new HashSet<>();
-    private Usuario usuario;
+
+    @ManyToOne(fetch = FetchType.EAGER) // o .LAZY
+    @JoinColumn(name = "usuario_id", nullable = false, referencedColumnName = "id")
+    @Getter @Setter private Usuario usuario;
+
+    @Getter private Boolean normalizado = false;
 
     public void agregarEtiquetas(String ... etiquetas) {
         this.etiquetas.addAll(List.of(etiquetas));
@@ -76,4 +114,20 @@ public class Hecho {
     public String getClientNombre() {
         return this.origen.getNombreAPI();
     }
+
+    public void marcarComoNormalizado() {
+        this.normalizado = true;
+    }
+
+  public String getNombreCategoria() {
+        return this.categoria.getNombre();
+  }
+
+  public void setDireccion(Direccion direccion) {
+      this.ubicacion.setDireccion(direccion);
+  }
+
+  public Direccion getDireccion() {
+      return this.ubicacion.getDireccion();
+  }
 }

@@ -9,6 +9,13 @@ import java.util.Locale;
 public class TFIDFCalculadoraPalabras {
   private final List<List<String>> documentosSpam;
 
+  public TFIDFCalculadoraPalabras() {
+    documentosSpam = new ArrayList<>();
+  }
+
+  public void recargarDocumentos(List<String> documentos) {
+    documentos.forEach(texto -> this.documentosSpam.add(this.prepararDocumento(texto)));
+  }
   //Para Testing
   public TFIDFCalculadoraPalabras(List<String> documentos) {
     this.documentosSpam = new ArrayList<>();

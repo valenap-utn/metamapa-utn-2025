@@ -86,7 +86,7 @@ entity origen_fuente {
 }
 
 entity contenido_multimedia {
-    * id INTEGER(11) <<PK>>
+    * hecho_id INTEGER(11) <<FK>>
     --
     * url VARCHAR(255)
     * descripcion TEXT

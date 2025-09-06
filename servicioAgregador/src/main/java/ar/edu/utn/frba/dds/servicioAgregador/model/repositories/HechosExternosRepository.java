@@ -24,4 +24,9 @@ public class HechosExternosRepository implements IHechosExternosRepository{
   public Long findIDFuente(Long idAgregador) {
     return this.idsHechos.get(idAgregador);
   }
+
+  @Override
+  public Long findByIDExterno(Long idAComprobar) {
+    return this.idsHechos.keySet().stream().filter(id -> this.idsHechos.get(id).equals(idAComprobar)).findFirst().orElse(null);
+  }
 }
