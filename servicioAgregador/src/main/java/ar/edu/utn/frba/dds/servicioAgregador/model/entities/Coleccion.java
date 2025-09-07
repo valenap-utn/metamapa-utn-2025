@@ -8,14 +8,11 @@ import ar.edu.utn.frba.dds.servicioAgregador.model.entities.filtros.FiltroNoEsta
 import java.util.*;
 import java.util.stream.Stream;
 
-import ar.edu.utn.frba.dds.servicioAgregador.model.entities.fuente.ColeccionFuente;
-import ar.edu.utn.frba.dds.servicioAgregador.model.entities.fuente.Fuente;
+import ar.edu.utn.frba.dds.servicioAgregador.model.entities.fuente.FuenteColeccion;
+import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.converters.AlgoritmoConsensoConverter;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.UuidGenerator;
 
 @Setter
 @Getter
@@ -24,42 +21,36 @@ import org.hibernate.annotations.UuidGenerator;
 public class Coleccion {
 
     @Id
-    @GeneratedValue
-    @UuidGenerator
-    @Column
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @NotBlank
     @Column(nullable = false)
     private String titulo;
 
-    @Size(max = 2000)
-    @Column(length = 2000, nullable = false)
+    @Column(columnDefinition = "TEXT", nullable = false)
     private String descripcion;
 
-    @Transient // no se persiste en la BBDD por ahora, es para q no se queje
-    private final List<Fuente> fuentes;
-    @Transient
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
+    @JoinColumn(referencedColumnName = "servicio_id", nullable = false)
+    private final List<FuenteColeccion> fuenteColeccions;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "reputacion_id")
     private final List<Filtro> criteriosDePertenencia;
 
-    // por ahora guardo el nombre del algoritmo como texto
-    @Transient
+    @Convert(converter = AlgoritmoConsensoConverter.class)
     private AlgoritmoConsenso algoritmoConsenso;
 
-    @OneToMany(mappedBy = "coleccion",
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
-            orphanRemoval = true,
-            fetch = FetchType.LAZY)
-    private List<ColeccionFuente> fuentesConfiguradas = new ArrayList<>();
+
     public Coleccion() {
-        this.fuentes = new ArrayList<>();
+        this.fuenteColeccions = new ArrayList<>();
         this.criteriosDePertenencia = new ArrayList<>();
     }
 
     public Coleccion(String titulo, String descripcion, AlgoritmoConsenso algoritmoConsenso) {
         this.titulo = titulo;
         this.descripcion = descripcion;
-        this.fuentes = new ArrayList<>();
+        this.fuenteColeccions = new ArrayList<>();
         this.criteriosDePertenencia = new ArrayList<>();
         this.criteriosDePertenencia.add(new FiltroNoEstaEliminado());
 
@@ -74,16 +65,16 @@ public class Coleccion {
     }
 
     public List<Hecho> getHechos() {
-        return this.fuentes.stream().flatMap(this::getHechosPorFuente).toList();
+        return this.fuenteColeccions.stream().flatMap(this::getHechosPorFuente).toList();
 
     }
 
-    private Stream<Hecho> getHechosPorFuente(Fuente fuente) {
-        return fuente.getHechos().stream().filter(this::cumpleTodosLosCriterios);
+    private Stream<Hecho> getHechosPorFuente(FuenteColeccion fuenteColeccion) {
+        return fuenteColeccion.getHechos().stream().filter(this::cumpleTodosLosCriterios);
     }
 
-    public void agregarFuentes(Collection<Fuente> fuentes) {
-        this.fuentes.addAll(fuentes);
+    public void agregarFuentes(Collection<FuenteColeccion> fuenteColeccions) {
+        this.fuenteColeccions.addAll(fuenteColeccions);
     }
 
 
@@ -91,19 +82,19 @@ public class Coleccion {
         return this.criteriosDePertenencia.stream().allMatch(criterio -> criterio.hechoCumple(hecho));
     }
 
-    public void consensuarHechos(Set<Fuente> fuentes) {
-        this.getHechos().forEach(hecho -> this.consensuarHecho(hecho, fuentes));
+    public void consensuarHechos(Set<FuenteColeccion> fuenteColeccions) {
+        this.getHechos().forEach(hecho -> this.consensuarHecho(hecho, fuenteColeccions));
     }
 
-    private void consensuarHecho(Hecho hecho, Set<Fuente> fuentes) {
-        if(this.getAlgoritmoConsenso().consensuarHecho(hecho, fuentes)){
+    private void consensuarHecho(Hecho hecho, Set<FuenteColeccion> fuenteColeccions) {
+        if(this.getAlgoritmoConsenso().consensuarHecho(hecho, fuenteColeccions)){
            hecho.agregarAlgoritmo(this.getAlgoritmoConsenso());
         }
     }
 
-    public void actualizarFuentes(List<Fuente> fuentes) {
-        this.fuentes.clear();
-        this.fuentes.addAll(fuentes);
+    public void actualizarFuentes(List<FuenteColeccion> fuenteColeccions) {
+        this.fuenteColeccions.clear();
+        this.fuenteColeccions.addAll(fuenteColeccions);
     }
 
     public void actualizarCriterios(List<Filtro> Criterios ) {

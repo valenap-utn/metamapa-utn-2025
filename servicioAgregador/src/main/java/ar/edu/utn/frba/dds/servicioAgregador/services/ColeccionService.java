@@ -8,7 +8,7 @@ import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.ColeccionDTOOutput;
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.ConjuntoHechoCompleto;
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.FiltroDTO;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Coleccion;
-import ar.edu.utn.frba.dds.servicioAgregador.model.entities.fuente.Fuente;
+import ar.edu.utn.frba.dds.servicioAgregador.model.entities.fuente.FuenteColeccion;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Usuario;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.filtros.Filtro;
@@ -79,8 +79,8 @@ public class ColeccionService implements IColeccionService{
     }
 
     Coleccion coleccionCreada = new Coleccion(coleccionInput.getNombre(), coleccionInput.getDescripcion(), this.algoritmoFactory.getAlgoritmo(coleccionInput.getAlgoritmo()));
-    Set<Fuente> fuentes =  coleccionInput.getFuentes().stream().map(this.mapperColeccionOutput::toFuente).collect(Collectors.toSet());
-    coleccionCreada.agregarFuentes(fuentes);
+    Set<FuenteColeccion> fuenteColeccions =  coleccionInput.getFuentes().stream().map(this.mapperColeccionOutput::toFuente).collect(Collectors.toSet());
+    coleccionCreada.agregarFuentes(fuenteColeccions);
     List<Filtro> filtros = coleccionInput.getCriterios().stream().map(this.mapperColeccionOutput::toCriterio).toList();
     coleccionCreada.agregarCriterios(filtros);
 
@@ -92,13 +92,13 @@ public class ColeccionService implements IColeccionService{
   public Mono<Void> actualizarHechosColecciones() {
     return Flux.fromIterable(this.coleccionRepository.findAll())
                     .flatMap(coleccion -> {
-                      List<Fuente> fuentes = coleccion.getFuentes();
-                      return this.actualizarHechosFuentes(fuentes);
+                      List<FuenteColeccion> fuenteColeccions = coleccion.getFuenteColeccions();
+                      return this.actualizarHechosFuentes(fuenteColeccions);
                     }).then();
   }
 
-  private Mono<Void> actualizarHechosFuentes(List<Fuente> fuentes) {
-    return Flux.fromIterable(fuentes)
+  private Mono<Void> actualizarHechosFuentes(List<FuenteColeccion> fuenteColeccions) {
+    return Flux.fromIterable(fuenteColeccions)
             .flatMap(fuente -> {
               List<Hecho> hechos = this.getHechosClient(fuente.getOrigen(), null);
               hechos = hechos.stream().map(this.hechoRepository::saveHecho).toList();
@@ -127,7 +127,7 @@ public class ColeccionService implements IColeccionService{
   @Override
   public ConjuntoHechoCompleto getHechosPorColeccion(String idColeccion, FiltroDTO filtro) {
     Coleccion coleccion = this.coleccionRepository.findById(idColeccion);
-    coleccion.getFuentes().forEach(fuente -> this.cargarHechosEnFuente(fuente, filtro));
+    coleccion.getFuenteColeccions().forEach(fuente -> this.cargarHechosEnFuente(fuente, filtro));
     List<Hecho> hechos = coleccion.getHechos();
     if(filtro.getCurada()){
       hechos = hechos.stream().filter(hecho -> hecho.estaCuradoPor(coleccion.getAlgoritmoConsenso())).toList();
@@ -152,8 +152,8 @@ public class ColeccionService implements IColeccionService{
     }
     coleccion.setDescripcion(coleccionInput.getDescripcion());
     coleccion.setTitulo(coleccionInput.getNombre());
-    List<Fuente> fuentes = coleccionInput.getFuentes().stream().map(this.mapperColeccionOutput::toFuente).toList();
-    coleccion.actualizarFuentes(fuentes);
+    List<FuenteColeccion> fuenteColeccions = coleccionInput.getFuentes().stream().map(this.mapperColeccionOutput::toFuente).toList();
+    coleccion.actualizarFuentes(fuenteColeccions);
     List<Filtro> filtros = coleccionInput.getCriterios().stream().map(this.mapperColeccionOutput::toCriterio).toList();
     coleccion.actualizarCriterios(filtros);
     coleccion.setAlgoritmoConsenso(this.algoritmoFactory.getAlgoritmo(coleccionInput.getAlgoritmo()));
@@ -172,24 +172,24 @@ public class ColeccionService implements IColeccionService{
     return client.getHechos(filtro);
   }
 
-  private void cargarHechosEnFuente(Fuente fuente, FiltroDTO filtro) {
+  private void cargarHechosEnFuente(FuenteColeccion fuenteColeccion, FiltroDTO filtro) {
     List<Hecho> hechos = new ArrayList<>();
-    if(filtro.getEntiemporeal() &&  fuente.getOrigen().getTipo() == TipoOrigen.PROXY) {
-      hechos.addAll(this.getHechosClient(fuente.getOrigen(), filtro));
+    if(filtro.getEntiemporeal() &&  fuenteColeccion.getOrigen().getTipo() == TipoOrigen.PROXY) {
+      hechos.addAll(this.getHechosClient(fuenteColeccion.getOrigen(), filtro));
     } else {
-      hechos.addAll(this.hechoRepository.findByOrigenWithFiltros(fuente.getOrigen(), filtro));
+      hechos.addAll(this.hechoRepository.findByOrigenWithFiltros(fuenteColeccion.getOrigen(), filtro));
     }
-    fuente.actualizarHechos(hechos);
+    fuenteColeccion.actualizarHechos(hechos);
   }
 
   public Mono<Void> consensuarHechos() {
     Set<Coleccion> colecciones = this.coleccionRepository.findAll();
-    Set<Fuente> fuentes = new HashSet<>();
-    colecciones.forEach(coleccion -> fuentes.addAll(coleccion.getFuentes()));
-    fuentes.forEach(fuente -> fuente.actualizarHechos(this.hechoRepository.findByOrigen(fuente.getOrigen())));
+    Set<FuenteColeccion> fuenteColeccions = new HashSet<>();
+    colecciones.forEach(coleccion -> fuenteColeccions.addAll(coleccion.getFuenteColeccions()));
+    fuenteColeccions.forEach(fuente -> fuente.actualizarHechos(this.hechoRepository.findByOrigen(fuente.getOrigen())));
     return Flux.fromIterable(colecciones).flatMap(
         coleccion -> {
-          coleccion.consensuarHechos(fuentes);
+          coleccion.consensuarHechos(fuenteColeccions);
           return Mono.empty();
         }
     ).then();

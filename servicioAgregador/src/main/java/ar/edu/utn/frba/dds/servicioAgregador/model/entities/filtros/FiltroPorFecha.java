@@ -5,7 +5,7 @@ import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
 import java.time.LocalDateTime;
 import lombok.Getter;
 
-public abstract class FiltroPorFecha implements Filtro{
+public abstract class FiltroPorFecha extends Filtro{
   @Getter
   private final LocalDateTime desde;
   @Getter

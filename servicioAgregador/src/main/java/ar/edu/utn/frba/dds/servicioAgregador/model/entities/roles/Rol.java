@@ -14,8 +14,8 @@ import jakarta.persistence.Table;
 @DiscriminatorColumn(name = "tipo")
 @Table(name = "rol_usuario")
 public abstract class Rol {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
+
   public abstract boolean tienePermisoDe(Permiso permiso);
 }

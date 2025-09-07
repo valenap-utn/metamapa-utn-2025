@@ -58,7 +58,7 @@ public class Hecho {
     @Column(name = "fecha_carga", nullable = false)
     @Setter @Getter private LocalDateTime fechaCarga;
 
-    @ManyToOne
+    @ManyToOne(optional = false, fetch=FetchType.EAGER)
     @JoinColumn(name = "origen_id", referencedColumnName = "id", nullable = false)
     @Setter @Getter private Origen origen;
 
@@ -68,7 +68,10 @@ public class Hecho {
     @Embedded
     @Setter @Getter private ContenidoMultimedia contenidoMultimedia;
 
+    @ElementCollection
+    @CollectionTable(name = "algoritmos_hecho")
     @Convert(converter = AlgoritmoConsensoConverter.class)
+    @Column(name = "algoritmo")
     @Getter private final List<AlgoritmoConsenso> algosAceptados = new ArrayList<>();
 
     @ElementCollection
@@ -80,6 +83,7 @@ public class Hecho {
     @JoinColumn(name = "usuario_id", nullable = false, referencedColumnName = "id")
     @Getter @Setter private Usuario usuario;
 
+    @Column(name = "normalizado")
     @Getter private Boolean normalizado = false;
 
     public void agregarEtiquetas(String ... etiquetas) {
@@ -139,5 +143,9 @@ public class Hecho {
 
   public Direccion getDireccion() {
       return this.ubicacion.getDireccion();
+  }
+
+  public boolean isEliminado() {
+      return this.eliminado;
   }
 }

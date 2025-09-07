@@ -5,7 +5,7 @@ import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.CriterioDTO;
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.FuenteDTO;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Categoria;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Coleccion;
-import ar.edu.utn.frba.dds.servicioAgregador.model.entities.fuente.Fuente;
+import ar.edu.utn.frba.dds.servicioAgregador.model.entities.fuente.FuenteColeccion;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.filtros.Filtro;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.filtros.FiltroPorCategoria;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.filtros.FiltroPorDescripcion;
@@ -25,13 +25,13 @@ public class MapColeccionOutput {
     coleccionDTOOutput.setId(coleccion.getId());
     coleccionDTOOutput.setNombre(coleccion.getDescripcion());
     coleccionDTOOutput.setDescripcion(coleccion.getDescripcion());
-    coleccionDTOOutput.setFuentes(coleccion.getFuentes().stream().map(this::toFuenteDTO).collect(Collectors.toList()));
+    coleccionDTOOutput.setFuentes(coleccion.getFuenteColeccions().stream().map(this::toFuenteDTO).collect(Collectors.toList()));
     coleccionDTOOutput.setCriterios(coleccion.getCriteriosDePertenencia().stream().map(this::toCriterioDTO).toList());
     return coleccionDTOOutput;
   }
 
-  public Fuente toFuente(FuenteDTO fuente) {
-    return new Fuente(Origen.builder().url(fuente.getUrl()).tipo(fuente.getTipoOrigen()).build());
+  public FuenteColeccion toFuente(FuenteDTO fuente) {
+    return new FuenteColeccion(Origen.builder().url(fuente.getUrl()).tipo(fuente.getTipoOrigen()).build());
   }
 
   public Filtro toCriterio(CriterioDTO criterioDTO) {
@@ -52,10 +52,10 @@ public class MapColeccionOutput {
     return filtro.toCriterioDTO();
   }
 
-  private FuenteDTO toFuenteDTO(Fuente fuente) {
+  private FuenteDTO toFuenteDTO(FuenteColeccion fuenteColeccion) {
     FuenteDTO fuenteDTO = new FuenteDTO();
-    fuenteDTO.setTipoOrigen(fuente.getOrigen().getTipo());
-    fuenteDTO.setUrl(fuente.getOrigen().getUrl());
+    fuenteDTO.setTipoOrigen(fuenteColeccion.getOrigen().getTipo());
+    fuenteDTO.setUrl(fuenteColeccion.getOrigen().getUrl());
     return fuenteDTO;
   }
 }

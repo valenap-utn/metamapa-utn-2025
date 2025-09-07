@@ -1,7 +1,7 @@
 package ar.edu.utn.frba.dds.servicioAgregador.model.entities.algoritmosConsenso;
 
 
-import ar.edu.utn.frba.dds.servicioAgregador.model.entities.fuente.Fuente;
+import ar.edu.utn.frba.dds.servicioAgregador.model.entities.fuente.FuenteColeccion;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
 
 import java.util.Collection;
@@ -10,13 +10,13 @@ import java.util.Collection;
 public class MultiplesMenciones implements AlgoritmoConsenso {
 
   @Override
-  public boolean consensuarHecho(Hecho hecho, Collection<Fuente> fuentes) {
+  public boolean consensuarHecho(Hecho hecho, Collection<FuenteColeccion> fuenteColeccions) {
     int coincidencias = 0;
-    for(Fuente fuente : fuentes){
-      if(fuente.tieneHecho(hecho)){
+    for(FuenteColeccion fuenteColeccion : fuenteColeccions){
+      if(fuenteColeccion.tieneHecho(hecho)){
         coincidencias++;
       }
-      if(fuente.tieneOtroHechoConMismoNombrePeroDistintosAtributos(hecho)){
+      if(fuenteColeccion.tieneOtroHechoConMismoNombrePeroDistintosAtributos(hecho)){
         return false;
       }
     }

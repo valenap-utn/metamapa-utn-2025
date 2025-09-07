@@ -5,7 +5,7 @@ import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.CriterioDTO;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Categoria;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
 
-public class FiltroPorCategoria implements Filtro {
+public class FiltroPorCategoria extends Filtro {
     private final Categoria categoria;
 
     public FiltroPorCategoria(Categoria categoria) {

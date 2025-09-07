@@ -17,16 +17,15 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+@Entity
+@Table(name = "usuario")
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Entity
-@Table(name = "usuario")
 @Getter
 @Setter
 public class Usuario {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
   @Column(nullable = false,name = "nombre")
@@ -35,6 +34,7 @@ public class Usuario {
   private String apellido;
   @Column(name="fecha_nacimiento")
   private LocalDate fechaDeNacimiento;
+
   @JoinColumn(name = "rol_id")
   @OneToOne
   private Rol rol;

@@ -5,7 +5,7 @@ import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.CriterioDTO;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Ubicacion;
 
-public class FiltroUbicacion  implements Filtro{
+public class FiltroUbicacion  extends Filtro{
   private Ubicacion ubicacion;
   public FiltroUbicacion(Ubicacion ubicacion) {
     this.ubicacion = ubicacion;

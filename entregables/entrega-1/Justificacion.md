@@ -22,7 +22,7 @@ por lo cual modificamos/delegamos la importación del CSV y hacemos
 que nos entregue una estructura intermedia llamada HechoValueObject.
 Como el importador devuelve una colección, nos dimos cuenta de que
 había cierto comportamiento en esta colección que no debía estar en
-la fuente externa, con lo cual creamos ColeccionHechoValueObject que
+la fuenteColeccion externa, con lo cual creamos ColeccionHechoValueObject que
 se encarga de borrar los repetidos por Titulo repetido y entregar los
 Hechos que luego cargaremos.
 

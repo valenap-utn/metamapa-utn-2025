@@ -1,21 +1,21 @@
 # ServicioAgregador
 
-Seguimos manteniendo la idea de que los hechos deben estar en la fuente.
+Seguimos manteniendo la idea de que los hechos deben estar en la fuenteColeccion.
 
 ## Conexion con otros servicios
 
 Volví a poner la Fuente solo con el origen y cree un Factory 
-de clients de fuente porque con las decisiones que tomamos anteriormente 
+de clients de fuenteColeccion porque con las decisiones que tomamos anteriormente 
 me di cuenta de que el client siempre hace lo mismo (traer hechos con filtros o sin ellos, 
-y comunicar a las fuentes de los hechos a marcar como eliminados ) entonces decidí por 
+y comunicar a las fuenteColeccions de los hechos a marcar como eliminados ) entonces decidí por 
 simplicidad y mantenibilidad hacer un único client que tiene como parámetro una clase 
-que se encarga de mapear cada hecho de una fuente distinta (por eso hay un factory para 
+que se encarga de mapear cada hecho de una fuenteColeccion distinta (por eso hay un factory para 
 que se coloque el mapeador correcto), así hay un único punto donde esta la lógica de acceso 
-a las fuentes.
+a las fuenteColeccions.
 
-Ahora el hecho y la fuente tienen origen el cual permite
+Ahora el hecho y la fuenteColeccion tienen origen el cual permite
 comunicarse con este factory y así las entidades de dominio no tienen conocimiento 
-de este client. La fuente también tiene origen debido a que las colecciones tienen fuentes y -por nuestro diseño- se necesita para acceder a estos clients o al repository de hechos. El origen contiene la URL y el tipo de fuente, lo cual le permite al sistema tener flexibilidad para crear conexiones y agregar nuevas sin que el sistema conozca todas las que existen.
+de este client. La fuenteColeccion también tiene origen debido a que las colecciones tienen fuenteColeccions y -por nuestro diseño- se necesita para acceder a estos clients o al repository de hechos. El origen contiene la URL y el tipo de fuenteColeccion, lo cual le permite al sistema tener flexibilidad para crear conexiones y agregar nuevas sin que el sistema conozca todas las que existen.
 Igual hay algunos temas que no tengo muy claros: cómo hacer la asignación de los ids en el caso de proxy (existiría un repo para eso o algo así?, sobre todo para el caso de la API que nos brindaron). Se podría poner como endpoint posible para marcar como eliminado uno con el verbo delete? Porque creo que tiene más sentido que con el verbo put que estamos usando.
 
 ## Detección de spam

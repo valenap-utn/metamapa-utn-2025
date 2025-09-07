@@ -3,7 +3,7 @@ package ar.edu.utn.frba.dds.servicioAgregador.services.seaders;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Categoria;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Coleccion;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.ContenidoMultimedia;
-import ar.edu.utn.frba.dds.servicioAgregador.model.entities.fuente.Fuente;
+import ar.edu.utn.frba.dds.servicioAgregador.model.entities.fuente.FuenteColeccion;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Usuario;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.algoritmosConsenso.MayoriaSimple;
@@ -45,23 +45,23 @@ public class SeaderColeccion {
     Origen origenProxy = Origen.builder().url(this.urlFuenteProxy).tipo(TipoOrigen.PROXY).build();
     Coleccion coleccion = new Coleccion();
     Coleccion coleccion2 = new Coleccion();
-    Fuente fuenteDinamica = new Fuente(origenDinamica);
-    Fuente fuenteProxy = new Fuente(origenProxy);
-    Fuente fuenteEstatica = new Fuente(origenEstatica);
+    FuenteColeccion fuenteColeccionDinamica = new FuenteColeccion(origenDinamica);
+    FuenteColeccion fuenteColeccionProxy = new FuenteColeccion(origenProxy);
+    FuenteColeccion fuenteColeccionEstatica = new FuenteColeccion(origenEstatica);
 
 
     coleccion.setTitulo("Desastres Naturales");
     coleccion.setDescripcion("Se muestran los desastres Naturales ocurridos en Buenos Aires, Argentina");
     coleccion.setAlgoritmoConsenso(new TodosConsensuados());
     coleccion.agregarCriterios(List.of(new FiltroPorFechaCarga(LocalDate.of(2020, 1, 12).atStartOfDay(), LocalDateTime.now())));
-    coleccion.agregarFuentes(List.of(fuenteDinamica, fuenteEstatica));
+    coleccion.agregarFuentes(List.of(fuenteColeccionDinamica, fuenteColeccionEstatica));
 
 
     coleccion2.setTitulo("Terremotos");
     coleccion2.setDescripcion("Tiene los terremotos que ocurren cerca de la cordillera de los andes");
     coleccion2.setAlgoritmoConsenso(new MayoriaSimple());
-    coleccion2.agregarFuentes(List.of(fuenteDinamica));
-    coleccion2.agregarFuentes(List.of(fuenteProxy));
+    coleccion2.agregarFuentes(List.of(fuenteColeccionDinamica));
+    coleccion2.agregarFuentes(List.of(fuenteColeccionProxy));
 
     this.coleccionRepository.save(coleccion);
     this.coleccionRepository.save(coleccion2);
