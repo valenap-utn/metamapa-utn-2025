@@ -35,7 +35,7 @@ public class ServicioEstadisticas {
         resultados.put("ubicacionPorOrigen", calculador.ubicacionConMasHechosPorOrigen(hechos));
         resultados.put("categoriaTop", calculador.categoriaConMasHechos(hechos));
         resultados.put("ubicacionPorCategoria", calculador.ubicacionConMasHechosPorCategoria(hechos));
-        resultados.put("mesPicoPorCategoria", calculador.mesPicoPorCategoria(hechos));
+        resultados.put("horaPicoPorCategoria", calculador.horaPicoPorCategoria(hechos));
         resultados.put("solicitudesSpam", calculador.totalSolicitudesSpam(solicitudes));
 
         cache.actualizar(resultados);

@@ -34,9 +34,9 @@ public class CalculadorEstadisticas {
                 ));
     }
 
-    public Map<Integer, Long> mesPicoPorCategoria(List<Hecho> hechos) {
+    public Map<Integer, Long> horaPicoPorCategoria(List<Hecho> hechos) {
         return hechos.stream()
-                .collect(Collectors.groupingBy(h -> h.getFechaAcontecimiento().getMonthValue(), Collectors.counting()));
+                .collect(Collectors.groupingBy(h -> h.getFechaAcontecimiento().getHour(), Collectors.counting()));
     }
 
     public long totalSolicitudesSpam(List<Solicitud> solicitudes) {
