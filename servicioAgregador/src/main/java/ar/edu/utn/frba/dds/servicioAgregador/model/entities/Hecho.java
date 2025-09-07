@@ -35,15 +35,21 @@ import lombok.Setter;
 @NoArgsConstructor
 @Builder
 public class Hecho {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Getter @Setter private Long id;
 
     @Column(nullable = false, name = "titulo")
     @Setter @Getter private String titulo;
+
+    @Column(name = "descripcion")
     @Setter @Getter private String descripcion;
 
     @ManyToOne
     @JoinColumn(referencedColumnName = "id", nullable = false, name = "categoria_id")
     @Setter @Getter private Categoria categoria;
+
+    @Embedded
     @Setter @Getter private Ubicacion ubicacion;
 
     @Column(name = "fecha_acontecimiento", nullable = false)
@@ -64,6 +70,10 @@ public class Hecho {
 
     @Convert(converter = AlgoritmoConsensoConverter.class)
     @Getter private final List<AlgoritmoConsenso> algosAceptados = new ArrayList<>();
+
+    @ElementCollection
+    @CollectionTable(name = "etiquetas_hecho", joinColumns =
+    @JoinColumn(name = "hecho_id", referencedColumnName = "id"))
     @Getter private final Set<String> etiquetas = new HashSet<>();
 
     @ManyToOne(fetch = FetchType.EAGER) // o .LAZY

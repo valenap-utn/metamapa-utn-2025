@@ -23,19 +23,25 @@ import lombok.Setter;
 @Entity
 @Table(name = "solicitud")
 public class Solicitud {
-    @Getter
-    @Setter
-    private Hecho hecho;
-    @Getter
-    @Setter
-    private String justificacion;
-    @Getter
-    private Estado estado;
-    @Getter
-    private Usuario usuario;
-    @Getter
-    @Setter
-    private Long id;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "hecho_id", nullable = false, referencedColumnName = "id")
+    @Getter @Setter private Hecho hecho;
+
+    @Column(nullable = false, name = "justificacion")
+    @Getter @Setter private String justificacion;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "estado", nullable = false)
+    @Getter private Estado estado;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "usuario_id")
+    @Getter private Usuario usuario;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Getter @Setter private Long id;
+
     public Solicitud(Hecho hecho, Usuario usuario, String justificacion) {
         if (justificacion.length() < 500) {
             throw new SolicitudError("La justificación debe tener como minimo 500 caracteres");

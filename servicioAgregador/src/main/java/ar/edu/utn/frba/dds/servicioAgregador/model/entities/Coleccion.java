@@ -5,6 +5,9 @@ import ar.edu.utn.frba.dds.servicioAgregador.model.entities.algoritmosConsenso.A
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.algoritmosConsenso.TodosConsensuados;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.filtros.Filtro;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.filtros.FiltroNoEstaEliminado;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -13,10 +16,12 @@ import java.util.stream.Stream;
 import lombok.Getter;
 import lombok.Setter;
 
-
+@Entity
+@Table(name = "coleccion")
 @Setter
 @Getter
 public class Coleccion {
+    @Id
     private String id;
     private String titulo;
     private String descripcion;
