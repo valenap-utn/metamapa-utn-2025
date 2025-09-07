@@ -6,6 +6,8 @@ import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.SolicitudInputDTO;
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.SolicitudOutputDTO;
 import ar.edu.utn.frba.dds.servicioAgregador.services.ISolicitudService;
 import java.util.List;
+
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -29,7 +31,7 @@ public class SolicitudController {
   }
 
   @PostMapping
-  public ResponseEntity<SolicitudOutputDTO> crearSolicitud(@RequestBody SolicitudInputDTO solicitudInput) {
+  public ResponseEntity<SolicitudOutputDTO> crearSolicitud( @Valid @RequestBody SolicitudInputDTO solicitudInput) {
       return ResponseEntity.status(HttpStatus.CREATED).body(this.solicitudService.crearSolicitud(solicitudInput));
   }
 
