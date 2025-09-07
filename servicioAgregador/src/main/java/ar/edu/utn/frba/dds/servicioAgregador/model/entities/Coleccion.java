@@ -1,34 +1,56 @@
 package ar.edu.utn.frba.dds.servicioAgregador.model.entities;
 
-
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.algoritmosConsenso.AlgoritmoConsenso;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.algoritmosConsenso.TodosConsensuados;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.filtros.Filtro;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.filtros.FiltroNoEstaEliminado;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+
+import java.util.*;
 import java.util.stream.Stream;
+
+import ar.edu.utn.frba.dds.servicioAgregador.model.entities.fuente.ColeccionFuente;
+import ar.edu.utn.frba.dds.servicioAgregador.model.entities.fuente.Fuente;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.UuidGenerator;
 
-@Entity
-@Table(name = "coleccion")
 @Setter
 @Getter
+@Entity
+@Table(name = "coleccion", uniqueConstraints = @UniqueConstraint(columnNames = "titulo"))
 public class Coleccion {
+
     @Id
-    private String id;
+    @GeneratedValue
+    @UuidGenerator
+    @Column
+    private UUID id;
+
+    @NotBlank
+    @Column(nullable = false)
     private String titulo;
+
+    @Size(max = 2000)
+    @Column(length = 2000, nullable = false)
     private String descripcion;
+
+    @Transient // no se persiste en la BBDD por ahora, es para q no se queje
     private final List<Fuente> fuentes;
+    @Transient
     private final List<Filtro> criteriosDePertenencia;
+
+    // por ahora guardo el nombre del algoritmo como texto
+    @Transient
     private AlgoritmoConsenso algoritmoConsenso;
 
+    @OneToMany(mappedBy = "coleccion",
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
+            orphanRemoval = true,
+            fetch = FetchType.LAZY)
+    private List<ColeccionFuente> fuentesConfiguradas = new ArrayList<>();
     public Coleccion() {
         this.fuentes = new ArrayList<>();
         this.criteriosDePertenencia = new ArrayList<>();

@@ -1,5 +1,6 @@
-package ar.edu.utn.frba.dds.servicioAgregador.model.entities;
+package ar.edu.utn.frba.dds.servicioAgregador.model.entities.fuente;
 
+import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.origenes.Origen;
 import java.util.Collection;
 import java.util.HashSet;

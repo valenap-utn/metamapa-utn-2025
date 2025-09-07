@@ -2,11 +2,10 @@ package ar.edu.utn.frba.dds.servicioAgregador.services;
 
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.ConjuntoHechoCompleto;
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.FiltroDTO;
-import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Fuente;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IHechoRepository;
 import ar.edu.utn.frba.dds.servicioAgregador.services.mappers.MapHechoOutput;
-import java.util.ArrayList;
+
 import java.util.List;
 import org.springframework.stereotype.Service;
 

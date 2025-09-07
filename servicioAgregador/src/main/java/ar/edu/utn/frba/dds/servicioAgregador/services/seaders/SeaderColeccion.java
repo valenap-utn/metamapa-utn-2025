@@ -3,7 +3,7 @@ package ar.edu.utn.frba.dds.servicioAgregador.services.seaders;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Categoria;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Coleccion;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.ContenidoMultimedia;
-import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Fuente;
+import ar.edu.utn.frba.dds.servicioAgregador.model.entities.fuente.Fuente;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Usuario;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.algoritmosConsenso.MayoriaSimple;
