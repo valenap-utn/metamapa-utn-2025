@@ -5,9 +5,8 @@ import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Direccion;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.IBuscadorFullTextSearch;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.ICategoriaRepository;
+import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IDireccionRepository;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IHechoRepository;
-import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.implReal.IDireccionRepository;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,7 +40,6 @@ public class Estandarizador implements IEstandarizador {
             {
               this.estandarizarTitulo(hechoAmodificar, hechosDesnormalizados);
               this.estandarizarCategoria(hechoAmodificar, hechosDesnormalizados);
-              this.estandarizarFechas(hechoAmodificar, hechosDesnormalizados);
               this.estandarizarUbicacion(hechoAmodificar, hechosDesnormalizados);
               hechoAmodificar.marcarComoNormalizado();
               return Mono.empty();
@@ -50,18 +48,6 @@ public class Estandarizador implements IEstandarizador {
   }
 
 
-
-
-
-  private void estandarizarFechas(Hecho hechoAmodificar, List<Hecho> hechosDesnormalizados) {
-    hechoAmodificar.setFechaCarga(this.estandarizarFecha(hechoAmodificar.getFechaCarga()));
-    hechoAmodificar.setFechaAcontecimiento(this.estandarizarFecha(hechoAmodificar.getFechaCarga()));
-  }
-
-  private LocalDateTime estandarizarFecha(LocalDateTime fechaCarga) {
-    //TODO
-    return null;
-  }
 
   private void estandarizarCategoria(Hecho hechoAmodificar, List<Hecho> hechosDesnormalizados) {
     List<Categoria> categorias = this.categoriaRepository.findByFullTextSearch(hechoAmodificar.getNombreCategoria());
@@ -86,15 +72,19 @@ public class Estandarizador implements IEstandarizador {
   }
 
   private void estandarizarUbicacion(Hecho hechoAmodificar, List<Hecho> hechosDesnormalizados) {
-    //Muy TODO
     List<Direccion> direcciones = this.direccionRepository.findByFullTextSearch(hechoAmodificar.getNombreCategoria());
     Direccion direccion = direcciones.stream().findFirst().orElse(null);
     if (direccion == null) {
-      List<String> titulos =  hechosDesnormalizados.stream().map(Hecho::getDireccion).toList();
-      direccion.setCiudad(this.buscadorFullTextSearch.crearNombreNormalizadoCon(hechoAmodificar.getDireccion().getCiudad(), titulos));
-      direccion.setLocalidad(this.buscadorFullTextSearch.crearNombreNormalizadoCon(hechoAmodificar.getDireccion().getCiudad(), titulos));
-      direccion.setProvincia(this.buscadorFullTextSearch.crearNombreNormalizadoCon(hechoAmodificar.getDireccion().getCiudad(), titulos));
-      direccion.setMunicipio(this.buscadorFullTextSearch.crearNombreNormalizadoCon(hechoAmodificar.getDireccion().getCiudad(), titulos));
+      direccion = new Direccion();
+      List<Direccion> direccionesHechos =  hechosDesnormalizados.stream().map(Hecho::getDireccion).toList();
+      direccion.setCiudad(this.buscadorFullTextSearch.crearNombreNormalizadoCon(hechoAmodificar.getDireccion().getCiudad(),
+              direccionesHechos.stream().map(Direccion::getCiudad).toList()));
+      direccion.setLocalidad(this.buscadorFullTextSearch.crearNombreNormalizadoCon(hechoAmodificar.getDireccion().getCiudad(),
+              direccionesHechos.stream().map(Direccion::getLocalidad).toList()));
+      direccion.setProvincia(this.buscadorFullTextSearch.crearNombreNormalizadoCon(hechoAmodificar.getDireccion().getCiudad(),
+              direccionesHechos.stream().map(Direccion::getProvincia).toList()));
+      direccion.setMunicipio(this.buscadorFullTextSearch.crearNombreNormalizadoCon(hechoAmodificar.getDireccion().getCiudad(),
+              direccionesHechos.stream().map(Direccion::getMunicipio).toList()));
     }
     hechoAmodificar.setDireccion(direccion);
 

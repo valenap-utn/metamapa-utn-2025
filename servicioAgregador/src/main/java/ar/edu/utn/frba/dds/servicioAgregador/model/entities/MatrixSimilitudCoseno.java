@@ -10,6 +10,7 @@ public class MatrixSimilitudCoseno {
 
   public MatrixSimilitudCoseno(List<Documento> documentosACargar, TFIDFCalculadoraPalabras calculadoraPalabras) {
     documentos = new ArrayList<>();
+    calculadoraPalabras.recargarDocumentos(documentosACargar.stream().map(Documento::getString).toList());
     this.documentosATrabajar = new ArrayList<>(documentosACargar);
     this.documentosATrabajar.forEach(documento -> documento.calcularTFIDF(calculadoraPalabras));
   }
