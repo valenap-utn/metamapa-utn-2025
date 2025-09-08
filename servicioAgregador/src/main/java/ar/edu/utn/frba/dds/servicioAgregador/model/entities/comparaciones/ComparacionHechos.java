@@ -3,6 +3,7 @@ package ar.edu.utn.frba.dds.servicioAgregador.model.entities.comparaciones;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Documento;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.deteccionDeSpam.TFIDFCalculadoraPalabras;
+import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,10 +17,10 @@ public abstract class ComparacionHechos {
 
     Documento documentoDeExterno = this.elementoAComparar(hechoExterno);
     Documento documentoDeInterno = this.elementoAComparar(hecho);
+    calculadora.recargarDocumentos(List.of(documentoDeInterno.getString(), documentoDeExterno.getString()));
     documentoDeExterno.calcularTFIDF(calculadora);
     documentoDeInterno.calcularTFIDF(calculadora);
-    documentoDeInterno.calcularCosenoConRespectoA(documentoDeExterno);
-    return documentoDeInterno.getCosenoActual() > this.getCantidadAceptable();
+    return documentoDeInterno.calcularCosenoConRespectoA(documentoDeExterno) > this.getCantidadAceptable();
   }
 
   protected abstract Documento elementoAComparar(Hecho hechoExterno);

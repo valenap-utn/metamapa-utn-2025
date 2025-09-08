@@ -42,7 +42,7 @@ public class Hecho {
     @Column(nullable = false, name = "titulo")
     @Setter @Getter private String titulo;
 
-    @Column(name = "descripcion")
+    @Column(name = "descripcion", columnDefinition = "TEXT")
     @Setter @Getter private String descripcion;
 
     @ManyToOne
@@ -69,9 +69,9 @@ public class Hecho {
     @Setter @Getter private ContenidoMultimedia contenidoMultimedia;
 
     @ElementCollection
-    @CollectionTable(name = "algoritmos_hecho")
+    @CollectionTable(name = "algoritmos_hecho", joinColumns =
+    @JoinColumn(name = "hecho_id", referencedColumnName = "id"))
     @Convert(converter = AlgoritmoConsensoConverter.class)
-    @Column(name = "algoritmo")
     @Getter private final List<AlgoritmoConsenso> algosAceptados = new ArrayList<>();
 
     @ElementCollection

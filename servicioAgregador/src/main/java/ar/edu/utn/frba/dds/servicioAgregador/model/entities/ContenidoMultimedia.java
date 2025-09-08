@@ -7,8 +7,8 @@ import lombok.Data;
 @Data
 @Embeddable
 public class ContenidoMultimedia {
-  @Column(name = "contenidoMultimedia_nombre", nullable = false)
+  @Column(name = "contenidoMultimedia_nombre")
   private String nombre;
-  @Column(name="contenidoMultimedia_path", nullable = false)
+  @Column(name="contenidoMultimedia_path")
   private String path;
 }

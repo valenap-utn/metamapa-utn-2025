@@ -1,6 +1,8 @@
 package ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities;
 
 
+import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.repositories.converters.rolConverter;
+import jakarta.persistence.Convert;
 import java.time.LocalDate;
 
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.roles.Rol;
@@ -35,7 +37,8 @@ public class Usuario {
     @Column(name = "fecha_nacimiento")
     private LocalDate fechaDeNacimiento;
 
-    @Column(name = "rol_id")
+    @Column(name = "rol")
+    @Convert(converter = rolConverter.class)
     private Rol rol;
 
     public Usuario of(Rol rol){

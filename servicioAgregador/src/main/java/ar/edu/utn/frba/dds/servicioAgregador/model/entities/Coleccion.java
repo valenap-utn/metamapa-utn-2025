@@ -8,7 +8,6 @@ import ar.edu.utn.frba.dds.servicioAgregador.model.entities.filtros.FiltroNoEsta
 import java.util.*;
 import java.util.stream.Stream;
 
-import ar.edu.utn.frba.dds.servicioAgregador.model.entities.fuente.FuenteColeccion;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.converters.AlgoritmoConsensoConverter;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -35,10 +34,11 @@ public class Coleccion {
     private final List<FuenteColeccion> fuenteColeccions;
 
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "reputacion_id")
+    @JoinColumn(name = "criterioPertenencia_id")
     private final List<Filtro> criteriosDePertenencia;
 
     @Convert(converter = AlgoritmoConsensoConverter.class)
+    @Column(name = "algoritmo_consenso")
     private AlgoritmoConsenso algoritmoConsenso;
 
 

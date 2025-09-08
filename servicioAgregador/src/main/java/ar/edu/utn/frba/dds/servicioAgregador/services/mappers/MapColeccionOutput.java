@@ -5,7 +5,7 @@ import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.CriterioDTO;
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.FuenteDTO;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Categoria;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Coleccion;
-import ar.edu.utn.frba.dds.servicioAgregador.model.entities.fuente.FuenteColeccion;
+import ar.edu.utn.frba.dds.servicioAgregador.model.entities.FuenteColeccion;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.filtros.Filtro;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.filtros.FiltroPorCategoria;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.filtros.FiltroPorDescripcion;

@@ -49,12 +49,12 @@ public class Documento {
     this.medicionesTFIDF.addAll(this.tokens.stream().map(token -> calculadoraPalabras.calcularTFIDFDePalabra(this.tokens, token)).toList());
   }
 
-  public void calcularCosenoConRespectoA(Documento documentoPrimero) {
+  public Double calcularCosenoConRespectoA(Documento documentoPrimero) {
     double acumulador = 0.0;
     for(int i=0; i<this.tokens.size(); i++) {
       acumulador += documentoPrimero.getMedicion(i) * this.medicionesTFIDF.get(i);
     }
-    this.cosenoActual = (acumulador)/(this.normaDocumento() * documentoPrimero.normaDocumento());
+    return (acumulador)/(this.normaDocumento() * documentoPrimero.normaDocumento());
   }
 
   private Double normaDocumento() {

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class FullTextSearchBasico implements IBuscadorFullTextSearch{
   private final TFIDFCalculadoraPalabras calculadoraPalabras = new TFIDFCalculadoraPalabras();
+  private final Double minimoAceptableCoseno = 0.5;
 
   @Override
   public String crearNombreNormalizadoCon(String nombreCategoria, List<String> categoriasHechos) {
@@ -19,9 +20,9 @@ public class FullTextSearchBasico implements IBuscadorFullTextSearch{
     //documento filtrado
     MatrixSimilitudCoseno matrixSimilitudCoseno = new MatrixSimilitudCoseno(todosLosDocumentos, calculadoraPalabras);
     matrixSimilitudCoseno.calcularCosenos();
-    List<Documento> documentosConCoseno = matrixSimilitudCoseno.getByIdDeDocumentoEnFilaConCoseno(id);
-    Comparator<Documento> comparador = Comparator.comparingDouble(Documento::getCosenoActual);
-    Documento documentoGanador = documentosConCoseno.stream().max(comparador).orElse(null);
+    List<DocumentoConCoseno> documentosConCoseno = matrixSimilitudCoseno.getByIdDeDocumentoEnFilaConCoseno(id);
+    Comparator<DocumentoConCoseno> comparador = Comparator.comparingDouble(DocumentoConCoseno::getCosenoDeSimilitud);
+    DocumentoConCoseno documentoGanador = documentosConCoseno.stream().filter(documentoConCoseno -> documentoConCoseno.getCosenoDeSimilitud() >= this.minimoAceptableCoseno).max(comparador).orElse(null);
     return documentoGanador == null ? documentoNombre.getString() : documentoGanador.getString();
   }
 

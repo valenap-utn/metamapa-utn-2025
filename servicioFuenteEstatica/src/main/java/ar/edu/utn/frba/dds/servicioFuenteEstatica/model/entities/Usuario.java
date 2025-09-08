@@ -3,6 +3,7 @@ package ar.edu.utn.frba.dds.servicioFuenteEstatica.model.entities;
 
 import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.entities.roles.Permiso;
 import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.entities.roles.Rol;
+import jakarta.persistence.ManyToOne;
 import java.time.LocalDate;
 
 import jakarta.persistence.Column;
@@ -36,7 +37,8 @@ public class Usuario {
   @Column(name = "fecha_nacimiento")
   private LocalDate fechaDeNacimiento;
 
-  @Column(name = "rol_id")
+  @JoinColumn(name = "rol_id", referencedColumnName = "id", nullable = false)
+  @ManyToOne
   private Rol rol;
 
   public static Usuario of(Long id){

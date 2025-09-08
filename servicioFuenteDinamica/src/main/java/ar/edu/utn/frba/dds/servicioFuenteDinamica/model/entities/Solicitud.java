@@ -39,11 +39,11 @@ public class Solicitud implements Revisable{
     @Setter @Getter private Estado estado;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "usuario_id")
+    @JoinColumn(name = "usuario_id", referencedColumnName = "id")
     @Getter private final Usuario usuario;
 
-//    @Column(name = "fue_usada")
-    private boolean fueUsada = false;
+    @Column(name = "fue_usada")
+    private Boolean fueUsada = false;
 
     public Solicitud(Hecho hecho, Usuario usuario, String justificacion) {
         this.usuario = usuario;

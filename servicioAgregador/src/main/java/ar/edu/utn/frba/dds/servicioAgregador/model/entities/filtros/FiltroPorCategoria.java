@@ -4,8 +4,12 @@ package ar.edu.utn.frba.dds.servicioAgregador.model.entities.filtros;
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.CriterioDTO;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Categoria;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
+import jakarta.persistence.Column;
+import jakarta.persistence.DiscriminatorValue;
 
+@DiscriminatorValue("CATEGORIA")
 public class FiltroPorCategoria extends Filtro {
+    @Column(name = "categoria")
     private final Categoria categoria;
 
     public FiltroPorCategoria(Categoria categoria) {

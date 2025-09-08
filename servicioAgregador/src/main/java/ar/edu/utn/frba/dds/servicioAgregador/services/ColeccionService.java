@@ -8,7 +8,7 @@ import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.ColeccionDTOOutput;
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.ConjuntoHechoCompleto;
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.FiltroDTO;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Coleccion;
-import ar.edu.utn.frba.dds.servicioAgregador.model.entities.fuente.FuenteColeccion;
+import ar.edu.utn.frba.dds.servicioAgregador.model.entities.FuenteColeccion;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Usuario;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.filtros.Filtro;

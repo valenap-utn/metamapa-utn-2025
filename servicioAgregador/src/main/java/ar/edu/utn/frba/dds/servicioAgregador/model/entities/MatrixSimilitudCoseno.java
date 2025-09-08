@@ -5,33 +5,32 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MatrixSimilitudCoseno {
-  private final List<List<Documento>> documentos;
+  private final List<List<DocumentoConCoseno>> documentos;
+  private final List<Documento> documentosATrabajar;
 
   public MatrixSimilitudCoseno(List<Documento> documentosACargar, TFIDFCalculadoraPalabras calculadoraPalabras) {
     documentos = new ArrayList<>();
-    List<Documento> documentoLista = new ArrayList<>(documentosACargar);
-    for (int i = 0; i < documentosACargar.size(); i++) {
-      List<Documento> documentosNuevos = new ArrayList<>();
-      documentoLista.forEach(d -> documentosNuevos.add(Documento.ofDocumento(d)));
-      documentosNuevos.forEach( docu -> docu.calcularTFIDF(calculadoraPalabras));
-      documentos.add(documentosNuevos);
-      Documento documentoAuxiliar = documentoLista.remove(0);
-      documentoLista.add(documentoAuxiliar);
-    }
+    this.documentosATrabajar = new ArrayList<>(documentosACargar);
+    this.documentosATrabajar.forEach(documento -> documento.calcularTFIDF(calculadoraPalabras));
   }
 
   public void calcularCosenos() {
-    this.documentos.forEach(this::calcularCosenosDeFila);
+    List<Documento> documentosCopia = new ArrayList<>(this.documentosATrabajar);
+    this.documentosATrabajar.forEach(documento -> this.calcularCosenosDeFila(documento, documentosCopia));
   }
 
-  private void calcularCosenosDeFila(List<Documento> filaDocumento) {
-    Documento documentoPrimero = filaDocumento.get(0);
-    filaDocumento.forEach( documento -> documento.calcularCosenoConRespectoA(documentoPrimero));
+  private void calcularCosenosDeFila(Documento documentoDeReferencia, List<Documento> filaDocumento) {
+    List<DocumentoConCoseno> cosenosDeFila = new ArrayList<>();
+    filaDocumento.forEach( documento -> cosenosDeFila.add(
+            new DocumentoConCoseno(documentoDeReferencia.calcularCosenoConRespectoA(documento), documento)));
+    this.documentos.add(cosenosDeFila);
+    Documento primerDocumento = filaDocumento.remove(0);
+    filaDocumento.add(primerDocumento);
   }
 
 
-  public List<Documento> getByIdDeDocumentoEnFilaConCoseno(int id) {
-    List<Documento> filaDocumento = new ArrayList<>(documentos.get(id));
+  public List<DocumentoConCoseno> getByIdDeDocumentoEnFilaConCoseno(int id) {
+    List<DocumentoConCoseno> filaDocumento = new ArrayList<>(documentos.get(id));
     filaDocumento.remove(0); //Para sacar el documento igual
     return filaDocumento;
   }

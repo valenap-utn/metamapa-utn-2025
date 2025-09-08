@@ -6,20 +6,28 @@ class Hecho{
     - Ubicacion ubicacion
     - LocalDateTime fechaAcontecimiento
     - ContenidoMultimedia contenidoMultimedia
-    - LocalDate fechaDeCarga
+    - LocalDateTime fechaDeCarga
     - boolean eliminado
     - Origen origen
     - Set<String> etiquetas
     - Usuario usuario
+    - Boolean normalizado
 }
 
 class Ubicacion {
     - Float longitud
     - Float latitud
+    - Direccion direccion
 }
 
 Hecho --> Ubicacion
-
+class Direccion {
+    - String ciudad
+    - String localidad;
+    - String municipio;
+    - String provincia;
+}
+Ubicacion --> Direccion
 
 class ContenidoMultimedia {
     - String nombre
@@ -63,21 +71,21 @@ Hecho --> Origen
 
 ' FUENTES y HECHOS
 
-class Fuente {
+class FuenteColeccion {
     -Origen origen
     -List<Hecho> hechos
     + actualizarHechos(List<Hecho>)
 }
 
-Fuente --> Origen
+FuenteColeccion --> Origen
 
 
-Fuente --> "*" Hecho
+FuenteColeccion --> "*" Hecho
 
 class Coleccion{
     - String titulo
     - String descripcion
-    - List<Fuente> fuente
+    - List<FuenteColeccion> fuentes
     - List<Filtro> criteriosPertenencia
 
 
@@ -87,13 +95,13 @@ class Coleccion{
     + void agregarFuentes(Collection<Fuente> fuentes)
 }
 
-Coleccion --> "*" Fuente
+Coleccion --> "*" FuenteColeccion
 Coleccion --> "*" Filtro
 
 
 'FILTROS
 
-interface Filtro {
+abstract class Filtro {
     + hechoCumple(Hecho unHecho): boolean
 }
 
@@ -158,12 +166,12 @@ class FiltroContenidoMultimedia {
     + hechoCumple(Hecho unHecho): boolean
 }
 
-FiltroPorCategoria ..|> Filtro
-FiltroPorFecha ..|> Filtro
-FiltroPorString ..|> Filtro
-FiltroOrigen ..|> Filtro
-FiltroContenidoMultimedia ..|> Filtro
-FiltroUbicacion ..|> Filtro
+FiltroPorCategoria --|> Filtro
+FiltroPorFecha --|> Filtro
+FiltroPorString --|> Filtro
+FiltroOrigen --|> Filtro
+FiltroContenidoMultimedia --|> Filtro
+FiltroUbicacion --|> Filtro
 
 
 class Solicitud {
@@ -232,35 +240,36 @@ DetectorDeSpamBasico --> TFIDFCalculadoraPalabras
 
 
 interface AlgoritmoConsenso {
-    + consensuarHecho(Hecho hecho, Collection<Fuente> fuentes): boolean
+    + consensuarHecho(Hecho hecho, Collection<FuenteColeccion> fuentes): boolean
 }
 
 AlgoritmoConsenso ..> "usa" Hecho
-AlgoritmoConsenso ..>"usa *" Fuente
+AlgoritmoConsenso ..>"usa *" FuenteColeccion
 
 class Absoluta implements AlgoritmoConsenso {
-    + consensuarHecho(Hecho hecho, Collection<Fuente> fuentes): boolean
+    + consensuarHecho(Hecho hecho, Collection<FuenteColeccion> fuentes): boolean
 }
 
 class MayoriaSimple implements AlgoritmoConsenso {
-    + consensuarHecho(Hecho hecho, Collection<Fuente> fuentes): boolean
+    + consensuarHecho(Hecho hecho, Collection<FuenteColeccion> fuentes): boolean
 }
 
 class MultiplesMenciones implements AlgoritmoConsenso {
-    + consensuarHecho(Hecho hecho, Collection<Fuente> fuentes): boolean
+    + consensuarHecho(Hecho hecho, Collection<FuenteColeccion> fuentes): boolean
 }
 
 class TodosConsensuados implements AlgoritmoConsenso {
-    + consensuarHecho(Hecho hecho, Collection<Fuente> fuentes): boolean
+    + consensuarHecho(Hecho hecho, Collection<FuenteColeccion> fuentes): boolean
 }
 
 class Normalizador {
-    - analizadorDB: AnalizadorPorBaseDeDatos
-    - analizadorInSitu: AnalizadorInSitu
+    - IBuscadorFullTextSearch buscador
     + normalizar(List<Hecho> hechos): List<Hecho>
-    - estandarizarFecha(Hecho);
-    - estandarizarUbicacion(Hecho)
-    - estandarizarCategoria(List<hecho> o hecho)
-    - estandarizarTitulo(Hecho)(?
+    - estandarizarFecha(Hecho, List<Hecho>): void
+    - estandarizarUbicacion(Hecho, List<Hecho>): void
+    - estandarizarCategoria(Hecho, List<Hecho>): void
+    - estandarizarTitulo(Hecho, List<Hecho>): void
+
+
 }
 @enduml

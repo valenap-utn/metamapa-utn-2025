@@ -64,19 +64,23 @@ public class Hecho implements Revisable{
     @Getter private final Set<String> etiquetas;
 
     @Column(name = "estado")
+    @Enumerated(EnumType.STRING)
     @Getter @Setter private Estado estado;
+
     @Column(name = "comentario_revision")
     @Setter private String comentarioRevision;
+
     @Column(name = "contenido")
     @Setter @Getter private String contenido;
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Setter @Getter private Long id;
+
     @Column(name = "es_anonimo")
-    @Setter @Getter private boolean esAnonimo;
+    @Setter @Getter private Boolean esAnonimo;
 
     @ManyToOne(fetch = FetchType.EAGER) // o .LAZY
-    @JoinColumn(name = "usuario_id", nullable = false, referencedColumnName = "id")
+    @JoinColumn(name = "usuario_id", referencedColumnName = "id")
     @Setter @Getter private Usuario usuario;
 
     public Hecho() {
