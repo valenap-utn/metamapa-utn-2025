@@ -3,6 +3,7 @@ package ar.edu.utn.frba.dds.servicioAgregador.controllers;
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.ColeccionDTOInput;
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.ColeccionDTOOutput;
 import ar.edu.utn.frba.dds.servicioAgregador.services.IColeccionService;
+import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -30,12 +31,12 @@ public class ColeccionAdminController {
   }
 
   @PutMapping("/{id}")
-  public ResponseEntity<ColeccionDTOOutput> cambiarColeccion(@PathVariable String id, @RequestBody ColeccionDTOInput coleccion) {
+  public ResponseEntity<ColeccionDTOOutput> cambiarColeccion(@PathVariable UUID id, @RequestBody ColeccionDTOInput coleccion) {
       return ResponseEntity.status(HttpStatus.OK).body(this.coleccionService.cambiarColeccion(coleccion, id));
   }
 
   @DeleteMapping("/{id}")
-  public ResponseEntity<ColeccionDTOOutput> eliminarColeccion(@PathVariable String id) {
+  public ResponseEntity<ColeccionDTOOutput> eliminarColeccion(@PathVariable UUID id) {
     return ResponseEntity.status(HttpStatus.NO_CONTENT).body(this.coleccionService.eliminarColeccion(id));
   }
 

@@ -72,7 +72,7 @@ public class Estandarizador implements IEstandarizador {
   }
 
   private void estandarizarUbicacion(Hecho hechoAmodificar, List<Hecho> hechosDesnormalizados) {
-    List<Direccion> direcciones = this.direccionRepository.findByFullTextSearch(hechoAmodificar.getNombreCategoria());
+    List<Direccion> direcciones = this.direccionRepository.findByFullTextSearch(hechoAmodificar.getDireccion());
     Direccion direccion = direcciones.stream().findFirst().orElse(null);
     if (direccion == null) {
       direccion = new Direccion();

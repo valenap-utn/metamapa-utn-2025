@@ -1,6 +1,7 @@
 package ar.edu.utn.frba.dds.servicioAgregador.model.entities;
 
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.origenes.Origen;
+import jakarta.persistence.Transient;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -29,14 +30,14 @@ public class FuenteColeccion {
     @JoinColumn(name = "origen_id", nullable = false, referencedColumnName = "id")
     @Getter private final Origen origen;
 
-    @Getter private final Set<Hecho> hechos;
-    @ManyToOne(optional = false, fetch= FetchType.LAZY)
-    @JoinColumn(name = "coleccion_id", nullable = false)
+    @Transient
+    @Getter private final Set<Hecho> hechos = new HashSet<>();
+    @ManyToOne
+    @JoinColumn(name = "coleccion_id", nullable = false, referencedColumnName = "id")
     @Getter private Coleccion coleccion;
 
     public FuenteColeccion(Origen origen) {
         this.origen = origen;
-        this.hechos = new HashSet<>();
     }
 
     public void actualizarHechos(Collection<Hecho> hechos) {

@@ -38,6 +38,13 @@ public class Origen {
   @Column(name = "nombreAPI")
   private String nombreAPI;
 
+  public Origen(TipoOrigen tipoOrigen, String url, Long id, String fuente) {
+    this.tipo = tipoOrigen;
+    this.url = url;
+    this.idExterno = id;
+    this.nombreAPI = fuente;
+  }
+
   public boolean esIgual(Origen o){
     return tipo.equals(o.getTipo()) && url.equals(o.getUrl());
   }

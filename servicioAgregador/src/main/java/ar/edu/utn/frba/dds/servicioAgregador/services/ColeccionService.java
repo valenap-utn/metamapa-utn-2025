@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.Setter;
 import org.springframework.stereotype.Service;
@@ -125,7 +126,7 @@ public class ColeccionService implements IColeccionService{
   }
 
   @Override
-  public ConjuntoHechoCompleto getHechosPorColeccion(String idColeccion, FiltroDTO filtro) {
+  public ConjuntoHechoCompleto getHechosPorColeccion(UUID idColeccion, FiltroDTO filtro) {
     Coleccion coleccion = this.coleccionRepository.findById(idColeccion);
     coleccion.getFuenteColeccions().forEach(fuente -> this.cargarHechosEnFuente(fuente, filtro));
     List<Hecho> hechos = coleccion.getHechos();
@@ -136,7 +137,7 @@ public class ColeccionService implements IColeccionService{
   }
 
   @Override
-  public ColeccionDTOOutput cambiarColeccion(ColeccionDTOInput coleccionInput, String idColeccion) {
+  public ColeccionDTOOutput cambiarColeccion(ColeccionDTOInput coleccionInput, UUID idColeccion) {
     Usuario usuarioSolicitante = this.userRepository.findById(coleccionInput.getUsuario());
     if(usuarioSolicitante == null) {
       throw new UsuarioNoEncontrado("El usuario con el identificador administrado no existe");
@@ -162,7 +163,7 @@ public class ColeccionService implements IColeccionService{
   }
 
   @Override
-  public ColeccionDTOOutput eliminarColeccion(String id) {
+  public ColeccionDTOOutput eliminarColeccion(UUID id) {
     return null;
   }
 

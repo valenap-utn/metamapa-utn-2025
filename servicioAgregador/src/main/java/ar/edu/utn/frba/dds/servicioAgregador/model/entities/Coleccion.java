@@ -16,7 +16,7 @@ import lombok.Setter;
 @Setter
 @Getter
 @Entity
-@Table(name = "coleccion", uniqueConstraints = @UniqueConstraint(columnNames = "titulo"))
+@Table(name = "coleccion")
 public class Coleccion {
 
     @Id
@@ -29,12 +29,11 @@ public class Coleccion {
     @Column(columnDefinition = "TEXT", nullable = false)
     private String descripcion;
 
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
-    @JoinColumn(referencedColumnName = "servicio_id", nullable = false)
+    @OneToMany(mappedBy = "coleccion",cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
     private final List<FuenteColeccion> fuenteColeccions;
 
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "criterioPertenencia_id")
+    @JoinColumn(name = "coleccion_id")
     private final List<Filtro> criteriosDePertenencia;
 
     @Convert(converter = AlgoritmoConsensoConverter.class)

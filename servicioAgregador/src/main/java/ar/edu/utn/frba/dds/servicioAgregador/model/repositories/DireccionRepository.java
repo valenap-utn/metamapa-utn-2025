@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class DireccionRepository implements IDireccionRepository{
   @Override
-  public List<Direccion> findByFullTextSearch(String nombreCategoria) {
+  public List<Direccion> findByFullTextSearch(Direccion nombreCategoria) {
     return List.of();
   }
 }

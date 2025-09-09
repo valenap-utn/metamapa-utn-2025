@@ -8,6 +8,7 @@ import ar.edu.utn.frba.dds.servicioAgregador.services.IColeccionService;
 import java.time.LocalDate;
 import java.util.List;
 
+import java.util.UUID;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -33,7 +34,7 @@ public class ColeccionController {
   }
 
   @GetMapping("/{id}/hechos")
-  public ResponseEntity<ConjuntoHechoCompleto> getHechos(@PathVariable String id,
+  public ResponseEntity<ConjuntoHechoCompleto> getHechos(@PathVariable UUID id,
                                          @RequestParam(required = false) String categoria,
                                          @RequestParam(required = false) @DateTimeFormat(pattern = "ddmmyyyy") LocalDate fecha_reporte_desde,
                                          @RequestParam(required = false) @DateTimeFormat(pattern = "ddmmyyyy") LocalDate fecha_reporte_hasta,

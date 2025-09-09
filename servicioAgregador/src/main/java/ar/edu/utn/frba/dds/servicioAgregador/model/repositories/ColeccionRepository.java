@@ -5,13 +5,14 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class ColeccionRepository implements IColeccionRepository {
   private final Map<Long, Coleccion> colecciones;
-  private final Map<String, Long> coleccionIds;
+  private final Map<UUID, Long> coleccionIds;
   private final AtomicLong idGenerator;
 
   public ColeccionRepository() {
@@ -24,7 +25,7 @@ public class ColeccionRepository implements IColeccionRepository {
   public Coleccion save(Coleccion coleccion) {
     if(coleccion.getId() == null){
       Long id = this.idGenerator.getAndIncrement();
-      coleccion.setId(id.toString());
+      coleccion.setId(UUID.randomUUID());
       this.colecciones.put(id, coleccion);
       this.coleccionIds.put(coleccion.getId(), id);
     } else {
@@ -35,7 +36,7 @@ public class ColeccionRepository implements IColeccionRepository {
   }
 
   @Override
-  public Coleccion findById(String id) {
+  public Coleccion findById(UUID id) {
     Long idColeccion = this.coleccionIds.get(id);
     return this.colecciones.get(idColeccion);
   }

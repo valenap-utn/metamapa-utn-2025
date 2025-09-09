@@ -1,11 +1,12 @@
 package ar.edu.utn.frba.dds.servicioAgregador.model.dtos;
 
 import java.util.List;
+import java.util.UUID;
 import lombok.Data;
 
 @Data
 public class ColeccionDTOOutput {
-  private String id;
+  private UUID id;
   private String nombre;
   private String descripcion;
   private List<FuenteDTO> fuentes;

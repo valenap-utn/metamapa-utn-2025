@@ -14,8 +14,8 @@ frame Metamapa {
     component APIVisualizador
     component APIService
     }
-    visualizador -(0- APIVisualizador
-    administrador -(0- APIAdministrador
+    visualizador "API REST" -(0- APIVisualizador
+    administrador "API REST" -(0- APIAdministrador
     APIAdministrador -(0- APIService
     APIVisualizador -(0- APIService
 
@@ -28,7 +28,7 @@ frame Metamapa {
 
 
 
-    contribuyente -(0- APIFuenteDinamica
+    contribuyente "API REST" -(0- APIFuenteDinamica
 
     node servicioFuenteEstatica {
     component APIFuenteEstatica
@@ -40,13 +40,19 @@ frame Metamapa {
     component APIFuenteProxy
     }
 
-    APIService -(0- APIFuenteDinamica
-        APIService -(0- APIFuenteEstatica
-        APIService -(0- APIFuenteProxy
+    APIService "API REST" -(0- APIFuenteDinamica
+        APIService "API REST" -(0- APIFuenteEstatica
+        APIService  "API REST" -(0- APIFuenteProxy
 
-    APIFuenteProxy -(0- InstanciaMetaMapa
-    APIFuenteProxy -(0- APICatedra
+    APIFuenteProxy "API REST" -(0- InstanciaMetaMapa
+    APIFuenteProxy "API REST" -(0- APICatedra
 
+    node servicioEstadistica {
+        component APIEstadistica
+    }
+
+    administrador "API REST" -(0- APIEstadistica
+    APIEstadistica "API REST" -(0- APIAdministrador
 }
 
 
