@@ -8,6 +8,13 @@
 
     <link rel="icon" href="../components/logo-ico.png" >
 
+    <!--  META-TAGS DE COMPARTIR ENLACE  -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://valenap-utn.github.io/landing-page-dds/index.html" />
+    <meta property="og:title" content="MetaMapa" />
+    <!--    <meta property="og:description" content="MetaMapa | Página principal" />-->
+    <meta property="og:image" content="../components/logo-mm.png" />
+
     <!-- Fuentes -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -22,13 +29,27 @@
     <script src="https://kit.fontawesome.com/d4dda767ac.js" crossorigin="anonymous"></script>
 </head>
 <body>
+
     <section class="mm-form-wrap">
         <div class="mm-card">
             <h1 class="mm-form-title">Crear cuenta</h1>
             <p class="mm-form-sub">Completá tus datos para empezar a utilizar MetaMapa</p>
 
             <form id="form-usuario" class="mm-form" novalidate>
-                <div class="mm-grid">
+                <h5>Elegí tu rol</h5>
+                <div id="seccionDeRoles" class="mm-grid">
+                    <div class="mm-field" style="padding: 10px 10px">
+                        <label for="rolAdministrador" class="mm-label">Administrador
+                            <input id="rolAdministrador" type="radio" name="rolAdministrador" value="administrador" onclick="activarSeccionDatosCrearCuentaAdministrador()" style="margin: 0 0 0 10px; padding: 10px 10px ">
+                        </label>
+                    </div>
+                    <div class="mm-field" style="padding: 10px 10px">
+                        <label for="rolContribuyente" class="mm-label">Contribuyente
+                            <input id="rolContribuyente" type="radio" name="rolAdministrador" value="contribuyente" onclick="activarSeccionDatosCrearCuentaContribuyente()" style="margin: 0 0 0 10px; padding: 10px 10px "/>
+                        </label>
+                    </div>
+                </div>
+                <div id="seccionDatosCrearCuenta" class="mm-grid">
                     <div class="mm-field">
                         <label for="nombre" class="mm-label">Nombre</label>
                         <input id="nombre" name="nombre" type="text" class="mm-input" placeholder="Tu nombre" required aria-label="Ingresar nombre">
@@ -36,22 +57,22 @@
 
                     <div class="mm-field">
                         <label for="apellido" class="mm-label">Apellido</label>
-                        <input id="apellido" name="apellido" type="text" class="mm-input" placeholder="Tu apellido" required aria-label="Ingresar apellido">
+                        <input id="apellido" name="apellido" type="text" class="mm-input" placeholder="Tu apellido"  aria-label="Ingresar apellido">
                     </div>
 
                     <div class="mm-field">
                         <label for="fechaDeNacimiento" class="mm-label">Fecha de nacimiento</label>
-                        <input id="fechaDeNacimiento" name="fechaDeNacimiento" type="date" class="mm-input" required>
+                        <input id="fechaDeNacimiento" name="fechaDeNacimiento" type="date" class="mm-input"  placeholder="Ejemplo: 19/11/2024">
                     </div>
 
-                    <div class="mm-field">
-                        <label for="rolId" class="mm-label">Rol</label>
-                        <select id="rolId" name="rolId" class="mm-input" required aria-label="Seleccionar rol">
-                            <option value="" disabled selected>Seleccioná un rol…</option>
-                            <option value="1">USUARIO</option>
-                            <option value="2">ADMIN</option>
-                        </select>
-                    </div>
+<!--                    <div class="mm-field">-->
+<!--                        <label for="rolId" class="mm-label">Rol</label>-->
+<!--                        <select id="rolId" name="rolId" class="mm-input"  aria-label="Seleccionar rol">-->
+<!--                            <option value="" disabled selected>Seleccioná un rol…</option>-->
+<!--                            <option value="1">USUARIO</option>-->
+<!--                            <option value="2">ADMIN</option>-->
+<!--                        </select>-->
+<!--                    </div>-->
                 </div>
 
                 <div class="mm-actions">
@@ -62,67 +83,7 @@
         </div>
     </section>
 
-    <script>
-        // // límites de fecha (opcional): impedir fechas futuras y menores de 13 años
-        // (function setDateLimits() {
-        //     const input = document.getElementById('fechaDeNacimiento');
-        //     const today = new Date();
-        //     const yyyy = today.getFullYear();
-        //     const mm = String(today.getMonth() + 1).padStart(2, '0');
-        //     const dd = String(today.getDate()).padStart(2, '0');
-        //     input.max = `${yyyy}-${mm}-${dd}`;
-        //
-        //     const minAge = 13;
-        //     input.min = `${yyyy - 120}-01-01`;   // edad mínima razonable
-        //     // Si querés forzar >=13:
-        //     // input.max = `${yyyy - minAge}-${mm}-${dd}`;
-        // })();
-
-        // envío
-        document.getElementById('form-usuario').addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            // Validación Bootstrap
-            const form = e.currentTarget;
-            if (!form.checkValidity()) {
-                form.classList.add('was-validated');
-                return;
-            }
-
-            const data = {
-                nombre: document.getElementById('nombre').value.trim(),
-                apellido: document.getElementById('apellido').value.trim(),
-                // LocalDate en ISO "yyyy-MM-dd"
-                fechaDeNacimiento: document.getElementById('fechaDeNacimiento').value,
-                // Si tu backend espera rol por id:
-                rolId: parseInt(document.getElementById('rolId').value, 10)
-                // Si en cambio espera rol por nombre: rol: document.getElementById('rolId').selectedOptions[0].text
-            };
-
-            try {
-                const resp = await fetch('/api/usuarios', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
-
-                if (!resp.ok) {
-                    const msg = await resp.text();
-                    alert('Error al crear usuario: ' + msg);
-                    return;
-                }
-
-                // éxito
-                alert('Usuario creado con éxito');
-                form.reset();
-                form.classList.remove('was-validated');
-                // redirigí si querés:
-                // window.location.href = '/login.html';
-            } catch (err) {
-                console.error(err);
-                alert('No se pudo conectar con el servidor.');
-            }
-        });
+    <script src="../js/crear-cuenta.js">
     </script>
 
 </body>

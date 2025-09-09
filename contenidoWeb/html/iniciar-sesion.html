@@ -8,6 +8,13 @@
 
     <link rel="icon" href="../components/logo-ico.png" >
 
+    <!--  META-TAGS DE COMPARTIR ENLACE  -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://valenap-utn.github.io/landing-page-dds/index.html" />
+    <meta property="og:title" content="MetaMapa" />
+<!--    <meta property="og:description" content="Iniciar sesión" />-->
+    <meta property="og:image" content="../components/logo-mm.png" />
+
     <!-- Fuentes -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -49,7 +56,7 @@
                                 <span class="input-group-text bg-white border-end-0">
                                     <i class="fa-solid fa-envelope" style="color: #3B4F61"></i>
                                 </span>
-                            <input type="email" id="email" class="form-control form-control-lg fs-6 border-start-0" placeholder="Email" required aria-label="Ingresar correo electrónico">
+                            <input type="email" id="email" class="form-control form-control-lg fs-6 border-start-0" placeholder="Email" required aria-label="Ingresar correo electrónico" autocomplete="on">
                         </div>
 
                         <div class="input-group mb-3">
@@ -96,8 +103,9 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const mockUsers = [
-                { email: 'valucha@gmail.com', password: 'valuchaa' },
-                { email: 'valen@example.com', password: 'metamapa' }
+                { email: 'valucha@gmail.com', password: 'valuchaa', role: 'contribuyente' },
+                { email: 'contrib@example.com', password: 'metamapa', role: 'contribuyente' },
+                { email: 'admin@example.com', password: 'metamapa', role: 'administrador' }
             ];
 
             const form = document.getElementById('login-form');
@@ -114,14 +122,18 @@
                 if (!pass.value.trim()) { pass.classList.add('is-invalid'); pass.focus(); return; }
                 pass.classList.remove('is-invalid');
 
-                const ok = mockUsers.some(u => u.email === email.value.trim() && u.password === pass.value);
-                if (!ok) { alert('Email o contraseña inválidos'); return; }
+                const user = mockUsers.find(u => u.email === email.value.trim() && u.password === pass.value);
+                if (!user) { alert('Email o contraseña inválidos'); return; }
 
-                const payload = { email: email.value.trim(), time: Date.now() };
+                const payload = { email: email.value.trim(), role: user.role, time: Date.now() };
                 const storage = remember.checked ? localStorage : sessionStorage;
                 storage.setItem('mm_auth', JSON.stringify(payload));
 
-                window.location.href = 'main-gral.html';
+                if (user.role === 'administrador') {
+                    window.location.href = 'admin.html';
+                } else {
+                    window.location.href = 'main-gral.html';
+                }
             });
         });
     </script>

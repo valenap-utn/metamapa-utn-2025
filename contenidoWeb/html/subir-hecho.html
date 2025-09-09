@@ -33,70 +33,91 @@
     <script src="https://kit.fontawesome.com/d4dda767ac.js" crossorigin="anonymous"></script>
 </head>
 <body>
-<section class="mm-form-wrap">
-    <div class="mm-card">
-        <h1 class="mm-form-title">Subir Hecho</h1>
-        <p class="mm-form-sub">Cargá la información del hecho para que quede disponible en MetaMapa</p>
+    <section class="mm-form-wrap">
+        <div class="mm-card">
+            <h1 class="mm-form-title">Subir Hecho</h1>
+            <p class="mm-form-sub">Cargá la información del hecho para que quede disponible en MetaMapa</p>
 
-        <form id="form-hecho" class="mm-form" novalidate>
-            <div class="mm-grid">
-                <!-- Título -->
-                <div class="mm-field" style="grid-column: 1 / -1;">
-                    <label for="titulo" class="mm-label">Título</label>
-                    <input id="titulo" name="titulo" type="text" class="mm-input" placeholder="Ej: Derrame en ribera del río" required>
+            <form id="form-hecho" class="mm-form" novalidate>
+                <div class="mm-grid">
+                    <!-- Título -->
+                    <div class="mm-field" style="grid-column: 1 / -1;">
+                        <label for="titulo" class="mm-label">Título</label>
+                        <input id="titulo" name="titulo" type="text" class="mm-input" placeholder="Ej: Derrame en ribera del río" required>
+                    </div>
+
+                    <!-- Categoría -->
+                    <div class="mm-field">
+                        <label for="categoria" class="mm-label">Categoría</label>
+                        <select id="categoria" name="categoria" class="mm-input" required>
+                            <option value="" disabled selected>Seleccioná una categoría…</option>
+                            <option value="EVENTO_SANITARIO">Evento sanitario</option>
+                            <option value="CONTAMINACION">Contaminación</option>
+                            <option value="DERRAME">Derrame</option>
+                            <!-- agregá más si aplica -->
+                        </select>
+                    </div>
+
+                    <!-- Fecha acontecimiento -->
+                    <div class="mm-field">
+                        <label for="fechaAcontecimiento" class="mm-label">Fecha del acontecimiento</label>
+                        <input id="fechaAcontecimiento" name="fechaAcontecimiento" type="date" class="mm-input" required>
+                    </div>
+
+<!--                    &lt;!&ndash; Origen &ndash;&gt;-->
+<!--                    <div class="mm-field">-->
+<!--                        <label for="origen" class="mm-label">Origen</label>-->
+<!--                        <select id="origen" name="origen" class="mm-input" required>-->
+<!--                            <option value="" disabled selected>Seleccioná el origen…</option>-->
+<!--                            <option value="USUARIO">Usuario</option>-->
+<!--                            <option value="ADMIN">Administrador</option>-->
+<!--                            <option value="IMPORTADO">Importado</option>-->
+<!--                            <option value="API">API</option>-->
+<!--                        </select>-->
+<!--                    </div>-->
+
+                    <!-- Ubicación (Lat/Long) -->
+                    <div class="mm-field" style="grid-column: 1 / -1;">
+                        <div id="map" aria-label="Mapa interactivo para seleccionar la ubicación del hecho"></div>
+                    </div>
+                    <!--
+                    <div class="mm-field">
+                        <label for="lat" class="mm-label">Latitud</label>
+                        <input id="lat" name="lat" type="number" step="any" class="mm-input" placeholder="-34.6037" required>
+                    </div>
+                    <div class="mm-field">
+                        <label for="lng" class="mm-label">Longitud</label>
+                        <input id="lng" name="lng" type="number" step="any" class="mm-input" placeholder="-58.3816" required>
+                    </div>
+                    -->
+                    <!-- Descripción -->
+                    <div class="mm-field" style="grid-column: 1 / -1;">
+                        <label for="descripcion" class="mm-label">Descripción</label>
+                        <textarea id="descripcion" name="descripcion" class="mm-input mm-input--textarea" placeholder="Contá brevemente qué ocurrió… (min. 500 caracteres)" minlength="500" required></textarea>
+                    </div>
                 </div>
 
-                <!-- Categoría -->
-                <div class="mm-field">
-                    <label for="categoria" class="mm-label">Categoría</label>
-                    <select id="categoria" name="categoria" class="mm-input" required>
-                        <option value="" disabled selected>Seleccioná una categoría…</option>
-                        <option value="EVENTO_SANITARIO">Evento sanitario</option>
-                        <option value="CONTAMINACION">Contaminación</option>
-                        <option value="DERRAME">Derrame</option>
-                        <!-- agregá más si aplica -->
-                    </select>
+                <div class="mm-actions">
+                    <a href="main-gral.html" class="mm-btn mm-btn-ghost"><span class="arrow"><i class="fa-solid fa-arrow-left"></i></span> Volver</a>
+                    <button type="submit" class="mm-btn mm-btn-primary">Subir hecho</button>
                 </div>
+            </form>
+        </div>
+    </section>
 
-                <!-- Fecha acontecimiento -->
-                <div class="mm-field">
-                    <label for="fechaAcontecimiento" class="mm-label">Fecha del acontecimiento</label>
-                    <input id="fechaAcontecimiento" name="fechaAcontecimiento" type="date" class="mm-input" required>
-                </div>
+    <script>
+        const map = L.map('map', { center: [-38.4, -63.6], zoom: 5, scrollWheelZoom: true });
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(map);
+        const markersLayer = L.layerGroup().addTo(map);
+        var latitudLongitud = null
+        function onMapClick(event) {
+            markersLayer.clearLayers();
+            latitudLongitud = event.latlng
+            L.marker(event.latlng)
+                .addTo(markersLayer)
+        }
 
-                <!-- Ubicación (Lat/Long) -->
-                <div class="mm-field" style="grid-column: 1 / -1;">
-                    <div id="map" aria-label="Mapa interactivo para seleccionar la ubicación del hecho"></div>
-                </div>
-
-                <!-- Descripción -->
-                <div class="mm-field" style="grid-column: 1 / -1;">
-                    <label for="descripcion" class="mm-label">Descripción</label>
-                    <textarea id="descripcion" name="descripcion" class="mm-input mm-input--textarea" placeholder="Contá brevemente qué ocurrió… (min. 500 caracteres)" minlength="500" required></textarea>
-                </div>
-            </div>
-
-            <div class="mm-actions">
-                <a href="main-gral.html" class="mm-btn mm-btn-ghost"><span class="arrow"><i class="fa-solid fa-arrow-left"></i></span> Volver</a>
-                <button type="submit" class="mm-btn mm-btn-primary">Subir hecho</button>
-            </div>
-        </form>
-    </div>
-</section>
-
-<script>
-    const map = L.map('map', { center: [-38.4, -63.6], zoom: 5, scrollWheelZoom: true });
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(map);
-    const markersLayer = L.layerGroup().addTo(map);
-    var latitudLongitud = null
-    function onMapClick(event) {
-        markersLayer.clearLayers();
-        latitudLongitud = event.latlng
-        L.marker(event.latlng)
-            .addTo(markersLayer)
-    }
-
-    map.on('click', onMapClick);
-</script>
+        map.on('click', onMapClick);
+    </script>
 </body>
 </html>
