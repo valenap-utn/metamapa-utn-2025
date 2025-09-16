@@ -29,7 +29,7 @@ public class EstadisticasController {
         return ResponseEntity.ok(resultado);
     }
 
-    @GetMapping("/{clave}/exportar")
+    @GetMapping("/{clave}/estadisticas.csv")
     public ResponseEntity<InputStreamResource> exportar(@PathVariable String clave) throws IOException {
         Path tempFile = Files.createTempFile("estadistica-" + clave, ".csv");
         servicio.exportarCSV(clave, tempFile);

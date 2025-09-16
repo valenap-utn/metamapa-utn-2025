@@ -4,18 +4,19 @@ import ar.edu.utn.frba.dds.services.ServicioEstadisticas;
 
 import java.util.Timer;
 import java.util.TimerTask;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 
+@Component
 public class EstadisticasScheduler {
     private final ServicioEstadisticas servicio;
-    private final Timer timer = new Timer(true);
 
-    public EstadisticasScheduler(ServicioEstadisticas servicio, long intervaloMs) {
+    public EstadisticasScheduler(ServicioEstadisticas servicio) {
         this.servicio = servicio;
-        timer.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                servicio.recalcular();
-            }
-        }, 0, intervaloMs);
+    }
+
+    @Scheduled(cron = "0 0 */3 * * *")
+    public void recalcularEstadisticas(){
+        this.servicio.recalcular();
     }
 }

@@ -1,8 +1,8 @@
 package ar.edu.utn.frba.dds.utils;
 
-import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
-import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Solicitud;
 
+import ar.edu.utn.frba.dds.model.entities.Hecho;
+import ar.edu.utn.frba.dds.model.entities.Solicitud;
 import java.util.*;
 import java.util.stream.Collectors;
 

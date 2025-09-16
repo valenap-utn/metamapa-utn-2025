@@ -1,7 +1,9 @@
 package ar.edu.utn.frba.dds.services;
 
-import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
-import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Solicitud;
+
+import ar.edu.utn.frba.dds.model.entities.Hecho;
+import ar.edu.utn.frba.dds.model.entities.Solicitud;
+import ar.edu.utn.frba.dds.services.servicioAgregador.ServicioAgregador;
 import ar.edu.utn.frba.dds.utils.Cache;
 import ar.edu.utn.frba.dds.utils.CalculadorEstadisticas;
 import ar.edu.utn.frba.dds.utils.ExportadorCSV;

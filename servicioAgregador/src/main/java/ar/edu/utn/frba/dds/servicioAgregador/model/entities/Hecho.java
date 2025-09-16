@@ -79,7 +79,7 @@ public class Hecho {
     @JoinColumn(name = "hecho_id", referencedColumnName = "id"))
     @Getter private final Set<String> etiquetas = new HashSet<>();
 
-    @ManyToOne(fetch = FetchType.EAGER) // o .LAZY
+    @ManyToOne
     @JoinColumn(name = "usuario_id", nullable = false, referencedColumnName = "id")
     @Getter @Setter private Usuario usuario;
 

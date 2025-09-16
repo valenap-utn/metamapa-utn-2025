@@ -34,7 +34,7 @@ public class Solicitud {
     @Column(name = "estado", nullable = false)
     @Getter private Estado estado;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "usuario_id")
     @Getter private Usuario usuario;
 

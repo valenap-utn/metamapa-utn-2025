@@ -1,0 +1,9 @@
+package ar.edu.utn.frba.dds.model.dtos;
+
+import java.util.List;
+import lombok.Data;
+
+@Data
+public class ConjuntoSolicitudesAgregador {
+  private List<SolicitudDTO> solicitudes;
+}
