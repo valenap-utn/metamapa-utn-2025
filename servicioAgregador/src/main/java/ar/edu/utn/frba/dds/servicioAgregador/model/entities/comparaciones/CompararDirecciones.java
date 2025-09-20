@@ -1,6 +1,6 @@
 package ar.edu.utn.frba.dds.servicioAgregador.model.entities.comparaciones;
 
-import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Documento;
+import ar.edu.utn.frba.dds.servicioAgregador.model.entities.normalizacion.Documento;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Direccion;
 

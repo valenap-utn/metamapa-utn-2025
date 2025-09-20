@@ -1,7 +1,9 @@
 package ar.edu.utn.frba.dds.servicioAgregador.services;
 
 import ar.edu.utn.frba.dds.servicioAgregador.exceptions.HechoNoEncontrado;
+import ar.edu.utn.frba.dds.servicioAgregador.exceptions.HechoYaEliminado;
 import ar.edu.utn.frba.dds.servicioAgregador.exceptions.SolicitudError;
+import ar.edu.utn.frba.dds.servicioAgregador.exceptions.SolicitudNoEncontrada;
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.ConjuntoSolicitudesOutput;
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.SolicitudInputDTO;
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.SolicitudOutputDTO;
@@ -69,8 +71,19 @@ public class SolicitudService implements ISolicitudService {
 
     public SolicitudOutputDTO aceptarSolicitud(Long idSolicitud) {
         Solicitud solicitud = this.repo.findById(idSolicitud);
+
+        if(solicitud == null) {
+            throw new SolicitudNoEncontrada("La solicitud con id: " + idSolicitud + " no existe");
+        }
+
+        if(solicitud.noEsPendiente()) {
+            throw new SolicitudError("La solicitud no puede ser aceptada, debido a que su estado es: " + solicitud.getEstado().name());
+        }
         solicitud.aceptar();
         Hecho hechoAEliminar = solicitud.getHecho();
+        if(hechoAEliminar.isEliminado()) {
+            throw new HechoYaEliminado("El hecho ya fue eliminado por otra solicitud");
+        }
         hechoAEliminar.setEliminado(true);
         ClientFuente client = this.clientFuenteFactory.getClientPorOrigen(hechoAEliminar.getOrigen());
         client.postEliminado(hechoAEliminar, this.idHechosExternos.findIDFuente(hechoAEliminar.getId()));
@@ -81,6 +94,13 @@ public class SolicitudService implements ISolicitudService {
     @Override
     public SolicitudOutputDTO eliminarSolicitud(Long idSolicitud) {
         Solicitud solicitud = this.repo.findById(idSolicitud);
+        if(solicitud == null) {
+            throw new SolicitudNoEncontrada("La solicitud con id: " + idSolicitud + " no existe");
+        }
+
+        if(solicitud.noEsPendiente()) {
+            throw new SolicitudError("La solicitud no puede ser eliminada, debido a que su estado es: " + solicitud.getEstado().name());
+        }
         solicitud.rechazar();
         repo.save(solicitud);
         return this.toSolicitudOutputDTO(solicitud);

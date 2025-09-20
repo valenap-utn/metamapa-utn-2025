@@ -50,4 +50,14 @@ public class HandlerExcepciones {
   public ResponseEntity<ErrorDTO> handleHechoNoEncontrado(HechoNoEncontrado error) {
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorDTO(error.getMessage(), error.getTipoError()));
   }
+
+  @ExceptionHandler(value = SolicitudNoEncontrada.class)
+  public ResponseEntity<ErrorDTO> handleSolicitudNoEncontrada(SolicitudNoEncontrada error) {
+    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorDTO(error.getMessage(), error.getTipoError()));
+  }
+
+  @ExceptionHandler(value = HechoYaEliminado.class)
+  public ResponseEntity<ErrorDTO> handleHechoYaEliminado(HechoNoEncontrado error) {
+    return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorDTO(error.getMessage(), error.getTipoError()));
+  }
 }

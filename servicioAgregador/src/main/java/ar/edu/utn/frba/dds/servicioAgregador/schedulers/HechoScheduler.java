@@ -12,7 +12,7 @@ public class HechoScheduler {
     this.estandarizador = estandarizador;
   }
 
-  @Scheduled(cron = "0 0 3 * * *")
+  @Scheduled(cron = "${api.cron.normalizarHechos}")
   public void normalizarHechos() {
     this.estandarizador.estandarizarHechos()
             .doOnSuccess(v -> System.out.println("Se han normalizado los hechos"))

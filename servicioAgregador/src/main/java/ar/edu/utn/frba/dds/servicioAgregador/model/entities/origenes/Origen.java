@@ -48,4 +48,8 @@ public class Origen {
   public boolean esIgual(Origen o){
     return tipo.equals(o.getTipo()) && url.equals(o.getUrl());
   }
+
+  public String getNombreTipo() {
+    return tipo.toString();
+  }
 }

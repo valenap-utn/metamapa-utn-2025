@@ -12,7 +12,7 @@ public class ColeccionScheduler {
     this.coleccionService = coleccionService;
   }
 
-  @Scheduled(cron = "0 0 * * * *")
+  @Scheduled(cron = "${api.cron.actualizarHechos}")
   public void actualizarFuentes() {
     coleccionService.actualizarHechosColecciones()
             .doOnSuccess(v -> System.out.println("Salio bien la actualizacion"))

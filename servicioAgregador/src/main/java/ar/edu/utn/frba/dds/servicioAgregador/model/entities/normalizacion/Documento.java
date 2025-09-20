@@ -1,4 +1,4 @@
-package ar.edu.utn.frba.dds.servicioAgregador.model.entities;
+package ar.edu.utn.frba.dds.servicioAgregador.model.entities.normalizacion;
 
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.deteccionDeSpam.TFIDFCalculadoraPalabras;
 import java.util.ArrayList;

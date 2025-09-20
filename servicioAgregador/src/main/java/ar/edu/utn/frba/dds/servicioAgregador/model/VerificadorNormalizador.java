@@ -1,4 +1,4 @@
-package ar.edu.utn.frba.dds.servicioAgregador.services;
+package ar.edu.utn.frba.dds.servicioAgregador.model;
 
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.comparaciones.ComparacionHechos;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;

@@ -1,4 +1,4 @@
-package ar.edu.utn.frba.dds.servicioAgregador.model.entities;
+package ar.edu.utn.frba.dds.servicioAgregador.model.entities.normalizacion;
 
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.deteccionDeSpam.TFIDFCalculadoraPalabras;
 import java.util.Comparator;
@@ -7,7 +7,7 @@ import java.util.Objects;
 import org.springframework.stereotype.Component;
 
 @Component
-public class FullTextSearchBasico implements IBuscadorFullTextSearch{
+public class FullTextSearchBasico implements IBuscadorFullTextSearch {
   private final TFIDFCalculadoraPalabras calculadoraPalabras = new TFIDFCalculadoraPalabras();
   private final Double minimoAceptableCoseno = 0.5;
 

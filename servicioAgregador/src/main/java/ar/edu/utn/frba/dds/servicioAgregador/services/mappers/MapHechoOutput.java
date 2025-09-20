@@ -2,8 +2,10 @@ package ar.edu.utn.frba.dds.servicioAgregador.services.mappers;
 
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.ConjuntoHechoCompleto;
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.HechoDTOCompleto;
+import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.OrigenDTO;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
 
+import ar.edu.utn.frba.dds.servicioAgregador.model.entities.origenes.Origen;
 import java.util.List;
 import org.springframework.stereotype.Component;
 
@@ -29,6 +31,8 @@ public class MapHechoOutput {
     hechoDTO.setTitulo(hecho.getTitulo());
     hechoDTO.setFechaAcontecimiento(hecho.getFechaAcontecimiento());
     hechoDTO.setIdUsuario(hecho.getIdUsuario());
+    Origen origen = hecho.getOrigen();
+    hechoDTO.setOrigen(new OrigenDTO(origen.getNombreTipo(), origen.getUrl()));
     return hechoDTO;
   }
 }

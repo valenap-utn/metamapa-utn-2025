@@ -12,7 +12,7 @@ public class ConsensoScheduler {
     this.coleccionService = coleccionService;
   }
 
-  @Scheduled(cron = "0 0 3 * * *")
+  @Scheduled(cron = "${api.cron.consensoHechos}")
   public void consensuarHechos() {
     this.coleccionService.consensuarHechos()
         .doOnSuccess(v -> System.out.println("Los hechos"))

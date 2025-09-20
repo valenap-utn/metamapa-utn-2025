@@ -3,6 +3,7 @@ package ar.edu.utn.frba.dds.servicioAgregador.services;
 import ar.edu.utn.frba.dds.servicioAgregador.exceptions.ColeccionNoEncontrada;
 import ar.edu.utn.frba.dds.servicioAgregador.exceptions.UsuarioNoEncontrado;
 import ar.edu.utn.frba.dds.servicioAgregador.exceptions.UsuarioSinPermiso;
+import ar.edu.utn.frba.dds.servicioAgregador.model.VerificadorNormalizador;
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.ColeccionDTOInput;
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.ColeccionDTOOutput;
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.ConjuntoHechoCompleto;
@@ -112,9 +113,12 @@ public class ColeccionService implements IColeccionService{
   private void verSiNormalizar(Hecho hecho) {
     Long idInterno =  this.hechosExternosRepository.findByIDExterno(hecho.getId());
     if(idInterno != null) {
-      Hecho hechoExterno = this.hechoRepository.findById(idInterno);
-      if(this.verificadorNormalizador.estaNormalizado(hecho, hechoExterno)) {
+      Hecho hechoInterno = this.hechoRepository.findById(idInterno);
+      if(this.verificadorNormalizador.estaNormalizado(hechoInterno, hecho)) {
         hecho.marcarComoNormalizado();
+        hecho.setTitulo(hechoInterno.getTitulo());
+        hecho.setUbicacion(hechoInterno.getUbicacion());
+        hecho.setCategoria(hechoInterno.getCategoria());
       }
     }
   }

@@ -78,4 +78,8 @@ public class Solicitud {
     public boolean fueMarcadaComoSpam() {
         return this.estado == Estado.SPAM;
     }
+
+  public boolean noEsPendiente() {
+        return this.estado != Estado.PENDIENTE;
+  }
 }

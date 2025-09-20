@@ -1,4 +1,4 @@
-package ar.edu.utn.frba.dds.servicioAgregador.model.entities;
+package ar.edu.utn.frba.dds.servicioAgregador.model.entities.normalizacion;
 
 import java.util.List;
 

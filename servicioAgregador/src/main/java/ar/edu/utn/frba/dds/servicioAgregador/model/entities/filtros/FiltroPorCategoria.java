@@ -6,11 +6,18 @@ import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Categoria;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import lombok.NoArgsConstructor;
 
+@Entity
+@NoArgsConstructor
 @DiscriminatorValue("CATEGORIA")
 public class FiltroPorCategoria extends Filtro {
-    @Column(name = "categoria")
-    private final Categoria categoria;
+    @ManyToOne
+    @JoinColumn(referencedColumnName = "id", name = "categoria_id")
+    private Categoria categoria;
 
     public FiltroPorCategoria(Categoria categoria) {
         this.categoria = categoria;

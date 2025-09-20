@@ -3,7 +3,7 @@ package ar.edu.utn.frba.dds.servicioAgregador.services;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Categoria;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Direccion;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
-import ar.edu.utn.frba.dds.servicioAgregador.model.entities.IBuscadorFullTextSearch;
+import ar.edu.utn.frba.dds.servicioAgregador.model.entities.normalizacion.IBuscadorFullTextSearch;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.ICategoriaRepository;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IDireccionRepository;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IHechoRepository;
@@ -72,6 +72,8 @@ public class Estandarizador implements IEstandarizador {
   }
 
   private void estandarizarUbicacion(Hecho hechoAmodificar, List<Hecho> hechosDesnormalizados) {
+
+    //TODO: preguntar a la url de argentina
     List<Direccion> direcciones = this.direccionRepository.findByFullTextSearch(hechoAmodificar.getDireccion());
     Direccion direccion = direcciones.stream().findFirst().orElse(null);
     if (direccion == null) {

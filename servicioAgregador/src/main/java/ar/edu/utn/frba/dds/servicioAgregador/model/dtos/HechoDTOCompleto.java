@@ -20,4 +20,5 @@ public class HechoDTOCompleto implements HechoDTO {
   private boolean eliminado;
   private ContenidoMultimedia contenidoMultimedia;
   private Long idUsuario;
+  private OrigenDTO origen;
 }
