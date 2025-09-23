@@ -22,6 +22,7 @@
     <module>servicioFuenteDinamica</module>
     <module>servicioFuenteProxy</module>
     <module>servicioEstadistica</module>
+    <module>clienteInterfaz</module>
   </modules>
 
   <dependencies>
