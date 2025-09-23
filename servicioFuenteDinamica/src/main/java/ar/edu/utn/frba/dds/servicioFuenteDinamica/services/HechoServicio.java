@@ -71,7 +71,7 @@ public class HechoServicio implements IHechoServicio {
     public Hecho modificarHecho(Long hechoId, HechoDTOModificacionDinamica nuevosDatos) {
         Hecho hecho = hechoRepository.findById(hechoId).orElseThrow(() -> new HechoNoEncontrado("Hecho no encontrado"));
         Usuario usuario = this.userRepository.findById(nuevosDatos.getIdUsuario());
-        if(!hecho.isEsAnonimo() && hecho.getUsuario() != usuario) {
+        if(!hecho.getEsAnonimo() && hecho.getUsuario() != usuario) {
             throw new UsuarioSinPermiso("Solo puede modificar un hecho su autor");
         }
 
