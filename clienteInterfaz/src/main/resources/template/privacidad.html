@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/layout :: layout('Privacidad', ~{::link}, ~{::section})}">
+<head>
+    <link th:href="@{/css/styles-commons.css}" rel="stylesheet">
+    <link th:href="@{/css/styles-main.css}" rel="stylesheet">
+</head>
+<body>
+
+<!--    <main class="container py-5" id="main-content">-->
+        <section class="mm-card mx-auto" style="max-width: 800px;">
+            <h1 class="mm-form-title mb-4 text-center" style="padding-top: 60px">Politica de privacidad</h1>
+            <p class="mm-form-sub text-center mb-5">En Metamapa valoramos tu privacidad</p>
+
+            <h2 class="h5 mt-4">1. Información que recopilamos </h2>
+                <li>Nombre y Apellido (obligatorio para registro de administradores y contribuyentes).</li>
+                <li>Correo electrónico (opcional, solo si el usuario lo desea).</li>
+                <li>Datos de hechos cargados (título, descripción, ubicación y fecha).</li>
+            </ul>
+          
+            <h2 class="h5 mt-4">2. Uso de la información</h2>
+            <p>La información recopilada se utiliza únicamente para:</p>
+            <ul>
+            <li>Mostrar hechos y colecciones dentro de la plataforma.</li>
+            <li>Permitir la interacción entre contribuyentes y administradores.</li>
+            <li>Gestionar solicitudes de eliminación y validación de hechos.</li> 
+            </ul>
+
+            <h2 class="h5 mt-4">3. Almacenamiento y seguridad</h2>
+            <p>Los datos se almacenan en la base de datos del sistema con el único propósito de ilustrar las funcionalidades del proyecto. No se utilizan con fines comerciales.</p>
+
+            <h2 class="h5 mt-4">4. Privacidad de menores</h2>
+            <p>El sistema no está destinado a menores de 13 años. En caso de detectarse información de este tipo, será eliminada.</p>
+
+            <h2 class="h5 mt-4">5. Contacto</h2>
+            <p>Si tenés dudas sobre esta política, escribinos a <a href="mail:contacto@metamapa.com" class="blue-link">contacto@metamapa.com</a></p>
+
+           <div class="mt-5 text-center">
+                <a th:href="@{/}">
+                    <button class="btn btn-back btn-lg mb-3" aria-label="Volver al inicio">Volver al inicio</button>
+                </a>
+            </div>
+        </section>
+<!--    </main>-->
+</body>
+</html>

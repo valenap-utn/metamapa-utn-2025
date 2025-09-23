@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/layout :: layout('Dashboard Estadisticas', ~{::link}, ~{::section})}">
+<head>
+<!--    <link rel="stylesheet" href="../../static/css/styles-commons.css"/>-->
+    <link th:href="@{/css/styles-main.css}" rel="stylesheet">
+    <link th:href="@{/css/estilos-admin/styles-dashboard-estadisticas.css}" rel="stylesheet">
+</head>
+<body class="body-metamapa">
+    <!-- Main -->
+<!--    <main class="container py-5" id="main-content">-->
+        <section class="mm-dashboard mx-auto" style="max-width: 1080px">
+            <h1 class="mm-form-title mb-2 text-center">Dashboard de estadísticas</h1>
+            <p class="mm-form-sub text-center mb-4">Resumen rápido de indicadores</p>
+
+            <div class="mm-stats">
+                <!-- Card -->
+                <article class="mm-card mm-stat">
+                    <h3 class="mm-stat__title">Provincia con mayor cantidad de hechos de una colección</h3>
+
+                    <!-- Gráfico -->
+                    <div class="mm-chart-wrap">
+                        <canvas id="chartProvColeccion" class="mm-chart"></canvas>
+                    </div>
+
+                    <p>Colección <span class="mm-chip">Desastres Naturales</span></p>
+                    <p>Provincia <span class="mm-chip">Buenos Aires</span></p>
+                    <p>Cantidad de hechos <span class="mm-chip mm-chip--strong">100000</span></p>
+                </article>
+
+                <article class="mm-card mm-stat">
+                    <h3 class="mm-stat__title">Categoría con mayor cantidad de hechos</h3>
+
+                    <!-- Gráfico -->
+                    <div class="mm-chart-wrap">
+                        <canvas id="chartCategorias" class="mm-chart"></canvas>
+                    </div>
+
+                    <p>Categoría <span class="mm-chip">Defensa civil</span></p>
+                    <p>Cantidad de hechos <span class="mm-chip mm-chip--strong">250000</span></p>
+                </article>
+
+                <article class="mm-card mm-stat">
+                    <h3 class="mm-stat__title">Provincia con mayor cantidad de hechos de una categoría</h3>
+                    <p>Provincia <span class="mm-chip">Neuquén</span></p>
+                    <p>Categoría <span class="mm-chip">Defensa Civil</span></p>
+                    <p>Cantidad de hechos <span class="mm-chip mm-chip--strong">324234</span></p>
+                </article>
+
+                <article class="mm-card mm-stat">
+                    <h3 class="mm-stat__title">Hora con más hechos para una categoría</h3>
+                    <p>Categoría <span class="mm-chip">Defensa civil</span></p>
+                    <p>Hora del día <span class="mm-chip mm-chip--strong">19:04</span></p>
+                </article>
+
+                <article class="mm-card mm-stat">
+                    <h3 class="mm-stat__title">Porcentaje de solicitudes con spam</h3>
+
+                    <!-- Gráfico -->
+                    <div class="mm-chart-wrap">
+                        <canvas id="chartSpam" class="mm-chart"></canvas>
+                    </div>
+
+                    <p>Total <span class="mm-chip mm-chip--strong">90%</span></p>
+                    <p>Cantidad de hechos total <span class="mm-chip">1.000.000</span></p>
+                </article>
+            </div>
+
+            <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1"></script>
+            <script type="module" th:src="@{/js/admins/dashboard-estadisticas.js}"></script>
+        </section>
+<!--    </main>-->
+
+    <a th:href="@{/admin}"><button class="btn btn-back btn-lg mb-3" aria-label="Volver a la página anterior">Volver atrás</button></a>
+
+</body>
+</html>
