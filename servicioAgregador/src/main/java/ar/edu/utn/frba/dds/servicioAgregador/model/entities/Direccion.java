@@ -16,11 +16,8 @@ public class Direccion {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column(name = "ciudad")
-  private String ciudad;
-
-  @Column(name = "localidad")
-  private String localidad;
+  @Column(name = "departamento")
+  private String departamento;
 
   @Column(name = "municipio")
   private String municipio;

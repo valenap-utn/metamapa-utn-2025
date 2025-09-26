@@ -4,9 +4,9 @@ import lombok.Data;
 
 @Data
 public class SolicitudOutputDTO {
-  Long id;
-  Long idHecho;
-  Long idusuario;
-  String justificacion;
-  String estado;
+  private Long id;
+  private Long idHecho;
+  private Long idusuario;
+  private String justificacion;
+  private String estado;
 }

@@ -40,7 +40,7 @@ public class SeaderColeccion {
   }
 
   public void init() {
-    Origen origenDinamica = Origen.builder().url(this.urlFuenteDinamica).tipo(TipoOrigen.PORCONTRIBUYENTE).build();
+    Origen origenDinamica = Origen.builder().url(this.urlFuenteDinamica).tipo(TipoOrigen.DINAMICA).build();
     Origen origenEstatica = Origen.builder().url(this.urlFuenteEstatica).tipo(TipoOrigen.DATASET).build();
     Origen origenProxy = Origen.builder().url(this.urlFuenteProxy).tipo(TipoOrigen.PROXY).build();
     Coleccion coleccion = new Coleccion();

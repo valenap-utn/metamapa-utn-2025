@@ -3,10 +3,12 @@ package ar.edu.utn.frba.dds.servicioAgregador.services;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Categoria;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Direccion;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
+import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Ubicacion;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.normalizacion.IBuscadorFullTextSearch;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.ICategoriaRepository;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IDireccionRepository;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IHechoRepository;
+import ar.edu.utn.frba.dds.servicioAgregador.services.clients.ClientAPIGobierno;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,12 +22,14 @@ public class Estandarizador implements IEstandarizador {
   private final ICategoriaRepository categoriaRepository;
   private final IBuscadorFullTextSearch buscadorFullTextSearch;
   private final IDireccionRepository direccionRepository;
+  private final ClientAPIGobierno apiGobierno;
 
-  public Estandarizador(IHechoRepository hechoRepository, ICategoriaRepository categoriaRepository, IBuscadorFullTextSearch buscadorFullTextSearch, IDireccionRepository direccionRepository) {
+  public Estandarizador(IHechoRepository hechoRepository, ICategoriaRepository categoriaRepository, IBuscadorFullTextSearch buscadorFullTextSearch, IDireccionRepository direccionRepository, ClientAPIGobierno apiGobierno) {
     this.hechoRepository = hechoRepository;
     this.categoriaRepository = categoriaRepository;
     this.buscadorFullTextSearch = buscadorFullTextSearch;
     this.direccionRepository = direccionRepository;
+    this.apiGobierno = apiGobierno;
   }
   @Override
   public Mono<Void> estandarizarHechos() {
@@ -72,23 +76,26 @@ public class Estandarizador implements IEstandarizador {
   }
 
   private void estandarizarUbicacion(Hecho hechoAmodificar, List<Hecho> hechosDesnormalizados) {
-
-    //TODO: preguntar a la url de argentina
+    boolean fuePedidoPorAPI = false;
+    Ubicacion ubicacion =hechoAmodificar.getUbicacion();
+    if (ubicacion.getDireccion() == null) {
+      Direccion direccion = this.apiGobierno.buscarUbicacion(hechoAmodificar.getUbicacion());
+      ubicacion.setDireccion(direccion);
+      fuePedidoPorAPI = true;
+    }
     List<Direccion> direcciones = this.direccionRepository.findByFullTextSearch(hechoAmodificar.getDireccion());
     Direccion direccion = direcciones.stream().findFirst().orElse(null);
-    if (direccion == null) {
+    if (direccion == null && !fuePedidoPorAPI) {
       direccion = new Direccion();
       List<Direccion> direccionesHechos =  hechosDesnormalizados.stream().map(Hecho::getDireccion).toList();
-      direccion.setCiudad(this.buscadorFullTextSearch.crearNombreNormalizadoCon(hechoAmodificar.getDireccion().getCiudad(),
-              direccionesHechos.stream().map(Direccion::getCiudad).toList()));
-      direccion.setLocalidad(this.buscadorFullTextSearch.crearNombreNormalizadoCon(hechoAmodificar.getDireccion().getCiudad(),
-              direccionesHechos.stream().map(Direccion::getLocalidad).toList()));
-      direccion.setProvincia(this.buscadorFullTextSearch.crearNombreNormalizadoCon(hechoAmodificar.getDireccion().getCiudad(),
+      direccion.setProvincia(this.buscadorFullTextSearch.crearNombreNormalizadoCon(hechoAmodificar.getDireccion().getDepartamento(),
+              direccionesHechos.stream().map(Direccion::getDepartamento).toList()));
+      direccion.setProvincia(this.buscadorFullTextSearch.crearNombreNormalizadoCon(hechoAmodificar.getDireccion().getProvincia(),
               direccionesHechos.stream().map(Direccion::getProvincia).toList()));
-      direccion.setMunicipio(this.buscadorFullTextSearch.crearNombreNormalizadoCon(hechoAmodificar.getDireccion().getCiudad(),
+      direccion.setMunicipio(this.buscadorFullTextSearch.crearNombreNormalizadoCon(hechoAmodificar.getDireccion().getMunicipio(),
               direccionesHechos.stream().map(Direccion::getMunicipio).toList()));
+    } else if (!fuePedidoPorAPI) {
+      hechoAmodificar.setDireccion(direccion);
     }
-    hechoAmodificar.setDireccion(direccion);
-
   }
 }

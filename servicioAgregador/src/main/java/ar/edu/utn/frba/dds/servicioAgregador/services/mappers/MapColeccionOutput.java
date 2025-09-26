@@ -23,10 +23,11 @@ public class MapColeccionOutput {
   public ColeccionDTOOutput toColeccionDTOOutput(Coleccion coleccion) {
     ColeccionDTOOutput coleccionDTOOutput = new ColeccionDTOOutput();
     coleccionDTOOutput.setId(coleccion.getId());
-    coleccionDTOOutput.setNombre(coleccion.getDescripcion());
+    coleccionDTOOutput.setTitulo(coleccion.getTitulo());
     coleccionDTOOutput.setDescripcion(coleccion.getDescripcion());
     coleccionDTOOutput.setFuentes(coleccion.getFuenteColeccions().stream().map(this::toFuenteDTO).collect(Collectors.toList()));
     coleccionDTOOutput.setCriterios(coleccion.getCriteriosDePertenencia().stream().map(this::toCriterioDTO).toList());
+    coleccionDTOOutput.setAlgoritmoDeConsenso(coleccion.getAlgoritmoConsenso().toString());
     return coleccionDTOOutput;
   }
 
