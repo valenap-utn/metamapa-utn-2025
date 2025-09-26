@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/layout :: layout('Términos y Condiciones | MetaMapa', ~{::link}, ~{::section})}">
+<head>
+    <link th:href="@{/css/styles-commons.css}" rel="stylesheet">
+    <link th:href="@{/css/styles-main.css}" rel="stylesheet">
+</head>
+<body>
+<!--    <main class="container py-5" id="main-content">-->
+        <section class="mm-card mx-auto" style="max-width: 800px;">
+            <h1 class="mm-form-title mb-4 text-center" style="padding-top: 60px">Términos y Condiciones</h1>
+            <p class="mm-form-sub text-center mb-5">Última actualización: 2 de septiembre de 2025</p>
+
+            <h2 class="h5 mt-4">1. Aceptación de los términos</h2>
+            <p>Al acceder y utilizar MetaMapa, aceptás cumplir con estos Términos y Condiciones y todas las leyes y regulaciones aplicables. Si no estás de acuerdo, por favor no utilices la plataforma.</p>
+
+            <h2 class="h5 mt-4">2. Uso de la plataforma</h2>
+            <ul>
+                <li>Podés navegar hechos y colecciones de manera anónima.</li>
+                <li>Para contribuir o administrar, debés registrarte y proporcionar información verídica.</li>
+                <li>No está permitido publicar contenido falso, ofensivo o que viole derechos de terceros.</li>
+            </ul>
+
+            <h2 class="h5 mt-4">3. Propiedad intelectual</h2>
+            <p>Todo el contenido generado por MetaMapa y sus usuarios está protegido por derechos de autor. No está permitido copiar, reproducir o distribuir contenido sin autorización.</p>
+
+            <h2 class="h5 mt-4">4. Privacidad</h2>
+            <p>La información personal se maneja según nuestra <a href="privacidad.html" class="blue-link" aria-label="Ir a la política de privacidad">Política de Privacidad</a>.</p>
+
+            <h2 class="h5 mt-4">5. Responsabilidad</h2>
+            <p>MetaMapa no se responsabiliza por la veracidad de los hechos publicados por los usuarios. Nos reservamos el derecho de eliminar contenido que incumpla estos términos.</p>
+
+            <h2 class="h5 mt-4">6. Modificaciones</h2>
+            <p>Nos reservamos el derecho de modificar estos términos en cualquier momento. Los cambios serán publicados en esta página.</p>
+
+            <h2 class="h5 mt-4">7. Contacto</h2>
+            <p>Para consultas sobre estos términos, escribinos a <a href="mail:contacto@metamapa.com" class="blue-link">contacto@metamapa.com</a></p>
+
+           <div class="mt-5 text-center">
+                <a th:href="@{/}">
+                    <button class="btn btn-back btn-lg mb-3" aria-label="Volver al inicio">Volver al inicio</button>
+                </a>
+           </div>
+        </section>
+<!--    </main>-->
+</body>
+</html>
