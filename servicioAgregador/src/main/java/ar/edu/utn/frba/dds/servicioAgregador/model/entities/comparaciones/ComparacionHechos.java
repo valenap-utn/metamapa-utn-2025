@@ -13,6 +13,11 @@ public abstract class ComparacionHechos {
   private TFIDFCalculadoraPalabras calculadora;
   private Double cantidadAceptable;
 
+  public ComparacionHechos(TFIDFCalculadoraPalabras calculadora, Double cantidadAceptable) {
+    this.calculadora = calculadora;
+    this.cantidadAceptable = cantidadAceptable;
+  }
+
   public boolean sonEquivalentes(Hecho hecho, Hecho hechoExterno){
 
     Documento documentoDeExterno = this.elementoAComparar(hechoExterno);

@@ -16,7 +16,7 @@ public class HandlerExcepciones {
     System.out.println("Fecha y hora de la excepcion: " + LocalDateTime.now());
     System.out.println("Stack trace de la excepcion: ");
     Arrays.stream(ex.getStackTrace()).map(StackTraceElement::toString).forEach(System.out::println);
-
+    System.out.println("\n");
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorDTO("Error en el servidor", "Error Servidor"));
   }
 

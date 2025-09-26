@@ -47,9 +47,6 @@ public class Hecho {
     @Column(name = "fecha_carga")
     @Setter @Getter private LocalDateTime fechaCarga;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "origen")
-    @Setter @Getter private Origen origen;
 
     @Column(name = "eliminado")
     @Setter @Getter private Boolean eliminado;
@@ -59,13 +56,12 @@ public class Hecho {
     @Setter @Getter private Usuario usuario;
 
 
-    public Hecho(HechoValueObject infoHecho, Origen origen) {
+    public Hecho(HechoValueObject infoHecho) {
         this.titulo = infoHecho.getTitulo();
         this.descripcion = infoHecho.getDescripcion();
         this.categoria = infoHecho.getCategoria();
         this.ubicacion = infoHecho.getUbicacion();
         this.fechaAcontecimiento = infoHecho.getFechaAcontecimiento();
-        this.origen = origen;
         this.fechaCarga = LocalDateTime.now();
         this.eliminado = false;
     }

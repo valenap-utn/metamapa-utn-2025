@@ -35,7 +35,7 @@ public class HechoRepository implements IHechoRepository {
   @Override
   public Set<Hecho> findAll() {
     return new HashSet<>(hechoPorID.values()).stream()
-        .filter(hecho -> !hecho.isEliminado()).collect(Collectors.toSet());
+        .filter(hecho -> !hecho.getEliminado()).collect(Collectors.toSet());
   }
 
   @Override

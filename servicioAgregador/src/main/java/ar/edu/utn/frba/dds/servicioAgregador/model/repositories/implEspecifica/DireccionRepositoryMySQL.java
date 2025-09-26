@@ -20,10 +20,9 @@ public class DireccionRepositoryMySQL implements IDireccionRepositoryFullTextSea
   public List<Direccion> findByFullTextSearch(Direccion direccion) {
     try {
       TypedQuery<Direccion> query = entityManager.createQuery(this.queryFullTextSearch, Direccion.class);
-      query.setParameter("ciudad", direccion.getCiudad());
       query.setParameter("municipio", direccion.getMunicipio());
       query.setParameter("provincia", direccion.getProvincia());
-      query.setParameter("localidad", direccion.getLocalidad());
+      query.setParameter("departamento", direccion.getDepartamento());
       return query.getResultList();
     } catch (Exception e) {
       throw new RuntimeException("Error al ejecutar consulta desde properties", e);

@@ -58,11 +58,12 @@ public class Hecho {
     @Column(name = "fecha_carga", nullable = false)
     @Setter @Getter private LocalDateTime fechaCarga;
 
-    @ManyToOne(optional = false, fetch=FetchType.EAGER)
+    @ManyToOne(optional = false)
     @JoinColumn(name = "origen_id", referencedColumnName = "id", nullable = false)
     @Setter @Getter private Origen origen;
 
     @Column(name = "eliminado", nullable = false)
+    @Builder.Default
     @Setter @Getter private Boolean eliminado = false;
 
     @Embedded
@@ -84,6 +85,7 @@ public class Hecho {
     @Getter @Setter private Usuario usuario;
 
     @Column(name = "normalizado")
+    @Builder.Default
     @Getter private Boolean normalizado = false;
 
     public void agregarEtiquetas(String ... etiquetas) {

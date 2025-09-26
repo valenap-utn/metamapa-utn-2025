@@ -48,10 +48,6 @@ public class Hecho implements Revisable{
     @Column(name = "fecha_carga", nullable = false)
     @Setter @Getter private LocalDateTime fechaCarga;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "origen")
-    @Setter @Getter private Origen origen;
-
     @Column(name = "eliminado")
     @Setter @Getter private boolean eliminado;
 

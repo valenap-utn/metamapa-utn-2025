@@ -26,7 +26,7 @@ public class MetaMapaClient implements IAPIClient {
     public MetaMapaClient(APIProperties apiProperties) {
         this.apiProperties = apiProperties;
         this.webClient = WebClient.builder()
-                .baseUrl(apiProperties.getBaseUrlMetaMapa())
+                .baseUrl(this.apiProperties.getBaseUrlMetaMapa())
                 .build();
     }
 

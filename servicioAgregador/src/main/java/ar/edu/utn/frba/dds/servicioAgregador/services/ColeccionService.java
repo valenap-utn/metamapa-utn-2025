@@ -3,7 +3,7 @@ package ar.edu.utn.frba.dds.servicioAgregador.services;
 import ar.edu.utn.frba.dds.servicioAgregador.exceptions.ColeccionNoEncontrada;
 import ar.edu.utn.frba.dds.servicioAgregador.exceptions.UsuarioNoEncontrado;
 import ar.edu.utn.frba.dds.servicioAgregador.exceptions.UsuarioSinPermiso;
-import ar.edu.utn.frba.dds.servicioAgregador.model.VerificadorNormalizador;
+import ar.edu.utn.frba.dds.servicioAgregador.model.entities.VerificadorNormalizador;
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.ColeccionDTOInput;
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.ColeccionDTOOutput;
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.ConjuntoHechoCompleto;
@@ -80,7 +80,7 @@ public class ColeccionService implements IColeccionService{
       throw new UsuarioSinPermiso("Se debe tener permisos de administrador");
     }
 
-    Coleccion coleccionCreada = new Coleccion(coleccionInput.getNombre(), coleccionInput.getDescripcion(), this.algoritmoFactory.getAlgoritmo(coleccionInput.getAlgoritmo()));
+    Coleccion coleccionCreada = new Coleccion(coleccionInput.getTitulo(), coleccionInput.getDescripcion(), this.algoritmoFactory.getAlgoritmo(coleccionInput.getAlgoritmo()));
     Set<FuenteColeccion> fuenteColeccions =  coleccionInput.getFuentes().stream().map(this.mapperColeccionOutput::toFuente).collect(Collectors.toSet());
     coleccionCreada.agregarFuentes(fuenteColeccions);
     List<Filtro> filtros = coleccionInput.getCriterios().stream().map(this.mapperColeccionOutput::toCriterio).toList();
@@ -156,7 +156,7 @@ public class ColeccionService implements IColeccionService{
       throw new ColeccionNoEncontrada("No existe la coleccion con el identificador enviado");
     }
     coleccion.setDescripcion(coleccionInput.getDescripcion());
-    coleccion.setTitulo(coleccionInput.getNombre());
+    coleccion.setTitulo(coleccionInput.getTitulo());
     List<FuenteColeccion> fuenteColeccions = coleccionInput.getFuentes().stream().map(this.mapperColeccionOutput::toFuente).toList();
     coleccion.actualizarFuentes(fuenteColeccions);
     List<Filtro> filtros = coleccionInput.getCriterios().stream().map(this.mapperColeccionOutput::toCriterio).toList();

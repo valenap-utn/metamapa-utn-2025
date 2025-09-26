@@ -32,7 +32,6 @@ public class HechoController {
                                                          @RequestParam(required = false) Float latitud,
                                                          @RequestParam(required = false) Float longitud,
                                                          @RequestParam(required = false) boolean entiemporeal){
-    try {
       FiltroDTO filtro = FiltroDTO.builder()
               .fecha_acontecimiento_desde(fecha_acontecimiento_desde)
               .fecha_acontecimiento_hasta(fecha_acontecimiento_hasta)
@@ -45,9 +44,6 @@ public class HechoController {
               .build();
 
       return ResponseEntity.ok(this.hechoService.findAll(filtro));
-    } catch (Exception e) {
-      return ResponseEntity.badRequest().build();
-    }
   }
 
 }

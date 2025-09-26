@@ -75,7 +75,6 @@ public class SeaderColeccion {
             .titulo("Inundacion Bahia Blanca")
             .categoria(new Categoria("Inundacion"))
             .fechaCarga(LocalDateTime.now())
-
             .fechaAcontecimiento(LocalDateTime.of(2025, 3, 7, 0, 0))
             .contenidoMultimedia(contenidoMultimedia)
             .origen(origenDinamica)

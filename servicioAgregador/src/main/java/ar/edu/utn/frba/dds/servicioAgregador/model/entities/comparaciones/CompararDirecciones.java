@@ -1,10 +1,15 @@
 package ar.edu.utn.frba.dds.servicioAgregador.model.entities.comparaciones;
 
+import ar.edu.utn.frba.dds.servicioAgregador.model.entities.deteccionDeSpam.TFIDFCalculadoraPalabras;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.normalizacion.Documento;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Direccion;
 
 public class CompararDirecciones extends ComparacionHechos{
+  public CompararDirecciones(TFIDFCalculadoraPalabras calculadora, Double cantidadAceptable) {
+    super(calculadora, cantidadAceptable);
+  }
+
   @Override
   protected Documento elementoAComparar(Hecho hechoExterno) {
 
@@ -13,8 +18,7 @@ public class CompararDirecciones extends ComparacionHechos{
       return Documento.ofStringSinNormalizar("");
     }
     String direccionStr = String.join(" ",
-            normalizarCampo(direccion.getCiudad()),
-            normalizarCampo(direccion.getLocalidad()),
+            normalizarCampo(direccion.getDepartamento()),
             normalizarCampo(direccion.getMunicipio()),
             normalizarCampo(direccion.getProvincia())
     );

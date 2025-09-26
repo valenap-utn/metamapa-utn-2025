@@ -9,7 +9,6 @@ import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.daos.IHechosDAO;
 import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.dtos.HechoDTOEstatica;
 import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.dtos.HechoValueObject;
 import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.entities.Hecho;
-import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.entities.Origen;
 import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.entities.Usuario;
 import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.entities.roles.PermisoSubidaArchivo;
 import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.repositories.IHechoRepository;
@@ -55,7 +54,7 @@ public class HechoService implements IHechoService {
 
 
     Set<Hecho> hechos = hechosVO.stream()
-        .map(unHvo -> new Hecho(unHvo, Origen.PORDATASET))
+        .map(Hecho::new)
         .collect(Collectors.toSet());
 
     hechos.forEach(hecho -> hecho.setUsuario(usuario));
@@ -74,7 +73,7 @@ public class HechoService implements IHechoService {
     Hecho hecho = this.hechoRepository.findByID(idHecho).orElse(null);
     if(hecho == null)
       return null;
-    if(hecho.isEliminado()) {
+    if(hecho.getEliminado()) {
       throw new HechoYaEstaEliminado("El hecho de id: " + idHecho + " ya está eliminado!");
     }
     hecho.setEliminado(true);

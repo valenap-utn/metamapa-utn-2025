@@ -19,8 +19,8 @@ public class IDAPI {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
-  @Column(name = "id_API")
-  private Long idAPI;
+  @Column(name = "id_eliminado")
+  private Long idEliminado;
   @Column(name = "nombre_API")
   private String nombreAPI;
 }

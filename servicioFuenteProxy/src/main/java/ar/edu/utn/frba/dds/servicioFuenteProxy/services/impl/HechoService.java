@@ -3,11 +3,12 @@ import ar.edu.utn.frba.dds.servicioFuenteProxy.clients.IAPIClient;
 import ar.edu.utn.frba.dds.servicioFuenteProxy.clients.dtos.output.HechoMapper;
 import ar.edu.utn.frba.dds.servicioFuenteProxy.clients.dtos.output.HechoOutputDTO;
 import ar.edu.utn.frba.dds.servicioFuenteProxy.exceptions.HechoYaEliminado;
+import ar.edu.utn.frba.dds.servicioFuenteProxy.model.entities.IDAPI;
+import ar.edu.utn.frba.dds.servicioFuenteProxy.model.repositories.IIDSEliminadosRepositoryJPA;
 import ar.edu.utn.frba.dds.servicioFuenteProxy.services.IHechoService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 // para ser usado localmente y entregados hacia el Controller, que luego los entregara al Servicio Agregador
@@ -18,21 +19,25 @@ public class HechoService implements IHechoService {
 
     private final List<IAPIClient> apiClients;
     private final HechoMapper hechoMapper;
-
-    private final List<Long> hechosEliminados = new ArrayList<>();
+    private final IIDSEliminadosRepositoryJPA iidsEliminadosRepositoryJPA;
 
     public void marcarComoEliminado(Long id, String clientNombre) {
-        if(hechosEliminados.contains(id)) {
+        IDAPI idapi = iidsEliminadosRepositoryJPA.findById(id).orElse(null);
+        if(idapi != null) {
             throw new HechoYaEliminado("El Hecho ya estaba eliminado");
 
         }
 
-        hechosEliminados.add(id);
+        IDAPI hechoAEliminar= new IDAPI();
+        hechoAEliminar.setIdEliminado(id);
+        hechoAEliminar.setNombreAPI(clientNombre);
+        this.iidsEliminadosRepositoryJPA.save(hechoAEliminar);
     }
 
-    public HechoService(List<IAPIClient> apiClients, HechoMapper hechoMapper) {
+    public HechoService(List<IAPIClient> apiClients, HechoMapper hechoMapper, IIDSEliminadosRepositoryJPA iidsEliminadosRepositoryJPA) {
         this.apiClients = apiClients;
         this.hechoMapper = hechoMapper;
+        this.iidsEliminadosRepositoryJPA = iidsEliminadosRepositoryJPA;
     }
 
     @Override
@@ -50,7 +55,7 @@ public class HechoService implements IHechoService {
                 .stream()
                 .flatMap(client -> client.getAllHechosExternos().stream()
                         .map(dto -> hechoMapper.toOutputDTO(dto, client.nombre())))
-                .filter( hecho ->!hechosEliminados.contains(hecho.getId()))
+                .filter(this::noEstaEliminado)
                 .filter(hecho -> categoria == null || hecho.getCategoria().equalsIgnoreCase(categoria))
                 .filter(hecho -> latitud == null || hecho.getLatitud().equals(latitud))
                 .filter(hecho -> longitud == null || hecho.getLongitud().equals(longitud))
@@ -60,7 +65,10 @@ public class HechoService implements IHechoService {
                 .filter(hecho -> fechaAcontecimientoHasta == null || hecho.getFecha().isBefore(fechaAcontecimientoHasta))
                 .toList();
     }
+
+    private boolean noEstaEliminado(HechoOutputDTO hecho) {
+        return this.iidsEliminadosRepositoryJPA.findByIdEliminadoAndNombreAPI(hecho.getId(), hecho.getFuente()).isEmpty();
+    }
 }
-//TODO: encontrar una forma mas generica de recorrer los hechos segun criterio. Por ejemplo, que los filtros se reciban como una lista, y luego abstraer la parte que coincide: .filter(hecho -> hecho.algo)
 
 
