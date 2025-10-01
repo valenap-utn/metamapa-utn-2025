@@ -46,9 +46,6 @@ public class HechoGlobalController {
   @DeleteMapping("/{id}")
   public ResponseEntity<HechoDTOEstatica> eliminarHecho(@PathVariable Long id ) {
     HechoDTOEstatica hecho = this.hechoService.marcarEliminadoHecho(id);
-    if(hecho == null){
-      return ResponseEntity.notFound().build();
-    }
     return ResponseEntity.ok(hecho);
   }
 

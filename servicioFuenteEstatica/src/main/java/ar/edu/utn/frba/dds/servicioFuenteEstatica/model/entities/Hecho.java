@@ -1,6 +1,7 @@
 package ar.edu.utn.frba.dds.servicioFuenteEstatica.model.entities;
 
 import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.dtos.HechoValueObject;
+import jakarta.persistence.CascadeType;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -35,7 +36,8 @@ public class Hecho {
     @Column(name = "descripcion", columnDefinition = "TEXT")
     @Setter @Getter private String descripcion;
 
-    @ManyToOne @JoinColumn(referencedColumnName = "id", nullable = false, name = "categoria_id")
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(referencedColumnName = "id", nullable = false, name = "categoria_id")
     @Setter @Getter private Categoria categoria;
 
     @Embedded

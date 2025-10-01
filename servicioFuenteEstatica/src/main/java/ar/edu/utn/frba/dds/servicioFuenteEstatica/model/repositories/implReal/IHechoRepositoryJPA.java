@@ -4,4 +4,5 @@ import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.entities.Hecho;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface IHechoRepositoryJPA extends JpaRepository<Hecho, Long> {
+  Hecho findHechoById(Long id);
 }

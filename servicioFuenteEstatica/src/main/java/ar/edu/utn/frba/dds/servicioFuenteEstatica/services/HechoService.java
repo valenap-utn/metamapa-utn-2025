@@ -2,6 +2,7 @@ package ar.edu.utn.frba.dds.servicioFuenteEstatica.services;
 
 import ar.edu.utn.frba.dds.servicioFuenteEstatica.exceptions.ArchivoVacioException;
 import ar.edu.utn.frba.dds.servicioFuenteEstatica.exceptions.ExcepcionIO;
+import ar.edu.utn.frba.dds.servicioFuenteEstatica.exceptions.HechoNoEncontrado;
 import ar.edu.utn.frba.dds.servicioFuenteEstatica.exceptions.HechoYaEstaEliminado;
 import ar.edu.utn.frba.dds.servicioFuenteEstatica.exceptions.UsuarioNoEncontrado;
 import ar.edu.utn.frba.dds.servicioFuenteEstatica.exceptions.UsuarioSinPermiso;
@@ -11,8 +12,8 @@ import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.dtos.HechoValueObject;
 import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.entities.Hecho;
 import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.entities.Usuario;
 import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.entities.roles.PermisoSubidaArchivo;
-import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.repositories.IHechoRepository;
-import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.repositories.IUserRepository;
+import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.repositories.implReal.IHechoRepositoryJPA;
+import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.repositories.implReal.IUsuarioRepositoryJPA;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -23,10 +24,10 @@ import java.util.stream.Collectors;
 @Service
 public class HechoService implements IHechoService {
   private final IHechosDAO hechosDAO;
-  private final IHechoRepository hechoRepository;
-  private final IUserRepository usuarioRepository;
+  private final IHechoRepositoryJPA hechoRepository;
+  private final IUsuarioRepositoryJPA usuarioRepository;
 
-  public HechoService(IHechosDAO hechosDAO, IHechoRepository hechoRepository, IUserRepository usuarioRepository) {
+  public HechoService(IHechosDAO hechosDAO, IHechoRepositoryJPA hechoRepository, IUsuarioRepositoryJPA usuarioRepository) {
     this.hechosDAO = hechosDAO;
     this.hechoRepository = hechoRepository;
     this.usuarioRepository = usuarioRepository;
@@ -38,7 +39,7 @@ public class HechoService implements IHechoService {
       throw new ArchivoVacioException("El archivo subido está vacío. Esto puede ser porque se ha subido incorrectamente o el archivo está corrupto");
     }
 
-    Usuario usuario = this.usuarioRepository.findById(idUsuario);
+    Usuario usuario = this.usuarioRepository.findById(idUsuario).orElse(null);
     if(usuario == null){
       throw new UsuarioNoEncontrado("El usuario no existe");
     }
@@ -70,19 +71,20 @@ public class HechoService implements IHechoService {
   }
 
   public HechoDTOEstatica marcarEliminadoHecho(Long idHecho) {
-    Hecho hecho = this.hechoRepository.findByID(idHecho).orElse(null);
-    if(hecho == null)
-      return null;
+    Hecho hecho = this.hechoRepository.findHechoById(idHecho);
+    if(hecho == null){
+      throw new HechoNoEncontrado("El hecho no existe");
+    }
     if(hecho.getEliminado()) {
       throw new HechoYaEstaEliminado("El hecho de id: " + idHecho + " ya está eliminado!");
     }
     hecho.setEliminado(true);
-    this.hechoRepository.saveHecho(hecho);
+    this.hechoRepository.save(hecho);
     return this.toHechoDTOEstatica(hecho);
   }
 
   public void eliminarTodo() {
-    hechoRepository.clear();
+    hechoRepository.deleteAll();
   }
 
   public HechoDTOEstatica toHechoDTOEstatica(Hecho hecho) {

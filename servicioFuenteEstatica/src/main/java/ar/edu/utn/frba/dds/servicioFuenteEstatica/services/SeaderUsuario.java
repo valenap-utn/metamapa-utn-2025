@@ -5,13 +5,14 @@ import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.entities.Usuario;
 import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.entities.roles.Administrador;
 import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.entities.roles.Contribuyente;
 import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.repositories.IUserRepository;
+import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.repositories.implReal.IUsuarioRepositoryJPA;
 import org.springframework.stereotype.Service;
 
 @Service
 public class SeaderUsuario {
-  private final IUserRepository userRepository;
+  private final IUsuarioRepositoryJPA userRepository;
 
-  public SeaderUsuario(IUserRepository userRepository) {
+  public SeaderUsuario(IUsuarioRepositoryJPA userRepository) {
 
     this.userRepository = userRepository;
   }

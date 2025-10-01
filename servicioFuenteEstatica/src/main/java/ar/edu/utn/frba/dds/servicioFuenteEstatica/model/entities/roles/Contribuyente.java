@@ -13,6 +13,7 @@ import jakarta.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
 
+@Entity
 @DiscriminatorValue("CONTRIBUYENTE")
 public class Contribuyente extends Rol {
   @ManyToMany
