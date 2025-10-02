@@ -1,8 +1,13 @@
 package ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities;
 
 
+import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.roles.Permiso;
+import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.roles.PermisoModificarHecho;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.repositories.converters.rolConverter;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Convert;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import java.time.LocalDate;
 
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.roles.Rol;
@@ -12,6 +17,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.util.Objects;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -37,8 +43,8 @@ public class Usuario {
     @Column(name = "fecha_nacimiento")
     private LocalDate fechaDeNacimiento;
 
-    @Column(name = "rol")
-    @Convert(converter = rolConverter.class)
+    @JoinColumn(name = "rol_id", referencedColumnName = "id", nullable = false)
+    @ManyToOne(cascade = CascadeType.PERSIST)
     private Rol rol;
 
     public Usuario of(Rol rol){
@@ -90,4 +96,11 @@ public class Usuario {
     }
 
 
+    public boolean tienePermiso(Permiso permiso) {
+        return this.rol.tienePermisoDe(permiso);
+    }
+
+    public Boolean equals(Usuario user) {
+        return Objects.equals(user.getId(), this.id);
+    }
 }

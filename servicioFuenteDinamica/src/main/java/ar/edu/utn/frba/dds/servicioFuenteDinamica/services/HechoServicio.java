@@ -1,20 +1,27 @@
 package ar.edu.utn.frba.dds.servicioFuenteDinamica.services;
 
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.exceptions.HechoNoEncontrado;
+import ar.edu.utn.frba.dds.servicioFuenteDinamica.exceptions.HechoYaEliminado;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.exceptions.SinSolicitudValida;
+import ar.edu.utn.frba.dds.servicioFuenteDinamica.exceptions.TiempoVencidoHecho;
+import ar.edu.utn.frba.dds.servicioFuenteDinamica.exceptions.UsuarioNoEncontrado;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.exceptions.UsuarioSinPermiso;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos.HechoDTODinamica;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos.HechoDTOModificacionDinamica;
+import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos.RevisionDTO;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.ContenidoMultimedia;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.RevisarEstado;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.Solicitud;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.Usuario;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.enums.Estado;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.Hecho;
+import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.roles.PermisoModificarHecho;
+import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.roles.PermisoRevisarHecho;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.repositories.IMultimediaRepository;
-import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.repositories.IHechoRepository;
-import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.repositories.ISolicitudRepository;
-import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.repositories.IUserRepository;
+import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.repositories.implReal.IHechoRepositoryJPA;
+import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.repositories.implReal.ISolicitudRepositoryJPA;
+import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.repositories.implReal.IUsuarioRepositoryJPA;
+import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,13 +32,13 @@ import java.util.List;
 @Service
 public class HechoServicio implements IHechoServicio {
 
-    private final IHechoRepository hechoRepository;
+    private final IHechoRepositoryJPA hechoRepository;
     private final IMultimediaRepository contentMultimediaRepository;
     private final RevisarEstado revisadorHechosSolicitud;
-    private final IUserRepository userRepository;
-    private final ISolicitudRepository solicitudRepository;
+    private final IUsuarioRepositoryJPA userRepository;
+    private final ISolicitudRepositoryJPA solicitudRepository;
 
-    public HechoServicio(IHechoRepository hechoRepository, IMultimediaRepository contentMultimediaRepository, RevisarEstado revisadorHechosSolicitud, IUserRepository userRepository, ISolicitudRepository solicitudRepository) {
+    public HechoServicio(IHechoRepositoryJPA hechoRepository, IMultimediaRepository contentMultimediaRepository, RevisarEstado revisadorHechosSolicitud, IUsuarioRepositoryJPA userRepository, ISolicitudRepositoryJPA solicitudRepository) {
         this.hechoRepository = hechoRepository;
         this.contentMultimediaRepository = contentMultimediaRepository;
         this.revisadorHechosSolicitud = revisadorHechosSolicitud;
@@ -49,7 +56,7 @@ public class HechoServicio implements IHechoServicio {
         hecho.setFechaCarga(LocalDateTime.now());
         hecho.setUbicacion(input.getUbicacion());
         hecho.setFechaAcontecimiento(input.getFechaAcontecimiento());
-        Usuario usuario = this.userRepository.findById(input.getIdUsuario());
+        Usuario usuario = this.userRepository.findById(input.getIdUsuario()).orElse(null);
         if(usuario == null) {
             hecho.setEsAnonimo(true);
         }
@@ -64,25 +71,31 @@ public class HechoServicio implements IHechoServicio {
 
     @Override
     public List<Hecho> obtenerHechosPublicos() {
-        return hechoRepository.findByEstadoIn(List.of(Estado.ACEPTADA, Estado.ACEPTADA_CON_CAMBIOS));
+        return hechoRepository.findHechosByEstado(Estado.ACEPTADA, Estado.ACEPTADA_CON_CAMBIOS);
     }
 
     @Override
     public Hecho modificarHecho(Long hechoId, HechoDTOModificacionDinamica nuevosDatos) {
         Hecho hecho = hechoRepository.findById(hechoId).orElseThrow(() -> new HechoNoEncontrado("Hecho no encontrado"));
-        Usuario usuario = this.userRepository.findById(nuevosDatos.getIdUsuario());
-        if(!hecho.getEsAnonimo() && hecho.getUsuario() != usuario) {
+        if (nuevosDatos.getIdUsuario() == null) {
+            throw new UsuarioNoEncontrado("El usuario no se ha podido encontrar");
+        }
+        Usuario usuario = this.userRepository.findById(nuevosDatos.getIdUsuario()).orElse(null);
+        if (usuario == null) {
+            throw new UsuarioSinPermiso("Un usuario sin cuenta no puede modificar un hecho");
+        }
+        if(hecho.getEsAnonimo() || !hecho.getUsuario().equals(usuario) || !usuario.tienePermiso(new PermisoModificarHecho())) {
             throw new UsuarioSinPermiso("Solo puede modificar un hecho su autor");
         }
 
-        List<Solicitud> solicitudesServicio = this.solicitudRepository.findByIDHecho(hecho.getId());
+        List<Solicitud> solicitudesServicio = this.solicitudRepository.findSolicitudByHecho(hecho);
         List<Solicitud> solicitudesServicioSinUsar = solicitudesServicio.stream().filter( sol -> sol.estaAceptada() && sol.noFueUsada()).toList();
 
         if(solicitudesServicioSinUsar.isEmpty()) {
            throw new SinSolicitudValida("Se necesita una solicitud de edición aceptada y válida para poder modificar un hecho");
         }
         if (Duration.between(hecho.getFechaCarga(), LocalDateTime.now()).toDays() >= 7) {
-            throw new IllegalStateException("Ya no se puede modificar el hecho.");
+            throw new TiempoVencidoHecho("Ya no se puede modificar el hecho.");
         }
         hecho.setDescripcion(nuevosDatos.getDescripcion());
         hecho.setContenido(nuevosDatos.getContenido());
@@ -91,13 +104,35 @@ public class HechoServicio implements IHechoServicio {
         hecho.setTitulo(nuevosDatos.getTitulo());
         hecho.setUbicacion(nuevosDatos.getUbicacion());
         solicitudesServicioSinUsar.forEach(Solicitud::usar);
+        this.solicitudRepository.saveAll(solicitudesServicioSinUsar);
         return hechoRepository.save(hecho);
     }
 
     @Override
-    public Hecho revisarHecho(Long id, String estadoStr, String comentario) {
+    public Hecho revisarHecho(Long id, RevisionDTO revisionDTO) {
         Hecho hecho = hechoRepository.findById(id).orElseThrow(() -> new RuntimeException("Hecho no encontrado"));
-        this.revisadorHechosSolicitud.revisar(hecho, estadoStr, comentario);
+        Usuario usuario = this.userRepository.findById(revisionDTO.getIdUsuario()).orElseThrow(() -> new UsuarioNoEncontrado("El usuario pasado no existe"));
+        if (!usuario.tienePermiso(new PermisoRevisarHecho())) {
+            throw new UsuarioSinPermiso("El usuario suministrado no tiene permiso para revisar el hecho");
+        }
+        this.revisadorHechosSolicitud.revisar(hecho, revisionDTO.getEstado(), revisionDTO.getComentario());
         return hechoRepository.save(hecho);
+    }
+
+    @Override
+    public Hecho marcarComoEliminado(Long id) {
+        Optional<Hecho> hechoOpt = hechoRepository.findById(id);
+
+        if (hechoOpt.isEmpty()) {
+            throw new HechoNoEncontrado("Hecho de id: "+ id +" no encontrado");
+        }
+
+        Hecho hecho = hechoOpt.get();
+        if (hecho.isEliminado()) {
+            throw new HechoYaEliminado("Hecho de id: "+ id +" ya eliminado");
+        }
+        hecho.setEliminado(true);
+        hechoRepository.save(hecho);
+        return hecho;
     }
 }

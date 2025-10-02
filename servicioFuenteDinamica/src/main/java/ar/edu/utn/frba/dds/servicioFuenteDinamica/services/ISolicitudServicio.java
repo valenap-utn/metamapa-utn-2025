@@ -1,11 +1,13 @@
 package ar.edu.utn.frba.dds.servicioFuenteDinamica.services;
 
+import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos.RevisionDTO;
+import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos.SolicitudDTO;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.Solicitud;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.Usuario;
 import org.springframework.stereotype.Service;
 
 @Service
 public interface ISolicitudServicio {
-  Solicitud crearSolicitud(Long hechoId, Usuario usuario, String contenido);
-  Solicitud procesarSolicitud(Long id, String estadoStr, String justificacion);
+  Solicitud crearSolicitud(SolicitudDTO solicitudDTO);
+  Solicitud procesarSolicitud(Long id, RevisionDTO revisionDTO);
 }

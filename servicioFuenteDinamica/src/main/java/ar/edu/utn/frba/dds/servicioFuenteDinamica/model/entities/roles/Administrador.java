@@ -1,5 +1,6 @@
 package ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.roles;
 
+import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -8,11 +9,12 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
-@AllArgsConstructor
-@NoArgsConstructor
+
 @Entity
-@Table(name = "administrador")
-public class Administrador implements Rol{
-  @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+@DiscriminatorValue("ADMINISTRADOR")
+public class Administrador extends Rol{
+  @Override
+  public boolean tienePermisoDe(Permiso permiso) {
+    return true;
+  }
 }

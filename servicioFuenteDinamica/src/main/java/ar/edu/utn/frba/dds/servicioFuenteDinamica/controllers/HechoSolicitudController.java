@@ -1,13 +1,12 @@
 package ar.edu.utn.frba.dds.servicioFuenteDinamica.controllers;
 
-import ar.edu.utn.frba.dds.servicioFuenteDinamica.exceptions.HechoNoEncontrado;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos.ConjuntoHechoDTODinamica;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos.HechoDTODinamica;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos.HechoDTOModificacionDinamica;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos.RevisionDTO;
+import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos.SolicitudDTO;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.Solicitud;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.Usuario;
-import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.repositories.IHechoRepository;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.Hecho;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.services.IHechoServicio;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.services.ISolicitudServicio;
@@ -16,18 +15,15 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api")
 public class HechoSolicitudController {
     private final IHechoServicio hechoServicio;
-    private final IHechoRepository hechoRepository;
     private final ISolicitudServicio solicitudServicio;
 
-    public HechoSolicitudController(IHechoServicio hechoServicio, IHechoRepository hechoRepository, ISolicitudServicio solicitudServicio) {
+    public HechoSolicitudController(IHechoServicio hechoServicio, ISolicitudServicio solicitudServicio) {
         this.hechoServicio = hechoServicio;
-        this.hechoRepository = hechoRepository;
         this.solicitudServicio = solicitudServicio;
     }
 
@@ -65,31 +61,32 @@ public class HechoSolicitudController {
 
     @PostMapping("/hechos/{id}/revisados")
     public ResponseEntity<HechoDTODinamica> revisarHecho(@PathVariable Long id, @RequestBody RevisionDTO revisionDTO) {
-        return ResponseEntity.ok(this.toHechoDTO(hechoServicio.revisarHecho(id, revisionDTO.getEstado(), revisionDTO.getComentario())));
+        return ResponseEntity.ok(this.toHechoDTO(hechoServicio.revisarHecho(id, revisionDTO)));
     }
 
     @DeleteMapping("/hechos/{id}")
     public ResponseEntity<HechoDTODinamica> marcarHechoComoEliminado(@PathVariable Long id) {
-        Optional<Hecho> hechoOpt = hechoRepository.findById(id);
-
-        if (hechoOpt.isEmpty()) {
-            throw new HechoNoEncontrado("Hecho de id: "+ id +" no encontrado");
-        }
-
-        Hecho hecho = hechoOpt.get();
-        hecho.setEliminado(true);
-        hechoRepository.save(hecho);
-
+        Hecho hecho = this.hechoServicio.marcarComoEliminado(id);
         return ResponseEntity.ok(this.toHechoDTO(hecho));
     }
 
     @PostMapping("/solicitudes")
-    public ResponseEntity<Solicitud> crearSolicitud(@RequestParam Long hechoId, @RequestParam Usuario usuario, @RequestParam String contenido) {
-        return ResponseEntity.ok(solicitudServicio.crearSolicitud(hechoId, usuario, contenido));
+    public ResponseEntity<SolicitudDTO> crearSolicitud(@RequestBody SolicitudDTO solicitud) {
+        return ResponseEntity.ok(this.toSolicitudDTO(solicitudServicio.crearSolicitud(solicitud)));
     }
 
     @PutMapping("/solicitudes/{id}")
-    public ResponseEntity<Solicitud> procesarSolicitud(@PathVariable Long id, @RequestBody RevisionDTO revisionDTO) {
-        return ResponseEntity.ok(solicitudServicio.procesarSolicitud(id, revisionDTO.getEstado(), revisionDTO.getComentario()));
+    public ResponseEntity<SolicitudDTO> procesarSolicitud(@PathVariable Long id, @RequestBody RevisionDTO revisionDTO) {
+        return ResponseEntity.ok(this.toSolicitudDTO(solicitudServicio.procesarSolicitud(id, revisionDTO)));
+    }
+
+    private SolicitudDTO toSolicitudDTO(Solicitud solicitud) {
+        SolicitudDTO solicitudDTO = new SolicitudDTO();
+        solicitudDTO.setId(solicitud.getId());
+        solicitudDTO.setJustificacion(solicitud.getJustificacion());
+        solicitudDTO.setIdusuario(solicitud.getIdUsuario());
+        solicitudDTO.setEstado(solicitud.getNombreEstado());
+        solicitudDTO.setIdHecho(solicitud.getIdHecho());
+        return solicitudDTO;
     }
 }

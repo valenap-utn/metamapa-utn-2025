@@ -69,4 +69,15 @@ public class Solicitud implements Revisable{
         this.fueUsada = true;
   }
 
+  public Long getIdUsuario() {
+      return this.usuario != null ? this.usuario.getId() : null;
+  }
+
+  public String getNombreEstado() {
+      return this.estado.toString();
+  }
+
+  public Long getIdHecho() {
+      return this.hecho.getId();
+  }
 }

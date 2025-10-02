@@ -55,7 +55,7 @@ public class HechoService implements IHechoService {
 
 
     Set<Hecho> hechos = hechosVO.stream()
-        .map(Hecho::new)
+        .map(hechoVO -> new Hecho(hechoVO, archivo.getOriginalFilename()))
         .collect(Collectors.toSet());
 
     hechos.forEach(hecho -> hecho.setUsuario(usuario));
@@ -97,6 +97,7 @@ public class HechoService implements IHechoService {
     dto.setFechaCarga(hecho.getFechaCarga());
     dto.setCategoria(hecho.getCategoria());
     dto.setIdUsuario(hecho.getIdUsuario());
+    dto.setNombreArchivo(hecho.getNombreArchivo());
     return dto;
   }
 }

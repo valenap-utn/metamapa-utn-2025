@@ -1,6 +1,7 @@
 package ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities;
 
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.enums.Estado;
+import jakarta.persistence.CascadeType;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
@@ -36,7 +37,8 @@ public class Hecho implements Revisable{
     @Column(name = "descripcion", columnDefinition = "TEXT")
     @Setter @Getter private String descripcion;
 
-    @ManyToOne @JoinColumn(referencedColumnName = "id", nullable = false, name = "categoria_id")
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(referencedColumnName = "id", nullable = false, name = "categoria_id")
     @Setter @Getter private Categoria categoria;
 
     @Embedded
@@ -73,7 +75,7 @@ public class Hecho implements Revisable{
     @Setter @Getter private Long id;
 
     @Column(name = "es_anonimo")
-    @Setter @Getter private Boolean esAnonimo;
+    @Setter @Getter private Boolean esAnonimo = false;
 
     @ManyToOne(fetch = FetchType.EAGER) // o .LAZY
     @JoinColumn(name = "usuario_id", referencedColumnName = "id")

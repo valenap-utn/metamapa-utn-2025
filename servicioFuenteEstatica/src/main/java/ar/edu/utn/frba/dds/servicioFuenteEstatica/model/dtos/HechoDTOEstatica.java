@@ -16,4 +16,5 @@ public class HechoDTOEstatica {
   private LocalDateTime fechaAcontecimiento;
   private LocalDateTime fechaCarga;
   private Long idUsuario;
+  private String nombreArchivo;
 }

@@ -57,8 +57,11 @@ public class Hecho {
     @JoinColumn(referencedColumnName = "id", name = "usuario_id")
     @Setter @Getter private Usuario usuario;
 
+    @Column(name = "nombre_archivo", nullable = false)
+    @Setter @Getter
+    private String nombreArchivo;
 
-    public Hecho(HechoValueObject infoHecho) {
+    public Hecho(HechoValueObject infoHecho, String nombreArchivo) {
         this.titulo = infoHecho.getTitulo();
         this.descripcion = infoHecho.getDescripcion();
         this.categoria = infoHecho.getCategoria();
@@ -66,6 +69,7 @@ public class Hecho {
         this.fechaAcontecimiento = infoHecho.getFechaAcontecimiento();
         this.fechaCarga = LocalDateTime.now();
         this.eliminado = false;
+        this.nombreArchivo = nombreArchivo;
     }
 
     public Long getIdUsuario() {

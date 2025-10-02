@@ -25,6 +25,16 @@ public class HandlerExcepciones {
     return ResponseEntity.status(400).body(new ErrorDTO(error.getMessage(), "estado Ilegal"));
   }
 
+  @ExceptionHandler(value = EstadoInexistente.class)
+  public ResponseEntity<ErrorDTO> EstadoInexistenteHandler(EstadoInexistente error){
+    return ResponseEntity.status(400).body(new ErrorDTO(error.getMessage(), error.getTipoError()));
+  }
+
+  @ExceptionHandler(value = EstadoIncorrecto.class)
+  public ResponseEntity<ErrorDTO> EstadoIncorrectoHandler(EstadoIncorrecto error){
+    return ResponseEntity.status(400).body(new ErrorDTO(error.getMessage(), error.getTipoError()));
+  }
+
   @ExceptionHandler(value = ArchivoYaExiste.class)
   public ResponseEntity<ErrorDTO> handleArchivoYaExiste(ArchivoYaExiste error) {
     return ResponseEntity.status(409).body(new ErrorDTO(error.getMessage(), error.getTipoError()));
@@ -35,6 +45,7 @@ public class HandlerExcepciones {
     return ResponseEntity.status(401).body(new ErrorDTO(error.getMessage(), error.getTipoError()));
   }
 
+
   @ExceptionHandler(value = UsuarioSinPermiso.class)
   public ResponseEntity<ErrorDTO> handleUsuarioSinPermiso(UsuarioSinPermiso error) {
     return ResponseEntity.status(403).body(new ErrorDTO(error.getMessage(), error.getTipoError()));
@@ -43,6 +54,11 @@ public class HandlerExcepciones {
   @ExceptionHandler(value = HechoNoEncontrado.class)
   public ResponseEntity<ErrorDTO> handleHechoNoEncontrado(HechoNoEncontrado error) {
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorDTO(error.getMessage(), error.getTipoError()));
+  }
+
+  @ExceptionHandler(value = HechoYaEliminado.class)
+  public ResponseEntity<ErrorDTO> handleHechoYaEliminado(HechoYaEliminado error) {
+    return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorDTO(error.getMessage(), error.getTipoError()));
   }
 
   @ExceptionHandler(value = SinSolicitudValida.class)
