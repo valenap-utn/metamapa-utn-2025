@@ -23,6 +23,7 @@
     <module>servicioFuenteProxy</module>
     <module>servicioEstadistica</module>
     <module>clienteInterfaz</module>
+    <module>servicioUsuario</module>
   </modules>
 
   <dependencies>
