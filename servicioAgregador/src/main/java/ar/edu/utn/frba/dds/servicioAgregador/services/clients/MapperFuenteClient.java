@@ -12,6 +12,7 @@ public abstract class MapperFuenteClient {
 
   protected Hecho.HechoBuilder crearHechoBasico(HechoDTO hechoDTO) {
     return Hecho.builder()
+            .idExterno(hechoDTO.getId())
             .titulo(hechoDTO.getTitulo())
             .descripcion(hechoDTO.getDescripcion())
             .fechaCarga(hechoDTO.getFechaCarga())

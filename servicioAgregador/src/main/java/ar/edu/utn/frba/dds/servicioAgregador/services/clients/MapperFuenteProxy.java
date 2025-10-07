@@ -19,7 +19,7 @@ public class MapperFuenteProxy extends MapperFuenteClient {
 
   private Hecho mapearHecho(HechoDTOProxy hechoDTO, String url) {
     return this.crearHechoBasico(hechoDTO)
-            .origen(new Origen(TipoOrigen.PROXY, url, hechoDTO.getId(), hechoDTO.getFuente()))
+            .origen(new Origen(TipoOrigen.PROXY, url, hechoDTO.getFuente()))
             .build();
   }
 

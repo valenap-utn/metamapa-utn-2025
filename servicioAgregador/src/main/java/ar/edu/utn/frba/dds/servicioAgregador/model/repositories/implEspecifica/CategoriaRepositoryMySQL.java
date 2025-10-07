@@ -7,7 +7,9 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public class CategoriaRepositoryMySQL implements ICategoriaRepositoryFullTextSearch{
   @PersistenceContext
   private EntityManager entityManager;

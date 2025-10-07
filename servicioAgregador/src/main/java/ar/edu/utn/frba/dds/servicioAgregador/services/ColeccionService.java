@@ -17,10 +17,11 @@ import ar.edu.utn.frba.dds.servicioAgregador.model.entities.origenes.Origen;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.origenes.TipoOrigen;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.roles.PermisoCrearColeccion;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.roles.PermisoModificarColeccion;
-import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IColeccionRepository;
-import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IHechoRepository;
-import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IHechosExternosRepository;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IUserRepository;
+import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.implReal.IColeccionRepositoryJPA;
+import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.implReal.IHechoRepositoryJPA;
+import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.implReal.IOrigenRepositoryJPA;
+import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.specifications.HechoSpecification;
 import ar.edu.utn.frba.dds.servicioAgregador.services.clients.ClientFuente;
 import ar.edu.utn.frba.dds.servicioAgregador.services.mappers.MapColeccionOutput;
 import ar.edu.utn.frba.dds.servicioAgregador.services.mappers.MapHechoOutput;
@@ -31,41 +32,41 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.Setter;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Service
 public class ColeccionService implements IColeccionService{
-  private final IColeccionRepository coleccionRepository;
+  private final IColeccionRepositoryJPA coleccionRepository;
   private final IUserRepository userRepository;
-  private final IHechoRepository hechoRepository;
+  private final IHechoRepositoryJPA hechoRepository;
   @Setter
   private MapColeccionOutput mapperColeccionOutput;
   @Setter
   private MapHechoOutput mapperHechoOutput;
   private final FactoryAlgoritmo algoritmoFactory;
   private final FactoryClientFuente clientFuenteFactory;
-  private final IHechosExternosRepository hechosExternosRepository;
   private final VerificadorNormalizador verificadorNormalizador;
+  private final IOrigenRepositoryJPA origenRepository;
 
-  public ColeccionService(IColeccionRepository coleccionRepository,
+  public ColeccionService(IColeccionRepositoryJPA coleccionRepository,
                           IUserRepository userRepository,
-                          IHechoRepository hechoRepository,
+                          IHechoRepositoryJPA hechoRepository,
                           FactoryAlgoritmo algoritmoFactory,
                           FactoryClientFuente clientFuenteFactory,
-                          IHechosExternosRepository hechosExternosRepository,
                           MapColeccionOutput mapperColeccionOutput,
-                          MapHechoOutput mapperHechoOutput, VerificadorNormalizador verificadorNormalizador) {
+                          MapHechoOutput mapperHechoOutput, VerificadorNormalizador verificadorNormalizador, HechoSpecification hechoSpecification, IOrigenRepositoryJPA origenRepository) {
     this.coleccionRepository = coleccionRepository;
     this.userRepository = userRepository;
     this.hechoRepository = hechoRepository;
     this.algoritmoFactory = algoritmoFactory;
     this.clientFuenteFactory = clientFuenteFactory;
-    this.hechosExternosRepository = hechosExternosRepository;
     this.mapperColeccionOutput = mapperColeccionOutput;
     this.mapperHechoOutput = mapperHechoOutput;
     this.verificadorNormalizador = verificadorNormalizador;
+    this.origenRepository = origenRepository;
   }
 
 
@@ -103,35 +104,47 @@ public class ColeccionService implements IColeccionService{
     return Flux.fromIterable(fuenteColeccions)
             .flatMap(fuente -> {
               List<Hecho> hechos = this.getHechosClient(fuente.getOrigen(), null);
-              hechos = hechos.stream().map(this.hechoRepository::saveHecho).toList();
+              hechos.forEach(hecho -> hecho.setOrigen(this.saveOrigenHechoNuevo(hecho.getOrigen())));
+              hechos = hechos.stream().map(this.hechoRepository::save).toList();
               hechos.forEach(this::verSiNormalizar);
-              hechos.forEach(this.hechosExternosRepository::save);
               return Mono.empty();
             }).then();
   }
 
+  private Origen saveOrigenHechoNuevo(Origen origen) {
+    Origen origenObtenido = null;
+    if(origen.getTipo() == TipoOrigen.PROXY)
+      origenObtenido = this.origenRepository.findByUrlAndTipoAndClientNombre(origen.getUrl(), origen.getTipo(), origen.getNombreAPI());
+    else
+      origenObtenido = this.origenRepository.findByUrlAndTipo(origen.getUrl(), origen.getTipo());
+    if(origenObtenido == null) {
+      origenObtenido = this.origenRepository.save(origen);
+    }
+    return origenObtenido;
+  }
+
   private void verSiNormalizar(Hecho hecho) {
-    Long idInterno =  this.hechosExternosRepository.findByIDExterno(hecho.getId());
-    if(idInterno != null) {
-      Hecho hechoInterno = this.hechoRepository.findById(idInterno);
-      if(this.verificadorNormalizador.estaNormalizado(hechoInterno, hecho)) {
+    Hecho hechoInterno =  this.hechoRepository.findByIdExternoAndOrigen(hecho.getIdExterno(), hecho.getOrigen());
+    if(hechoInterno != null && this.verificadorNormalizador.estaNormalizado(hechoInterno, hecho)) {
         hecho.marcarComoNormalizado();
         hecho.setTitulo(hechoInterno.getTitulo());
         hecho.setUbicacion(hechoInterno.getUbicacion());
         hecho.setCategoria(hechoInterno.getCategoria());
-      }
     }
   }
 
   @Override
   public List<ColeccionDTOOutput> getAllColecciones(){
-    Set<Coleccion> colecciones = this.coleccionRepository.findAll();
+    List<Coleccion> colecciones = this.coleccionRepository.findAll();
     return colecciones.stream().map(this.mapperColeccionOutput::toColeccionDTOOutput).collect(Collectors.toList());
   }
 
   @Override
   public ConjuntoHechoCompleto getHechosPorColeccion(UUID idColeccion, FiltroDTO filtro) {
-    Coleccion coleccion = this.coleccionRepository.findById(idColeccion);
+    Coleccion coleccion = this.coleccionRepository.findById(idColeccion).orElse(null);
+    if (coleccion == null) {
+      throw  new ColeccionNoEncontrada("No se ha encontrado la coleccion de id " + idColeccion);
+    }
     coleccion.getFuenteColeccions().forEach(fuente -> this.cargarHechosEnFuente(fuente, filtro));
     List<Hecho> hechos = coleccion.getHechos();
     if(filtro.getCurada()){
@@ -151,7 +164,7 @@ public class ColeccionService implements IColeccionService{
       throw new UsuarioSinPermiso("Se debe tener permisos de administrador");
     }
 
-    Coleccion coleccion = this.coleccionRepository.findById(idColeccion);
+    Coleccion coleccion = this.coleccionRepository.findById(idColeccion).orElse(null);
     if(coleccion == null) {
       throw new ColeccionNoEncontrada("No existe la coleccion con el identificador enviado");
     }
@@ -182,13 +195,14 @@ public class ColeccionService implements IColeccionService{
     if(filtro.getEntiemporeal() &&  fuenteColeccion.getOrigen().getTipo() == TipoOrigen.PROXY) {
       hechos.addAll(this.getHechosClient(fuenteColeccion.getOrigen(), filtro));
     } else {
-      hechos.addAll(this.hechoRepository.findByOrigenWithFiltros(fuenteColeccion.getOrigen(), filtro));
+      Specification<Hecho> especificacionFiltros = HechoSpecification.filterBy(filtro, fuenteColeccion.getOrigen());
+      hechos.addAll(this.hechoRepository.findAll(especificacionFiltros));
     }
     fuenteColeccion.actualizarHechos(hechos);
   }
 
   public Mono<Void> consensuarHechos() {
-    Set<Coleccion> colecciones = this.coleccionRepository.findAll();
+    List<Coleccion> colecciones = this.coleccionRepository.findAll();
     Set<FuenteColeccion> fuenteColeccions = new HashSet<>();
     colecciones.forEach(coleccion -> fuenteColeccions.addAll(coleccion.getFuenteColeccions()));
     fuenteColeccions.forEach(fuente -> fuente.actualizarHechos(this.hechoRepository.findByOrigen(fuente.getOrigen())));

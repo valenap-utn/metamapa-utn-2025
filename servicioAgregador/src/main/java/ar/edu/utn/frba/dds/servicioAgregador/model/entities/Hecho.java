@@ -38,6 +38,10 @@ public class Hecho {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Getter @Setter private Long id;
 
+    @Column(nullable = false, name = "id_externo")
+    @Getter @Setter
+    private Long idExterno;
+
     @Column(nullable = false, name = "titulo")
     @Setter @Getter private String titulo;
 
@@ -87,6 +91,7 @@ public class Hecho {
     @Builder.Default
     @Getter private Boolean normalizado = false;
 
+
     public void agregarEtiquetas(String ... etiquetas) {
         this.etiquetas.addAll(List.of(etiquetas));
     }
@@ -118,9 +123,6 @@ public class Hecho {
         return this.algosAceptados.contains(algoritmoConsenso);
     }
 
-    public Long getIdExterno() {
-        return this.origen.getIdExterno();
-    }
 
   public Long getIdUsuario() {
         return this.usuario.getId();

@@ -1,6 +1,6 @@
 package ar.edu.utn.frba.dds.servicioUsuario.filters;
 
-import ar.utn.ba.ddsi.gestionDeAlumnosServer.utils.JwtUtil;
+import ar.edu.utn.frba.dds.servicioUsuario.utils.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,7 +23,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (header != null && header.startsWith("Bearer ")) {
             String token = header.substring(7);
             try {
-                String username = JwtUtil.validarToken(token);
+                String username =
+                        JwtUtil.validarToken(token);
                 var auth = new UsernamePasswordAuthenticationToken(
                     username, 
                     null, 

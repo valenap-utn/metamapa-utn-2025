@@ -30,18 +30,14 @@ public class Origen {
   @Enumerated(EnumType.STRING)
   @Column(name = "tipo", nullable = false)
   private TipoOrigen tipo;
-
   @Column(name = "url", nullable = false)
   private String url;
-  @Column(name = "id_externo")
-  private Long idExterno;
   @Column(name = "nombreAPI")
   private String nombreAPI;
 
-  public Origen(TipoOrigen tipoOrigen, String url, Long id, String fuente) {
+  public Origen(TipoOrigen tipoOrigen, String url, String fuente) {
     this.tipo = tipoOrigen;
     this.url = url;
-    this.idExterno = id;
     this.nombreAPI = fuente;
   }
 

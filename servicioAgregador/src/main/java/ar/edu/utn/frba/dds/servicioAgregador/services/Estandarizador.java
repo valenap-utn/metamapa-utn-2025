@@ -5,9 +5,12 @@ import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Direccion;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Ubicacion;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.normalizacion.IBuscadorFullTextSearch;
-import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.ICategoriaRepository;
-import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IDireccionRepository;
-import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IHechoRepository;
+import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.implReal.IDireccionRepository;
+import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.implEspecifica.ICategoriaRepositoryFullTextSearch;
+import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.implEspecifica.IDireccionRepositoryFullTextSearch;
+import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.implEspecifica.IHechoRepositoryFullTextSearch;
+import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.implReal.ICategoriaRepositoryJPA;
+import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.implReal.IHechoRepositoryJPA;
 import ar.edu.utn.frba.dds.servicioAgregador.services.clients.ClientAPIGobierno;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,16 +21,25 @@ import reactor.core.publisher.Mono;
 
 @Service
 public class Estandarizador implements IEstandarizador {
-  private final IHechoRepository hechoRepository;
-  private final ICategoriaRepository categoriaRepository;
+  private final IHechoRepositoryFullTextSearch hechoRepositoryFTS;
+  private final IHechoRepositoryJPA hechoRepository;
+  private final ICategoriaRepositoryFullTextSearch categoriaRepositoryFTS;
+  private final ICategoriaRepositoryJPA categoriaRepository;
   private final IBuscadorFullTextSearch buscadorFullTextSearch;
+  private final IDireccionRepositoryFullTextSearch direccionRepositoryFTS;
   private final IDireccionRepository direccionRepository;
   private final ClientAPIGobierno apiGobierno;
 
-  public Estandarizador(IHechoRepository hechoRepository, ICategoriaRepository categoriaRepository, IBuscadorFullTextSearch buscadorFullTextSearch, IDireccionRepository direccionRepository, ClientAPIGobierno apiGobierno) {
+  public Estandarizador(IHechoRepositoryFullTextSearch hechoRepositoryFTS, IHechoRepositoryJPA hechoRepository,
+                        ICategoriaRepositoryFullTextSearch categoriaRepositoryFTS, ICategoriaRepositoryJPA categoriaRepository,
+                        IBuscadorFullTextSearch buscadorFullTextSearch, IDireccionRepositoryFullTextSearch direccionRepositoryFTS,
+                        IDireccionRepository direccionRepository, ClientAPIGobierno apiGobierno) {
+    this.hechoRepositoryFTS = hechoRepositoryFTS;
     this.hechoRepository = hechoRepository;
+    this.categoriaRepositoryFTS = categoriaRepositoryFTS;
     this.categoriaRepository = categoriaRepository;
     this.buscadorFullTextSearch = buscadorFullTextSearch;
+    this.direccionRepositoryFTS = direccionRepositoryFTS;
     this.direccionRepository = direccionRepository;
     this.apiGobierno = apiGobierno;
   }
@@ -36,7 +48,8 @@ public class Estandarizador implements IEstandarizador {
     List<Hecho> hechos = hechoRepository.findByNormalizado(false);
     List<Hecho> hechosCopia = new ArrayList<>(hechos);
     return Flux.fromIterable(hechos)
-            .flatMap(hecho -> this.estandarizarHecho(hecho, hechosCopia)).then();
+            .flatMap(hecho -> this.estandarizarHecho(hecho, hechosCopia))
+            .then();
   }
 
   private Mono<Void> estandarizarHecho(Hecho hecho, List<Hecho> hechosDesnormalizados) {
@@ -46,6 +59,7 @@ public class Estandarizador implements IEstandarizador {
               this.estandarizarCategoria(hechoAmodificar, hechosDesnormalizados);
               this.estandarizarUbicacion(hechoAmodificar, hechosDesnormalizados);
               hechoAmodificar.marcarComoNormalizado();
+              this.hechoRepository.save(hecho);
               return Mono.empty();
             }
             ).then();
@@ -54,7 +68,7 @@ public class Estandarizador implements IEstandarizador {
 
 
   private void estandarizarCategoria(Hecho hechoAmodificar, List<Hecho> hechosDesnormalizados) {
-    List<Categoria> categorias = this.categoriaRepository.findByFullTextSearch(hechoAmodificar.getNombreCategoria());
+    List<Categoria> categorias = this.categoriaRepositoryFTS.findByFullTextSearch(hechoAmodificar.getNombreCategoria());
     Categoria categoria = categorias.stream().findFirst().orElse(null);
     if (categoria == null) {
       categoria = new Categoria();
@@ -66,7 +80,7 @@ public class Estandarizador implements IEstandarizador {
   }
 
   private void estandarizarTitulo(Hecho hechoAmodificar, List<Hecho> hechosDesnormalizados) {
-    List<Hecho> hechos = this.hechoRepository.findByFullTextSearch(hechoAmodificar.getTitulo());
+    List<Hecho> hechos = this.hechoRepositoryFTS.findByFullTextSearch(hechoAmodificar.getTitulo());
     String titulo = hechos.stream().map(Hecho::getTitulo).findFirst().orElse(null);
     if (titulo == null) {
       List<String> titulos =  hechosDesnormalizados.stream().map(Hecho::getTitulo).toList();
@@ -83,7 +97,7 @@ public class Estandarizador implements IEstandarizador {
       ubicacion.setDireccion(direccion);
       fuePedidoPorAPI = true;
     }
-    List<Direccion> direcciones = this.direccionRepository.findByFullTextSearch(hechoAmodificar.getDireccion());
+    List<Direccion> direcciones = this.direccionRepositoryFTS.findByFullTextSearch(hechoAmodificar.getDireccion());
     Direccion direccion = direcciones.stream().findFirst().orElse(null);
     if (direccion == null && !fuePedidoPorAPI) {
       direccion = new Direccion();
@@ -94,8 +108,9 @@ public class Estandarizador implements IEstandarizador {
               direccionesHechos.stream().map(Direccion::getProvincia).toList()));
       direccion.setMunicipio(this.buscadorFullTextSearch.crearNombreNormalizadoCon(hechoAmodificar.getDireccion().getMunicipio(),
               direccionesHechos.stream().map(Direccion::getMunicipio).toList()));
-    } else if (!fuePedidoPorAPI) {
+    } else if (fuePedidoPorAPI) {
       hechoAmodificar.setDireccion(direccion);
     }
+    this.direccionRepository.save(hechoAmodificar.getDireccion());
   }
 }
