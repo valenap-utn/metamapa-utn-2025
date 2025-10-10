@@ -1,6 +1,7 @@
 package ar.edu.utn.frba.dds.servicioAgregador.services;
 
 import ar.edu.utn.frba.dds.servicioAgregador.exceptions.ColeccionNoEncontrada;
+import ar.edu.utn.frba.dds.servicioAgregador.exceptions.ColeccionYaEliminada;
 import ar.edu.utn.frba.dds.servicioAgregador.exceptions.UsuarioNoEncontrado;
 import ar.edu.utn.frba.dds.servicioAgregador.exceptions.UsuarioSinPermiso;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.VerificadorNormalizador;
@@ -57,7 +58,7 @@ public class ColeccionService implements IColeccionService{
                           FactoryAlgoritmo algoritmoFactory,
                           FactoryClientFuente clientFuenteFactory,
                           MapColeccionOutput mapperColeccionOutput,
-                          MapHechoOutput mapperHechoOutput, VerificadorNormalizador verificadorNormalizador, HechoSpecification hechoSpecification, IOrigenRepositoryJPA origenRepository) {
+                          MapHechoOutput mapperHechoOutput, VerificadorNormalizador verificadorNormalizador, IOrigenRepositoryJPA origenRepository) {
     this.coleccionRepository = coleccionRepository;
     this.userRepository = userRepository;
     this.hechoRepository = hechoRepository;
@@ -112,7 +113,7 @@ public class ColeccionService implements IColeccionService{
   }
 
   private Origen saveOrigenHechoNuevo(Origen origen) {
-    Origen origenObtenido = null;
+    Origen origenObtenido;
     if(origen.getTipo() == TipoOrigen.PROXY)
       origenObtenido = this.origenRepository.findByUrlAndTipoAndClientNombre(origen.getUrl(), origen.getTipo(), origen.getNombreAPI());
     else
@@ -181,7 +182,15 @@ public class ColeccionService implements IColeccionService{
 
   @Override
   public ColeccionDTOOutput eliminarColeccion(UUID id) {
-    return null;
+    Coleccion coleccion = this.coleccionRepository.findById(id).orElse(null);
+    if (coleccion == null) {
+      throw new ColeccionNoEncontrada("La colección de id " + id + " no existe");
+    }
+    if (coleccion.getEliminada() == true) {
+      throw new ColeccionYaEliminada("La coleccion de id " + id + "ya está eliminada");
+    }
+    coleccion.marcarComoEliminada();
+    return this.mapperColeccionOutput.toColeccionDTOOutput(coleccion);
   }
 
 

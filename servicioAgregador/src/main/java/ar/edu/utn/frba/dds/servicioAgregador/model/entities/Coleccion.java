@@ -39,8 +39,8 @@ public class Coleccion {
     @Convert(converter = AlgoritmoConsensoConverter.class)
     @Column(name = "algoritmo_consenso")
     private AlgoritmoConsenso algoritmoConsenso;
-
-
+    @Column(name = "eliminada")
+    private Boolean eliminada = Boolean.FALSE;
     public Coleccion() {
         this.fuenteColeccions = new ArrayList<>();
         this.criteriosDePertenencia = new ArrayList<>();
@@ -99,6 +99,10 @@ public class Coleccion {
     public void actualizarCriterios(List<Filtro> Criterios ) {
         this.criteriosDePertenencia.clear();
         this.criteriosDePertenencia.addAll(Criterios);
+    }
+
+    public void marcarComoEliminada() {
+        this.eliminada = Boolean.TRUE;
     }
 }
 

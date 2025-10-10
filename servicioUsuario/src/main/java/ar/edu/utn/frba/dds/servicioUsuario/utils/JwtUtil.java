@@ -1,6 +1,9 @@
 package ar.edu.utn.frba.dds.servicioUsuario.utils;
 
-import io.jsonwebtoken.*;
+
+import ar.edu.utn.frba.dds.servicioUsuario.models.entities.Usuario;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import java.security.Key;
 import java.util.Date;
@@ -13,21 +16,23 @@ public class JwtUtil {
     private static final long ACCESS_TOKEN_VALIDITY = 15 * 60 * 1000; // 15 min
     private static final long REFRESH_TOKEN_VALIDITY = 7 * 24 * 60 * 60 * 1000; // 7 días
 
-    public static String generarAccessToken(String username) {
+    public static String generarAccessToken(Usuario usuario) {
         return Jwts.builder()
-                .setSubject(username)
+                .setSubject(usuario.getEmail())
                 .setIssuer("gestion-alumnos-server")
                 .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_VALIDITY))
+                .claim("idUsuario", usuario.getId())
                 .signWith(key)
                 .compact();
     }
 
-    public static String generarRefreshToken(String username) {
+    public static String generarRefreshToken(Usuario usuario) {
         return Jwts.builder()
-                .setSubject(username)
+                .setSubject(usuario.getEmail())
                 .setIssuer("gestion-alumnos-server")
                 .setExpiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_VALIDITY))
                 .claim("type", "refresh") // diferenciamos refresh del access
+                .claim("idUsuario", usuario.getId())
                 .signWith(key)
                 .compact();
     }
