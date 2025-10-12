@@ -2,6 +2,7 @@ package ar.edu.utn.frba.dds.servicioAgregador.controllers;
 
 
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.ConjuntoSolicitudesOutput;
+import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.RevisionDTO;
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.SolicitudInputDTO;
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.SolicitudOutputDTO;
 import ar.edu.utn.frba.dds.servicioAgregador.services.ISolicitudService;
@@ -36,13 +37,13 @@ public class SolicitudController {
   }
 
   @PatchMapping("/{id}")
-  public ResponseEntity<SolicitudOutputDTO> actualizarSolicitud(@PathVariable Long id) {
-    return ResponseEntity.ok(this.solicitudService.aceptarSolicitud(id));
+  public ResponseEntity<SolicitudOutputDTO> actualizarSolicitud(@PathVariable Long id, @RequestBody RevisionDTO revisionDTO) {
+    return ResponseEntity.ok(this.solicitudService.aceptarSolicitud(id, revisionDTO));
   }
 
   @DeleteMapping("/{id}")
-  public ResponseEntity<SolicitudOutputDTO> eliminarSolicitud(@PathVariable Long id) {
-    return ResponseEntity.ok(this.solicitudService.eliminarSolicitud(id));
+  public ResponseEntity<SolicitudOutputDTO> eliminarSolicitud(@PathVariable Long id, @RequestBody RevisionDTO revisionDTO) {
+    return ResponseEntity.ok(this.solicitudService.eliminarSolicitud(id, revisionDTO));
   }
 
   @GetMapping

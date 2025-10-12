@@ -1,5 +1,6 @@
 package ar.edu.utn.frba.dds.servicioAgregador.model.entities;
 
+import ar.edu.utn.frba.dds.servicioAgregador.exceptions.ColeccionConDatosErroneos;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.algoritmosConsenso.AlgoritmoConsenso;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.algoritmosConsenso.TodosConsensuados;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.filtros.Filtro;
@@ -29,7 +30,8 @@ public class Coleccion {
     @Column(columnDefinition = "TEXT", nullable = false)
     private String descripcion;
 
-    @OneToMany(mappedBy = "coleccion",cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
+    @JoinColumn(name = "coleccion_id")
     private final List<FuenteColeccion> fuenteColeccions;
 
     @OneToMany(cascade = CascadeType.ALL)
@@ -49,9 +51,11 @@ public class Coleccion {
     public Coleccion(String titulo, String descripcion, AlgoritmoConsenso algoritmoConsenso) {
         this.titulo = titulo;
         this.descripcion = descripcion;
+        if (titulo == null || descripcion == null) {
+            throw new ColeccionConDatosErroneos("Falta el titulo y/o la descripcion");
+        }
         this.fuenteColeccions = new ArrayList<>();
         this.criteriosDePertenencia = new ArrayList<>();
-        this.criteriosDePertenencia.add(new FiltroNoEstaEliminado());
 
         AlgoritmoConsenso algoritmoElegido = algoritmoConsenso;
         if(algoritmoConsenso == null)

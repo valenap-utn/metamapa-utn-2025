@@ -2,12 +2,14 @@ package ar.edu.utn.frba.dds.servicioAgregador.model.entities;
 
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.roles.Permiso;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.roles.Rol;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
@@ -35,8 +37,8 @@ public class Usuario {
   @Column(name="fecha_nacimiento")
   private LocalDate fechaDeNacimiento;
 
-  @JoinColumn(name = "rol_id")
-  @OneToOne
+  @JoinColumn(name = "rol_id", referencedColumnName = "id", nullable = false)
+  @ManyToOne(cascade = CascadeType.PERSIST)
   private Rol rol;
 
   public static Usuario of(Long id){

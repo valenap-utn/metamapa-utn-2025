@@ -1,6 +1,7 @@
 package ar.edu.utn.frba.dds.servicioAgregador.model.entities;
 
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.origenes.Origen;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Transient;
 import java.util.Collection;
 import java.util.HashSet;
@@ -26,15 +27,13 @@ public class FuenteColeccion {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(optional = false, fetch=FetchType.EAGER)
+    @ManyToOne(optional = false, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "origen_id", nullable = false, referencedColumnName = "id")
     @Getter private final Origen origen;
 
     @Transient
     @Getter private final Set<Hecho> hechos = new HashSet<>();
-    @ManyToOne
-    @JoinColumn(name = "coleccion_id", nullable = false, referencedColumnName = "id")
-    @Getter private Coleccion coleccion;
+
 
     public FuenteColeccion(Origen origen) {
         this.origen = origen;

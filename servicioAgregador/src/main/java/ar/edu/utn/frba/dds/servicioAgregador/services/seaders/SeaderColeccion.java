@@ -11,10 +11,15 @@ import ar.edu.utn.frba.dds.servicioAgregador.model.entities.algoritmosConsenso.T
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.filtros.FiltroPorFechaCarga;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.origenes.Origen;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.origenes.TipoOrigen;
+import ar.edu.utn.frba.dds.servicioAgregador.model.entities.roles.Administrador;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.roles.Contribuyente;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IColeccionRepository;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IHechoRepository;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IUserRepository;
+import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.implReal.IColeccionRepositoryJPA;
+import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.implReal.IHechoRepositoryJPA;
+import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.implReal.IUserRepositoryJPA;
+import jakarta.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -23,22 +28,23 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class SeaderColeccion {
-  private final IColeccionRepository coleccionRepository;
-  private final IHechoRepository hechoRepository;
+  private final IColeccionRepositoryJPA coleccionRepository;
+  private final IHechoRepositoryJPA hechoRepository;
   @Value("${api.url.fuenteProxy}")
   private String urlFuenteProxy;
   @Value("${api.url.fuenteDinamica}")
   private String urlFuenteDinamica;
   @Value("${api.url.fuenteEstatica}")
   private String urlFuenteEstatica;
-  private final IUserRepository userRepository;
+  private final IUserRepositoryJPA userRepository;
 
-  public SeaderColeccion(IColeccionRepository coleccionRepository, IHechoRepository hechoRepository, IUserRepository userRepository) {
+  public SeaderColeccion(IColeccionRepositoryJPA coleccionRepository, IHechoRepositoryJPA hechoRepository, IUserRepositoryJPA userRepository) {
     this.coleccionRepository = coleccionRepository;
     this.hechoRepository = hechoRepository;
     this.userRepository = userRepository;
   }
 
+  @Transactional
   public void init() {
     Origen origenDinamica = Origen.builder().url(this.urlFuenteDinamica).tipo(TipoOrigen.DINAMICA).build();
     Origen origenEstatica = Origen.builder().url(this.urlFuenteEstatica).tipo(TipoOrigen.DATASET).build();
@@ -60,14 +66,16 @@ public class SeaderColeccion {
     coleccion2.setTitulo("Terremotos");
     coleccion2.setDescripcion("Tiene los terremotos que ocurren cerca de la cordillera de los andes");
     coleccion2.setAlgoritmoConsenso(new MayoriaSimple());
-    coleccion2.agregarFuentes(List.of(fuenteColeccionDinamica));
+    //coleccion2.agregarFuentes(List.of(fuenteColeccionDinamica));
     coleccion2.agregarFuentes(List.of(fuenteColeccionProxy));
 
     this.coleccionRepository.save(coleccion);
     this.coleccionRepository.save(coleccion2);
     ContenidoMultimedia contenidoMultimedia = new ContenidoMultimedia();
+    Usuario admin = Usuario.of(new Administrador(), "Marcos", "Romualdo");
     Usuario contribuyente = Usuario.of(new Contribuyente(), "Carlos", "Romualdo");
     Usuario contribuyente2 = Usuario.of(new Contribuyente(), "Josefina", "Mariel");
+    this.userRepository.save(admin);
     this.userRepository.save(contribuyente);
     this.userRepository.save(contribuyente2);
     // Creación de hechos
@@ -79,6 +87,7 @@ public class SeaderColeccion {
             .contenidoMultimedia(contenidoMultimedia)
             .origen(origenDinamica)
             .usuario(contribuyente)
+            .idExterno(1L)
             .build();
 
     Hecho hecho2 = Hecho.builder().origen(origenDinamica)
@@ -89,9 +98,10 @@ public class SeaderColeccion {
             .fechaAcontecimiento(LocalDateTime.of(2025, 3, 7, 0 , 0))
             .usuario(contribuyente2)
             .origen(origenDinamica)
+            .idExterno(2L)
             .build();
 
-    this.hechoRepository.saveHecho(hecho);
-    this.hechoRepository.saveHecho(hecho2);
+    this.hechoRepository.save(hecho);
+    this.hechoRepository.save(hecho2);
   }
 }

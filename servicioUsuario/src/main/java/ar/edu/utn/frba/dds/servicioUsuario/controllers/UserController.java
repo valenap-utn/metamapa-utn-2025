@@ -28,7 +28,7 @@ public class UserController {
     this.userService = userService;
   }
 
-  @GetMapping("/usuarios/crear")
+  @PostMapping("/usuarios")
   public ResponseEntity<UsuarioCreadoDTO> crearUsuario(UsuarioNuevoDTO usuario) {
     return ResponseEntity.status(HttpStatus.CREATED).body(userService.crearUsuario(usuario));
   }
@@ -48,7 +48,6 @@ public class UserController {
   public ResponseEntity<AuthResponseDTO> refresh(@RequestBody RefreshTokenDTO request) {
     try {
       return ResponseEntity.ok(this.userService.hacerElRefrescoDeSesion(request));
-
     } catch (Exception e) {
       return ResponseEntity.badRequest().build();
     }

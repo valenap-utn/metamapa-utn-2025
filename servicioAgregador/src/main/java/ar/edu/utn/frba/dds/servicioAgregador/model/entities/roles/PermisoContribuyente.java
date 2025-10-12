@@ -4,9 +4,6 @@ import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 
 @Entity
-@DiscriminatorValue("MODIFICARCOLECCION")
-public class PermisoModificarColeccion extends Permiso {
-  public PermisoModificarColeccion() {
-    super("");
-  }
+@DiscriminatorValue("CONTRIBUYENTE")
+public class PermisoContribuyente extends Permiso {
 }

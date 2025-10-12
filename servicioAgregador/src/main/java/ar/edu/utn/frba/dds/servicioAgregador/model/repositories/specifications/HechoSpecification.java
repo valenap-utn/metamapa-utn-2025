@@ -6,6 +6,7 @@ import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.origenes.Origen;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
+import jakarta.persistence.criteria.Path;
 import java.time.LocalDate;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
@@ -17,9 +18,11 @@ public class HechoSpecification {
   private static final String FECHACARGA = "fecha_carga";
   private static final String CATEGORIA = "categoria_id";
   private static final String CATEGORIANOMBRE = "nombre";
+  private static final String ELIMINADO = "eliminado";
   public static Specification<Hecho> filterBy(FiltroDTO filtro, Origen origen) {
     return Specification
             .where(tieneOrigen(origen))
+            .and(noEstaEliminado())
             .and(tieneFechaCargaInicio(filtro.getFecha_reporte_desde()))
             .and(tieneFechaCargaFin(filtro.getFecha_reporte_hasta()))
             .and(tieneFechaAcontecimientoInicio(filtro.getFecha_acontecimiento_desde()))
@@ -27,8 +30,17 @@ public class HechoSpecification {
             .and(tieneCategoria(filtro.getCategoria()));
   }
 
+  private static Specification<Hecho> noEstaEliminado() {
+    return ((root, query, cb) -> cb.equal(root.get(HechoSpecification.ELIMINADO), Boolean.FALSE));
+  }
   private static Specification<Hecho> tieneOrigen(Origen origen) {
-    return ((root, query, cb) -> origen == null ? cb.conjunction() : cb.equal(root.get(HechoSpecification.ORIGEN), origen.getId()));
+    return ((root, query, cb) -> {
+     if (origen == null) {
+      return cb.conjunction();
+     }
+     Path<Origen> origen1 = root.get("origen");
+     return cb.equal(origen1.get("id"), origen.getId());
+    });
   }
 
   private static Specification<Hecho> tieneCategoria(String categoria) {

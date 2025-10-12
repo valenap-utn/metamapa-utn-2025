@@ -1,5 +1,6 @@
 package ar.edu.utn.frba.dds.servicioAgregador.services;
 
+import ar.edu.utn.frba.dds.servicioAgregador.exceptions.ColeccionConDatosErroneos;
 import ar.edu.utn.frba.dds.servicioAgregador.exceptions.ColeccionNoEncontrada;
 import ar.edu.utn.frba.dds.servicioAgregador.exceptions.ColeccionYaEliminada;
 import ar.edu.utn.frba.dds.servicioAgregador.exceptions.UsuarioNoEncontrado;
@@ -18,14 +19,17 @@ import ar.edu.utn.frba.dds.servicioAgregador.model.entities.origenes.Origen;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.origenes.TipoOrigen;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.roles.PermisoCrearColeccion;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.roles.PermisoModificarColeccion;
-import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IUserRepository;
+import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.implEspecifica.ICategoriaRepositoryFullTextSearch;
+import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.implReal.ICategoriaRepositoryJPA;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.implReal.IColeccionRepositoryJPA;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.implReal.IHechoRepositoryJPA;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.implReal.IOrigenRepositoryJPA;
+import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.implReal.IUserRepositoryJPA;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.specifications.HechoSpecification;
 import ar.edu.utn.frba.dds.servicioAgregador.services.clients.ClientFuente;
 import ar.edu.utn.frba.dds.servicioAgregador.services.mappers.MapColeccionOutput;
 import ar.edu.utn.frba.dds.servicioAgregador.services.mappers.MapHechoOutput;
+import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -41,7 +45,7 @@ import reactor.core.publisher.Mono;
 @Service
 public class ColeccionService implements IColeccionService{
   private final IColeccionRepositoryJPA coleccionRepository;
-  private final IUserRepository userRepository;
+  private final IUserRepositoryJPA userRepository;
   private final IHechoRepositoryJPA hechoRepository;
   @Setter
   private MapColeccionOutput mapperColeccionOutput;
@@ -51,14 +55,15 @@ public class ColeccionService implements IColeccionService{
   private final FactoryClientFuente clientFuenteFactory;
   private final VerificadorNormalizador verificadorNormalizador;
   private final IOrigenRepositoryJPA origenRepository;
-
+  private final ICategoriaRepositoryJPA categoriaRepositoryJPA;
+  private final ICategoriaRepositoryFullTextSearch categoriaRepositoryFullTextSearch;
   public ColeccionService(IColeccionRepositoryJPA coleccionRepository,
-                          IUserRepository userRepository,
+                          IUserRepositoryJPA userRepository,
                           IHechoRepositoryJPA hechoRepository,
                           FactoryAlgoritmo algoritmoFactory,
                           FactoryClientFuente clientFuenteFactory,
                           MapColeccionOutput mapperColeccionOutput,
-                          MapHechoOutput mapperHechoOutput, VerificadorNormalizador verificadorNormalizador, IOrigenRepositoryJPA origenRepository) {
+                          MapHechoOutput mapperHechoOutput, VerificadorNormalizador verificadorNormalizador, IOrigenRepositoryJPA origenRepository, ICategoriaRepositoryJPA categoriaRepositoryJPA, ICategoriaRepositoryFullTextSearch categoriaRepositoryFullTextSearch) {
     this.coleccionRepository = coleccionRepository;
     this.userRepository = userRepository;
     this.hechoRepository = hechoRepository;
@@ -68,12 +73,15 @@ public class ColeccionService implements IColeccionService{
     this.mapperHechoOutput = mapperHechoOutput;
     this.verificadorNormalizador = verificadorNormalizador;
     this.origenRepository = origenRepository;
+    this.categoriaRepositoryJPA = categoriaRepositoryJPA;
+    this.categoriaRepositoryFullTextSearch = categoriaRepositoryFullTextSearch;
   }
 
 
   @Override
+  @Transactional
   public ColeccionDTOOutput crearColeccion(ColeccionDTOInput coleccionInput) {
-    Usuario usuarioSolicitante = this.userRepository.findById(coleccionInput.getUsuario());
+    Usuario usuarioSolicitante = this.userRepository.findById(coleccionInput.getUsuario()).orElse(null);
     if(usuarioSolicitante == null) {
       throw new UsuarioNoEncontrado("El usuario con el identificador administrado no existe");
     }
@@ -83,16 +91,24 @@ public class ColeccionService implements IColeccionService{
     }
 
     Coleccion coleccionCreada = new Coleccion(coleccionInput.getTitulo(), coleccionInput.getDescripcion(), this.algoritmoFactory.getAlgoritmo(coleccionInput.getAlgoritmo()));
+    if(coleccionInput.getFuentes() == null || coleccionInput.getFuentes().isEmpty()) {
+      throw new ColeccionConDatosErroneos("Es necesario ingresar las fuentes para la colección");
+    }
+
     Set<FuenteColeccion> fuenteColeccions =  coleccionInput.getFuentes().stream().map(this.mapperColeccionOutput::toFuente).collect(Collectors.toSet());
     coleccionCreada.agregarFuentes(fuenteColeccions);
     List<Filtro> filtros = coleccionInput.getCriterios().stream().map(this.mapperColeccionOutput::toCriterio).toList();
     coleccionCreada.agregarCriterios(filtros);
 
+    fuenteColeccions.forEach(fuenteColeccion -> this.saveOrigenHechoNuevo(fuenteColeccion.getOrigen()));
     Coleccion coleccionGuardada = this.coleccionRepository.save(coleccionCreada);
     return this.mapperColeccionOutput.toColeccionDTOOutput(coleccionGuardada);
   }
 
+
+
   @Override
+  @Transactional
   public Mono<Void> actualizarHechosColecciones() {
     return Flux.fromIterable(this.coleccionRepository.findAll())
                     .flatMap(coleccion -> {
@@ -115,9 +131,12 @@ public class ColeccionService implements IColeccionService{
   private Origen saveOrigenHechoNuevo(Origen origen) {
     Origen origenObtenido;
     if(origen.getTipo() == TipoOrigen.PROXY)
-      origenObtenido = this.origenRepository.findByUrlAndTipoAndClientNombre(origen.getUrl(), origen.getTipo(), origen.getNombreAPI());
-    else
-      origenObtenido = this.origenRepository.findByUrlAndTipo(origen.getUrl(), origen.getTipo());
+      origenObtenido = this.origenRepository.findByUrlAndTipoAndClientNombre(origen.getUrl(), origen.getTipo(), origen.getNombreAPI()).get(0);
+    else{
+      List<Origen> origenes =this.origenRepository.findByUrlAndTipo(origen.getUrl(), origen.getTipo());
+      origenObtenido = origenes.get(0);
+    }
+
     if(origenObtenido == null) {
       origenObtenido = this.origenRepository.save(origen);
     }
@@ -135,12 +154,14 @@ public class ColeccionService implements IColeccionService{
   }
 
   @Override
+  @Transactional
   public List<ColeccionDTOOutput> getAllColecciones(){
     List<Coleccion> colecciones = this.coleccionRepository.findAll();
     return colecciones.stream().map(this.mapperColeccionOutput::toColeccionDTOOutput).collect(Collectors.toList());
   }
 
   @Override
+  @Transactional
   public ConjuntoHechoCompleto getHechosPorColeccion(UUID idColeccion, FiltroDTO filtro) {
     Coleccion coleccion = this.coleccionRepository.findById(idColeccion).orElse(null);
     if (coleccion == null) {
@@ -155,8 +176,9 @@ public class ColeccionService implements IColeccionService{
   }
 
   @Override
+  @Transactional
   public ColeccionDTOOutput cambiarColeccion(ColeccionDTOInput coleccionInput, UUID idColeccion) {
-    Usuario usuarioSolicitante = this.userRepository.findById(coleccionInput.getUsuario());
+    Usuario usuarioSolicitante = this.userRepository.findById(coleccionInput.getUsuario()).orElse(null);
     if(usuarioSolicitante == null) {
       throw new UsuarioNoEncontrado("El usuario con el identificador administrado no existe");
     }
@@ -176,11 +198,13 @@ public class ColeccionService implements IColeccionService{
     List<Filtro> filtros = coleccionInput.getCriterios().stream().map(this.mapperColeccionOutput::toCriterio).toList();
     coleccion.actualizarCriterios(filtros);
     coleccion.setAlgoritmoConsenso(this.algoritmoFactory.getAlgoritmo(coleccionInput.getAlgoritmo()));
+    fuenteColeccions.forEach(fuenteColeccion -> this.saveOrigenHechoNuevo(fuenteColeccion.getOrigen()));
     Coleccion coleccionGuardada = this.coleccionRepository.save(coleccion);
     return this.mapperColeccionOutput.toColeccionDTOOutput(coleccionGuardada);
   }
 
   @Override
+  @Transactional
   public ColeccionDTOOutput eliminarColeccion(UUID id) {
     Coleccion coleccion = this.coleccionRepository.findById(id).orElse(null);
     if (coleccion == null) {

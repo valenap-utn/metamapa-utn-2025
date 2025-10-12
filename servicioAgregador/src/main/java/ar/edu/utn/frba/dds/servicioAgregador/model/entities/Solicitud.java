@@ -27,7 +27,7 @@ public class Solicitud {
     @JoinColumn(name = "hecho_id", nullable = false, referencedColumnName = "id")
     @Getter @Setter private Hecho hecho;
 
-    @Column(nullable = false, name = "justificacion")
+    @Column(nullable = false, name = "justificacion", columnDefinition = "TEXT")
     @Getter @Setter private String justificacion;
 
     @Enumerated(EnumType.STRING)
@@ -41,6 +41,9 @@ public class Solicitud {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Getter @Setter private Long id;
+
+    @Column(name = "justificacion_cambio_estado")
+    @Getter @Setter private String justificacionCambioEstado;
 
     public Solicitud(Hecho hecho, Usuario usuario, String justificacion) {
         if (justificacion.length() < 500) {

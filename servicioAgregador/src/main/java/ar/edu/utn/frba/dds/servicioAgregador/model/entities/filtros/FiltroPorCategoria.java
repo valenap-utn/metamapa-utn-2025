@@ -4,7 +4,7 @@ package ar.edu.utn.frba.dds.servicioAgregador.model.entities.filtros;
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.CriterioDTO;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Categoria;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
-import jakarta.persistence.Column;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @DiscriminatorValue("CATEGORIA")
 public class FiltroPorCategoria extends Filtro {
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(referencedColumnName = "id", name = "categoria_id")
     private Categoria categoria;
 

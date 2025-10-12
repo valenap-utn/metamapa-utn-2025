@@ -45,4 +45,10 @@ public class JwtUtil {
                 .getBody()
                 .getSubject();
     }
+
+    public static Long getId(String token) {
+        return Jwts.parserBuilder().setSigningKey(key)
+                .build().parseClaimsJws(token).getBody()
+                .get("idUsuario", Long.class);
+    }
 }

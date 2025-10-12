@@ -7,6 +7,7 @@ import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
 
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.origenes.Origen;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -21,7 +22,7 @@ public class MapHechoOutput {
   public HechoDTOCompleto toHechoDTO(Hecho hecho) {
     HechoDTOCompleto hechoDTO = new HechoDTOCompleto();
     hechoDTO.setId(hecho.getId());
-    hechoDTO.setEtiquetas(hecho.getEtiquetas());
+    hechoDTO.setEtiquetas(hecho.getEtiquetas().stream().collect(Collectors.toSet()));
     hechoDTO.setCategoria(hecho.getCategoria());
     hechoDTO.setDescripcion(hecho.getDescripcion());
     hechoDTO.setContenidoMultimedia(hecho.getContenidoMultimedia());

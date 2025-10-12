@@ -12,6 +12,7 @@ import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.implEspecifica.I
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.implReal.ICategoriaRepositoryJPA;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.implReal.IHechoRepositoryJPA;
 import ar.edu.utn.frba.dds.servicioAgregador.services.clients.ClientAPIGobierno;
+import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,6 +45,7 @@ public class Estandarizador implements IEstandarizador {
     this.apiGobierno = apiGobierno;
   }
   @Override
+  @Transactional
   public Mono<Void> estandarizarHechos() {
     List<Hecho> hechos = hechoRepository.findByNormalizado(false);
     List<Hecho> hechosCopia = new ArrayList<>(hechos);

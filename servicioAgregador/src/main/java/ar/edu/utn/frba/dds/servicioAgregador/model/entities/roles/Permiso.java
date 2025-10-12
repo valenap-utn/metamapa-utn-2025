@@ -12,7 +12,7 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name="permiso")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-public class Permiso {
+public abstract class Permiso {
   @Id @GeneratedValue(strategy= GenerationType.IDENTITY)
   private Long id;
 

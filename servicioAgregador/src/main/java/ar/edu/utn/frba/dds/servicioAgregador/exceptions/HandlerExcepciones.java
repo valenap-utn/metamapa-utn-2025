@@ -26,6 +26,11 @@ public class HandlerExcepciones {
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorDTO(error.getMessage(), error.getTipoError()));
   }
 
+  @ExceptionHandler(value = ColeccionConDatosErroneos.class)
+  public ResponseEntity<ErrorDTO> handleColeccionConDatosErroneos(ColeccionConDatosErroneos error) {
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorDTO(error.getMessage(), error.getTipoError()));
+  }
+
   @ExceptionHandler(value = UsuarioNoEncontrado.class)
   public ResponseEntity<ErrorDTO> handleUsuarioNoEncontrado(UsuarioNoEncontrado error) {
     return ResponseEntity.status(401).body(new ErrorDTO(error.getMessage(), error.getTipoError()));

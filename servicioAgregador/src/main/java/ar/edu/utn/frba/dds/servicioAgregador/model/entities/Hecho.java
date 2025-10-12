@@ -3,6 +3,7 @@ package ar.edu.utn.frba.dds.servicioAgregador.model.entities;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.algoritmosConsenso.AlgoritmoConsenso;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.origenes.Origen;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.converters.AlgoritmoConsensoConverter;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
@@ -48,7 +49,7 @@ public class Hecho {
     @Column(name = "descripcion", columnDefinition = "TEXT")
     @Setter @Getter private String descripcion;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(referencedColumnName = "id", nullable = false, name = "categoria_id")
     @Setter @Getter private Categoria categoria;
 

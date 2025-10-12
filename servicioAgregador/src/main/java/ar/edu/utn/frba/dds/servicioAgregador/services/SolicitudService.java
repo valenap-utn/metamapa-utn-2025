@@ -4,46 +4,47 @@ import ar.edu.utn.frba.dds.servicioAgregador.exceptions.HechoNoEncontrado;
 import ar.edu.utn.frba.dds.servicioAgregador.exceptions.HechoYaEliminado;
 import ar.edu.utn.frba.dds.servicioAgregador.exceptions.SolicitudError;
 import ar.edu.utn.frba.dds.servicioAgregador.exceptions.SolicitudNoEncontrada;
+import ar.edu.utn.frba.dds.servicioAgregador.exceptions.UsuarioNoEncontrado;
+import ar.edu.utn.frba.dds.servicioAgregador.exceptions.UsuarioSinPermiso;
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.ConjuntoSolicitudesOutput;
+import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.RevisionDTO;
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.SolicitudInputDTO;
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.SolicitudOutputDTO;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.deteccionDeSpam.DetectorDeSpam;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Solicitud;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Usuario;
-import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IHechoRepository;
-import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IHechosExternosRepository;
-import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.ISolicitudRepository;
-import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.UserRepository;
+import ar.edu.utn.frba.dds.servicioAgregador.model.entities.roles.PermisoAceptarSolicitud;
+import ar.edu.utn.frba.dds.servicioAgregador.model.entities.roles.PermisoEliminarSolicitud;
+import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.implReal.IHechoRepositoryJPA;
+import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.implReal.ISolicitudRepositoryJPA;
+import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.implReal.IUserRepositoryJPA;
 import ar.edu.utn.frba.dds.servicioAgregador.services.clients.ClientFuente;
 import java.util.List;
-import java.util.Set;
 import org.springframework.stereotype.Service;
 
 @Service
 public class SolicitudService implements ISolicitudService {
     private final FactoryDetectorDeSpam detectorDeSpamFactory;
-    private final ISolicitudRepository repo;
-    private final IHechoRepository hechoRepository;
-    private final UserRepository userRepository;
-    private final IHechosExternosRepository idHechosExternos;
+    private final ISolicitudRepositoryJPA repo;
+    private final IHechoRepositoryJPA hechoRepository;
+    private final IUserRepositoryJPA userRepository;
     private final FactoryClientFuente clientFuenteFactory;
-    public SolicitudService(ISolicitudRepository repo, FactoryDetectorDeSpam detectorDeSpamFactory, IHechoRepository hechoRepository, UserRepository userRepository, IHechosExternosRepository idHechosExternos,
+    public SolicitudService(ISolicitudRepositoryJPA repo, FactoryDetectorDeSpam detectorDeSpamFactory, IHechoRepositoryJPA hechoRepository, IUserRepositoryJPA userRepository,
                             FactoryClientFuente clientFuenteFactory) {
         this.repo = repo;
         this.detectorDeSpamFactory = detectorDeSpamFactory;
       this.hechoRepository = hechoRepository;
       this.userRepository = userRepository;
-      this.idHechosExternos = idHechosExternos;
       this.clientFuenteFactory = clientFuenteFactory;
     }
 
     public SolicitudOutputDTO crearSolicitud(SolicitudInputDTO solicitudInput) {
-        Hecho hecho = this.hechoRepository.findById(solicitudInput.getIdHecho());
+        Hecho hecho = this.hechoRepository.findById(solicitudInput.getIdHecho()).orElse(null);
         if(hecho == null) {
             throw new HechoNoEncontrado("El hecho no existe");
         }
-        Usuario user = this.userRepository.findById(solicitudInput.getIdusuario());
+        Usuario user = this.userRepository.findById(solicitudInput.getIdusuario()).orElse(null);
         Solicitud solicitud = new Solicitud(hecho, user, solicitudInput.getJustificacion());
         DetectorDeSpam detectorDeSpam = this.detectorDeSpamFactory.crearDetectorDeSpamBasico();
         //se decide modelar la deteccion del spam que se realice antes de agregar la solicitud al repositorio
@@ -69,8 +70,17 @@ public class SolicitudService implements ISolicitudService {
         return solicitudOutputDTO;
     }
 
-    public SolicitudOutputDTO aceptarSolicitud(Long idSolicitud) {
-        Solicitud solicitud = this.repo.findById(idSolicitud);
+    @Override
+    public SolicitudOutputDTO aceptarSolicitud(Long idSolicitud, RevisionDTO revisionDTO) {
+        Usuario user = this.userRepository.findById(revisionDTO.getIdUsuario()).orElse(null);
+        if(user == null) {
+            throw new UsuarioNoEncontrado("El usuario no existe");
+        }
+
+        if (!user.tienePermisoDe(new PermisoAceptarSolicitud())) {
+            throw new UsuarioSinPermiso("El Usuario no tiene permiso para eliminar la solicitud");
+        }
+        Solicitud solicitud = this.repo.findById(idSolicitud).orElse(null);
 
         if(solicitud == null) {
             throw new SolicitudNoEncontrada("La solicitud con id: " + idSolicitud + " no existe");
@@ -80,20 +90,29 @@ public class SolicitudService implements ISolicitudService {
             throw new SolicitudError("La solicitud no puede ser aceptada, debido a que su estado es: " + solicitud.getEstado().name());
         }
         solicitud.aceptar();
+        solicitud.setJustificacionCambioEstado(revisionDTO.getJustificacion());
         Hecho hechoAEliminar = solicitud.getHecho();
         if(hechoAEliminar.isEliminado()) {
             throw new HechoYaEliminado("El hecho ya fue eliminado por otra solicitud");
         }
         hechoAEliminar.setEliminado(true);
         ClientFuente client = this.clientFuenteFactory.getClientPorOrigen(hechoAEliminar.getOrigen());
-        client.postEliminado(hechoAEliminar, this.idHechosExternos.findIDFuente(hechoAEliminar.getId()));
+        client.postEliminado(hechoAEliminar, hechoAEliminar.getIdExterno());
         repo.save(solicitud);
         return this.toSolicitudOutputDTO(solicitud);
     }
 
     @Override
-    public SolicitudOutputDTO eliminarSolicitud(Long idSolicitud) {
-        Solicitud solicitud = this.repo.findById(idSolicitud);
+    public SolicitudOutputDTO eliminarSolicitud(Long idSolicitud, RevisionDTO revisionDTO) {
+        Usuario user = this.userRepository.findById(revisionDTO.getIdUsuario()).orElse(null);
+        if(user == null) {
+            throw new UsuarioNoEncontrado("El usuario no existe");
+        }
+
+        if (!user.tienePermisoDe(new PermisoEliminarSolicitud())) {
+            throw new UsuarioSinPermiso("El Usuario no tiene permiso para eliminar la solicitud");
+        }
+        Solicitud solicitud = this.repo.findById(idSolicitud).orElse(null);
         if(solicitud == null) {
             throw new SolicitudNoEncontrada("La solicitud con id: " + idSolicitud + " no existe");
         }
@@ -101,6 +120,7 @@ public class SolicitudService implements ISolicitudService {
         if(solicitud.noEsPendiente()) {
             throw new SolicitudError("La solicitud no puede ser eliminada, debido a que su estado es: " + solicitud.getEstado().name());
         }
+        solicitud.setJustificacionCambioEstado(revisionDTO.getJustificacion());
         solicitud.rechazar();
         repo.save(solicitud);
         return this.toSolicitudOutputDTO(solicitud);
@@ -108,12 +128,11 @@ public class SolicitudService implements ISolicitudService {
 
     @Override
     public ConjuntoSolicitudesOutput buscarSolicitudes() {
-        Set<Solicitud> solicituds = this.repo.findAll();
+        List<Solicitud> solicituds = this.repo.findAll();
         List<SolicitudOutputDTO> solicitudesDTO = solicituds.stream().map(this::toSolicitudOutputDTO).toList();
         ConjuntoSolicitudesOutput conjuntoSolicitudesOutput = new ConjuntoSolicitudesOutput();
         conjuntoSolicitudesOutput.setSolicitudes(solicitudesDTO);
         return conjuntoSolicitudesOutput;
     }
-
 
 }

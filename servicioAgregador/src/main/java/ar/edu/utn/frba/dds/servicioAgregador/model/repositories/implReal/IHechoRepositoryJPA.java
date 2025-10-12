@@ -15,4 +15,6 @@ public interface IHechoRepositoryJPA extends JpaRepository<Hecho, Long>, JpaSpec
   Hecho findByIdExternoAndOrigen(Long idExterno, Origen origen);
 
   List<Hecho> findByNormalizado(boolean b);
+
+  List<Hecho> findAllByEliminado(Boolean aFalse);
 }
