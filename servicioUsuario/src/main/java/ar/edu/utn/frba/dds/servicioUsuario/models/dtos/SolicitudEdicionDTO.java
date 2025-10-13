@@ -9,4 +9,5 @@ public class SolicitudEdicionDTO {
   private Long idusuario;
   private String justificacion;
   private String estado;
+  private HechoDTOInput propuesta;
 }

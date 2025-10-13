@@ -4,6 +4,7 @@ import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.HechoDTOInput;
 import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.HechoDTOOutput;
 import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.RevisionDTO;
 import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.SolicitudEdicionDTO;
+import ar.edu.utn.frba.dds.servicioUsuario.servicios.FuenteDinamicaService;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -13,28 +14,30 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/fuenteDinamica")
 public class FuenteDinamicaController {
+  private final FuenteDinamicaService fuenteDinamicaService;
+
+  public FuenteDinamicaController(FuenteDinamicaService fuenteDinamicaService) {
+    this.fuenteDinamicaService = fuenteDinamicaService;
+  }
 
   @PostMapping("/hechos")
   public HechoDTOOutput crearHecho(HechoDTOInput hecho, String baseUrl){
 
-  }
-
-  @PutMapping("/hechos/{id}")
-  public HechoDTOOutput actualizarHecho(@PathVariable Long id, HechoDTOInput hecho, String baseUrl) {
-
+    return this.fuenteDinamicaService.crearHecho(hecho, baseUrl);
   }
 
   @PostMapping("/hechos/{id}/revisados")
-  public HechoDTOOutput revisarHecho(Long idHecho, String baseUrl) {
-
+  public HechoDTOOutput revisarHecho(@PathVariable Long id, String baseUrl) {
+    return this.fuenteDinamicaService.revisarHecho(id, baseUrl);
   }
 
   @PostMapping("/solicitudes")
   public SolicitudEdicionDTO solicitarModificacion(SolicitudEdicionDTO solicitudEdicion, String baseUrl) {
-
+    return this.fuenteDinamicaService.solicitarModificacion(solicitudEdicion, baseUrl);
   }
 
   @PutMapping("/solicitudes/{idSolicitud}")
   public SolicitudEdicionDTO  procesarSolicitudEdicion(@PathVariable Long idSolicitud, String baseUrl, RevisionDTO revisionDTO) {
+    return this.fuenteDinamicaService.procesarSolicitudEdicion(idSolicitud, baseUrl, revisionDTO);
   }
 }
