@@ -15,7 +15,6 @@ public interface IHechoServicio {
 
   List<Hecho> obtenerHechosPublicos();
 
-  Hecho modificarHecho(Long hechoId, HechoDTOModificacionDinamica nuevosDatos);
 
   Hecho revisarHecho(Long id, RevisionDTO revisionDTO);
 

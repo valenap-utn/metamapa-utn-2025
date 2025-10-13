@@ -54,10 +54,6 @@ public class HechoSolicitudController {
         return hechoDTO;
     }
 
-    @PutMapping("/hechos/{id}")
-    public ResponseEntity<?> modificarHecho(@PathVariable Long id, @RequestBody HechoDTOModificacionDinamica nuevosDatos) {
-            return ResponseEntity.ok(this.toHechoDTO(hechoServicio.modificarHecho(id, nuevosDatos)));
-    }
 
     @PostMapping("/hechos/{id}/revisados")
     public ResponseEntity<HechoDTODinamica> revisarHecho(@PathVariable Long id, @RequestBody RevisionDTO revisionDTO) {

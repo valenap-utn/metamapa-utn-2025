@@ -1,4 +1,111 @@
 package ar.edu.utn.frba.dds.servicioUsuario.servicios;
 
+import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.ColeccionDTOInput;
+import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.ColeccionDTOOutput;
+import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.ConjuntoHechoDTO;
+import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.ConjuntoSolicitudesEliminacionOutput;
+import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.FiltroDTO;
+import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.HechoDTOOutput;
+import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.SolicitudEliminacionDTO;
+import java.util.List;
+import java.util.UUID;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.util.UriBuilder;
+
+@Service
 public class AgregadorService {
+  @Value("${api.servicioAgregador.url}")
+  private String baseURL;
+  private final WebClient webClient;
+
+  public AgregadorService() {
+    this.webClient = WebClient.builder().baseUrl(baseURL).build();
+  }
+
+
+
+  public List<HechoDTOOutput> findAllHechos(FiltroDTO filtroDTO) {
+    return this.webClient.get().uri(uriBuilder -> this.uriConFiltros(filtroDTO, uriBuilder, "/api/hechos").build())
+            .retrieve()
+            .bodyToMono(ConjuntoHechoDTO.class).map(
+                    ConjuntoHechoDTO::getHechos
+            ).block();
+  }
+
+  public List<HechoDTOOutput> findHechosByColeccionId(UUID coleccionId, FiltroDTO filtroDTO) {
+    return this.webClient.get().uri(uriBuilder -> this.uriConFiltros(filtroDTO, uriBuilder, "/api/colecciones/{id}/hechos").build(coleccionId))
+            .retrieve().bodyToMono(ConjuntoHechoDTO.class).map(
+                    ConjuntoHechoDTO::getHechos
+            ).block();
+  }
+
+  private UriBuilder uriConFiltros(FiltroDTO filtroDTO, UriBuilder uriBuilder, String path) {
+    UriBuilder uriAMedioConstruir = uriBuilder.path(path);
+    if(filtroDTO != null) {
+      uriAMedioConstruir.queryParam("categoria", filtroDTO.getCategoria())
+              .queryParam("fecha_reporte_desde", filtroDTO.getFecha_reporte_desde())
+              .queryParam("fecha_reporte_hasta", filtroDTO.getFecha_reporte_hasta())
+              .queryParam("fecha_acontecimiento_desde", filtroDTO.getFecha_acontecimiento_desde())
+              .queryParam("fecha_acontecimiento_hasta", filtroDTO.getFecha_acontecimiento_hasta())
+              .queryParam("latitud", filtroDTO.getLatitud())
+              .queryParam("longitud", filtroDTO.getLongitud());
+    }
+    return uriAMedioConstruir;
+  }
+
+  public List<SolicitudEliminacionDTO> findAllSolicitudes() {
+    return this.webClient.get().uri(uriBuilder -> uriBuilder.path("/api/solicitudes").build())
+            .retrieve().bodyToMono(ConjuntoSolicitudesEliminacionOutput.class)
+            .map( ConjuntoSolicitudesEliminacionOutput::getSolicitudes)
+            .block();
+  }
+
+  public SolicitudEliminacionDTO crearSolicitud(SolicitudEliminacionDTO solicitudEliminacionDTO) {
+    return this.webClient.post().uri(uriBuilder -> uriBuilder.path("/api/solicitudes").build())
+            .bodyValue(solicitudEliminacionDTO).retrieve()
+            .bodyToMono(SolicitudEliminacionDTO.class)
+            .block();
+  }
+
+  public SolicitudEliminacionDTO cancelarSolicitud(Long idSolicitud) {
+    return this.webClient.patch().uri(uriBuilder -> uriBuilder.path("/api/solicitudes/{id}").build(idSolicitud))
+            .retrieve().bodyToMono(SolicitudEliminacionDTO.class)
+            .block();
+  }
+
+  public SolicitudEliminacionDTO aceptarSolicitud(Long idSolicitud) {
+    return this.webClient.delete().uri(uriBuilder -> uriBuilder.path("/api/solicitudes/{id}").build(idSolicitud))
+            .retrieve().bodyToMono(SolicitudEliminacionDTO.class)
+            .block();
+  }
+
+  public ColeccionDTOOutput modificarColeccion(ColeccionDTOInput coleccionDTOInput, UUID coleccionId) {
+    return this.webClient.put().uri(uriBuilder -> uriBuilder.path("/api/colecciones/{id}").build(coleccionId))
+            .bodyValue(coleccionDTOInput)
+            .retrieve().bodyToMono(ColeccionDTOOutput.class).block();
+  }
+
+  public ColeccionDTOOutput eliminarColeccion(UUID idColeccion) {
+    return this.webClient.delete().uri(uriBuilder -> uriBuilder.path("/api/colecciones/{id}").build(idColeccion))
+            .retrieve().bodyToMono(ColeccionDTOOutput.class).block();
+  }
+
+  public ColeccionDTOOutput crearColeccion(ColeccionDTOInput coleccion) {
+    return this.webClient.post().uri(uriBuilder -> uriBuilder.path("/api/colecciones").build())
+            .bodyValue(coleccion)
+            .retrieve().bodyToMono(ColeccionDTOOutput.class).block();
+  }
+
+
+  public HechoDTOOutput getHecho(Long idHecho) {
+    //TODO
+    return null;
+  }
+
+
+  public List<ColeccionDTOOutput> findColecciones() {
+    return List.of();
+  }
 }

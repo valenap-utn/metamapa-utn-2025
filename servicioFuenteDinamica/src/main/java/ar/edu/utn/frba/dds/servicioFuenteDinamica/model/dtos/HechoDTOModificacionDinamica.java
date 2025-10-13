@@ -8,7 +8,6 @@ import lombok.Data;
 
 @Data
 public class HechoDTOModificacionDinamica {
-  private Long id;
   private String titulo;
   private String descripcion;
   private Categoria categoria;
@@ -16,6 +15,4 @@ public class HechoDTOModificacionDinamica {
   private LocalDateTime fechaAcontecimiento;
   private ContenidoMultimedia contenidoMultimedia;
   private String contenido;
-  private Long idUsuario;
-  private Long idSolicitud;
 }

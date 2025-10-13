@@ -1,0 +1,84 @@
+@startuml
+'https://plantuml.com/deployment-diagram
+
+actor visualizador
+actor administrador
+actor contribuyente
+component InstanciaMetaMapa
+component APICatedra
+
+
+frame Metamapa {
+    node servicioAgregador {
+        component APIAdministrador
+        component APIVisualizador
+        component APIService
+        database DBAgregador {
+        }
+        APIAdministrador -(0- DBAgregador
+        APIVisualizador -(0- DBAgregador
+        APIService -(0- DBAgregador
+    }
+
+    APIAdministrador -(0- APIService
+    APIVisualizador -(0- APIService
+
+
+    node servicioFuenteDinamica {
+        component APIFuenteDinamica
+        database DBFDinamica {
+        }
+        APIFuenteDinamica -(0- DBFDinamica
+    }
+
+
+
+
+
+    node servicioFuenteEstatica {
+    component APIFuenteEstatica
+        database DBFEstatica {
+            }
+        APIFuenteEstatica -(0- DBFEstatica
+    }
+
+
+
+    node servicioFuenteProxy {
+        component APIFuenteProxy
+        database DBFEstatica {
+            }
+        APIFuenteProxy -(0- DBFEstatica
+    }
+
+    APIService "API REST" -(0- APIFuenteDinamica
+        APIService "API REST" -(0- APIFuenteEstatica
+        APIService  "API REST" -(0- APIFuenteProxy
+
+    APIFuenteProxy "API REST" -(0- InstanciaMetaMapa
+    APIFuenteProxy "API REST" -(0- APICatedra
+
+    node servicioEstadistica {
+        component APIEstadistica
+    }
+    node serverFront {
+        component GeneradorDeVistas
+    }
+    node servicioUsuarios {
+        component APIServicioUsuarios
+    }
+    GeneradorDeVistas -(0- APIServicioUsuarios
+    APIServicioUsuarios "API REST" -(0- APIVisualizador
+    APIServicioUsuarios "API REST" -(0- APIAdministrador
+    APIServicioUsuarios "API REST" -(0- APIFuenteDinamica
+    APIServicioUsuarios "API REST" -(0- APIEstadistica
+    APIEstadistica "API REST" -(0- APIAdministrador
+    administrador -(0- GeneradorDeVistas
+    contribuyente -(0- GeneradorDeVistas
+    visualizador -(0- GeneradorDeVistas
+}
+
+
+
+
+@enduml

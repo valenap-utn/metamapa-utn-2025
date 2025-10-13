@@ -1,6 +1,7 @@
 package ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities;
 
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.enums.Estado;
+import jakarta.persistence.Embedded;
 import java.util.List;
 
 import jakarta.persistence.Column;
@@ -44,6 +45,10 @@ public class Solicitud implements Revisable{
 
     @Column(name = "fue_usada")
     private Boolean fueUsada = false;
+
+    @Embedded
+    @Getter @Setter
+    private HechoModificacion hechoModificacion;
 
     public Solicitud(Hecho hecho, Usuario usuario, String justificacion) {
         this.usuario = usuario;

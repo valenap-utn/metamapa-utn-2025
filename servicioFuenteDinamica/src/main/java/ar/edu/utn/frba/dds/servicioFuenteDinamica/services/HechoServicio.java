@@ -74,39 +74,6 @@ public class HechoServicio implements IHechoServicio {
         return hechoRepository.findHechosByEstado(Estado.ACEPTADA, Estado.ACEPTADA_CON_CAMBIOS);
     }
 
-    @Override
-    public Hecho modificarHecho(Long hechoId, HechoDTOModificacionDinamica nuevosDatos) {
-        Hecho hecho = hechoRepository.findById(hechoId).orElseThrow(() -> new HechoNoEncontrado("Hecho no encontrado"));
-        if (nuevosDatos.getIdUsuario() == null) {
-            throw new UsuarioNoEncontrado("El usuario no se ha podido encontrar");
-        }
-        Usuario usuario = this.userRepository.findById(nuevosDatos.getIdUsuario()).orElse(null);
-        if (usuario == null) {
-            throw new UsuarioSinPermiso("Un usuario sin cuenta no puede modificar un hecho");
-        }
-        if(hecho.getEsAnonimo() || !hecho.getUsuario().equals(usuario) || !usuario.tienePermiso(new PermisoModificarHecho())) {
-            throw new UsuarioSinPermiso("Solo puede modificar un hecho su autor");
-        }
-
-        List<Solicitud> solicitudesServicio = this.solicitudRepository.findSolicitudByHecho(hecho);
-        List<Solicitud> solicitudesServicioSinUsar = solicitudesServicio.stream().filter( sol -> sol.estaAceptada() && sol.noFueUsada()).toList();
-
-        if(solicitudesServicioSinUsar.isEmpty()) {
-           throw new SinSolicitudValida("Se necesita una solicitud de edición aceptada y válida para poder modificar un hecho");
-        }
-        if (Duration.between(hecho.getFechaCarga(), LocalDateTime.now()).toDays() >= 7) {
-            throw new TiempoVencidoHecho("Ya no se puede modificar el hecho.");
-        }
-        hecho.setDescripcion(nuevosDatos.getDescripcion());
-        hecho.setContenido(nuevosDatos.getContenido());
-        hecho.setFechaAcontecimiento(nuevosDatos.getFechaAcontecimiento());
-        hecho.setCategoria(nuevosDatos.getCategoria());
-        hecho.setTitulo(nuevosDatos.getTitulo());
-        hecho.setUbicacion(nuevosDatos.getUbicacion());
-        solicitudesServicioSinUsar.forEach(Solicitud::usar);
-        this.solicitudRepository.saveAll(solicitudesServicioSinUsar);
-        return hechoRepository.save(hecho);
-    }
 
     @Override
     public Hecho revisarHecho(Long id, RevisionDTO revisionDTO) {

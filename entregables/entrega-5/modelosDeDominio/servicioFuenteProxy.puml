@@ -1,0 +1,38 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+class Hecho {
+    - Long id
+    - String titulo
+    - String descripcion
+    - Categoria categoria
+    - Ubicacion ubicacion
+    - LocalDate fechaAcontecimiento
+    - LocalDate fechaCarga
+    - Origen origen
+    - boolean eliminado
+    - Usuario usuario
+}
+
+class Ubicacion {
+    - Float longitud
+    - Float latitud
+}
+
+class Categoria {
+    -private String nombre;
+    +public boolean esIgualA(Categoria);
+}
+
+enum Origen {
+  PORDATASET,
+  PORCONTRIBUYENTE,
+  CARGAMANUAL,
+}
+
+Hecho --> Ubicacion
+Hecho --> Categoria
+Hecho --> Origen
+
+
+@enduml

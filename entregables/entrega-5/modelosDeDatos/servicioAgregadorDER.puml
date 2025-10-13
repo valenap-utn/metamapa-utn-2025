@@ -1,0 +1,125 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+entity hecho {
+    * id INTEGER(11) <<PK>>
+    * categoria_id INTEGER(11) <<FK>>
+    * direccion_id INTEGER(11) <<FK>>
+    * origen_id INTEGER(11) <<FK>>
+    * usuario_id INTEGER(11) <<FK>>
+    --
+    * titulo VARCHAR(255)
+    * descripcion TEXT
+    * fecha_acontecimiento DATETIME
+    * fecha_carga DATETIME
+    * latitud DECIMAL(12, 2)
+    * longitud DECIMAL(12, 2)
+    * eliminado TINYINT
+    * normalizado TINYINT
+    * contenidoMultimedia_nombre VARCHAR(255)
+    * contenidoMultimedia_path VARCHAR(255)
+    * idExterno INTEGER(11)
+}
+
+entity algoritmos_hecho {
+    * hecho_id INTEGER(11) <<FK>>
+    --
+    * tipo VARCHAR(255)
+}
+
+hecho ||-o{ algoritmos_hecho
+
+entity etiquetas_hecho {
+    * hecho_id INTEGER(11) <<FK>>
+    --
+    * descripcion VARCHAR(70)
+}
+
+hecho ||--o{ etiquetas_hecho
+
+entity usuario {
+    * id INTEGER(11) <<PK>>
+    --
+    * nombre VARCHAR(255)
+    * fecha_nacimiento DATETIME
+}
+
+entity direccion {
+    * id INTEGER(11) <<PK>>
+    * hecho_id INTEGER(11) <<FK>>
+    --
+    * ciudad VARCHAR(255)
+    * localidad VARCHAR(255)
+    * municipio VARCHAR(255)
+    * provincia VARCHAR(255)
+}
+
+hecho ||--o{ direccion
+
+
+entity categoria {
+    * id INTEGER(11) <<PK>>
+    --
+    * nombre VARCHAR(255)
+}
+
+entity origen{
+    * id INTEGER(11) <<PK>>
+    --
+    * tipoOrigen VARCHAR(255)
+    * url VARCHAR(255)
+    * idExterno INTEGER(11)
+    * nombreAPI VARCHAR(255)
+}
+
+entity coleccion {
+    * id VARCHAR(50) <<PK>>
+    --
+    * algoritmo_consenso VARCHAR(255)
+    * titulo VARCHAR(255)
+    * descripcion TEXT
+}
+
+entity filtro_coleccion {
+    * id INTEGER(11) <<PK>>
+    * coleccion_id INTEGER(11) <<FK>>
+    * categoria_id BIGINT <<FK>>
+    * direccion_id BIGINT <<FK>>
+    --
+    * latitud DECIMAL(12, 2)
+    * longitud DECIMAL(12, 2)
+    * fecha_desde DATETIME(6)
+    * fecha_hasta DATETIME(6)
+    * tipo VARCHAR(31)
+    * cadena_a_comparar VARCHAR(255)
+}
+
+coleccion ||--o{ filtro_coleccion
+categoria |o--o{ filtro_coleccion
+direccion |o--o{ filtro_coleccion
+
+entity fuente_coleccion {
+    * id INTEGER(11) <<pk>>
+    * origen_id INTEGER(11) <<FK>>
+    * coleccion_id VARCHAR(255) <<FK>>
+    --
+}
+
+usuario |o--o{ hecho
+categoria ||--|{ hecho
+origen ||--o{ hecho
+coleccion ||--|{ fuente_coleccion
+origen ||--o{ fuente_coleccion
+
+entity solicitud {
+    * id INTEGER(11) <<PK>>
+    --
+    * hecho_id INTEGER(11) <<FK>>
+    * justificacion TEXT
+    * estado VARCHAR(50)
+    * usuario_id INTEGER(11) <<FK>>
+}
+
+solicitud }o--|| hecho
+usuario ||--o{ solicitud
+@enduml

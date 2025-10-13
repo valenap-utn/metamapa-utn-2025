@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/fuenteDinamica")
 public class FuenteDinamicaController {
+
   @PostMapping("/hechos")
   public HechoDTOOutput crearHecho(HechoDTOInput hecho, String baseUrl){
 
