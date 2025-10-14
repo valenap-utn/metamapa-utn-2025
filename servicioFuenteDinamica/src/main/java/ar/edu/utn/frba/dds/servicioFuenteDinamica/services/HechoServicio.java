@@ -2,30 +2,23 @@ package ar.edu.utn.frba.dds.servicioFuenteDinamica.services;
 
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.exceptions.HechoNoEncontrado;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.exceptions.HechoYaEliminado;
-import ar.edu.utn.frba.dds.servicioFuenteDinamica.exceptions.SinSolicitudValida;
-import ar.edu.utn.frba.dds.servicioFuenteDinamica.exceptions.TiempoVencidoHecho;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.exceptions.UsuarioNoEncontrado;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.exceptions.UsuarioSinPermiso;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos.HechoDTODinamica;
-import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos.HechoDTOModificacionDinamica;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos.RevisionDTO;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.ContenidoMultimedia;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.RevisarEstado;
-import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.Solicitud;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.Usuario;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.enums.Estado;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.Hecho;
-import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.roles.PermisoModificarHecho;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.roles.PermisoRevisarHecho;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.repositories.IMultimediaRepository;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.repositories.implReal.IHechoRepositoryJPA;
-import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.repositories.implReal.ISolicitudRepositoryJPA;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.repositories.implReal.IUsuarioRepositoryJPA;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -36,14 +29,12 @@ public class HechoServicio implements IHechoServicio {
     private final IMultimediaRepository contentMultimediaRepository;
     private final RevisarEstado revisadorHechosSolicitud;
     private final IUsuarioRepositoryJPA userRepository;
-    private final ISolicitudRepositoryJPA solicitudRepository;
 
-    public HechoServicio(IHechoRepositoryJPA hechoRepository, IMultimediaRepository contentMultimediaRepository, RevisarEstado revisadorHechosSolicitud, IUsuarioRepositoryJPA userRepository, ISolicitudRepositoryJPA solicitudRepository) {
+    public HechoServicio(IHechoRepositoryJPA hechoRepository, IMultimediaRepository contentMultimediaRepository, RevisarEstado revisadorHechosSolicitud, IUsuarioRepositoryJPA userRepository) {
         this.hechoRepository = hechoRepository;
         this.contentMultimediaRepository = contentMultimediaRepository;
         this.revisadorHechosSolicitud = revisadorHechosSolicitud;
       this.userRepository = userRepository;
-      this.solicitudRepository = solicitudRepository;
     }
 
     @Override
@@ -70,14 +61,17 @@ public class HechoServicio implements IHechoServicio {
     }
 
     @Override
-    public List<Hecho> obtenerHechosPublicos() {
-        return hechoRepository.findHechosByEstado(Estado.ACEPTADA, Estado.ACEPTADA_CON_CAMBIOS);
+    public List<Hecho> obtenerHechosPublicos(Boolean pendientes) {
+        if (pendientes) {
+            return hechoRepository.findHechosByEstado(Estado.EN_REVISION);
+        }
+        return this.hechoRepository.findAll();
     }
 
 
     @Override
     public Hecho revisarHecho(Long id, RevisionDTO revisionDTO) {
-        Hecho hecho = hechoRepository.findById(id).orElseThrow(() -> new RuntimeException("Hecho no encontrado"));
+        Hecho hecho = hechoRepository.findById(id).orElseThrow(() -> new HechoNoEncontrado("Hecho no encontrado"));
         Usuario usuario = this.userRepository.findById(revisionDTO.getIdUsuario()).orElseThrow(() -> new UsuarioNoEncontrado("El usuario pasado no existe"));
         if (!usuario.tienePermiso(new PermisoRevisarHecho())) {
             throw new UsuarioSinPermiso("El usuario suministrado no tiene permiso para revisar el hecho");

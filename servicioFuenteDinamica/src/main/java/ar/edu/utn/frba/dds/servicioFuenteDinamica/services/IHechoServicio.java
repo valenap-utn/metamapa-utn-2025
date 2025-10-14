@@ -1,7 +1,6 @@
 package ar.edu.utn.frba.dds.servicioFuenteDinamica.services;
 
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos.HechoDTODinamica;
-import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos.HechoDTOModificacionDinamica;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos.RevisionDTO;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.Hecho;
 import org.springframework.stereotype.Service;
@@ -13,7 +12,7 @@ import java.util.List;
 public interface IHechoServicio {
   Hecho crearHecho(HechoDTODinamica input, MultipartFile contenidoMultimedia);
 
-  List<Hecho> obtenerHechosPublicos();
+  List<Hecho> obtenerHechosPublicos(Boolean pendientes);
 
 
   Hecho revisarHecho(Long id, RevisionDTO revisionDTO);

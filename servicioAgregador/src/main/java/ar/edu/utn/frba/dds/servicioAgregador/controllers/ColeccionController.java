@@ -35,7 +35,8 @@ public class ColeccionController {
 
   @GetMapping("/{id}/hechos")
   public ResponseEntity<ConjuntoHechoCompleto> getHechos(@PathVariable UUID id,
-                                         @RequestParam(required = false) String categoria,
+                                         @RequestParam(required = false) Long idUsuario,
+                                                         @RequestParam(required = false) String categoria,
                                          @RequestParam(required = false) @DateTimeFormat(pattern = "ddmmyyyy") LocalDate fecha_reporte_desde,
                                          @RequestParam(required = false) @DateTimeFormat(pattern = "ddmmyyyy") LocalDate fecha_reporte_hasta,
                                          @RequestParam(required = false) @DateTimeFormat(pattern = "ddmmyyyy") LocalDate fecha_acontecimiento_desde,
@@ -54,6 +55,7 @@ public class ColeccionController {
               .longitud(longitud)
               .curada(curada)
               .entiemporeal(entiemporeal)
+              .idUsuario(idUsuario)
               .build();
 
       return ResponseEntity.ok(this.coleccionService.getHechosPorColeccion(id, filtro)) ;

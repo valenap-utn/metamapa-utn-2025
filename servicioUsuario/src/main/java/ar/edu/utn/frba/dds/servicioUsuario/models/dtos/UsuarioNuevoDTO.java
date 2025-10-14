@@ -10,6 +10,6 @@ public class UsuarioNuevoDTO {
   private LocalDate fechaDeNacimiento;
   private String email;
   private String rolSolicitado;
-  private Boolean esConAuth0;
+  private String providerOAuth;
   private String password;
 }

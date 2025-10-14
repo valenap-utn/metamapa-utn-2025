@@ -40,4 +40,7 @@ public class Usuario {
   private String password;
   @Column(name = "fecha_creacion", nullable = false)
   private LocalDate fechaCreacion;
+  @Column(name = "provider_oauth")
+  private String providerOAuth;
+
 }

@@ -80,4 +80,10 @@ public class ServicioAgregadorController {
     return this.agregadorService.findColecciones();
   }
 
+  @GetMapping("/usuarios/{id}/hechos")
+  public List<HechoDTOOutput> findHechoByUsuarioId(@PathVariable UUID id){
+    return this.agregadorService.findHechosByIdUsuario(id);
+  }
+
+
 }

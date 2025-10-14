@@ -16,4 +16,5 @@ public class FiltroDTO {
   Float longitud;
   Boolean curada;
   Boolean entiemporeal;
+  Long idUsuario;
 }

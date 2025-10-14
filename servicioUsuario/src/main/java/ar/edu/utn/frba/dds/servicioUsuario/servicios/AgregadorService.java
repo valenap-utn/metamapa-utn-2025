@@ -7,6 +7,7 @@ import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.ConjuntoSolicitudesElimin
 import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.FiltroDTO;
 import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.HechoDTOOutput;
 import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.SolicitudEliminacionDTO;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Value;
@@ -106,6 +107,10 @@ public class AgregadorService {
 
 
   public List<ColeccionDTOOutput> findColecciones() {
-    return List.of();
+    return null;
+  }
+
+  public List<HechoDTOOutput> findHechosByIdUsuario(UUID id) {
+    return null;
   }
 }

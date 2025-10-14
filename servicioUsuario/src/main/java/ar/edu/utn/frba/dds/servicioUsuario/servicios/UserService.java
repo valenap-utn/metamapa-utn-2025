@@ -37,7 +37,7 @@ public class UserService {
     if (usuario == null) {
       throw new UsuarioNoEncontrado("Esta incorrecto el username o la password");
     }
-    if (!passwordEncoder.matches(password, usuario.getPassword())) {
+    if (!passwordEncoder.matches(password, usuario.getPassword()) && usuario.getProviderOAuth() == null) {
       throw new UsuarioNoEncontrado("Esta incorrecto el username o la password");
     }
 
@@ -66,7 +66,7 @@ public class UserService {
   }
 
   public UsuarioCreadoDTO crearUsuario(UsuarioNuevoDTO usuario) {
-    if(usuario.getNombre() == null || usuario.getEmail() == null || usuario.getPassword() == null) {
+    if(usuario.getNombre() == null || usuario.getEmail() == null || (usuario.getPassword() == null &&  usuario.getProviderOAuth() == null)) {
       throw new UsuarioInvalido("El perfil creado no cumple con los requisitos mínimos!");
     }
     Usuario usuarioEncontrado= this.usuarioRepository.findByEmail(usuario.getEmail()).orElse(null);
@@ -100,7 +100,7 @@ public class UserService {
   }
 
   private Boolean quiereSerAdministradorLocal(UsuarioNuevoDTO usuario) {
-    return !usuario.getEsConAuth0() && usuario.getRolSolicitado().equals("ADMINISTRADOR");
+    return usuario.getProviderOAuth() == null && usuario.getRolSolicitado().equals("ADMINISTRADOR");
   }
 
   public AuthResponseDTO hacerElRefrescoDeSesion(RefreshTokenDTO request) {

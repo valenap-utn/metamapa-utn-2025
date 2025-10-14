@@ -27,7 +27,18 @@ public class HechoSpecification {
             .and(tieneFechaCargaFin(filtro.getFecha_reporte_hasta()))
             .and(tieneFechaAcontecimientoInicio(filtro.getFecha_acontecimiento_desde()))
             .and(tieneFechaAcontecimientoFin(filtro.getFecha_acontecimiento_hasta()))
-            .and(tieneCategoria(filtro.getCategoria()));
+            .and(tieneCategoria(filtro.getCategoria()))
+            .and(tieneUsuario(filtro.getIdUsuario()));
+  }
+
+  private static Specification<Hecho> tieneUsuario(Long idUsuario) {
+    return ((root, query, cb) -> {
+        if (idUsuario == null) {
+          return cb.conjunction();
+        }
+        Path<Origen> usuario = root.get("usuario");
+        return cb.equal(usuario.get("id"), idUsuario);
+      });
   }
 
   private static Specification<Hecho> noEstaEliminado() {
