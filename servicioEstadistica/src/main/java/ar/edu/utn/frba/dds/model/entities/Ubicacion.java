@@ -7,4 +7,8 @@ public class Ubicacion {
   private Float longitud;
   private Float latitud;
   private Direccion direccion;
+
+  public String getProvincia() {
+    return null;
+  }
 }
