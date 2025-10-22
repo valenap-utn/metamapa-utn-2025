@@ -1,18 +1,23 @@
 package ar.edu.utn.frba.dds.utils;
 
 import ar.edu.utn.frba.dds.model.dtos.DatoEstadisticoDTO;
-import ar.edu.utn.frba.dds.model.dtos.EstadisticaDTO;
+import ar.edu.utn.frba.dds.model.entities.DatoCalculo;
 import ar.edu.utn.frba.dds.model.entities.Hecho;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class CategoriaProvinciaMayorHechos extends CalculadorPorDobleCriterioString{
+public class CategoriaProvinciaMayorHechos extends CalculadorEstadisticas{
+
 
   @Override
-  public EstadisticaDTO calcular(List<Hecho> hechos){
+  protected String getNombreEstadistica() {
+    return "CATEGORIAPROVINCIAMAYORHECHOS";
+  }
+  @Override
+  protected List<DatoEstadisticoDTO> generarCalculo(DatoCalculo datoCalculo) {
+    List<Hecho> hechos = datoCalculo.getHechos();
     Map<String, Map<String, Long>> datos = hechos.stream()
             .collect(Collectors.groupingBy(
                     h -> h.getCategoria().getNombre() ,
@@ -22,13 +27,13 @@ public class CategoriaProvinciaMayorHechos extends CalculadorPorDobleCriterioStr
                     )
             ));
 
-    EstadisticaDTO estadisticaDTO = this.calcularEstadistica(datos);
-    estadisticaDTO.setNombre("CATEGORIAPROVINCIAMAYORHECHOS");
-    return estadisticaDTO;
+    List<DatoEstadisticoDTO> datosObtenidos = new ArrayList<>();
+    datos.forEach((key, value) -> value.forEach((key1, value1) -> datosObtenidos.add(this.formarEstadistica(key, key1, value1))));
+    return datosObtenidos;
   }
 
-  @Override
-  protected DatoEstadisticoDTO formarEstadistica(String categoria, String provincia, Long cantidad) {
+
+  private DatoEstadisticoDTO formarEstadistica(String categoria, String provincia, Long cantidad) {
     DatoEstadisticoDTO estadisticoDTO = new DatoEstadisticoDTO();
     estadisticoDTO.setPrimerCriterio(categoria);
     estadisticoDTO.setSegundoCriterio(provincia);

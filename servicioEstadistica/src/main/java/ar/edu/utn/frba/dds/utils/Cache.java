@@ -1,17 +1,20 @@
 package ar.edu.utn.frba.dds.utils;
 
+import ar.edu.utn.frba.dds.model.dtos.ConjuntoEstadisticasDTO;
+import ar.edu.utn.frba.dds.model.dtos.EstadisticaDTO;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Cache {
-    private final Map<String, Object> cache = new HashMap<>();
+    private ConjuntoEstadisticasDTO cache;
 
-    public void actualizar(Map<String, Object> resultados) {
-        cache.clear();
-        cache.putAll(resultados);
+    public void actualizar(ConjuntoEstadisticasDTO resultados) {
+        this.cache = resultados;
     }
 
-    public Object obtener(String clave) {
-        return cache.get(clave);
+    public ConjuntoEstadisticasDTO obtener() {
+        return cache;
     }
 }

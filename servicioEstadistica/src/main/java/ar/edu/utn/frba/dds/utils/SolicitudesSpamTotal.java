@@ -2,30 +2,30 @@ package ar.edu.utn.frba.dds.utils;
 
 import ar.edu.utn.frba.dds.model.dtos.DatoEstadisticoDTO;
 import ar.edu.utn.frba.dds.model.dtos.EstadisticaDTO;
-import ar.edu.utn.frba.dds.model.entities.Hecho;
+import ar.edu.utn.frba.dds.model.entities.DatoCalculo;
 import ar.edu.utn.frba.dds.model.entities.Solicitud;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
-public class SolicitudesSpamTotal implements CalculadorSolicitudes{
+public class SolicitudesSpamTotal extends CalculadorEstadisticas{
+
   @Override
-  public EstadisticaDTO calcular(List<Solicitud> solicitudes){
+  protected List<DatoEstadisticoDTO> generarCalculo(DatoCalculo datoCalculo) {
+    List<Solicitud> solicitudes = datoCalculo.getSolicitudes();
     Long cantidadSpam = solicitudes.stream()
             .filter(Solicitud::fueMarcadaComoSpam)
             .count();
     Long cantidadTotal = (long) solicitudes.size();
-
-    EstadisticaDTO estadisticaDTO = new EstadisticaDTO();
     List<DatoEstadisticoDTO> datosObtenidos = new ArrayList<>();
     DatoEstadisticoDTO datoEstadisticoDTO = new DatoEstadisticoDTO();
     datoEstadisticoDTO.setCantidad(cantidadSpam);
     datoEstadisticoDTO.setTotal(cantidadTotal);
     datosObtenidos.add(datoEstadisticoDTO);
-    estadisticaDTO.setDatos(datosObtenidos);
-    return estadisticaDTO;
+    return datosObtenidos;
   }
 
+  @Override
+  protected String getNombreEstadistica() {
+    return "SOLICITUDESSPAM";
+  }
 }

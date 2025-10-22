@@ -1,5 +1,7 @@
 package ar.edu.utn.frba.dds.services.servicioAgregador;
 
+import ar.edu.utn.frba.dds.model.dtos.ColeccionDTO;
+import ar.edu.utn.frba.dds.model.dtos.ConjuntoColeccionDTO;
 import ar.edu.utn.frba.dds.model.dtos.ConjuntoHechoAgregador;
 import ar.edu.utn.frba.dds.model.dtos.ConjuntoSolicitudesAgregador;
 import ar.edu.utn.frba.dds.model.dtos.HechoDTO;
@@ -71,5 +73,14 @@ public class ClientServicioAgregador implements ServicioAgregador {
     solicitud.setId(solicitudDTO.getId());
     solicitud.setIdUsuario(solicitudDTO.getIdusuario());
     return solicitud;
+  }
+
+  @Override
+  public List<ColeccionDTO> obtenerColecciones() {
+    return webClient.get().uri(uriBuilder -> uriBuilder.path("/api/colecciones").build())
+            .retrieve()
+            .bodyToMono(ConjuntoColeccionDTO.class)
+            .map( ConjuntoColeccionDTO::getColecciones)
+            .block();
   }
 }
