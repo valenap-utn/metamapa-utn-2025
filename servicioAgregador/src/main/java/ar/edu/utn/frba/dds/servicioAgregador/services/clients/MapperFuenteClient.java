@@ -19,7 +19,8 @@ public abstract class MapperFuenteClient {
             .fechaAcontecimiento(hechoDTO.getFechaAcontecimiento())
             .categoria(hechoDTO.getCategoria())
             .ubicacion(hechoDTO.getUbicacion())
-            .usuario(Usuario.of(hechoDTO.getIdUsuario()));
+            .usuario( hechoDTO.getIdUsuario() == null ?  null:
+                    Usuario.of(hechoDTO.getIdUsuario()));
   }
 
   public void modificarHechoParaEliminacion(Hecho hecho, UriBuilder uriBuilder) {

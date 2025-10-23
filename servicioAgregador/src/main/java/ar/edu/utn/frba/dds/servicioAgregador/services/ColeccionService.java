@@ -122,18 +122,22 @@ public class ColeccionService implements IColeccionService{
             .flatMap(fuente -> {
               List<Hecho> hechos = this.getHechosClient(fuente.getOrigen(), null);
               hechos.forEach(hecho -> hecho.setOrigen(this.saveOrigenHechoNuevo(hecho.getOrigen())));
-              hechos = hechos.stream().map(this.hechoRepository::save).toList();
               hechos.forEach(this::verSiNormalizar);
+              this.hechoRepository.saveAll(hechos);
               return Mono.empty();
             }).then();
   }
 
   private Origen saveOrigenHechoNuevo(Origen origen) {
-    Origen origenObtenido;
-    if(origen.getTipo() == TipoOrigen.PROXY)
-      origenObtenido = this.origenRepository.findByUrlAndTipoAndClientNombre(origen.getUrl(), origen.getTipo(), origen.getNombreAPI()).get(0);
+    List<Origen> origenes;
+    Origen origenObtenido = null;
+    if(origen.getTipo() == TipoOrigen.PROXY) {
+      origenes = this.origenRepository.findByUrlAndTipoAndClientNombre(origen.getUrl(), origen.getTipo(), origen.getNombreAPI());
+    }
     else{
-      List<Origen> origenes =this.origenRepository.findByUrlAndTipo(origen.getUrl(), origen.getTipo());
+       origenes = this.origenRepository.findByUrlAndTipo(origen.getUrl(), origen.getTipo());
+    }
+    if (!origenes.isEmpty()) {
       origenObtenido = origenes.get(0);
     }
 
@@ -145,11 +149,14 @@ public class ColeccionService implements IColeccionService{
 
   private void verSiNormalizar(Hecho hecho) {
     Hecho hechoInterno =  this.hechoRepository.findByIdExternoAndOrigen(hecho.getIdExterno(), hecho.getOrigen());
-    if(hechoInterno != null && this.verificadorNormalizador.estaNormalizado(hechoInterno, hecho)) {
-        hecho.marcarComoNormalizado();
-        hecho.setTitulo(hechoInterno.getTitulo());
-        hecho.setUbicacion(hechoInterno.getUbicacion());
-        hecho.setCategoria(hechoInterno.getCategoria());
+    if(hechoInterno != null) {
+        hecho.setId(hechoInterno.getId());
+        if (this.verificadorNormalizador.estaNormalizado(hechoInterno, hecho)) {
+          hecho.marcarComoNormalizado();
+          hecho.setTitulo(hechoInterno.getTitulo());
+          hecho.setUbicacion(hechoInterno.getUbicacion());
+          hecho.setCategoria(hechoInterno.getCategoria());
+        }
     }
   }
 

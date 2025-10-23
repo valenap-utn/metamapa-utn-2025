@@ -33,7 +33,7 @@ public class HechoSolicitudController {
     }
 
     @GetMapping("/hechos")
-    public ResponseEntity<ConjuntoHechoDTODinamica> obtenerHechos( @RequestParam Boolean pendientes) {
+    public ResponseEntity<ConjuntoHechoDTODinamica> obtenerHechos( @RequestParam(required = false) Boolean pendientes) {
         List<HechoDTODinamica> hechos = hechoServicio.obtenerHechosPublicos(pendientes).stream().map(this::toHechoDTO).toList();
         ConjuntoHechoDTODinamica conjuntoHechos = new ConjuntoHechoDTODinamica();
         conjuntoHechos.setHechos(hechos);

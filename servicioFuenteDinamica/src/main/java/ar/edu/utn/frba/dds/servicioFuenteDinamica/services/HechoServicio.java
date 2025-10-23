@@ -62,7 +62,7 @@ public class HechoServicio implements IHechoServicio {
 
     @Override
     public List<Hecho> obtenerHechosPublicos(Boolean pendientes) {
-        if (pendientes) {
+        if (pendientes != null && pendientes) {
             return hechoRepository.findHechosByEstado(Estado.EN_REVISION);
         }
         return this.hechoRepository.findAll();

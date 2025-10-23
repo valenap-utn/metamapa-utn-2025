@@ -85,7 +85,7 @@ public class Hecho {
     @Getter private final Set<String> etiquetas = new HashSet<>();
 
     @ManyToOne
-    @JoinColumn(name = "usuario_id", nullable = false, referencedColumnName = "id")
+    @JoinColumn(name = "usuario_id", referencedColumnName = "id")
     @Getter @Setter private Usuario usuario;
 
     @Column(name = "normalizado")
@@ -126,7 +126,7 @@ public class Hecho {
 
 
   public Long getIdUsuario() {
-        return this.usuario.getId();
+        return this.usuario == null ? null : this.usuario.getId();
   }
 
     public String getClientNombre() {
@@ -146,7 +146,7 @@ public class Hecho {
   }
 
   public Direccion getDireccion() {
-      return this.ubicacion.getDireccion();
+      return this.ubicacion == null ? null : this.ubicacion.getDireccion();
   }
 
   public boolean isEliminado() {

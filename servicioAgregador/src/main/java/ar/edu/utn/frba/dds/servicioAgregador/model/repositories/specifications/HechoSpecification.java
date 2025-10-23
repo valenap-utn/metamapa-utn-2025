@@ -21,7 +21,8 @@ public class HechoSpecification {
   private static final String ELIMINADO = "eliminado";
   public static Specification<Hecho> filterBy(FiltroDTO filtro, Origen origen) {
     return Specification
-            .where(tieneOrigen(origen))
+            .where(tieneUrlOrigen(origen))
+            .and(tieneTipoOrigen(origen))
             .and(noEstaEliminado())
             .and(tieneFechaCargaInicio(filtro.getFecha_reporte_desde()))
             .and(tieneFechaCargaFin(filtro.getFecha_reporte_hasta()))
@@ -44,13 +45,23 @@ public class HechoSpecification {
   private static Specification<Hecho> noEstaEliminado() {
     return ((root, query, cb) -> cb.equal(root.get(HechoSpecification.ELIMINADO), Boolean.FALSE));
   }
-  private static Specification<Hecho> tieneOrigen(Origen origen) {
+  private static Specification<Hecho> tieneUrlOrigen(Origen origen) {
     return ((root, query, cb) -> {
      if (origen == null) {
       return cb.conjunction();
      }
      Path<Origen> origen1 = root.get("origen");
-     return cb.equal(origen1.get("id"), origen.getId());
+     return cb.equal(origen1.get("url"), origen.getUrl());
+    });
+  }
+
+  private static Specification<Hecho> tieneTipoOrigen(Origen origen) {
+    return ((root, query, cb) -> {
+      if (origen == null) {
+        return cb.conjunction();
+      }
+      Path<Origen> origen1 = root.get("origen");
+      return cb.equal(origen1.get("tipo"), origen.getTipo());
     });
   }
 
