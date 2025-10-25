@@ -19,8 +19,6 @@ import ar.edu.utn.frba.dds.servicioAgregador.model.entities.origenes.Origen;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.origenes.TipoOrigen;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.roles.PermisoCrearColeccion;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.roles.PermisoModificarColeccion;
-import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.implEspecifica.ICategoriaRepositoryFullTextSearch;
-import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.implReal.ICategoriaRepositoryJPA;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.implReal.IColeccionRepositoryJPA;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.implReal.IHechoRepositoryJPA;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.implReal.IOrigenRepositoryJPA;
@@ -55,15 +53,13 @@ public class ColeccionService implements IColeccionService{
   private final FactoryClientFuente clientFuenteFactory;
   private final VerificadorNormalizador verificadorNormalizador;
   private final IOrigenRepositoryJPA origenRepository;
-  private final ICategoriaRepositoryJPA categoriaRepositoryJPA;
-  private final ICategoriaRepositoryFullTextSearch categoriaRepositoryFullTextSearch;
   public ColeccionService(IColeccionRepositoryJPA coleccionRepository,
                           IUserRepositoryJPA userRepository,
                           IHechoRepositoryJPA hechoRepository,
                           FactoryAlgoritmo algoritmoFactory,
                           FactoryClientFuente clientFuenteFactory,
                           MapColeccionOutput mapperColeccionOutput,
-                          MapHechoOutput mapperHechoOutput, VerificadorNormalizador verificadorNormalizador, IOrigenRepositoryJPA origenRepository, ICategoriaRepositoryJPA categoriaRepositoryJPA, ICategoriaRepositoryFullTextSearch categoriaRepositoryFullTextSearch) {
+                          MapHechoOutput mapperHechoOutput, VerificadorNormalizador verificadorNormalizador, IOrigenRepositoryJPA origenRepository) {
     this.coleccionRepository = coleccionRepository;
     this.userRepository = userRepository;
     this.hechoRepository = hechoRepository;
@@ -73,8 +69,6 @@ public class ColeccionService implements IColeccionService{
     this.mapperHechoOutput = mapperHechoOutput;
     this.verificadorNormalizador = verificadorNormalizador;
     this.origenRepository = origenRepository;
-    this.categoriaRepositoryJPA = categoriaRepositoryJPA;
-    this.categoriaRepositoryFullTextSearch = categoriaRepositoryFullTextSearch;
   }
 
 
@@ -249,9 +243,13 @@ public class ColeccionService implements IColeccionService{
     return Flux.fromIterable(colecciones).flatMap(
         coleccion -> {
           coleccion.consensuarHechos(fuenteColeccions);
-          return Mono.empty();
+          return Mono.just(coleccion);
         }
-    ).then();
+    ).flatMap(coleccion -> {
+      this.hechoRepository.saveAll(
+              fuenteColeccions.stream().flatMap( fuente -> fuente.getHechos().stream()).toList()
+      );
+      return Mono.empty();
+    }).then();
   }
-
 }

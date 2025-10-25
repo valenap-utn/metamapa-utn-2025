@@ -54,7 +54,7 @@ public class Estandarizador implements IEstandarizador {
             .then();
   }
 
-  private Mono<Hecho> estandarizarHecho(Hecho hecho, List<Hecho> hechosDesnormalizados) {
+  private Mono<Void> estandarizarHecho(Hecho hecho, List<Hecho> hechosDesnormalizados) {
     return Mono.just(hecho).map(hechoAmodificar ->
             {
               this.estandarizarTitulo(hechoAmodificar, hechosDesnormalizados);
@@ -62,9 +62,9 @@ public class Estandarizador implements IEstandarizador {
               this.estandarizarUbicacion(hechoAmodificar, hechosDesnormalizados);
               hechoAmodificar.marcarComoNormalizado();
               this.hechoRepository.save(hecho);
-              return Mono.just(hecho);
+              return Mono.empty();
             }
-            ).then(Mono.just(hecho));
+            ).then();
   }
 
 

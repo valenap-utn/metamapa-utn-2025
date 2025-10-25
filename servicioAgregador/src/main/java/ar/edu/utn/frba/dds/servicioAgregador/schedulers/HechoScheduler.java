@@ -16,6 +16,7 @@ public class HechoScheduler {
   public void normalizarHechos() {
     this.estandarizador.estandarizarHechos()
             .doOnSuccess(v -> System.out.println("Se han normalizado los hechos"))
+            .doOnError(e -> System.out.println("Error al consensuar hechos"))
             .subscribe();
   }
 }
