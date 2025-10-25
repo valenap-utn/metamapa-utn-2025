@@ -539,3 +539,7 @@ span.chip__label{
         justify-content: center;
     }
 }
+
+.form-check-input[type=checkbox] {
+    border-radius: 25px;
+}

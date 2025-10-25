@@ -342,7 +342,6 @@ public class ClientSeader implements IFuenteDinamica, IFuenteEstatica, IServicio
   @Override //retorna solo los hechos NO eliminados
   public List<HechoDTOOutput> findAllHechos(FiltroDTO filtro) {
     return this.hechos.values().stream()
-        .filter(h -> !h.isEliminado())
 
         //Excluimos a los que tienen la solicitud de eliminación aceptada
         .filter(h -> this.solicitudesEliminacion.values().stream()
@@ -391,10 +390,7 @@ public class ClientSeader implements IFuenteDinamica, IFuenteEstatica, IServicio
     solicitudEliminacionDTO.setEstado("ACEPTAR");
 
     HechoDTOOutput hecho = this.hechos.get(solicitudEliminacionDTO.getIdHecho());
-    if(hecho != null){
-      hecho.setEliminado(true);
-      hecho.setFechaDeBaja(LocalDateTime.now());
-    }
+
     return solicitudEliminacionDTO;
   }
 
@@ -444,7 +440,6 @@ public class ClientSeader implements IFuenteDinamica, IFuenteEstatica, IServicio
   public List<HechoDTOOutput> listHechosDelUsuario(Long userId) {
     return this.hechos.values().stream()
         .filter(h -> userId != null && userId.equals(h.getIdUsuario()))
-        .filter(h -> !h.isEliminado())
         .sorted((a,b) -> {
           var fa = a.getFechaCarga(); var fb = b.getFechaCarga();
           if (fa == null && fb == null) return 0;

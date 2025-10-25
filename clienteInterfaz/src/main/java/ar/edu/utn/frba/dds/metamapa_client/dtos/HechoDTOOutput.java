@@ -16,13 +16,10 @@ public class HechoDTOOutput {
   private LocalDateTime fechaAcontecimiento;
   private LocalDateTime fechaCarga;
   private Set<String> etiquetas;
-  private boolean eliminado;
   private ContenidoMultimedia contenidoMultimedia;
   private Long idUsuario;
   private OrigenDTO origen;
 
   private String estado;
   private LocalDateTime fechaAprobacion;
-
-  private LocalDateTime fechaDeBaja; //para saber cuando se eliminó
 }

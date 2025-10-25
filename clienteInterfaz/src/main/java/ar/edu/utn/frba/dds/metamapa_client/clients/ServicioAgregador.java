@@ -26,6 +26,7 @@ public class ServicioAgregador implements IServicioAgregador {
 
 
   public List<HechoDTOOutput> findAllHechos(FiltroDTO filtroDTO) {
+
     return this.agregadorWebClient.get().uri(uriBuilder -> this.uriConFiltros(filtroDTO, uriBuilder, "/api/hechos").build())
             .retrieve()
             .bodyToMono(ConjuntoHechoDTO.class).map(
