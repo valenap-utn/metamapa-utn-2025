@@ -359,7 +359,7 @@ public class ClientSeader implements IFuenteDinamica, IFuenteEstatica, IServicio
     return hechos.subList(0, 3);
   }
 
-  //Solicitudes de ELIMINACION
+  // ---------- Solicitudes de ELIMINACION ----------
 
   @Override
   public List<SolicitudEliminacionDTO> findAllSolicitudes() {
@@ -394,11 +394,13 @@ public class ClientSeader implements IFuenteDinamica, IFuenteEstatica, IServicio
     return solicitudEliminacionDTO;
   }
 
+  // ---------- Colecciones ----------
+
   @Override
   public ColeccionDTOOutput modificarColeccion(ColeccionDTOInput coleccionDTOInput, UUID coleccionId) {
     ColeccionDTOOutput coleccionDTOOutput = this.toColeccionDTOOutput(coleccionDTOInput);
     coleccionDTOOutput.setId(coleccionId);
-    this.coleccion.put(coleccionId, this.toColeccionDTOOutput(coleccionDTOInput));
+    this.coleccion.put(coleccionId, coleccionDTOOutput);
     return coleccionDTOOutput;
   }
 
@@ -414,6 +416,34 @@ public class ClientSeader implements IFuenteDinamica, IFuenteEstatica, IServicio
     coleccionDTOOutput.setId(id);
     this.coleccion.put(id, coleccionDTOOutput);
     return coleccionDTOOutput;
+  }
+
+  @Override
+  public ColeccionDTOOutput revisarColeccion(UUID idColeccion) {
+    if(idColeccion == null) return null;
+    return this.coleccion.get(idColeccion);
+  }
+
+  @Override
+  public ColeccionDTOOutput actualizarColeccion(ColeccionDTOInput coleccion, UUID idColeccion){
+    if (idColeccion == null || coleccion == null) return null;
+
+    ColeccionDTOOutput existing = this.coleccion.get(idColeccion);
+    if (existing == null) {
+      // si no existe, comportate como crear + setear id
+      ColeccionDTOOutput created = toColeccionDTOOutput(coleccion);
+      created.setId(idColeccion);
+      this.coleccion.put(idColeccion, created);
+      return created;
+    }
+
+    if (coleccion.getTitulo() != null) existing.setTitulo(coleccion.getTitulo());
+    if (coleccion.getDescripcion() != null) existing.setDescripcion(coleccion.getDescripcion());
+    if (coleccion.getAlgoritmo() != null) existing.setAlgoritmoDeConsenso(coleccion.getAlgoritmo());
+    if (coleccion.getFuentes() != null) existing.setFuentes(new ArrayList<>(coleccion.getFuentes()));
+    if (coleccion.getCriterios() != null) existing.setCriterios(new ArrayList<>(coleccion.getCriterios()));
+
+    return existing;
   }
 
   @Override
