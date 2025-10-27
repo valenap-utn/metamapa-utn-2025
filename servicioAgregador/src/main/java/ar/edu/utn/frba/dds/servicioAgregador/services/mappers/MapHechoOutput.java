@@ -3,6 +3,7 @@ package ar.edu.utn.frba.dds.servicioAgregador.services.mappers;
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.ConjuntoHechoCompleto;
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.HechoDTOCompleto;
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.OrigenDTO;
+import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Categoria;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
 
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.origenes.Origen;
@@ -12,10 +13,11 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class MapHechoOutput {
-  public ConjuntoHechoCompleto toConjuntoHechoDTOOutput(List<Hecho> hechos) {
+  public ConjuntoHechoCompleto toConjuntoHechoDTOOutput(List<Hecho> hechos, List<Categoria> categorias) {
     ConjuntoHechoCompleto conjuntoDeHechos = new ConjuntoHechoCompleto();
     List<HechoDTOCompleto> hechosDTO =  hechos.stream().map(this::toHechoDTO).toList();
     conjuntoDeHechos.setHechos(hechosDTO);
+    conjuntoDeHechos.setCategorias(categorias.stream().map(Categoria::getNombre).toList());
     return conjuntoDeHechos;
   }
 

@@ -5,6 +5,7 @@ import ar.edu.utn.frba.dds.servicioAgregador.exceptions.ColeccionNoEncontrada;
 import ar.edu.utn.frba.dds.servicioAgregador.exceptions.ColeccionYaEliminada;
 import ar.edu.utn.frba.dds.servicioAgregador.exceptions.UsuarioNoEncontrado;
 import ar.edu.utn.frba.dds.servicioAgregador.exceptions.UsuarioSinPermiso;
+import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Categoria;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.VerificadorNormalizador;
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.ColeccionDTOInput;
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.ColeccionDTOOutput;
@@ -19,6 +20,7 @@ import ar.edu.utn.frba.dds.servicioAgregador.model.entities.origenes.Origen;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.origenes.TipoOrigen;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.roles.PermisoCrearColeccion;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.roles.PermisoModificarColeccion;
+import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.implReal.ICategoriaRepositoryJPA;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.implReal.IColeccionRepositoryJPA;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.implReal.IHechoRepositoryJPA;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.implReal.IOrigenRepositoryJPA;
@@ -53,13 +55,14 @@ public class ColeccionService implements IColeccionService{
   private final FactoryClientFuente clientFuenteFactory;
   private final VerificadorNormalizador verificadorNormalizador;
   private final IOrigenRepositoryJPA origenRepository;
+  private final ICategoriaRepositoryJPA categoriaRepository;
   public ColeccionService(IColeccionRepositoryJPA coleccionRepository,
                           IUserRepositoryJPA userRepository,
                           IHechoRepositoryJPA hechoRepository,
                           FactoryAlgoritmo algoritmoFactory,
                           FactoryClientFuente clientFuenteFactory,
                           MapColeccionOutput mapperColeccionOutput,
-                          MapHechoOutput mapperHechoOutput, VerificadorNormalizador verificadorNormalizador, IOrigenRepositoryJPA origenRepository) {
+                          MapHechoOutput mapperHechoOutput, VerificadorNormalizador verificadorNormalizador, IOrigenRepositoryJPA origenRepository, ICategoriaRepositoryJPA categoriaRepository) {
     this.coleccionRepository = coleccionRepository;
     this.userRepository = userRepository;
     this.hechoRepository = hechoRepository;
@@ -69,6 +72,7 @@ public class ColeccionService implements IColeccionService{
     this.mapperHechoOutput = mapperHechoOutput;
     this.verificadorNormalizador = verificadorNormalizador;
     this.origenRepository = origenRepository;
+    this.categoriaRepository = categoriaRepository;
   }
 
 
@@ -173,7 +177,8 @@ public class ColeccionService implements IColeccionService{
     if(filtro.getCurada()){
       hechos = hechos.stream().filter(hecho -> hecho.estaCuradoPor(coleccion.getAlgoritmoConsenso())).toList();
     }
-    return this.mapperHechoOutput.toConjuntoHechoDTOOutput(hechos);
+    List<Categoria> categorias = this.categoriaRepository.findAll();
+    return this.mapperHechoOutput.toConjuntoHechoDTOOutput(hechos, categorias);
   }
 
   @Override
