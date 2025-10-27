@@ -12,13 +12,13 @@ import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.implEspecifica.I
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.implReal.ICategoriaRepositoryJPA;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.implReal.IHechoRepositoryJPA;
 import ar.edu.utn.frba.dds.servicioAgregador.services.clients.ClientAPIGobierno;
-import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 @Service
 public class Estandarizador implements IEstandarizador {
@@ -45,12 +45,12 @@ public class Estandarizador implements IEstandarizador {
     this.apiGobierno = apiGobierno;
   }
   @Override
-  @Transactional
   public Mono<Void> estandarizarHechos() {
-    List<Hecho> hechos = hechoRepository.findByNormalizado(false);
+    List<Hecho> hechos = this.hechoRepository.findByNormalizado(false);
     List<Hecho> hechosCopia = new ArrayList<>(hechos);
     return Flux.fromIterable(hechos)
             .flatMap(hecho -> this.estandarizarHecho(hecho, hechosCopia))
+            .subscribeOn(Schedulers.boundedElastic())
             .then();
   }
 

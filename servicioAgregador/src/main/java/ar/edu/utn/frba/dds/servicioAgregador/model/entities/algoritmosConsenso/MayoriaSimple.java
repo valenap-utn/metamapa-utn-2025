@@ -18,4 +18,9 @@ public class MayoriaSimple implements AlgoritmoConsenso {
 
     return coincidencias >= Math.ceil(cantidadFuentes / 2.0);
   }
+
+  @Override
+  public String getNombre() {
+    return "MAYORIASIMPLE";
+  }
 }

@@ -31,7 +31,10 @@ public class HechoController {
                                                          @RequestParam(required = false) @DateTimeFormat(pattern = "ddmmyyyy") LocalDate fecha_acontecimiento_hasta,
                                                          @RequestParam(required = false) Float latitud,
                                                          @RequestParam(required = false) Float longitud,
-                                                         @RequestParam(required = false) boolean entiemporeal){
+                                                         @RequestParam(required = false) boolean entiemporeal,
+                                                         @RequestParam(required = false) String provincia,
+                                                         @RequestParam(required = false) String departamento,
+                                                         @RequestParam(required = false) String municipio){
       FiltroDTO filtro = FiltroDTO.builder()
               .fecha_acontecimiento_desde(fecha_acontecimiento_desde)
               .fecha_acontecimiento_hasta(fecha_acontecimiento_hasta)
@@ -41,6 +44,9 @@ public class HechoController {
               .latitud(latitud)
               .longitud(longitud)
               .entiemporeal(entiemporeal)
+              .departamento(departamento)
+              .municipio(municipio)
+              .provincia(provincia)
               .build();
 
       return ResponseEntity.ok(this.hechoService.findAll(filtro));

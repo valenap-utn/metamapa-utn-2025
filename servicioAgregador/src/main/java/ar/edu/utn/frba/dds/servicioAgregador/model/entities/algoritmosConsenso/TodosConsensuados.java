@@ -12,4 +12,9 @@ public class TodosConsensuados implements AlgoritmoConsenso {
   public boolean consensuarHecho(Hecho hecho, Collection<FuenteColeccion> fuenteColeccions) {
     return true;
   }
+
+  @Override
+  public String getNombre() {
+    return "TODOSCONSENSUADOS";
+  }
 }

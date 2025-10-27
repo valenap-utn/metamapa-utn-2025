@@ -7,12 +7,14 @@ import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Categoria;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Coleccion;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.FuenteColeccion;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.filtros.Filtro;
+import ar.edu.utn.frba.dds.servicioAgregador.model.entities.filtros.FiltroDepartamento;
+import ar.edu.utn.frba.dds.servicioAgregador.model.entities.filtros.FiltroMunicipio;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.filtros.FiltroPorCategoria;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.filtros.FiltroPorDescripcion;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.filtros.FiltroPorFechaAcontecimiento;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.filtros.FiltroPorFechaCarga;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.filtros.FiltroPorTitulo;
-import ar.edu.utn.frba.dds.servicioAgregador.model.entities.filtros.FiltroUbicacion;
+import ar.edu.utn.frba.dds.servicioAgregador.model.entities.filtros.FiltroProvincia;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.origenes.Origen;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
@@ -44,7 +46,9 @@ public class MapColeccionOutput {
               new FiltroPorFechaAcontecimiento(criterioDTO.getFechaAcontecimientoInicial(), criterioDTO.getFechaAcontecimientoFinal());
       case "FECHACARGA" ->
               new FiltroPorFechaCarga(criterioDTO.getFechaCargaInicial(), criterioDTO.getFechaCargaFinal());
-      case "UBICACION" -> new FiltroUbicacion(criterioDTO.getUbicacion());
+      case "UBICACIONPROVINCIA" -> new FiltroProvincia(criterioDTO.getProvincia());
+      case "UBICACIONMUNICIPIO" -> new FiltroMunicipio(criterioDTO.getMunicipio());
+      case "UBICACIONDEPARTAMENTO" -> new FiltroDepartamento(criterioDTO.getDepartamento());
       default -> null;
     };
   }

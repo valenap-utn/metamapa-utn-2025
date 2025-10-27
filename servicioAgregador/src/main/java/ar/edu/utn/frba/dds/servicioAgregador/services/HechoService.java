@@ -3,7 +3,6 @@ package ar.edu.utn.frba.dds.servicioAgregador.services;
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.ConjuntoHechoCompleto;
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.FiltroDTO;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
-import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IHechoRepository;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.implReal.IHechoRepositoryJPA;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.specifications.HechoSpecification;
 import ar.edu.utn.frba.dds.servicioAgregador.services.mappers.MapHechoOutput;
@@ -28,6 +27,10 @@ public class HechoService implements IHechoService{
   public ConjuntoHechoCompleto findAll(FiltroDTO filtroDTO) {
     Specification<Hecho> especificacionFiltros = HechoSpecification.filterBy(filtroDTO, null);
     List<Hecho> hechosDelSistema = this.hechoRepository.findAll(especificacionFiltros);
+    if(filtroDTO.tieneFiltroUbicacion()) {
+      hechosDelSistema = filtroDTO.filtrarPorUbicacion(hechosDelSistema);
+    }
     return this.mapHechoOutput.toConjuntoHechoDTOOutput(hechosDelSistema);
   }
+
 }

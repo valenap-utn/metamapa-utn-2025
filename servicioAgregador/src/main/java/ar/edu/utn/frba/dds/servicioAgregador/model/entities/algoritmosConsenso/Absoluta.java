@@ -14,4 +14,9 @@ public class Absoluta implements AlgoritmoConsenso {
     }
     return true; //si todas lo tienen => consensuado
   }
+
+  @Override
+  public String getNombre() {
+    return "ABSOLUTA";
+  }
 }

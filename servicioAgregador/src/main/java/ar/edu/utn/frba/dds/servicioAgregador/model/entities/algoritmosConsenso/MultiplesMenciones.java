@@ -22,4 +22,9 @@ public class MultiplesMenciones implements AlgoritmoConsenso {
     }
     return coincidencias >= 2;
   }
+
+  @Override
+  public String getNombre() {
+    return "MULTIPLESMENCIONES";
+  }
 }

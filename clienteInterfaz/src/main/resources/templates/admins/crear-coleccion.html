@@ -50,8 +50,8 @@
                             <label for="algoritmo" class="mm-label">Algoritmo de consenso</label>
                             <select id="algoritmo" class="mm-input" th:field="*{algoritmo}">
                                 <option value="" disabled>Seleccioná un algoritmo…</option>
-                                <option value="MULTIPLES_MENCIONES">Múltiples menciones</option>
-                                <option value="MAYORIA_SIMPLE">Mayoría simple</option>
+                                <option value="MULTIPLESMENCIONES">Múltiples menciones</option>
+                                <option value="MAYORIASIMPLE">Mayoría simple</option>
                                 <option value="ABSOLUTA">Absoluta</option>
                                 <option value="SIN_ALGORITMO_CONSENSO">Ninguno</option>
                             </select>
@@ -94,8 +94,8 @@
                             <!-- Se van mostrando las fuentes que se quieren agregar a la colección -->
                             <div class="mm-chips" id="fuentesContainer" aria-live="polite">
                                 <span class="chip" th:each="f, indiceFuente : *{fuentes}">
-                                    <input type="text" style="display: none;" th:field="*{fuentes[__${indiceFuente.index}__].tipoOrigen}" th:value="${f.tipoOrigen}" />
-                                    <input type="text" style="display: none;" th:field="*{fuentes[__${indiceFuente.index}__].url}" th:value="${f.url}"/>
+                                    <input type="text" style="display: none;" th:field="*{fuentes[__${indiceFuente.index}__].tipoOrigen}"  />
+                                    <input type="text" style="display: none;" th:field="*{fuentes[__${indiceFuente.index}__].url}" />
                                     <strong th:text="${f.tipoOrigen}"></strong> · <span th:text="${f.url}"></span>
                                     <button type="button" class="chip__remove" aria-label="Quitar fuente"><span aria-hidden="true">×</span></button>
                                 </span>
@@ -145,13 +145,13 @@
 
                                 <div id="criteriosChips" class="mm-chips" aria-live="polite" >
                                     <span class="mm-chip" th:each="criterio, indiceCriterio : *{criterios}">
-                                        <input th:id="${'Criterio.' + indiceCriterio.index}" type="text" style="display: none;" th:field="*{criterios[__${indiceCriterio.index}__].tipo}" th:value="${criterio.tipo}" />
-                                        <input th:if="${criterio.titulo != null}" type="text" style="display: none;" th:field="*{criterios[__${indiceCriterio.index}__].titulo}" th:value="${criterio.titulo}"/>
-                                        <input th:if="${criterio.categoria != null}" type="text" style="display: none;" th:field="*{criterios[__${indiceCriterio.index}__].categoria}" th:value="${criterio.categoria}"/>
-                                        <input th:if="${criterio.tipo.equalsIgnoreCase('FECHAACONTECIMIENTO') }" type="datetime-local" style="display: none;" th:field="*{criterios[__${indiceCriterio.index}__].fechaAcontecimientoInicial}" th:value="${criterio.fechaAcontecimientoInicial}"/>
-                                        <input th:if="${criterio.tipo.equalsIgnoreCase('FECHAACONTECIMIENTO')}" type="datetime-local" style="display: none;" th:field="*{criterios[__${indiceCriterio.index}__].fechaAcontecimientoFinal}" th:value="${criterio.fechaAcontecimientoFinal}"/>
-                                        <input th:if="${criterio.tipo.equalsIgnoreCase('FECHACARGA')}" type="datetime-local" style="display: none;" th:field="*{criterios[__${indiceCriterio.index}__].fechaCargaInicial}" th:value="${criterio.fechaCargaInicial}"/>
-                                        <input th:if="${criterio.tipo.equalsIgnoreCase('FECHACARGA')}" type="datetime-local" style="display: none;" th:field="*{criterios[__${indiceCriterio.index}__].fechaCargaFinal}" th:value="${criterio.fechaCargaFinal}"/>
+                                        <input th:id="${'Criterio.' + indiceCriterio.index}" type="text" style="display: none;" th:field="*{criterios[__${indiceCriterio.index}__].tipo}" />
+                                        <input th:if="${criterio.titulo != null}" type="text" style="display: none;" th:field="*{criterios[__${indiceCriterio.index}__].titulo}" />
+                                        <input th:if="${criterio.categoria != null}" type="text" style="display: none;" th:field="*{criterios[__${indiceCriterio.index}__].categoria}"/>
+                                        <input th:if="${criterio.tipo.equalsIgnoreCase('FECHAACONTECIMIENTO') }" type="datetime-local" style="display: none;" th:field="*{criterios[__${indiceCriterio.index}__].fechaAcontecimientoInicial}" />
+                                        <input th:if="${criterio.tipo.equalsIgnoreCase('FECHAACONTECIMIENTO')}" type="datetime-local" style="display: none;" th:field="*{criterios[__${indiceCriterio.index}__].fechaAcontecimientoFinal}" />
+                                        <input th:if="${criterio.tipo.equalsIgnoreCase('FECHACARGA')}" type="datetime-local" style="display: none;" th:field="*{criterios[__${indiceCriterio.index}__].fechaCargaInicial}" />
+                                        <input th:if="${criterio.tipo.equalsIgnoreCase('FECHACARGA')}" type="datetime-local" style="display: none;" th:field="*{criterios[__${indiceCriterio.index}__].fechaCargaFinal}" />
                                         <b th:if="${criterio.tipo.equalsIgnoreCase('TITULO')}" th:text="${'Título: '+ criterio.titulo }"></b>
                                         <b th:if="${criterio.tipo.equalsIgnoreCase('CATEGORIA')}" th:text="${'Categoría: '+ criterio.categoria }"></b>
                                         <b th:if="${criterio.tipo.equalsIgnoreCase('FECHAACONTECIMIENTO')}" th:text="${'Fecha de acontecimiento: '+ (criterio.fechaAcontecimientoInicial != null ? criterio.fechaAcontecimientoInicial : '-') + '→' + (criterio.fechaAcontecimientoFinal != null ? criterio.fechaAcontecimientoFinal : '-')  }"></b>

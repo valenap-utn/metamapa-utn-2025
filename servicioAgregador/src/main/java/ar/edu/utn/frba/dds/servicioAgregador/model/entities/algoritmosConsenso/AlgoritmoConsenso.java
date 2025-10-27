@@ -8,4 +8,5 @@ import java.util.Collection;
 
 public interface AlgoritmoConsenso {
   boolean consensuarHecho(Hecho hecho, Collection<FuenteColeccion> fuenteColeccions);
+  String getNombre();
 }

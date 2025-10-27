@@ -17,11 +17,11 @@ public class Direccion {
   private Long id;
 
   @Column(name = "departamento")
-  private String departamento;
+  private String departamento = "";
 
   @Column(name = "municipio")
-  private String municipio;
+  private String municipio = "";
 
   @Column(name = "provincia")
-  private String provincia;
+  private String provincia = "";
 }

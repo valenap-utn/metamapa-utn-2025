@@ -152,4 +152,17 @@ public class Hecho {
   public boolean isEliminado() {
       return this.eliminado;
   }
+
+  public String getDepartamento() {
+    return this.getDireccion() != null ?  this.getDireccion().getDepartamento() : "";
+
+    }
+
+  public String getProvincia() {
+    return this.getDireccion() != null ?  this.getDireccion().getProvincia() : "";
+  }
+
+  public String getMunicipio() {
+      return this.getDireccion() != null ?  this.getDireccion().getMunicipio() : "";
+  }
 }

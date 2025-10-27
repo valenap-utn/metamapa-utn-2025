@@ -231,9 +231,10 @@ public class ColeccionService implements IColeccionService{
     } else {
       Specification<Hecho> especificacionFiltros = HechoSpecification.filterBy(filtro, fuenteColeccion.getOrigen());
       hechos.addAll(this.hechoRepository.findAll(especificacionFiltros));
-//      if(filtro.getUbicacion() != null) {
-          //TODO
-//      }
+
+    }
+    if(filtro.tieneFiltroUbicacion()) {
+      hechos = filtro.filtrarPorUbicacion(hechos);
     }
     fuenteColeccion.actualizarHechos(hechos);
   }

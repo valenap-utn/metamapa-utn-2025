@@ -1,6 +1,5 @@
 package ar.edu.utn.frba.dds.servicioAgregador.model.dtos;
 
-import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Ubicacion;
 import java.time.LocalDateTime;
 import lombok.Data;
 
@@ -14,5 +13,7 @@ public class CriterioDTO {
   private String titulo;
   private String descripcion;
   private String categoria;
-  private Ubicacion ubicacion;
+  private String provincia;
+  private String departamento;
+  private String municipio;
 }
