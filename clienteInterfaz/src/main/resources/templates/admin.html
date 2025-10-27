@@ -4,74 +4,74 @@
     <link th:href="@{/css/styles-main.css}" rel="stylesheet">
 </head>
 <body>
-    <!-- Main -->
-    <section class="mm-card mx-auto" style="max-width: 900px; padding-top: 60px">
-        <h1 class="mm-form-title mb-4 text-center">Panel de Administrador</h1>
-        <p class="mm-form-sub text-center mb-5">Resumen y gestión de actividad</p>
+<!-- Main -->
+<section class="mm-card mx-auto" style="max-width: 900px; padding-top: 60px">
+    <h1 class="mm-form-title mb-4 text-center">Panel de Administrador</h1>
+    <p class="mm-form-sub text-center mb-5">Resumen y gestión de actividad</p>
 
-        <!-- Resumen de actividad -->
-        <div class="row metrics-row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-3 mb-4 align-items-stretch">
-            <div class="col d-flex">
-                <div class="card mm-card mm-metric w-100 h-100">
-                    <div class="card-body">
-                        <h5 class="card-title">Hechos</h5>
-                        <p class="mm-metric__number" th:text="${metrics.get('hechos') }">124</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col d-flex">
-                <div class="card mm-card mm-metric w-100 h-100">
-                    <div class="card-body">
-                        <h5 class="card-title">Fuentes</h5>
-                        <p class="mm-metric__number" th:text="${metrics.get('fuentes')}">8</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col d-flex">
-                <div class="card mm-card mm-metric w-100 h-100">
-                    <div class="card-body">
-                        <h5 class="card-title">Solicitudes de eliminación</h5>
-                        <p class="mm-metric__number" th:text="${metrics.get('solicitudes')}">3</p>
-                    </div>
+    <!-- Resumen de actividad -->
+    <div class="row metrics-row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-3 mb-4 align-items-stretch">
+        <div class="col d-flex">
+            <div class="card mm-card mm-metric w-100 h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Hechos</h5>
+                    <p class="mm-metric__number" th:text="${metrics.get('hechos') }">124</p>
                 </div>
             </div>
         </div>
-
-        <!-- Gestión de colecciones -->
-        <h2 class="h5 mt-4 mb-3">Gestión de Colecciones</h2>
-        <div class="mm-actions">
-            <a class="btn btn-back btn-lg mb-3" aria-label="Crear coleccion" th:href="@{/admin/crear-coleccion}">Crear colección</a>
-            <button class="btn btn-back btn-lg mb-3" aria-label="Editar colección">Editar colección</button>
-            <button class="btn btn-back btn-lg mb-3" aria-label="Eliminar colección">Eliminar colección</button>
+        <div class="col d-flex">
+            <div class="card mm-card mm-metric w-100 h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Fuentes</h5>
+                    <p class="mm-metric__number" th:text="${metrics.get('fuentes')}">8</p>
+                </div>
+            </div>
         </div>
-
-        <!-- Acciones sobre hechos y solicitudes -->
-        <h2 class="h5 mt-4 mb-3">Acciones sobre hechos y solicitudes</h2>
-        <!--            <div class="d-flex gap-2 flex-wrap mb-3">-->
-        <div class="mm-actions">
-            <a class="btn btn-back btn-lg mb-3" aria-label="Importar archivo CSV de hechos" th:href="@{/admin/importar-csv}">Importar CSV con hechos</a>
-
-            <a class="btn btn-back btn-lg mb-3" aria-label="Revisar nuevos hechos subidos" th:href="@{/admin/gest-nuevosHechos}">Gestionar nuevos hechos</a>
-            <!-- Qué era esto de aceptar con modificaciones ? xd -->
-            <a class="btn btn-back btn-lg mb-3" aria-label="Gestionar solicitudes de edición de Hechos" th:href="@{/admin/gest-solEdicion}">Gestionar solicitudes de edición</a>
-
-            <a class="btn btn-back btn-lg mb-3" aria-label="Gestionar solicitudes de eliminación de Hechos" th:href="@{/admin/gest-solEliminacion}">Gestionar solicitudes de eliminación</a>
-            <a class="btn btn-back btn-lg mb-3" aria-label="Consultar estadísticas" th:href="@{/admin/dashboard-estadisticas}">Consultar estadísticas</a>
+        <div class="col d-flex">
+            <div class="card mm-card mm-metric w-100 h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Solicitudes de eliminación</h5>
+                    <p class="mm-metric__number" th:text="${metrics.get('solicitudes')}">3</p>
+                </div>
+            </div>
         </div>
+    </div>
 
-        <!-- ALERT DE CONFIRMACIÓN -->
-        <th:block th:if="${success != null}">
-            <script th:inline="javascript">
-                alert(/*[[${success}]]*/'');
-            </script>
-        </th:block>
+    <!-- Gestión de colecciones -->
+    <h2 class="h5 mt-4 mb-3">Gestión de Colecciones</h2>
+    <div class="mm-actions">
+        <a class="btn btn-back btn-lg mb-3" aria-label="Crear coleccion" th:href="@{/admin/crear-coleccion}">Crear colección</a>
+        <!--            <button class="btn btn-back btn-lg mb-3" aria-label="Editar colección">Editar colección</button>-->
+        <!--            <button class="btn btn-back btn-lg mb-3" aria-label="Eliminar colección">Eliminar colección</button>-->
+    </div>
 
-        <th:block th:if="${error != null}">
-            <script th:inline="javascript">
-                alert(/*[[${error}]]*/'');
-            </script>
-        </th:block>
+    <!-- Acciones sobre hechos y solicitudes -->
+    <h2 class="h5 mt-4 mb-3">Acciones sobre hechos y solicitudes</h2>
+    <!--            <div class="d-flex gap-2 flex-wrap mb-3">-->
+    <div class="mm-actions">
+        <a class="btn btn-back btn-lg mb-3" aria-label="Importar archivo CSV de hechos" th:href="@{/admin/importar-csv}">Importar CSV con hechos</a>
 
-    </section>
+        <a class="btn btn-back btn-lg mb-3" aria-label="Revisar nuevos hechos subidos" th:href="@{/admin/gest-nuevosHechos}">Gestionar nuevos hechos</a>
+        <!-- Qué era esto de aceptar con modificaciones ? xd -->
+        <a class="btn btn-back btn-lg mb-3" aria-label="Gestionar solicitudes de edición de Hechos" th:href="@{/admin/gest-solEdicion}">Gestionar solicitudes de edición</a>
+
+        <a class="btn btn-back btn-lg mb-3" aria-label="Gestionar solicitudes de eliminación de Hechos" th:href="@{/admin/gest-solEliminacion}">Gestionar solicitudes de eliminación</a>
+        <a class="btn btn-back btn-lg mb-3" aria-label="Consultar estadísticas" th:href="@{/admin/dashboard-estadisticas}">Consultar estadísticas</a>
+    </div>
+
+    <!-- ALERT DE CONFIRMACIÓN -->
+    <th:block th:if="${success != null}">
+        <script th:inline="javascript">
+            alert(/*[[${success}]]*/'');
+        </script>
+    </th:block>
+
+    <th:block th:if="${error != null}">
+        <script th:inline="javascript">
+            alert(/*[[${error}]]*/'');
+        </script>
+    </th:block>
+
+</section>
 </body>
 </html>
