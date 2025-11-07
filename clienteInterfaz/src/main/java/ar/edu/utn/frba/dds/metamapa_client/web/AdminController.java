@@ -215,6 +215,7 @@ public class AdminController {
     return "admins/gest-nuevosHechos";
   }
 
+/*
   @PostMapping("/gest-nuevosHechos/{id}/aprobar")
   @PreAuthorize("hasRole('ADMINISTRADOR')")
   public ResponseEntity<Void> aprobarHecho(@PathVariable("id") Long id) {
@@ -227,6 +228,23 @@ public class AdminController {
   public ResponseEntity<Void> rechazarHecho(@PathVariable("id") Long id) {
     this.agregador.rechazarHecho(id);
     return ResponseEntity.noContent().build(); //204 en caso de exito !
+  }
+*/
+
+  @PostMapping("/gest-nuevosHechos/{id}/aprobar")
+  @PreAuthorize("hasRole('ADMINISTRADOR')")
+  public String aprobarHecho(@PathVariable("id") Long id, RedirectAttributes ra) {
+    this.agregador.aprobarHecho(id);
+    ra.addFlashAttribute("success", "Hecho aprobado correctamente.");
+    return "redirect:/admin/gest-nuevosHechos";
+  }
+
+  @PostMapping("/gest-nuevosHechos/{id}/rechazar")
+  @PreAuthorize("hasRole('ADMINISTRADOR')")
+  public String rechazarHecho(@PathVariable("id") Long id, RedirectAttributes ra) {
+    this.agregador.rechazarHecho(id);
+    ra.addFlashAttribute("success", "Hecho rechazado correctamente.");
+    return "redirect:/admin/gest-nuevosHechos";
   }
 
   //Para solicitudes de Edición
