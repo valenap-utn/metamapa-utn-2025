@@ -274,10 +274,35 @@ public class HechosController {
     return "redirect:/hechos/mis-hechos";
   }
 
+  //Solicitudes de Eliminación
+  @PostMapping("/{idHecho}/solicitud-eliminacion")
+  @PreAuthorize("hasRole('CONTRIBUYENTE')")
+  public ResponseEntity<?> crearSolicitudEliminacion(@PathVariable Long idHecho, @RequestParam String justificacion, HttpSession session) {
+    String accessToken = (String) session.getAttribute("accessToken");
+    Long userId = null;
+    if (accessToken != null) {
+      userId = JwtUtil.getId(accessToken);
+    }
+
+    if (justificacion == null || justificacion.trim().length() < 500) {
+      return ResponseEntity.badRequest().body("La justificación debe tener al menos 500 caracteres");
+    }
+
+    SolicitudEliminacionDTO solicitud = new SolicitudEliminacionDTO();
+    solicitud.setIdHecho(idHecho);
+    solicitud.setIdusuario(userId);
+    solicitud.setJustificacion(justificacion);
+    solicitud.setEstado("PENDIENTE");
+    solicitud.setFechaSolicitud(LocalDateTime.now());
+    this.agregador.crearSolicitud(solicitud);
+    return ResponseEntity.ok().build(); //200 en caso de éxito!
+  }
+
 
   //-------------------------------------
 
-  record HechoDto(Long id, String titulo, String fecha, String categoria, String ubicacion) {}
+  record HechoDto(Long id, String titulo, String fecha, String categoria, String ubicacion) {
+  }
 
   @GetMapping("/hechos/nav-hechos")
   public String navHechos(@RequestParam(defaultValue = "0") int page, Model model, WebClient backend, HttpSession session) {
