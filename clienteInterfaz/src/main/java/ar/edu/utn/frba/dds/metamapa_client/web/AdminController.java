@@ -5,8 +5,10 @@ import ar.edu.utn.frba.dds.metamapa_client.clients.ClientSeader;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.*;
 import jakarta.servlet.http.HttpServletRequest;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Stream;
 
@@ -49,7 +51,29 @@ public class AdminController {
   @GetMapping
   @PreAuthorize("hasRole('ADMINISTRADOR')")
   public String dashboard(Model model) {
-    model.addAttribute("metrics", Map.of("hechos", 124, "fuentes", 8, "solicitudes", 3));
+
+    List<HechoDTOOutput> hechos = agregador.findAllHechos(new FiltroDTO());
+    long totalHechos = hechos.size();
+
+    //Por el momento al total de fuentes lo hacemos así (después vemos si lo terminamos poniendo o no)
+    long totalFuentes = hechos.stream()
+        .map(h -> h.getOrigen())
+        .filter(Objects::nonNull)
+        .map(o -> o.getUrl() != null ? o.getUrl() : o.getTipo())
+        .filter(Objects::nonNull)
+        .distinct()
+        .count();
+
+    long totalSolEliminacion = agregador.findAllSolicitudes().size();
+
+    Map<String, Long> metrics = new HashMap<>();
+    metrics.put("totalHechos", totalHechos);
+    metrics.put("totalFuentes", totalFuentes);
+    metrics.put("solicitudes", totalSolEliminacion);
+
+    model.addAttribute("metrics", metrics);
+    model.addAttribute("titulo", "Panel de Administrador | MetaMapa");
+
     return "admin";
   }
 
