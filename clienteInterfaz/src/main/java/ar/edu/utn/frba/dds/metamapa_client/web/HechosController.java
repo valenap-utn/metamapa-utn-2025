@@ -64,10 +64,10 @@ public class HechosController {
     FiltroDTO filtroDTO = new FiltroDTO();
 
     ProvinciaResp provinciasResponse = georefWebClient.get()
-            .uri("/provincias?campos=id,nombre")
-            .retrieve()
-            .bodyToMono(ProvinciaResp.class)
-            .block();
+        .uri("/provincias?campos=id,nombre")
+        .retrieve()
+        .bodyToMono(ProvinciaResp.class)
+        .block();
 
     List<UbicacionDTO> provincias = provinciasResponse.getProvincias();
 
@@ -97,7 +97,7 @@ public class HechosController {
 
   @PostMapping("/subir-hecho")
   public String subirHechoPost(@Valid @ModelAttribute("hecho") HechoDTOInput hechoDtoInput, Model model, BindingResult bindingResult, RedirectAttributes redirectAttributes, HttpSession session, Authentication authentication) {
-    if(bindingResult.hasErrors()){
+    if (bindingResult.hasErrors()) {
       redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.hecho", bindingResult);
       redirectAttributes.addFlashAttribute("hecho", hechoDtoInput);
       redirectAttributes.addFlashAttribute("titulo", "Revisá los campos marcados");
@@ -112,16 +112,16 @@ public class HechosController {
     }
 
     hechoDtoInput.setIdUsuario(user.getId());
-    if(hechoDtoInput.getFechaCarga() == null){
+    if (hechoDtoInput.getFechaCarga() == null) {
       hechoDtoInput.setFechaCarga(LocalDateTime.now());
     }
 
-    try{
+    try {
 
       this.agregador.crearHecho(hechoDtoInput, "http://localhost:4000");
       redirectAttributes.addFlashAttribute("success", "Tu hecho se creó exitosamente, pronto un administrador lo estará revisado !");
       return "redirect:/main-gral";
-    }catch(Exception e){
+    } catch (Exception e) {
       log.error("Error al crear el hecho", e);
       redirectAttributes.addFlashAttribute("error", "Ha ocurrido un error al crear el hecho. Volvé a intentarlo");
       redirectAttributes.addFlashAttribute("hecho", hechoDtoInput);
@@ -191,31 +191,37 @@ public class HechosController {
  */
   @GetMapping("/{idHecho}/editar")
   @PreAuthorize("hasRole('CONTRIBUYENTE')")
-  public String editar(@PathVariable Long idHecho, HttpSession session, RedirectAttributes ra, Model model) {
-    String accessToken = session.getAttribute("accessToken").toString();
-
-    Long userId = JwtUtil.getId(accessToken);
-
-    if(userId == null) {
-        return "redirect:/iniciar-sesion";
+  public String editar(@PathVariable Long idHecho, HttpSession session, RedirectAttributes ra, Model model, Authentication authentication) {
+    // Usuario actual (por Jwt - OAuth2 - el que sea)
+    UsuarioDTO usuario = usuarioCuentaService.obtenerUsuarioActual(session, authentication);
+    if (usuario == null || usuario.getId() == null) {
+      ra.addFlashAttribute("error", "No se pudo identificar al usuario actual");
+      return "redirect:/main-gral";
     }
 
+    Long userId = usuario.getId();
+
+    // Obtenemos el hecho
     HechoDTOOutput hecho = agregador.revisarHecho(idHecho, "http://localhost:3000");
     if (hecho == null) {
       ra.addFlashAttribute("error", "El hecho no existe.");
       return "redirect:/hechos/mis-hechos";
     }
+
+    // Validamos que el hecho sea del usuario actual
     if (!userId.equals(hecho.getIdUsuario())) {
       ra.addFlashAttribute("error", "No podés editar un hecho que no es tuyo.");
       return "redirect:/hechos/mis-hechos";
     }
 
+    //Validamos la ventana de 7 días de poder editar (desde la fecha de carga)
     boolean editable = hecho.getFechaCarga() != null && LocalDateTime.now().isBefore(hecho.getFechaCarga().plusDays(7));
-    if(!editable){
+    if (!editable) {
       ra.addFlashAttribute("error", "La edición está disponible solo durante los primeros 7 días");
       return "redirect:/hechos/mis-hechos";
     }
 
+    //Enviamos datos a la vista
     model.addAttribute("hecho", hecho);
     model.addAttribute("titulo", "Editar Hecho");
     return "hechos/editar";
@@ -223,10 +229,38 @@ public class HechosController {
 
   @PostMapping("/{idHecho}/editar")
   @PreAuthorize("hasRole('CONTRIBUYENTE')")
-  public String enviarEdicion(@PathVariable Long idHecho, @ModelAttribute("hecho")HechoDTOInput hechoDtoInput, HttpSession session, RedirectAttributes ra) {
-    String accessToken = session.getAttribute("accessToken").toString();
-    Long userId = JwtUtil.getId(accessToken);
+  public String enviarEdicion(@PathVariable Long idHecho, @ModelAttribute("hecho") HechoDTOInput hechoDtoInput, HttpSession session, RedirectAttributes ra, Authentication authentication) {
+    // Usuario actual
+    UsuarioDTO usuario = usuarioCuentaService.obtenerUsuarioActual(session, authentication);
+    if (usuario == null || usuario.getId() == null) {
+      ra.addFlashAttribute("error", "No se pudo identificar al usuario actual.");
+      return "redirect:/iniciar-sesion";
+    }
 
+    Long userId = usuario.getId();
+
+    // Verificamos que el hecho exista y sea del usuario
+    HechoDTOOutput hechoOriginal = agregador.revisarHecho(idHecho, "http://localhost:3000");
+    if (hechoOriginal == null) {
+      ra.addFlashAttribute("error", "El hecho que intentas editar no existe.");
+      return "redirect:/hechos/mis-hechos";
+    }
+
+    if (!userId.equals(hechoOriginal.getIdUsuario())) {
+      ra.addFlashAttribute("error", "No podés editar un hecho que no es tuyo.");
+      return "redirect:/hechos/mis-hechos";
+    }
+
+    // Validamos la ventana de 7 días
+    boolean editable = hechoOriginal.getFechaCarga() != null
+        && LocalDateTime.now().isBefore(hechoOriginal.getFechaCarga().plusDays(7));
+
+    if (!editable) {
+      ra.addFlashAttribute("error", "La edición está disponible solo durante los primeros 7 días desde la carga.");
+      return "redirect:/hechos/mis-hechos";
+    }
+
+    // Creamos la solicitud
     SolicitudEdicionDTO solicitud = new SolicitudEdicionDTO();
     solicitud.setIdHecho(idHecho);
     solicitud.setEstado("PENDIENTE");
@@ -235,33 +269,9 @@ public class HechosController {
 
     this.agregador.solicitarModificacion(solicitud, "http://localhost:4000");
 
-    ra.addFlashAttribute("success","Tu edición fue enviada a revisión. Aparecerá nuevamente cuando sea aprobada.");
+    ra.addFlashAttribute("success", "Tu edición fue enviada a revisión. Aparecerá nuevamente cuando sea aprobada.");
 
     return "redirect:/hechos/mis-hechos";
-  }
-
-  //Solicitudes de Eliminación
-  @PostMapping("/{idHecho}/solicitud-eliminacion")
-  @PreAuthorize("hasRole('CONTRIBUYENTE')")
-  public ResponseEntity<?> crearSolicitudEliminacion(@PathVariable Long idHecho, @RequestParam String justificacion, HttpSession session){
-    String accessToken = (String) session.getAttribute("accessToken");
-    Long userId = null;
-    if(accessToken != null) {
-      userId = JwtUtil.getId(accessToken);
-    }
-
-    if(justificacion == null || justificacion.trim().length() < 500){
-      return ResponseEntity.badRequest().body("La justificación debe tener al menos 500 caracteres");
-    }
-
-    SolicitudEliminacionDTO solicitud = new SolicitudEliminacionDTO();
-    solicitud.setIdHecho(idHecho);
-    solicitud.setIdusuario(userId);
-    solicitud.setJustificacion(justificacion);
-    solicitud.setEstado("PENDIENTE");
-    solicitud.setFechaSolicitud(LocalDateTime.now());
-    this.agregador.crearSolicitud(solicitud);
-    return ResponseEntity.ok().build(); //200 en caso de éxito!
   }
 
 
@@ -270,11 +280,11 @@ public class HechosController {
   record HechoDto(Long id, String titulo, String fecha, String categoria, String ubicacion) {}
 
   @GetMapping("/hechos/nav-hechos")
-  public String navHechos(@RequestParam(defaultValue="0") int page, Model model, WebClient backend, HttpSession session) {
+  public String navHechos(@RequestParam(defaultValue = "0") int page, Model model, WebClient backend, HttpSession session) {
     var spec = backend.get().uri(uri -> uri.path("/api/hechos")
-                                                    .queryParam("page", page)
-                                                    .queryParam("size", 20)
-                                                    .build());
+        .queryParam("page", page)
+        .queryParam("size", 20)
+        .build());
 
     var token = (String) session.getAttribute("AUTH_TOKEN");
     if (token != null) spec = spec.header(HttpHeaders.AUTHORIZATION, "Bearer " + token);
