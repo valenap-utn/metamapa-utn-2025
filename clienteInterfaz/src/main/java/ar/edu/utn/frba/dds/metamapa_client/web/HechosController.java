@@ -6,6 +6,7 @@ import ar.edu.utn.frba.dds.metamapa_client.dtos.*;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.usuarios.Rol;
 import ar.edu.utn.frba.dds.metamapa_client.services.ConexionServicioUser;
 import ar.edu.utn.frba.dds.metamapa_client.services.IConexionServicioUser;
+import ar.edu.utn.frba.dds.metamapa_client.services.IUsuarioCuentaService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
@@ -21,6 +22,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -39,11 +41,13 @@ public class HechosController {
   private final ClientSeader agregador;
   private final IConexionServicioUser servicioUsuarios;
   private final WebClient georefWebClient;
+  private final IUsuarioCuentaService usuarioCuentaService;
 
-  public HechosController(ClientSeader agregador, IConexionServicioUser servicioUsuarios, WebClient georefWebClient) {
+  public HechosController(ClientSeader agregador, IConexionServicioUser servicioUsuarios, WebClient georefWebClient, IUsuarioCuentaService usuarioCuentaService) {
     this.agregador = agregador;
     this.servicioUsuarios = servicioUsuarios;
-      this.georefWebClient = georefWebClient;
+    this.georefWebClient = georefWebClient;
+    this.usuarioCuentaService = usuarioCuentaService;
   }
 
   @GetMapping("/{idHecho}")
@@ -92,7 +96,7 @@ public class HechosController {
   }
 
   @PostMapping("/subir-hecho")
-  public String subirHechoPost(@Valid @ModelAttribute("hecho") HechoDTOInput hechoDtoInput, Model model, BindingResult bindingResult, RedirectAttributes redirectAttributes, HttpSession session) {
+  public String subirHechoPost(@Valid @ModelAttribute("hecho") HechoDTOInput hechoDtoInput, Model model, BindingResult bindingResult, RedirectAttributes redirectAttributes, HttpSession session, Authentication authentication) {
     if(bindingResult.hasErrors()){
       redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.hecho", bindingResult);
       redirectAttributes.addFlashAttribute("hecho", hechoDtoInput);
@@ -101,17 +105,19 @@ public class HechosController {
     }
 
     //Obtenemos user
-    String accessToken = (String) session.getAttribute("accessToken");
-    Long userId = null;
-    if (accessToken != null) {
-      userId = JwtUtil.getId(accessToken);
+    UsuarioDTO user = usuarioCuentaService.obtenerUsuarioActual(session, authentication);
+    if (user == null || user.getId() == null) {
+      redirectAttributes.addFlashAttribute("error", "No se pudo identificar al usuario actual");
+      return "redirect:/iniciar-sesion";
+    }
+
+    hechoDtoInput.setIdUsuario(user.getId());
+    if(hechoDtoInput.getFechaCarga() == null){
+      hechoDtoInput.setFechaCarga(LocalDateTime.now());
     }
 
     try{
-      hechoDtoInput.setIdUsuario(userId);
-      if(hechoDtoInput.getFechaCarga() == null){
-        hechoDtoInput.setFechaCarga(LocalDateTime.now());
-      }
+
       this.agregador.crearHecho(hechoDtoInput, "http://localhost:4000");
       redirectAttributes.addFlashAttribute("success", "Tu hecho se creó exitosamente, pronto un administrador lo estará revisado !");
       return "redirect:/main-gral";
@@ -129,33 +135,42 @@ public class HechosController {
   // Para ver Hechos subidos por uno mismo
   @GetMapping("/mis-hechos")
   @PreAuthorize("hasRole('CONTRIBUYENTE')")
-  public String misHechos(@RequestParam(defaultValue = "12") int limit, @RequestParam(defaultValue = "12") int step, HttpSession session, Model model) {
+  public String misHechos(@RequestParam(defaultValue = "12") int limit, @RequestParam(defaultValue = "12") int step, HttpSession session, Model model, Authentication authentication) {
 
-    String accessToken = session.getAttribute("accessToken").toString();
-    Long userId = JwtUtil.getId(accessToken);
-    if (userId == null) return "redirect:/iniciar-sesion";
+    UsuarioDTO usuario = usuarioCuentaService.obtenerUsuarioActual(session, authentication);
 
-    //Hechos con solicitud de edición PENDIENTE
+    if (usuario == null || usuario.getId() == null) {
+      model.addAttribute("error", "No se pudo identificar al usuario actual");
+      return "redirect:/iniciar-sesion";
+    }
+
+    Long userId = usuario.getId();
+
+    // Si no tenemos userId => no seguimos
+    if (userId == null) {
+      return "redirect:/iniciar-sesion";
+    }
+
     Set<Long> enRevision = agregador.findAllSolicitudesEdicion().stream()
         .filter(h -> "PENDIENTE".equalsIgnoreCase(h.getEstado()))
-        .map(SolicitudEdicionDTO :: getIdHecho)
+        .map(SolicitudEdicionDTO::getIdHecho)
         .collect(Collectors.toSet());
 
-    // Mostramos solo todos los hechos ya APROBADOS
     List<HechoDTOOutput> all = agregador.listHechosDelUsuario(userId).stream()
         .filter(h -> "APROBAR".equalsIgnoreCase(h.getEstado()))
-        .filter(h-> !enRevision.contains(h.getId()))
-        .sorted((a,b)-> {
-          var ka = (a.getFechaAprobacion() !=null ? a.getFechaAprobacion() : a.getFechaCarga());
-          var kb = (b.getFechaAprobacion() !=null ? b.getFechaAprobacion() : b.getFechaCarga());
-          if(ka == null && kb == null) return 0;
-          if(ka ==null) return 1;
-          if(kb ==null) return -1;
+        .filter(h -> !enRevision.contains(h.getId()))
+        .sorted((a, b) -> {
+          var ka = (a.getFechaAprobacion() != null ? a.getFechaAprobacion() : a.getFechaCarga());
+          var kb = (b.getFechaAprobacion() != null ? b.getFechaAprobacion() : b.getFechaCarga());
+          if (ka == null && kb == null) return 0;
+          if (ka == null) return 1;
+          if (kb == null) return -1;
           return kb.compareTo(ka);
-        }).toList();
+        })
+        .toList();
 
     int total = all.size();
-    int shown = Math.min(Math.max(limit,0), total);
+    int shown = Math.min(Math.max(limit, 0), total);
 
     model.addAttribute("items", all.subList(0, shown));
     model.addAttribute("shown", shown);
@@ -164,6 +179,7 @@ public class HechosController {
     model.addAttribute("nextLimit", Math.min(shown + step, total));
     model.addAttribute("step", step);
     model.addAttribute("titulo", "Mis Hechos");
+
     return "hechos/mis-hechos";
   }
 
