@@ -3,6 +3,7 @@ package ar.edu.utn.frba.dds.servicioFuenteEstatica.model.dtos;
 
 import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.entities.Categoria;
 import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.entities.Ubicacion;
+import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.entities.Usuario;
 import java.time.LocalDateTime;
 import lombok.Data;
 
@@ -15,6 +16,7 @@ public class HechoDTOEstatica {
   private Ubicacion ubicacion;
   private LocalDateTime fechaAcontecimiento;
   private LocalDateTime fechaCarga;
-  private Long idUsuario;
+  private Usuario usuario;
   private String nombreArchivo;
+
 }

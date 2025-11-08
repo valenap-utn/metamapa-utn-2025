@@ -42,5 +42,10 @@ public class EstadisticasController {
                 .body(resource);
     }
 
+    @GetMapping("/recalcular")
+    public Boolean recalcular() {
+        this.servicio.recalcular();
+        return true;
+    }
 }
 

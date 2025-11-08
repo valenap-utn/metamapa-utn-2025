@@ -39,19 +39,17 @@ public class ServicioEstadisticas {
     }
 
     public void recalcular() {
-        List<Hecho> hechos = agregador.obtenerHechos();
+
         List<Solicitud> solicitudes = agregador.obtenerSolicitudes();
         List<ColeccionDTO> colecciones = agregador.obtenerColecciones();
-
-        colecciones.forEach(coleccion -> {
-            hechos.stream().filter(
-                    hecho -> coleccion.getFuentes().stream().anyMatch(
-                            fuenteDTO -> hecho.getOrigen().equals(fuenteDTO)
-                    )
-            ).forEach(
-                    hecho -> hecho.agregarTituloColeccion(coleccion.getTitulo())
-            );
-        });
+        List<Hecho> hechos = agregador.obtenerHechos();
+        colecciones.forEach(coleccion -> hechos.stream().filter(
+                hecho -> coleccion.getFuentes().stream().anyMatch(
+                        fuenteDTO -> hecho.getOrigen().equals(fuenteDTO)
+                )
+        ).forEach(
+                hecho -> hecho.agregarTituloColeccion(coleccion.getTitulo())
+        ));
         ConjuntoEstadisticasDTO conjuntoEstadisticasDTO = new ConjuntoEstadisticasDTO();
         DatoCalculo datosNecesarios = new DatoCalculo();
         datosNecesarios.setHechos(hechos);

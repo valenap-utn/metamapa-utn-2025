@@ -1,6 +1,7 @@
 package ar.edu.utn.frba.dds.servicioAgregador.controllers;
 
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.ColeccionDTOOutput;
+import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.ConjuntoColeccion;
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.ConjuntoHechoCompleto;
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.FiltroDTO;
 import ar.edu.utn.frba.dds.servicioAgregador.services.IColeccionService;
@@ -29,8 +30,11 @@ public class ColeccionController {
 
 
   @GetMapping
-  public ResponseEntity<List<ColeccionDTOOutput>> getColecciones(){
-      return ResponseEntity.ok(this.coleccionService.getAllColecciones());
+  public ResponseEntity<ConjuntoColeccion> getColecciones(){
+    List<ColeccionDTOOutput> colecciones = this.coleccionService.getAllColecciones();
+    ConjuntoColeccion conjuntoColeccion = new ConjuntoColeccion();
+    conjuntoColeccion.setColecciones(colecciones);
+      return ResponseEntity.ok(conjuntoColeccion);
   }
 
   @GetMapping("/{id}/hechos")

@@ -26,7 +26,7 @@ public class CategoriaHoraMayorHechos extends CalculadorEstadisticas{
 
   @Override
   protected String getNombreEstadistica() {
-    return "CATEGORIGAHORAMAYORHECHOS";
+    return "CATEGORIAHORAMAYORHECHOS";
   }
 
   private DatoEstadisticoDTO formarEstadistica(Integer hora, String categoria, Long cantidad) {

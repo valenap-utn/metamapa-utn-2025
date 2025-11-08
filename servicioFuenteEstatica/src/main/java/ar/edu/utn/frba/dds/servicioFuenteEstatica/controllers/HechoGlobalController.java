@@ -3,6 +3,7 @@ package ar.edu.utn.frba.dds.servicioFuenteEstatica.controllers;
 import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.dtos.ConjuntoHechoDTOEstatica;
 import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.dtos.HechoDTOEstatica;
 
+import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.dtos.UsuarioDTO;
 import ar.edu.utn.frba.dds.servicioFuenteEstatica.services.IHechoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -50,8 +52,8 @@ public class HechoGlobalController {
   }
 
   @PostMapping
-  public ResponseEntity<String> importar(@RequestParam("archivo") MultipartFile archivo, @RequestParam("idUsuario") Long idUsuario) {
-      Set<HechoDTOEstatica> hechosImportados = hechoService.importarDesdeCSV(archivo, idUsuario);
+  public ResponseEntity<String> importar(@RequestParam("archivo") MultipartFile archivo, @RequestBody UsuarioDTO usuarioDTO) {
+      Set<HechoDTOEstatica> hechosImportados = hechoService.importarDesdeCSV(archivo, usuarioDTO);
       return ResponseEntity.ok("Importación exitosa. Se importaron " + hechosImportados.size() + " hechos.");
   }
 

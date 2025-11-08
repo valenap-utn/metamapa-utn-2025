@@ -1,16 +1,17 @@
 package ar.edu.utn.frba.dds.servicioFuenteEstatica.services;
 
 import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.dtos.HechoDTOEstatica;
+import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.dtos.UsuarioDTO;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Set;
 
 public interface IHechoService {
-  public Set<HechoDTOEstatica> importarDesdeCSV(MultipartFile archivo, Long idUsuario);
+  Set<HechoDTOEstatica> importarDesdeCSV(MultipartFile archivo, UsuarioDTO usuario);
 
-  public Set<HechoDTOEstatica> obtenerTodos();
+  Set<HechoDTOEstatica> obtenerTodos();
 
-  public HechoDTOEstatica marcarEliminadoHecho(Long idHecho);
+  HechoDTOEstatica marcarEliminadoHecho(Long idHecho);
 
   void eliminarTodo();
 }

@@ -17,10 +17,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 @Component
 public class ClientServicioAgregador implements ServicioAgregador {
   private final WebClient webClient;
-  @Value("${api.url.servicioAgregador}")
-  private String baseUrl;
 
-  public ClientServicioAgregador() {
+  public ClientServicioAgregador(@Value("${api.url.servicioAgregador}") String baseUrl) {
     this.webClient = WebClient.builder().baseUrl(baseUrl).build();
   }
 

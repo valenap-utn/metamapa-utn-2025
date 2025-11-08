@@ -17,12 +17,12 @@ public class CategoriaProvinciaMayorHechos extends CalculadorEstadisticas{
   }
   @Override
   protected List<DatoEstadisticoDTO> generarCalculo(DatoCalculo datoCalculo) {
-    List<Hecho> hechos = datoCalculo.getHechos();
+    List<Hecho> hechos = datoCalculo.getHechos().stream().filter(hecho -> hecho.getProvincia() != null).toList();
     Map<String, Map<String, Long>> datos = hechos.stream()
             .collect(Collectors.groupingBy(
                     h -> h.getCategoria().getNombre() ,
                     Collectors.groupingBy(
-                            h -> h.getUbicacion().getProvincia(),
+                            Hecho::getProvincia,
                             Collectors.counting()
                     )
             ));

@@ -22,9 +22,13 @@ public class Hecho {
   private ContenidoMultimedia contenidoMultimedia;
   private Long idUsuario;
   private Origen origen;
+  @Builder.Default
   private List<String> titulosColeccion = new ArrayList<>();
 
   public void agregarTituloColeccion(String titulo) {
     this.titulosColeccion.add(titulo);
+  }
+  public String getProvincia() {
+    return ubicacion == null || ubicacion.getProvincia() == null ? null : ubicacion.getProvincia() ;
   }
 }

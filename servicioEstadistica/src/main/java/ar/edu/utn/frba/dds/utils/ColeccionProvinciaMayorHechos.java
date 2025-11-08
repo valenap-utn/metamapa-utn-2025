@@ -21,12 +21,12 @@ public class ColeccionProvinciaMayorHechos extends CalculadorEstadisticas{
   @Override
   protected List<DatoEstadisticoDTO> generarCalculo(DatoCalculo datoCalculo) {
     List<String> titulosColeccion = datoCalculo.getTitulosColeccion();
-    List<Hecho> hechos = datoCalculo.getHechos();
+    List<Hecho> hechos = datoCalculo.getHechos().stream().filter(hecho -> hecho.getProvincia() != null).toList();
     List<MapeoColeccion> datos =
             titulosColeccion.stream().map(
                     titulo -> {
                       Map<String, Long> datoshechos = hechos.stream().collect(Collectors.groupingBy(
-                              hecho -> hecho.getUbicacion().getProvincia(),
+                              Hecho::getProvincia,
                               Collectors.counting()
                       ));
                       return new MapeoColeccion(titulo, datoshechos);

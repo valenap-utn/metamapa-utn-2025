@@ -13,9 +13,6 @@ import ar.edu.utn.frba.dds.servicioAgregador.model.entities.origenes.Origen;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.origenes.TipoOrigen;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.roles.Administrador;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.roles.Contribuyente;
-import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IColeccionRepository;
-import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IHechoRepository;
-import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.IUserRepository;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.implReal.IColeccionRepositoryJPA;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.implReal.IHechoRepositoryJPA;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.implReal.IUserRepositoryJPA;
@@ -60,8 +57,8 @@ public class SeaderColeccion {
     coleccion.setDescripcion("Se muestran los desastres Naturales ocurridos en Buenos Aires, Argentina");
     coleccion.setAlgoritmoConsenso(new TodosConsensuados());
     coleccion.agregarCriterios(List.of(new FiltroPorFechaCarga(LocalDate.of(2020, 1, 12).atStartOfDay(), LocalDateTime.now())));
-    coleccion.agregarFuentes(List.of(fuenteColeccionDinamica, fuenteColeccionEstatica));
-
+    coleccion.agregarFuentes(List.of(fuenteColeccionDinamica));
+    //coleccion.agregarFuentes(List.of(fuenteColeccionEstatica));
 
     coleccion2.setTitulo("Terremotos");
     coleccion2.setDescripcion("Tiene los terremotos que ocurren cerca de la cordillera de los andes");

@@ -9,6 +9,7 @@ public class Ubicacion {
   private Direccion direccion;
 
   public String getProvincia() {
-    return null;
+
+    return direccion == null ? null : direccion.getProvincia();
   }
 }

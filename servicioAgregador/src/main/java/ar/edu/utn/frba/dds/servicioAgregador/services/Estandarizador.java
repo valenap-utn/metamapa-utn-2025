@@ -3,6 +3,7 @@ package ar.edu.utn.frba.dds.servicioAgregador.services;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Categoria;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Direccion;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
+import ar.edu.utn.frba.dds.servicioAgregador.model.entities.HechoParaNormalizar;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Ubicacion;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.normalizacion.IBuscadorFullTextSearch;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.implReal.IDireccionRepository;
@@ -46,28 +47,35 @@ public class Estandarizador implements IEstandarizador {
   }
   @Override
   public Mono<Void> estandarizarHechos() {
-    List<Hecho> hechos = this.hechoRepository.findByNormalizado(false);
-    List<Hecho> hechosCopia = new ArrayList<>(hechos);
-    return Flux.fromIterable(hechos)
-            .flatMap(hecho -> this.estandarizarHecho(hecho, hechosCopia))
+    return Flux.fromIterable(this.prepararHechos())
+            .flatMap(hechoParaNormalizar -> this.estandarizarHecho(hechoParaNormalizar.getHecho(), hechoParaNormalizar.getHechosCopia()))
+            .reduce((h1, h2) -> h2)
+            .map(
+              hechos -> {
+                this.hechoRepository.saveAll(hechos);
+                return Mono.empty();
+              }
+            )
             .subscribeOn(Schedulers.boundedElastic())
             .then();
   }
+  public List<HechoParaNormalizar> prepararHechos() {
+    List<Hecho> hechos = this.hechoRepository.findByNormalizado(false);
+    List<Hecho> hechosCopia = new ArrayList<>(hechos);
+    return hechos.stream().map(hecho -> new HechoParaNormalizar(hecho, hechosCopia)).toList();
+  }
 
-  private Mono<Void> estandarizarHecho(Hecho hecho, List<Hecho> hechosDesnormalizados) {
+  private Mono<List<Hecho>> estandarizarHecho(Hecho hecho, List<Hecho> hechosDesnormalizados) {
     return Mono.just(hecho).map(hechoAmodificar ->
             {
               this.estandarizarTitulo(hechoAmodificar, hechosDesnormalizados);
               this.estandarizarCategoria(hechoAmodificar, hechosDesnormalizados);
               this.estandarizarUbicacion(hechoAmodificar, hechosDesnormalizados);
               hechoAmodificar.marcarComoNormalizado();
-              this.hechoRepository.save(hecho);
-              return Mono.empty();
+              return hechosDesnormalizados;
             }
-            ).then();
+            );
   }
-
-
 
   private void estandarizarCategoria(Hecho hechoAmodificar, List<Hecho> hechosDesnormalizados) {
     List<Categoria> categorias = this.categoriaRepositoryFTS.findByFullTextSearch(hechoAmodificar.getNombreCategoria());

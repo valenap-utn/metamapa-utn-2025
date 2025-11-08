@@ -29,7 +29,7 @@ public class MapColeccionOutput {
     coleccionDTOOutput.setDescripcion(coleccion.getDescripcion());
     coleccionDTOOutput.setFuentes(coleccion.getFuenteColeccions().stream().map(this::toFuenteDTO).collect(Collectors.toList()));
     coleccionDTOOutput.setCriterios(coleccion.getCriteriosDePertenencia().stream().map(this::toCriterioDTO).toList());
-    coleccionDTOOutput.setAlgoritmoDeConsenso(coleccion.getAlgoritmoConsenso().toString());
+    coleccionDTOOutput.setAlgoritmoDeConsenso(coleccion.getAlgoritmoConsenso().getNombre());
     return coleccionDTOOutput;
   }
 

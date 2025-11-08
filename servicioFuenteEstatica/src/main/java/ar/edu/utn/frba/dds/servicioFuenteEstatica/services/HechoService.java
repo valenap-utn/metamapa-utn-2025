@@ -4,14 +4,15 @@ import ar.edu.utn.frba.dds.servicioFuenteEstatica.exceptions.ArchivoVacioExcepti
 import ar.edu.utn.frba.dds.servicioFuenteEstatica.exceptions.ExcepcionIO;
 import ar.edu.utn.frba.dds.servicioFuenteEstatica.exceptions.HechoNoEncontrado;
 import ar.edu.utn.frba.dds.servicioFuenteEstatica.exceptions.HechoYaEstaEliminado;
-import ar.edu.utn.frba.dds.servicioFuenteEstatica.exceptions.UsuarioNoEncontrado;
 import ar.edu.utn.frba.dds.servicioFuenteEstatica.exceptions.UsuarioSinPermiso;
 import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.daos.IHechosDAO;
 import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.dtos.HechoDTOEstatica;
 import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.dtos.HechoValueObject;
+import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.dtos.UsuarioDTO;
 import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.entities.Hecho;
 import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.entities.Usuario;
-import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.entities.roles.PermisoSubidaArchivo;
+import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.entities.roles.Permiso;
+import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.entities.roles.Rol;
 import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.repositories.implReal.IHechoRepositoryJPA;
 import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.repositories.implReal.IUsuarioRepositoryJPA;
 import org.springframework.stereotype.Service;
@@ -34,16 +35,15 @@ public class HechoService implements IHechoService {
   }
 
   //Importar desde CSV a Set<Hecho>
-  public Set<HechoDTOEstatica> importarDesdeCSV(MultipartFile archivo, Long idUsuario) {
+  public Set<HechoDTOEstatica> importarDesdeCSV(MultipartFile archivo, UsuarioDTO usuarioDTO) {
     if(archivo.isEmpty()){
       throw new ArchivoVacioException("El archivo subido está vacío. Esto puede ser porque se ha subido incorrectamente o el archivo está corrupto");
     }
 
-    Usuario usuario = this.usuarioRepository.findById(idUsuario).orElse(null);
-    if(usuario == null){
-      throw new UsuarioNoEncontrado("El usuario no existe");
-    }
-    if(!usuario.tienePermisoDe(new PermisoSubidaArchivo(""))){
+    Usuario usuario = this.usuarioRepository.findById(usuarioDTO.getId()).orElse(
+            this.usuarioRepository.save(Usuario.of(usuarioDTO.getId(), usuarioDTO.getEmail()))
+    );
+    if(!usuarioDTO.tienePermisoDe(Permiso.SUBIDAARCHIVO, Rol.ADMINISTRADOR)){
       throw new UsuarioSinPermiso("El usuario especificado no tiene permisos para subir archivos con hechos");
     }
     Set<HechoValueObject> hechosVO;
@@ -96,7 +96,7 @@ public class HechoService implements IHechoService {
     dto.setFechaAcontecimiento(hecho.getFechaAcontecimiento());
     dto.setFechaCarga(hecho.getFechaCarga());
     dto.setCategoria(hecho.getCategoria());
-    dto.setIdUsuario(hecho.getIdUsuario());
+    dto.setUsuario(hecho.getUsuario());
     dto.setNombreArchivo(hecho.getNombreArchivo());
     return dto;
   }
