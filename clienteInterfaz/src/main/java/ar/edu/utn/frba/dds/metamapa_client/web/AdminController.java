@@ -5,8 +5,10 @@ import ar.edu.utn.frba.dds.metamapa_client.clients.ClientSeader;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.*;
 import jakarta.servlet.http.HttpServletRequest;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Stream;
 
@@ -49,7 +51,29 @@ public class AdminController {
   @GetMapping
   @PreAuthorize("hasRole('ADMINISTRADOR')")
   public String dashboard(Model model) {
-    model.addAttribute("metrics", Map.of("hechos", 124, "fuentes", 8, "solicitudes", 3));
+
+    List<HechoDTOOutput> hechos = agregador.findAllHechos(new FiltroDTO());
+    long totalHechos = hechos.size();
+
+    //Por el momento al total de fuentes lo hacemos así (después vemos si lo terminamos poniendo o no)
+    long totalFuentes = hechos.stream()
+        .map(h -> h.getOrigen())
+        .filter(Objects::nonNull)
+        .map(o -> o.getUrl() != null ? o.getUrl() : o.getTipo())
+        .filter(Objects::nonNull)
+        .distinct()
+        .count();
+
+    long totalSolEliminacion = agregador.findAllSolicitudes().size();
+
+    Map<String, Long> metrics = new HashMap<>();
+    metrics.put("totalHechos", totalHechos);
+    metrics.put("totalFuentes", totalFuentes);
+    metrics.put("solicitudes", totalSolEliminacion);
+
+    model.addAttribute("metrics", metrics);
+    model.addAttribute("titulo", "Panel de Administrador | MetaMapa");
+
     return "admin";
   }
 
@@ -215,6 +239,7 @@ public class AdminController {
     return "admins/gest-nuevosHechos";
   }
 
+/*
   @PostMapping("/gest-nuevosHechos/{id}/aprobar")
   @PreAuthorize("hasRole('ADMINISTRADOR')")
   public ResponseEntity<Void> aprobarHecho(@PathVariable("id") Long id) {
@@ -227,6 +252,23 @@ public class AdminController {
   public ResponseEntity<Void> rechazarHecho(@PathVariable("id") Long id) {
     this.agregador.rechazarHecho(id);
     return ResponseEntity.noContent().build(); //204 en caso de exito !
+  }
+*/
+
+  @PostMapping("/gest-nuevosHechos/{id}/aprobar")
+  @PreAuthorize("hasRole('ADMINISTRADOR')")
+  public String aprobarHecho(@PathVariable("id") Long id, RedirectAttributes ra) {
+    this.agregador.aprobarHecho(id);
+    ra.addFlashAttribute("success", "Hecho aprobado correctamente.");
+    return "redirect:/admin/gest-nuevosHechos";
+  }
+
+  @PostMapping("/gest-nuevosHechos/{id}/rechazar")
+  @PreAuthorize("hasRole('ADMINISTRADOR')")
+  public String rechazarHecho(@PathVariable("id") Long id, RedirectAttributes ra) {
+    this.agregador.rechazarHecho(id);
+    ra.addFlashAttribute("success", "Hecho rechazado correctamente.");
+    return "redirect:/admin/gest-nuevosHechos";
   }
 
   //Para solicitudes de Edición
