@@ -24,4 +24,15 @@ public class Direccion {
 
   @Column(name = "provincia")
   private String provincia = "";
+
+  @Column(name = "normalizada", nullable = false)
+  private Boolean normalizada = Boolean.FALSE;
+
+  public void marcarNormalizada() {
+    this.normalizada = true;
+  }
+
+  public boolean estaNormalizada() {
+    return this.normalizada;
+  }
 }

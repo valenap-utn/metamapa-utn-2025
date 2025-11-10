@@ -25,4 +25,12 @@ public class Ubicacion {
         this.longitud = longitud;
         this.latitud = latitud;
     }
+
+  public boolean esNula() {
+        return longitud == null || latitud == null;
+  }
+
+  public boolean estaNormalizada() {
+      return this.direccion != null && this.direccion.estaNormalizada();
+  }
 }

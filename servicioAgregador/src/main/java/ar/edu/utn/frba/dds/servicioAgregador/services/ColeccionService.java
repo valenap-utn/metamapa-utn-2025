@@ -121,6 +121,7 @@ public class ColeccionService implements IColeccionService{
               List<Hecho> hechos = this.getHechosClient(fuente.getOrigen(), null);
               hechos.forEach(hecho -> hecho.setOrigen(this.saveOrigenHechoNuevo(hecho.getOrigen())));
               hechos.forEach(this::verSiNormalizar);
+              this.categoriaRepository.saveAll(hechos.stream().map(Hecho::getCategoria).toList());
               this.hechoRepository.saveAll(hechos);
               return Mono.empty();
             }).then();
@@ -151,6 +152,7 @@ public class ColeccionService implements IColeccionService{
         hecho.setId(hechoInterno.getId());
         if (this.verificadorNormalizador.estaNormalizado(hechoInterno, hecho)) {
           hecho.marcarComoNormalizado();
+          hecho.setId(hechoInterno.getId());
           hecho.setTitulo(hechoInterno.getTitulo());
           hecho.setUbicacion(hechoInterno.getUbicacion());
           hecho.setCategoria(hechoInterno.getCategoria());

@@ -9,11 +9,9 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 @Component
 public class ClientAPIGobierno {
-  @Value("${api.url.APIgobierno}")
-  private String baseURL;
   private final WebClient webClient;
 
-  public ClientAPIGobierno() {
+  public ClientAPIGobierno(@Value("${api.url.APIgobierno}") String baseURL) {
     this.webClient = WebClient.builder().baseUrl(baseURL).build();
   }
 

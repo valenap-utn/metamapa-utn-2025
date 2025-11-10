@@ -1,6 +1,7 @@
 package ar.edu.utn.frba.dds.servicioAgregador.model.entities.deteccionDeSpam;
 
 import ar.edu.utn.frba.dds.servicioAgregador.config.ColeccionDeDocumentosSpam;
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -29,7 +30,13 @@ public class TFIDFCalculadoraPalabras {
   }
 
   public List<String> prepararDocumento(String documento) {
-    String docuConSoloLetras = documento.replaceAll("[^a-zA-Z]", " ");
+    String documentoSinAcentos = documento.replace('ñ', '\001');
+    documentoSinAcentos = documentoSinAcentos.replace('Ñ', '\002');
+    documentoSinAcentos = Normalizer.normalize(documentoSinAcentos, Normalizer.Form.NFD);
+    documentoSinAcentos = documentoSinAcentos.replaceAll("\\p{InCombiningDiacriticalMarks}", "");
+    documentoSinAcentos = documentoSinAcentos.replace('\001', 'ñ');
+    documentoSinAcentos = documentoSinAcentos.replace('\002', 'Ñ');
+    String docuConSoloLetras = documentoSinAcentos.replaceAll("[^a-zA-ZñÑ0-9]", " ");
     String docuEnMinuscula = docuConSoloLetras.toLowerCase(Locale.ROOT);
     return Arrays.stream(docuEnMinuscula.split(" ")).toList();
   }
