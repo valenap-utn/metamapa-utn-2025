@@ -3,18 +3,19 @@ package ar.edu.utn.frba.dds.servicioFuenteDinamica.services;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.exceptions.EstadoIncorrecto;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.exceptions.HechoNoEncontrado;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.exceptions.SolicitudNoEncontrada;
-import ar.edu.utn.frba.dds.servicioFuenteDinamica.exceptions.UsuarioNoEncontrado;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.exceptions.UsuarioSinPermiso;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos.RevisionDTO;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos.SolicitudDTO;
+import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos.UsuarioDTO;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.Categoria;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.HechoModificacion;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.RevisarEstado;
+import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.Usuario;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.enums.Estado;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.Hecho;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.Solicitud;
-import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.Usuario;
-import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.roles.PermisoRevisarSolicitud;
+import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.roles.Permiso;
+import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.roles.Rol;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.repositories.implReal.IHechoRepositoryJPA;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.repositories.implReal.ISolicitudRepositoryJPA;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.repositories.implReal.IUsuarioRepositoryJPA;
@@ -37,13 +38,11 @@ public class SolicitudServicio implements ISolicitudServicio {
     @Override
     public Solicitud crearSolicitud(SolicitudDTO solicitudDTO) {
         Hecho hecho = hechoRepository.findById(solicitudDTO.getIdHecho()).orElseThrow(() -> new HechoNoEncontrado("Hecho no encontrado"));
-        if (solicitudDTO.getIdusuario() == null) {
+        if (solicitudDTO.getUsuario() == null) {
             throw new UsuarioSinPermiso("Solo se le permiten modificar hechos a los usuarios con cuenta");
         }
-        Usuario usuario =this.usuarioRepository.findById(solicitudDTO.getIdusuario()).orElse(null);
-        if (usuario == null) {
-            throw new UsuarioNoEncontrado("Usuario no encontrado");
-        }
+        Usuario usuario = this.getOrSaveUsuario(solicitudDTO.getUsuario());
+
         if(!hecho.getUsuario().equals(usuario)) {
             throw new UsuarioSinPermiso("El usuario solicitante no coincide con el que creo el hecho");
         }
@@ -67,11 +66,19 @@ public class SolicitudServicio implements ISolicitudServicio {
         return hechoModificacion;
     }
 
+    private Usuario getOrSaveUsuario(UsuarioDTO usuarioDTO) {
+        Usuario usuario = this.usuarioRepository.findById(usuarioDTO.getId()).orElse(
+                this.usuarioRepository.save(Usuario.builder().id(usuarioDTO.getId()).email(usuarioDTO.getEmail())
+                        .nombre(usuarioDTO.getNombre()).apellido(usuarioDTO.getApellido()).build())
+        );
+        usuario.cargarRolYPermisos(usuarioDTO.getRol(), usuarioDTO.getPermisos());
+        return usuario;
+    }
     @Override
     public Solicitud procesarSolicitud(Long id, RevisionDTO revisionDTO) {
         Solicitud solicitud = solicitudRepository.findById(id).orElseThrow(() -> new SolicitudNoEncontrada("Solicitud no encontrada"));
-        Usuario usuario = this.usuarioRepository.findById(revisionDTO.getIdUsuario()).orElseThrow(()-> new UsuarioNoEncontrado("El usuario suministrado no existe"));
-        if (!usuario.tienePermiso(new PermisoRevisarSolicitud())) {
+        Usuario usuario = this.getOrSaveUsuario(revisionDTO.getUsuario());
+        if (!usuario.tienePermisoDe(Permiso.REVISARSOLICITUD, Rol.ADMINISTRADOR)) {
             throw new UsuarioSinPermiso("El usuario no tiene permisos para revisar la solicitud");
         }
         if (revisionDTO.getEstado().equals("ACEPTADA_CON_CAMBIOS")) {

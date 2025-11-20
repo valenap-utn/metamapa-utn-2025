@@ -10,12 +10,13 @@ import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.ConjuntoSolicitudesOutpu
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.RevisionDTO;
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.SolicitudInputDTO;
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.SolicitudOutputDTO;
+import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.UsuarioDTO;
+import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Usuario;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.deteccionDeSpam.DetectorDeSpam;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Solicitud;
-import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Usuario;
-import ar.edu.utn.frba.dds.servicioAgregador.model.entities.roles.PermisoAceptarSolicitud;
-import ar.edu.utn.frba.dds.servicioAgregador.model.entities.roles.PermisoEliminarSolicitud;
+import ar.edu.utn.frba.dds.servicioAgregador.model.entities.roles.Permiso;
+import ar.edu.utn.frba.dds.servicioAgregador.model.entities.roles.Rol;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.implReal.IHechoRepositoryJPA;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.implReal.ISolicitudRepositoryJPA;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.implReal.IUserRepositoryJPA;
@@ -72,19 +73,7 @@ public class SolicitudService implements ISolicitudService {
 
     @Override
     public SolicitudOutputDTO aceptarSolicitud(Long idSolicitud, RevisionDTO revisionDTO) {
-        Usuario user = this.userRepository.findById(revisionDTO.getIdUsuario()).orElse(null);
-        if(user == null) {
-            throw new UsuarioNoEncontrado("El usuario no existe");
-        }
-
-        if (!user.tienePermisoDe(new PermisoAceptarSolicitud())) {
-            throw new UsuarioSinPermiso("El Usuario no tiene permiso para eliminar la solicitud");
-        }
-        Solicitud solicitud = this.repo.findById(idSolicitud).orElse(null);
-
-        if(solicitud == null) {
-            throw new SolicitudNoEncontrada("La solicitud con id: " + idSolicitud + " no existe");
-        }
+        Solicitud solicitud = revisarSolicitudUsuario(idSolicitud, revisionDTO);
 
         if(solicitud.noEsPendiente()) {
             throw new SolicitudError("La solicitud no puede ser aceptada, debido a que su estado es: " + solicitud.getEstado().name());
@@ -102,20 +91,27 @@ public class SolicitudService implements ISolicitudService {
         return this.toSolicitudOutputDTO(solicitud);
     }
 
-    @Override
-    public SolicitudOutputDTO eliminarSolicitud(Long idSolicitud, RevisionDTO revisionDTO) {
-        Usuario user = this.userRepository.findById(revisionDTO.getIdUsuario()).orElse(null);
-        if(user == null) {
+    private Solicitud revisarSolicitudUsuario(Long idSolicitud, RevisionDTO revisionDTO) {
+        if(revisionDTO.getIdUsuario() == null) {
             throw new UsuarioNoEncontrado("El usuario no existe");
         }
+        Usuario user = this.getOrSaveUsuario(revisionDTO.getUsuario());
 
-        if (!user.tienePermisoDe(new PermisoEliminarSolicitud())) {
+
+        if (!user.tienePermisoDe(Permiso.REVISARSOLICITUD, Rol.ADMINISTRADOR)) {
             throw new UsuarioSinPermiso("El Usuario no tiene permiso para eliminar la solicitud");
         }
         Solicitud solicitud = this.repo.findById(idSolicitud).orElse(null);
+
         if(solicitud == null) {
             throw new SolicitudNoEncontrada("La solicitud con id: " + idSolicitud + " no existe");
         }
+        return solicitud;
+    }
+
+    @Override
+    public SolicitudOutputDTO eliminarSolicitud(Long idSolicitud, RevisionDTO revisionDTO) {
+        Solicitud solicitud = revisarSolicitudUsuario(idSolicitud, revisionDTO);
 
         if(solicitud.noEsPendiente()) {
             throw new SolicitudError("La solicitud no puede ser eliminada, debido a que su estado es: " + solicitud.getEstado().name());
@@ -135,4 +131,12 @@ public class SolicitudService implements ISolicitudService {
         return conjuntoSolicitudesOutput;
     }
 
+    private Usuario getOrSaveUsuario(UsuarioDTO usuarioDTO) {
+        Usuario usuario = this.userRepository.findById(usuarioDTO.getId()).orElse(
+                this.userRepository.save(Usuario.builder().id(usuarioDTO.getId()).email(usuarioDTO.getEmail())
+                        .nombre(usuarioDTO.getNombre()).apellido(usuarioDTO.getApellido()).build())
+        );
+        usuario.cargarRolYPermisos(usuarioDTO.getRol(), usuarioDTO.getPermisos());
+        return usuario;
+    }
 }

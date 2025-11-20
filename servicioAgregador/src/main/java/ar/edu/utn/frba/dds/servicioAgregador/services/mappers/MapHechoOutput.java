@@ -33,7 +33,7 @@ public class MapHechoOutput {
     hechoDTO.setUbicacion(hecho.getUbicacion());
     hechoDTO.setTitulo(hecho.getTitulo());
     hechoDTO.setFechaAcontecimiento(hecho.getFechaAcontecimiento());
-    hechoDTO.setIdUsuario(hecho.getIdUsuario());
+    hechoDTO.setUsuario(hecho.getUsuarioDTO());
     Origen origen = hecho.getOrigen();
     hechoDTO.setOrigen(new OrigenDTO(origen.getNombreTipo(), origen.getUrl()));
     return hechoDTO;

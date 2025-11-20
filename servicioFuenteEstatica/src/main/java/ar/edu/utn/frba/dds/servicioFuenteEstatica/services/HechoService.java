@@ -41,9 +41,11 @@ public class HechoService implements IHechoService {
     }
 
     Usuario usuario = this.usuarioRepository.findById(usuarioDTO.getId()).orElse(
-            this.usuarioRepository.save(Usuario.of(usuarioDTO.getId(), usuarioDTO.getEmail()))
+            this.usuarioRepository.save(Usuario.builder().id(usuarioDTO.getId()).email(usuarioDTO.getEmail())
+                    .nombre(usuarioDTO.getNombre()).apellido(usuarioDTO.getApellido()).build())
     );
-    if(!usuarioDTO.tienePermisoDe(Permiso.SUBIDAARCHIVO, Rol.ADMINISTRADOR)){
+    usuario.cargarRolYPermisos(usuarioDTO.getRol(), usuarioDTO.getPermisos());
+    if(!usuario.tienePermisoDe(Permiso.SUBIDAARCHIVO, Rol.ADMINISTRADOR)){
       throw new UsuarioSinPermiso("El usuario especificado no tiene permisos para subir archivos con hechos");
     }
     Set<HechoValueObject> hechosVO;

@@ -11,8 +11,6 @@ import ar.edu.utn.frba.dds.servicioAgregador.model.entities.algoritmosConsenso.T
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.filtros.FiltroPorFechaCarga;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.origenes.Origen;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.origenes.TipoOrigen;
-import ar.edu.utn.frba.dds.servicioAgregador.model.entities.roles.Administrador;
-import ar.edu.utn.frba.dds.servicioAgregador.model.entities.roles.Contribuyente;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.implReal.IColeccionRepositoryJPA;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.implReal.IHechoRepositoryJPA;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.implReal.IUserRepositoryJPA;
@@ -69,9 +67,9 @@ public class SeaderColeccion {
     this.coleccionRepository.save(coleccion);
     this.coleccionRepository.save(coleccion2);
     ContenidoMultimedia contenidoMultimedia = new ContenidoMultimedia();
-    Usuario admin = Usuario.of(new Administrador(), "Marcos", "Romualdo");
-    Usuario contribuyente = Usuario.of(new Contribuyente(), "Carlos", "Romualdo");
-    Usuario contribuyente2 = Usuario.of(new Contribuyente(), "Josefina", "Mariel");
+    Usuario admin = Usuario.builder().id(1L).nombre("Marcos").apellido("Romualdo").email("mar_romualdo@gmail.com").build();
+    Usuario contribuyente = Usuario.builder().id(1L).nombre("Carlos").apellido("Romualdo").email("car_romualdo@gmail.com").build();
+    Usuario contribuyente2 = Usuario.builder().id(1L).nombre("Josefina").apellido("Mariel").email("jose_mariel@gmail.com").build();
     this.userRepository.save(admin);
     this.userRepository.save(contribuyente);
     this.userRepository.save(contribuyente2);

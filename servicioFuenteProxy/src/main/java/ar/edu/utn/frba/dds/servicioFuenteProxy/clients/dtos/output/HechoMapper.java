@@ -17,7 +17,7 @@ public class HechoMapper {
         output.setFecha(input.getFecha_hecho());
         output.setFechaCarga(input.getCreated_at());
         output.setFuente(fuente.name()); // .name() lo devuelve tal cual el enum pero en formato string "DESASTRES_NATURALES" o "META_MAPA"
-        output.setIdUsuario(input.getIdUsuario());
+        output.setUsuario(input.getUsuario());
         return output;
     }
 }

@@ -1,5 +1,6 @@
 package ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities;
 
+import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos.UsuarioDTO;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.enums.Estado;
 import jakarta.persistence.CascadeType;
 import java.time.LocalDateTime;
@@ -24,7 +25,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @AllArgsConstructor
@@ -87,6 +87,13 @@ public class Hecho implements Revisable{
         this.etiquetas = new HashSet<>();
     }
 
+    public void agregarUsuario(Usuario usuario) {
+        this.usuario = usuario;
+        if (usuario == null) {
+            this.esAnonimo = true;
+        }
+    }
+
     public void agregarEtiquetas(String ... etiquetas) {
         this.etiquetas.addAll(List.of(etiquetas));
     }
@@ -98,4 +105,8 @@ public class Hecho implements Revisable{
   public boolean tieneId(Long id) {
       return this.id != null && this.id.equals(id);
   }
+
+    public UsuarioDTO getUsuarioDTO() {
+        return this.usuario == null? null: this.usuario.getUsuarioDTO();
+    }
 }

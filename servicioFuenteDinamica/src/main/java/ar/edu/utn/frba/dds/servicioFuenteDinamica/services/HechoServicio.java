@@ -6,12 +6,14 @@ import ar.edu.utn.frba.dds.servicioFuenteDinamica.exceptions.UsuarioNoEncontrado
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.exceptions.UsuarioSinPermiso;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos.HechoDTODinamica;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos.RevisionDTO;
+import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos.UsuarioDTO;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.ContenidoMultimedia;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.RevisarEstado;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.Usuario;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.enums.Estado;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.Hecho;
-import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.roles.PermisoRevisarHecho;
+import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.roles.Permiso;
+import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.roles.Rol;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.repositories.IMultimediaRepository;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.repositories.implReal.IHechoRepositoryJPA;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.repositories.implReal.IUsuarioRepositoryJPA;
@@ -47,10 +49,12 @@ public class HechoServicio implements IHechoServicio {
         hecho.setFechaCarga(LocalDateTime.now());
         hecho.setUbicacion(input.getUbicacion());
         hecho.setFechaAcontecimiento(input.getFechaAcontecimiento());
-        Usuario usuario = this.userRepository.findById(input.getIdUsuario()).orElse(null);
-        if(usuario == null) {
-            hecho.setEsAnonimo(true);
+        UsuarioDTO usuarioDTO = input.getUsuario();
+        Usuario usuario = null;
+        if (usuarioDTO.getId() != null) {
+           usuario = this.getOrSaveUsuario(usuarioDTO);
         }
+
         hecho.setUsuario(usuario);
         if (contenidoMultimedia != null ) {
             ContenidoMultimedia contMultimediaHecho = this.contentMultimediaRepository.saveFile(contenidoMultimedia);
@@ -68,12 +72,23 @@ public class HechoServicio implements IHechoServicio {
         return this.hechoRepository.findAll();
     }
 
+    private Usuario getOrSaveUsuario(UsuarioDTO usuarioDTO) {
+      Usuario usuario = this.userRepository.findById(usuarioDTO.getId()).orElse(
+              this.userRepository.save(Usuario.builder().id(usuarioDTO.getId()).email(usuarioDTO.getEmail())
+                      .nombre(usuarioDTO.getNombre()).apellido(usuarioDTO.getApellido()).build())
+      );
+      usuario.cargarRolYPermisos(usuarioDTO.getRol(), usuarioDTO.getPermisos());
+      return usuario;
+    }
 
     @Override
     public Hecho revisarHecho(Long id, RevisionDTO revisionDTO) {
         Hecho hecho = hechoRepository.findById(id).orElseThrow(() -> new HechoNoEncontrado("Hecho no encontrado"));
-        Usuario usuario = this.userRepository.findById(revisionDTO.getIdUsuario()).orElseThrow(() -> new UsuarioNoEncontrado("El usuario pasado no existe"));
-        if (!usuario.tienePermiso(new PermisoRevisarHecho())) {
+        if (revisionDTO.getIdUsuario() == null) {
+          throw new UsuarioNoEncontrado("El usuario suministrado no existe");
+        }
+        Usuario usuario = this.getOrSaveUsuario(revisionDTO.getUsuario());
+        if (!usuario.tienePermisoDe(Permiso.REVISARHECHO, Rol.ADMINISTRADOR)) {
             throw new UsuarioSinPermiso("El usuario suministrado no tiene permiso para revisar el hecho");
         }
         this.revisadorHechosSolicitud.revisar(hecho, revisionDTO.getEstado(), revisionDTO.getComentario());

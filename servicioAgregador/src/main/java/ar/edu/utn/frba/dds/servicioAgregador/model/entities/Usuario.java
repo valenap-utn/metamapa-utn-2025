@@ -1,18 +1,17 @@
 package ar.edu.utn.frba.dds.servicioAgregador.model.entities;
 
+
+import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.UsuarioDTO;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.roles.Permiso;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.roles.Rol;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import java.time.LocalDate;
+import jakarta.persistence.Transient;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -24,73 +23,41 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Getter
-@Setter
 public class Usuario {
   @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+  @Getter @Setter private Long id;
 
-  @Column(nullable = false,name = "nombre")
-  private String nombre;
+  @Column(name = "email")
+  private String email;
+
+  @Column(name = "nombre")
+  @Getter @Setter private String nombre;
+
   @Column(name = "apellido")
-  private String apellido;
-  @Column(name="fecha_nacimiento")
-  private LocalDate fechaDeNacimiento;
+  @Getter @Setter private String apellido;
 
-  @JoinColumn(name = "rol_id", referencedColumnName = "id", nullable = false)
-  @ManyToOne(cascade = CascadeType.PERSIST)
+  @Transient
   private Rol rol;
 
-  public static Usuario of(Long id){
-    return Usuario.builder().id(id).build();
+  @Transient
+  private List<Permiso> permisos;
+
+
+  public void cargarRolYPermisos(Rol rol, List<Permiso> permisos) {
+    this.permisos = permisos;
+    this.rol = rol;
   }
 
-  public static Usuario of(Rol rol){
-    return Usuario
-        .builder()
-        .rol(rol)
-        .nombre(null)
-        .apellido(null)
-        .fechaDeNacimiento(null)
-        .build();
-  }
-
-  public static Usuario of(Rol rol, String nombre){
-    return Usuario
-        .builder()
-        .rol(rol)
-        .nombre(nombre)
-        .apellido(null)
-        .fechaDeNacimiento(null)
-        .build();
-  }
-
-  public static Usuario of(Rol rol, String nombre, String apellido){
-    return Usuario
-        .builder()
-        .rol(rol)
-        .nombre(nombre)
-        .apellido(apellido)
-        .fechaDeNacimiento(null)
-        .build();
-  }
-
-  public static Usuario of(Rol rol, String nombre, String apellido, LocalDate fechaDeNacimiento){
-    return Usuario
-        .builder()
-        .rol(rol)
-        .nombre(nombre)
-        .apellido(apellido)
-        .fechaDeNacimiento(fechaDeNacimiento)
-        .build();
-  }
-
-  public Integer getEdad() {
-    return LocalDate.now().getYear() - this.fechaDeNacimiento.getYear();
+  public boolean tienePermisoDe(Permiso permiso, Rol rol) {
+    return this.permisos.contains(permiso) && this.rol.equals(rol);
   }
 
 
-  public boolean tienePermisoDe(Permiso permiso) {
-    return this.rol.tienePermisoDe(permiso);
+  public static Usuario of(Long id, String email) {
+    return Usuario.builder().id(id).email(email).build();
+  }
+
+  public UsuarioDTO getUsuarioDTO() {
+    return UsuarioDTO.builder().id(this.id).nombre(this.nombre).apellido(this.apellido).email(this.email).build();
   }
 }

@@ -1,6 +1,7 @@
 package ar.edu.utn.frba.dds.servicioAgregador.services.clients;
 
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.HechoDTO;
+import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.UsuarioDTO;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Usuario;
 import java.util.List;
@@ -11,6 +12,7 @@ public abstract class MapperFuenteClient {
   public abstract List<Hecho> toHechos(WebClient.ResponseSpec respuesta, String url);
 
   protected Hecho.HechoBuilder crearHechoBasico(HechoDTO hechoDTO) {
+    UsuarioDTO usuarioDTO = hechoDTO.getUsuario();
     return Hecho.builder()
             .idExterno(hechoDTO.getId())
             .titulo(hechoDTO.getTitulo())
@@ -19,8 +21,9 @@ public abstract class MapperFuenteClient {
             .fechaAcontecimiento(hechoDTO.getFechaAcontecimiento())
             .categoria(hechoDTO.getCategoria())
             .ubicacion(hechoDTO.getUbicacion())
-            .usuario( hechoDTO.getIdUsuario() == null ?  null:
-                    Usuario.of(hechoDTO.getIdUsuario()));
+            .usuario( hechoDTO.getUsuario() == null ?  null:
+                    Usuario.builder().id(usuarioDTO.getId()).nombre(usuarioDTO.getNombre())
+                            .apellido(usuarioDTO.getApellido()).email(usuarioDTO.getEmail()).build());
   }
 
   public void modificarHechoParaEliminacion(Hecho hecho, UriBuilder uriBuilder) {

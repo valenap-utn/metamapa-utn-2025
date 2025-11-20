@@ -5,5 +5,9 @@ import lombok.Data;
 @Data
 public class RevisionDTO {
   private String justificacion;
-  private Long idUsuario;
+  private UsuarioDTO usuario;
+
+  public Long getIdUsuario() {
+    return usuario.getId();
+  }
 }

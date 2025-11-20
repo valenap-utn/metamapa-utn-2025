@@ -7,8 +7,12 @@ import lombok.Data;
 public class ColeccionDTOInput {
   private String titulo;
   private String descripcion;
-  private Long usuario;
+  private UsuarioDTO usuario;
   private List<FuenteDTO> fuentes;
   private List<CriterioDTO> criterios;
   private String algoritmo;
+
+  public Long getIdUsuario() {
+    return this.usuario.getId();
+  }
 }

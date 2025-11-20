@@ -17,7 +17,7 @@ public class HechoDTOProxy implements HechoDTO {
   private LocalDateTime fecha;
   private LocalDateTime fechaCarga;
   private String fuente;
-  private Long idUsuario;
+  private UsuarioDTO usuario;
 
   @Override
   public LocalDateTime getFechaAcontecimiento() {

@@ -1,12 +1,16 @@
 package ar.edu.utn.frba.dds.servicioFuenteEstatica.model.entities;
 
 
+import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.entities.roles.Permiso;
+import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.entities.roles.Rol;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -25,10 +29,25 @@ public class Usuario {
   @Column(name = "email")
   private String email;
 
+  @Column(name = "nombre")
+  @Getter @Setter private String nombre;
+
+  @Column(name = "apellido")
+  @Getter @Setter private String apellido;
+
+  @Transient
+  private Rol rol;
+
+  @Transient
+  private List<Permiso> permisos;
 
 
-  public static Usuario of(Long id, String email) {
-    return Usuario.builder().id(id).email(email).build();
+  public void cargarRolYPermisos(Rol rol, List<Permiso> permisos) {
+    this.permisos = permisos;
+    this.rol = rol;
   }
 
+  public boolean tienePermisoDe(Permiso permiso, Rol rol) {
+    return this.permisos.contains(permiso) && this.rol.equals(rol);
+  }
 }

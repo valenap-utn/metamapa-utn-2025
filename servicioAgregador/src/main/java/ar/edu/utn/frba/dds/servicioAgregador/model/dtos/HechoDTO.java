@@ -20,5 +20,5 @@ public interface HechoDTO {
 
   LocalDateTime getFechaCarga();
 
-  Long getIdUsuario();
+  UsuarioDTO getUsuario();
 }

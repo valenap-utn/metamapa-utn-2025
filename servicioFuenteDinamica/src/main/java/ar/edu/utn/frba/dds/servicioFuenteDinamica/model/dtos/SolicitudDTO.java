@@ -7,7 +7,7 @@ import lombok.Data;
 public class SolicitudDTO {
   private Long id;
   private Long idHecho;
-  private Long idusuario;
+  private UsuarioDTO usuario;
   private String justificacion;
   private String estado;
   private LocalDateTime fechaSolicitud;

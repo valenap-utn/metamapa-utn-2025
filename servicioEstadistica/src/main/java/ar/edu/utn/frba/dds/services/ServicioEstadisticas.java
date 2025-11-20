@@ -1,11 +1,17 @@
 package ar.edu.utn.frba.dds.services;
 
 
+import ar.edu.utn.frba.dds.exceptions.UsuarioNoEncontrado;
+import ar.edu.utn.frba.dds.exceptions.UsuarioSinPermiso;
 import ar.edu.utn.frba.dds.model.dtos.ColeccionDTO;
 import ar.edu.utn.frba.dds.model.dtos.ConjuntoEstadisticasDTO;
+import ar.edu.utn.frba.dds.model.dtos.UsuarioDTO;
 import ar.edu.utn.frba.dds.model.entities.DatoCalculo;
 import ar.edu.utn.frba.dds.model.entities.Hecho;
 import ar.edu.utn.frba.dds.model.entities.Solicitud;
+import ar.edu.utn.frba.dds.model.entities.Usuario;
+import ar.edu.utn.frba.dds.model.entities.roles.Permiso;
+import ar.edu.utn.frba.dds.model.entities.roles.Rol;
 import ar.edu.utn.frba.dds.services.servicioAgregador.ServicioAgregador;
 import ar.edu.utn.frba.dds.utils.Cache;
 import ar.edu.utn.frba.dds.utils.CalculadorEstadisticas;
@@ -62,11 +68,26 @@ public class ServicioEstadisticas {
         cache.actualizar(conjuntoEstadisticasDTO);
     }
 
-    public ConjuntoEstadisticasDTO obtenerEstadisticas() {
+    public ConjuntoEstadisticasDTO obtenerEstadisticas(UsuarioDTO usuarioDTO) {
+        this.verificarUsuario(usuarioDTO);
         return cache.obtener();
     }
 
-    public void exportarCSV(Path destino) throws IOException {
+    private void verificarUsuario(UsuarioDTO usuarioDTO) {
+        if (usuarioDTO.getId() == null) {
+            throw new UsuarioNoEncontrado("Usuario no encontrado");
+        }
+        Usuario usuario = Usuario.builder().rol(usuarioDTO.getRol()).id(usuarioDTO.getId())
+                .email(usuarioDTO.getEmail()).permisos(usuarioDTO.getPermisos())
+                .nombre(usuarioDTO.getNombre()).apellido(usuarioDTO.getApellido()).build();
+
+        if (!usuario.tienePermisoDe(Permiso.VISITARESTADISTICAS, Rol.ADMINISTRADOR)) {
+            throw new UsuarioSinPermiso("El usuario no tiene los permisos suficientes");
+        }
+    }
+
+    public void exportarCSV(Path destino, UsuarioDTO usuarioDTO) throws IOException {
+        this.verificarUsuario(usuarioDTO);
         ConjuntoEstadisticasDTO data = cache.obtener();
         String csv = exportador.generarCSV(data);
         Files.writeString(destino, csv);

@@ -1,5 +1,6 @@
 package ar.edu.utn.frba.dds.servicioFuenteProxy.clients.dtos.input;
 
+import ar.edu.utn.frba.dds.servicioFuenteProxy.clients.dtos.UsuarioDTO;
 import ar.edu.utn.frba.dds.servicioFuenteProxy.model.entities.Categoria;
 import ar.edu.utn.frba.dds.servicioFuenteProxy.model.entities.Ubicacion;
 import java.time.LocalDateTime;
@@ -14,7 +15,7 @@ public class HechoDTOMetamapa  {
   private Ubicacion ubicacion;
   private LocalDateTime fechaAcontecimiento;
   private LocalDateTime fechaCarga;
-  private Long idUsuario;
+  private UsuarioDTO usuario;
 
   public Double getLongitud(){
     return ubicacion == null ? null : Double.valueOf(ubicacion.getLongitud());

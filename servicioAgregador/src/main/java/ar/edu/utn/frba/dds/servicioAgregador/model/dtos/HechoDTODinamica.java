@@ -18,7 +18,7 @@ public class HechoDTODinamica implements HechoDTO {
   private LocalDateTime fechaCarga;
   private ContenidoMultimedia contenidoMultimedia;
   private TipoOrigen tipoOrigen;
-  private Long idUsuario;
+  private UsuarioDTO usuario;
 
   public Categoria getCategoria() {
     return new Categoria(this.categoria.getNombre());

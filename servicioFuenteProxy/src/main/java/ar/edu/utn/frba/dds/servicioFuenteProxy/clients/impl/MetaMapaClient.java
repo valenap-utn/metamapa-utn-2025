@@ -53,7 +53,7 @@ public class MetaMapaClient implements IAPIClient {
         hechoInputDTO.setLongitud(hechoDTOMetamapa.getLongitud());
         hechoInputDTO.setDescripcion(hechoDTOMetamapa.getDescripcion());
         hechoInputDTO.setTitulo(hechoDTOMetamapa.getTitulo());
-        hechoInputDTO.setIdUsuario(hechoDTOMetamapa.getIdUsuario());
+        hechoInputDTO.setUsuario(hechoDTOMetamapa.getUsuario());
         return hechoInputDTO;
     }
 

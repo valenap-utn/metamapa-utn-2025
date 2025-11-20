@@ -6,5 +6,9 @@ import lombok.Data;
 public class RevisionDTO {
   private String estado;
   private String comentario;
-  private Long idUsuario;
+  private UsuarioDTO usuario;
+
+  public Long getIdUsuario() {
+    return this.usuario.getId();
+  }
 }

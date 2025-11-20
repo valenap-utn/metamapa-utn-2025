@@ -1,5 +1,6 @@
 package ar.edu.utn.frba.dds.servicioAgregador.model.entities;
 
+import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.UsuarioDTO;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.algoritmosConsenso.AlgoritmoConsenso;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.origenes.Origen;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.converters.AlgoritmoConsensoConverter;
@@ -164,5 +165,9 @@ public class Hecho {
 
   public String getMunicipio() {
       return this.getDireccion() != null ?  this.getDireccion().getMunicipio() : "";
+  }
+
+  public UsuarioDTO getUsuarioDTO() {
+    return this.usuario == null? null: this.usuario.getUsuarioDTO();
   }
 }

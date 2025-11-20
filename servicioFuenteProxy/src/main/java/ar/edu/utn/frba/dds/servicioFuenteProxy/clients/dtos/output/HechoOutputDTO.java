@@ -1,5 +1,6 @@
 package ar.edu.utn.frba.dds.servicioFuenteProxy.clients.dtos.output;
 
+import ar.edu.utn.frba.dds.servicioFuenteProxy.clients.dtos.UsuarioDTO;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -15,5 +16,5 @@ public class HechoOutputDTO {
     private LocalDateTime fecha;
     private LocalDateTime fechaCarga;
     private String fuente; // de qué API vino
-    private Long idUsuario;
+    private UsuarioDTO usuario;
 }

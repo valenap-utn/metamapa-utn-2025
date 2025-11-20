@@ -5,7 +5,9 @@ import ar.edu.utn.frba.dds.servicioAgregador.exceptions.ColeccionNoEncontrada;
 import ar.edu.utn.frba.dds.servicioAgregador.exceptions.ColeccionYaEliminada;
 import ar.edu.utn.frba.dds.servicioAgregador.exceptions.UsuarioNoEncontrado;
 import ar.edu.utn.frba.dds.servicioAgregador.exceptions.UsuarioSinPermiso;
+import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.UsuarioDTO;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Categoria;
+import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Usuario;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.VerificadorNormalizador;
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.ColeccionDTOInput;
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.ColeccionDTOOutput;
@@ -14,12 +16,11 @@ import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.FiltroDTO;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Coleccion;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.FuenteColeccion;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
-import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Usuario;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.filtros.Filtro;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.origenes.Origen;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.origenes.TipoOrigen;
-import ar.edu.utn.frba.dds.servicioAgregador.model.entities.roles.PermisoCrearColeccion;
-import ar.edu.utn.frba.dds.servicioAgregador.model.entities.roles.PermisoModificarColeccion;
+import ar.edu.utn.frba.dds.servicioAgregador.model.entities.roles.Permiso;
+import ar.edu.utn.frba.dds.servicioAgregador.model.entities.roles.Rol;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.implReal.ICategoriaRepositoryJPA;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.implReal.IColeccionRepositoryJPA;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.implReal.IHechoRepositoryJPA;
@@ -79,12 +80,12 @@ public class ColeccionService implements IColeccionService{
   @Override
   @Transactional
   public ColeccionDTOOutput crearColeccion(ColeccionDTOInput coleccionInput) {
-    Usuario usuarioSolicitante = this.userRepository.findById(coleccionInput.getUsuario()).orElse(null);
-    if(usuarioSolicitante == null) {
+    if(coleccionInput.getIdUsuario() == null) {
       throw new UsuarioNoEncontrado("El usuario con el identificador administrado no existe");
     }
+    Usuario usuarioSolicitante = this.getOrSaveUsuario(coleccionInput.getUsuario());
 
-    if(!usuarioSolicitante.tienePermisoDe(new PermisoCrearColeccion())) {
+    if(!usuarioSolicitante.tienePermisoDe(Permiso.CREARCOLECCION, Rol.ADMINISTRADOR)) {
       throw new UsuarioSinPermiso("Se debe tener permisos de administrador");
     }
 
@@ -186,12 +187,12 @@ public class ColeccionService implements IColeccionService{
   @Override
   @Transactional
   public ColeccionDTOOutput cambiarColeccion(ColeccionDTOInput coleccionInput, UUID idColeccion) {
-    Usuario usuarioSolicitante = this.userRepository.findById(coleccionInput.getUsuario()).orElse(null);
-    if(usuarioSolicitante == null) {
+    if(coleccionInput.getIdUsuario() == null) {
       throw new UsuarioNoEncontrado("El usuario con el identificador administrado no existe");
     }
+    Usuario usuarioSolicitante = this.getOrSaveUsuario(coleccionInput.getUsuario());
 
-    if(!usuarioSolicitante.tienePermisoDe(new PermisoModificarColeccion())) {
+    if(!usuarioSolicitante.tienePermisoDe(Permiso.MODIFICARCOLECCION, Rol.ADMINISTRADOR)) {
       throw new UsuarioSinPermiso("Se debe tener permisos de administrador");
     }
 
@@ -211,9 +212,16 @@ public class ColeccionService implements IColeccionService{
     return this.mapperColeccionOutput.toColeccionDTOOutput(coleccionGuardada);
   }
 
-  @Override
   @Transactional
-  public ColeccionDTOOutput eliminarColeccion(UUID id) {
+  @Override
+  public ColeccionDTOOutput eliminarColeccion(UUID id, UsuarioDTO usuariodto) {
+    if(usuariodto.getId() == null) {
+      throw new UsuarioNoEncontrado("El usuario con el identificador administrado no existe");
+    }
+    Usuario usuario = this.getOrSaveUsuario(usuariodto);
+    if (!usuario.tienePermisoDe(Permiso.ELIMINARCOLECCION, Rol.ADMINISTRADOR)) {
+      throw new UsuarioSinPermiso("El usuario no tiene permiso para eliminar la colección");
+    }
     Coleccion coleccion = this.coleccionRepository.findById(id).orElse(null);
     if (coleccion == null) {
       throw new ColeccionNoEncontrada("La colección de id " + id + " no existe");
@@ -262,5 +270,14 @@ public class ColeccionService implements IColeccionService{
       );
       return Mono.empty();
     }).then();
+  }
+
+  private Usuario getOrSaveUsuario(UsuarioDTO usuarioDTO) {
+    Usuario usuario = this.userRepository.findById(usuarioDTO.getId()).orElse(
+            this.userRepository.save(Usuario.builder().id(usuarioDTO.getId()).email(usuarioDTO.getEmail())
+                    .nombre(usuarioDTO.getNombre()).apellido(usuarioDTO.getApellido()).build())
+    );
+    usuario.cargarRolYPermisos(usuarioDTO.getRol(), usuarioDTO.getPermisos());
+    return usuario;
   }
 }

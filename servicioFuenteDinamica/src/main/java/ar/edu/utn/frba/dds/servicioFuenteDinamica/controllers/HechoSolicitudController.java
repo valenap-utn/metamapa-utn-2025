@@ -2,11 +2,9 @@ package ar.edu.utn.frba.dds.servicioFuenteDinamica.controllers;
 
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos.ConjuntoHechoDTODinamica;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos.HechoDTODinamica;
-import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos.HechoDTOModificacionDinamica;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos.RevisionDTO;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos.SolicitudDTO;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.Solicitud;
-import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.Usuario;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.Hecho;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.services.IHechoServicio;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.services.ISolicitudServicio;
@@ -50,7 +48,7 @@ public class HechoSolicitudController {
         hechoDTO.setContenidoMultimedia(hecho.getContenidoMultimedia());
         hechoDTO.setTitulo(hecho.getTitulo());
         hechoDTO.setUbicacion(hecho.getUbicacion());
-        hechoDTO.setIdUsuario(hecho.getIdUsuario());
+        hechoDTO.setUsuario(hecho.getUsuarioDTO());
         return hechoDTO;
     }
 
@@ -80,7 +78,7 @@ public class HechoSolicitudController {
         SolicitudDTO solicitudDTO = new SolicitudDTO();
         solicitudDTO.setId(solicitud.getId());
         solicitudDTO.setJustificacion(solicitud.getJustificacion());
-        solicitudDTO.setIdusuario(solicitud.getIdUsuario());
+        solicitudDTO.setUsuario(solicitud.getUsuario().getUsuarioDTO());
         solicitudDTO.setEstado(solicitud.getNombreEstado());
         solicitudDTO.setIdHecho(solicitud.getIdHecho());
         return solicitudDTO;

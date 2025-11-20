@@ -3,7 +3,6 @@ package ar.edu.utn.frba.dds.servicioFuenteDinamica.services;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos.RevisionDTO;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos.SolicitudDTO;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.Solicitud;
-import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.Usuario;
 import org.springframework.stereotype.Service;
 
 @Service

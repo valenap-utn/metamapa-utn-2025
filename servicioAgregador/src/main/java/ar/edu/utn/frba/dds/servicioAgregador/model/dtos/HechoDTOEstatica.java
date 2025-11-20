@@ -14,7 +14,7 @@ public class HechoDTOEstatica  implements HechoDTO{
   private Ubicacion ubicacion;
   private LocalDateTime fechaAcontecimiento;
   private LocalDateTime fechaCarga;
-  private Long idUsuario;
+  private UsuarioDTO usuario;
 
   public Categoria getCategoria() {
     return new Categoria(this.categoria.getNombre());
