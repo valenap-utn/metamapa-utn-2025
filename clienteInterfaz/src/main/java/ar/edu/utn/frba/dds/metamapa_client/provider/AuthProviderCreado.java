@@ -30,7 +30,8 @@ public class AuthProviderCreado implements AuthenticationProvider {
     String password = authentication.getCredentials().toString();
     String email = authentication.getName();
     try {
-      AuthResponseDTO tokensDeAcceso = this.conexionServicioUser.getTokens(email, password);
+//      AuthResponseDTO tokensDeAcceso = this.conexionServicioUser.getTokens(email, password);
+      AuthResponseDTO tokensDeAcceso = this.conexionServicioUser.autenticar(email, password);
       if(tokensDeAcceso == null) {
         throw new FalloEnLaAutenticacion("No se pudo recuperar el token");
       }

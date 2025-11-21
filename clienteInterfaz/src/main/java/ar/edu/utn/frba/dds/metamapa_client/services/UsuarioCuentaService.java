@@ -1,64 +1,137 @@
 package ar.edu.utn.frba.dds.metamapa_client.services;
 
 import ar.edu.utn.frba.dds.metamapa_client.dtos.UsuarioDTO;
-import ar.edu.utn.frba.dds.metamapa_client.services.internal.WebApiCallerService;
 import jakarta.servlet.http.HttpSession;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.parameters.P;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
-/**
- * Implementación ejemplo para entorno real.
- * Acá en vez de ClientSeader hablamos con API de usuarios
- */
+
 @Service
 @Profile("prod")
+@Slf4j
 public class UsuarioCuentaService implements IUsuarioCuentaService {
 
-  private final WebApiCallerService webApiCallerService;
+  private final IConexionServicioUser conexionServicioUsuario;
 
-  public UsuarioCuentaService(WebApiCallerService webApiCallerService) {
-    this.webApiCallerService = webApiCallerService;
+  public UsuarioCuentaService(IConexionServicioUser conexionServicioUsuario) {
+    this.conexionServicioUsuario = conexionServicioUsuario;
   }
 
   @Override
   public UsuarioDTO ensureFromOAuth(String email, String nombre, String provider, String roleHint) {
-    // Esquema típico:
-    // 1. Intentar buscar usuario por email en el servicio real.
-    // 2. Si no existe, crearlo llamando al backend.
-    // 3. Devolver el usuario definitivo con su ID.
+    log.info("[UsuarioCuentaService] ensureFromOAuth email={} provider={} role={}", email, provider, roleHint);
 
-    // TODO: adaptarlo a tus endpoints reales
-    // Ejemplo imaginario:
-    // UsuarioDTO existente = webApiCallerService.get(baseUrl + "/api/users/by-email?email=" + email, UsuarioDTO.class);
-    // if (existente != null) return existente;
-    // UsuarioDTO nuevo = new UsuarioDTO(...);
-    // return webApiCallerService.post(baseUrl + "/api/users", nuevo, UsuarioDTO.class);
+    if (email == null || email.isBlank()) {
+      log.warn("[UsuarioCuentaService] Email OAuth2 vacío");
+      throw new IllegalArgumentException("Email OAuth2 vacío");
+    }
 
-    throw new UnsupportedOperationException("Implementar con el API real de usuarios");
+    //Intentamos obtener usuario con email desde servicioUsuario
+    try{
+      UsuarioDTO existente = conexionServicioUsuario.findByEmail(email);
+      if(existente != null) {
+        log.info("[UsuarioCuentaService] Usuario ya existente id={} email={}",
+            existente.getId(), existente.getEmail());
+        return existente;
+      }
+    }catch (Exception e){
+      log.warn("[UsuarioCuentaService] Error buscando usuario por email={} (seguimos con alta nueva)",
+          email, e);
+    }
+
+
+    //Si no existe => Creamos usuario nuevo en servicioUsuario
+    UsuarioDTO nuevo = new UsuarioDTO();
+    nuevo.setEmail(email);
+    nuevo.setNombre(nombre);
+    nuevo.setRol(roleHint);
+
+    log.info("[UsuarioCuentaService] Creando usuario nuevo email={} provider={}", email, provider);
+
+    String providerOAuth = (provider == null || provider.isBlank()) ? "OAUTH" : provider;
+
+    UsuarioDTO creado = conexionServicioUsuario.crearUsuario(nuevo, providerOAuth);
+    log.info("[UsuarioCuentaService] Usuario creado id={} email={}",
+        creado != null ? creado.getId() : null,
+        creado != null ? creado.getEmail() : null);
+
+    return creado;
   }
 
   @Override
   public UsuarioDTO obtenerUsuarioActual(HttpSession session, Authentication authentication) {
-    // En un diseño real, lo más limpio:
-    // - leer accessToken de sesión (guardado cuando te logueás contra tu backend)
-    // - llamar /api/auth/me con WebApiCallerService
-    try {
-      return webApiCallerService.get("/api/auth/me", UsuarioDTO.class);
-    } catch (Exception e) {
-      return null;
+    log.info("[UsuarioCuentaService] obtenerUsuarioActual...");
+
+    // Flujo OAuth2: primero
+    if (authentication instanceof OAuth2AuthenticationToken oauthToken) {
+      OAuth2User oAuth2User = oauthToken.getPrincipal();
+      String email = (String) oAuth2User.getAttributes().get("email");
+
+      log.info("[UsuarioCuentaService] OAuth2AuthenticationToken detectado. email atr={}", email);
+
+      if (email != null && !email.isBlank()) {
+        try {
+          UsuarioDTO u = conexionServicioUsuario.findByEmail(email);
+          if (u != null && session != null && u.getId() != null) {
+            // lo guardo para el agregador, pero NO lo uso para volver a pedir /usuarios/{id}
+            session.setAttribute("USER_ID", u.getId());
+          }
+          return u;
+        } catch (Exception e) {
+          log.warn("[UsuarioCuentaService] Error buscando usuario por email={} (OAuth2)", email, e);
+        }
+      }
     }
+
+    // Flujo login normal con JWT (/auth/me)
+    try {
+      UsuarioDTO me = conexionServicioUsuario.getMe();
+      if (me != null) {
+        log.info("[UsuarioCuentaService] getMe() devolvió id={} email={}", me.getId(), me.getEmail());
+        if (me.getId() != null && session != null) {
+          session.setAttribute("USER_ID", me.getId());
+        }
+        return me;
+      }
+    } catch (Exception e) {
+      log.warn("[UsuarioCuentaService] getMe() falló, probamos con Authentication clásico", e);
+    }
+
+    // Fallback login normal sin JWT: usar getName() como email
+    if (authentication != null) {
+      String username = authentication.getName();
+      log.info("[UsuarioCuentaService] Authentication clásico. username={}", username);
+
+      if (username != null && !username.isBlank()) {
+        try {
+          UsuarioDTO u = conexionServicioUsuario.findByEmail(username);
+          if (u != null && u.getId() != null && session != null) {
+            session.setAttribute("USER_ID", u.getId());
+          }
+          return u;
+        } catch (Exception e) {
+          log.warn("[UsuarioCuentaService] Error buscando usuario por email={} (user/pass)", username, e);
+        }
+      }
+    }
+
+    log.warn("[UsuarioCuentaService] No se pudo determinar el usuario actual");
+    return null;
   }
+
 
   @Override
   public UsuarioDTO findByEmail(String email) {
-    // TODO: endpoint real de búsqueda por email
-    throw new UnsupportedOperationException("findByEmail no implementado aún en remoto");
+    return conexionServicioUsuario.findByEmail(email);
   }
 
   @Override
   public UsuarioDTO findById(Long id) {
-    // TODO: endpoint real /api/users/{id}
-    throw new UnsupportedOperationException("findById no implementado aún en remoto");
+    return conexionServicioUsuario.findById(id);
   }
 }

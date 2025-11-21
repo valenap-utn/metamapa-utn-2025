@@ -1,10 +1,13 @@
 package ar.edu.utn.frba.dds.metamapa_client.web;
 
 import ar.edu.utn.frba.dds.metamapa_client.clients.ClientSeader;
+import ar.edu.utn.frba.dds.metamapa_client.clients.IServicioAgregador;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.ColeccionDTOOutput;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.FiltroDTO;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.HechoDTOOutput;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.UsuarioDTO;
+import ar.edu.utn.frba.dds.metamapa_client.dtos.UsuarioNuevoDTO;
+import ar.edu.utn.frba.dds.metamapa_client.services.IConexionServicioUser;
 import ar.edu.utn.frba.dds.metamapa_client.services.IUsuarioCuentaService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -12,6 +15,7 @@ import java.util.List;
 import java.util.UUID;
 
 import jakarta.servlet.http.HttpSession;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,13 +28,17 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 @Controller
+@Slf4j
 public class PageController {
-  private final ClientSeader cliente;
+  //  private final ClientSeader cliente;
+  private final IServicioAgregador cliente;
   private final IUsuarioCuentaService usuarioCuentaService;
+  private final IConexionServicioUser conexionServicioUser;
 
-  public PageController(ClientSeader cliente,  IUsuarioCuentaService usuarioCuentaService) {
+  public PageController(/* ClientSeader cliente */ IServicioAgregador cliente, IUsuarioCuentaService usuarioCuentaService, IConexionServicioUser conexionServicioUser) {
     this.cliente = cliente;
     this.usuarioCuentaService = usuarioCuentaService;
+    this.conexionServicioUser = conexionServicioUser;
   }
 
   @GetMapping({"/","/index"})
@@ -85,11 +93,30 @@ public class PageController {
   }
 
   @PostMapping("/auth/register")
-  public String register(Model model, @ModelAttribute("cuenta") UsuarioDTO usuario) {
-    UsuarioDTO usuario2 = this.cliente.crearUsuario(usuario);
+  public String register(@ModelAttribute("cuenta") UsuarioDTO form) {
+    UsuarioNuevoDTO nuevo = new UsuarioNuevoDTO();
+    nuevo.setNombre(form.getNombre());
+    nuevo.setApellido(form.getApellido());
+    nuevo.setEmail(form.getEmail());
+    nuevo.setFechaDeNacimiento(form.getFechaDeNacimiento());
+    nuevo.setPassword(form.getPassword());
+    nuevo.setRolSolicitado(form.getRol());
+    nuevo.setProviderOAuth(null); // No viene de OAuth => null
 
-    return "redirect:/iniciar-sesion";
+//    conexionServicioUser.crearUsuario(nuevo);
+
+    try {
+      conexionServicioUser.crearUsuario(nuevo);
+      return "redirect:/iniciar-sesion";
+    } catch (Exception e) {
+      log.error("[PageController] Error creando usuario", e);
+
+      // O redirigir a página de error,,,
+      return "redirect:/crear-cuenta?error";
+    }
+
   }
+
 
   @GetMapping("/privacidad")
   public String privacidad() {
@@ -105,7 +132,8 @@ public class PageController {
   public String mainDeUsuario() {
     ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
     HttpServletRequest request = attributes.getRequest();
-    String rol = request.getSession().getAttribute("rol").toString();
+    String rol = (String) request.getSession().getAttribute("rol");
+    if(rol == null) return "redirect:/iniciar-sesion";
     return rol.startsWith("ADMIN") ? "redirect:/admin" : "redirect:/main-gral";
   }
 
@@ -121,7 +149,7 @@ public class PageController {
     // Cargamos más info del usuario si está en nuestro "cliente" local
     if (usuario.getId() != null) {
       try {
-        UsuarioDTO completo = cliente.obtenerUsuarioPorId(usuario.getId());
+        UsuarioDTO completo = conexionServicioUser.findById(usuario.getId());
         if (completo != null) {
           usuario = completo;
         }

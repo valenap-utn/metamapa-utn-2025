@@ -2,28 +2,38 @@ package ar.edu.utn.frba.dds.metamapa_client.services;
 
 import ar.edu.utn.frba.dds.metamapa_client.dtos.AuthResponseDTO;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.CredencialesUserDTO;
+import ar.edu.utn.frba.dds.metamapa_client.dtos.LoginRequestDTO;
+import ar.edu.utn.frba.dds.metamapa_client.dtos.LoginResponseDTO;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.RolesPermisosDTO;
+import ar.edu.utn.frba.dds.metamapa_client.dtos.UsuarioCrearRequestDTO;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.UsuarioDTO;
+import ar.edu.utn.frba.dds.metamapa_client.dtos.UsuarioNuevoDTO;
 import ar.edu.utn.frba.dds.metamapa_client.exceptions.FalloEnLaAutenticacion;
 import ar.edu.utn.frba.dds.metamapa_client.exceptions.ServicioDesconectado;
 import ar.edu.utn.frba.dds.metamapa_client.exceptions.UsuarioNoEncontrado;
 import ar.edu.utn.frba.dds.metamapa_client.services.internal.WebApiCallerService;
 import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
+@Component
+@Profile("prod")
+@Slf4j
 public class ConexionServicioUser implements IConexionServicioUser {
   private final WebApiCallerService webApiCallerService;
-//  private final WebClient webClient;
   private final WebClient.Builder webClientBuilder;
 
   @Value("${api.servicioUsuarios.url}")
   private String baseUrl;
-
   private WebClient webClient;
 
   ConexionServicioUser(WebApiCallerService webApiCallerService, WebClient.Builder webClientBuilder) {
@@ -35,15 +45,20 @@ public class ConexionServicioUser implements IConexionServicioUser {
   // que para el momento del Constructor todavía no fue Inyectado
   @PostConstruct
   void init(){
-    this.webClient = webClientBuilder.baseUrl(baseUrl).build();
+    this.webClient = webClientBuilder.build();
+    log.info("[ConexionServicioUser] WebClient inicializado con baseUrl={}", baseUrl);
   }
 
+  @Override
   public AuthResponseDTO getTokens(String username, String password) {
     try {
       CredencialesUserDTO credenciales = new CredencialesUserDTO(username, password);
-      return this.webClient.post().uri(uriBuilder ->
-                      uriBuilder.path("/api/auth").build()).bodyValue(credenciales)
-              .retrieve().bodyToMono(AuthResponseDTO.class).block();
+      return this.webClient.post()
+          .uri(uriBuilder -> uriBuilder.path("/api/auth").build())
+          .bodyValue(credenciales)
+          .retrieve()
+          .bodyToMono(AuthResponseDTO.class)
+          .block();
     }catch (WebClientResponseException e) { //// errores HTTP
       //log.error(e.getMessage());
       if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
@@ -57,38 +72,105 @@ public class ConexionServicioUser implements IConexionServicioUser {
     }
   }
 
+  @Override
   public RolesPermisosDTO getRolesPermisos(String tokenAcceso) {
     try {
       return webApiCallerService.getWithAuth(
-              baseUrl + "/api/auth/user/roles-permisos",
-              tokenAcceso,
-              RolesPermisosDTO.class
+          baseUrl + "/api/auth/user/roles-permisos",
+          tokenAcceso,
+          RolesPermisosDTO.class
       );
     } catch (Exception e) {
       throw new RuntimeException("Error al obtener roles y permisos: " + e.getMessage(), e);
     }
   }
 
-//  public UsuarioDTO crearUsuario(UsuarioDTO alumnoDTO) {
-//    UsuarioDTO response = webApiCallerService.post(baseUrl + "/api/users", alumnoDTO, UsuarioDTO.class);
-//    if (response == null) {
-//      throw new RuntimeException("Error al crear alumno en el servicio externo");
-//    }
-//    return response;
-//  }
-
   // Para usuario actual (lee el accessToken de sesión y maneja el refresh)
+  @Override
   public UsuarioDTO getMe() {
     return webApiCallerService.get(baseUrl + "/api/auth/me", UsuarioDTO.class);
   } // a chequear,,,
 
+  @Override
+  public UsuarioDTO findByEmail(String email) {
+    String url = UriComponentsBuilder
+        .fromHttpUrl(baseUrl + "/api/usuarios/search")
+        .queryParam("email", email)
+        .toUriString();
+
+    log.info("[ConexionServicioUser] findByEmail email={} -> GET {}", email, url);
+
+    return webApiCallerService.get(url, UsuarioDTO.class);
+  }
+
+  @Override
+  public UsuarioDTO findById(Long id) {
+    String url = baseUrl + "/api/usuarios/" + id;
+    return webApiCallerService.get(url, UsuarioDTO.class);
+  }
+
+  @Override
+  public LoginResponseDTO login(String email, String password) {
+    String url = baseUrl + "/api/auth/login";
+    log.info("[ConexionServicioUser] login email={} -> POST {}", email, url);
+
+    var request = new LoginRequestDTO();
+    request.setEmail(email);
+    request.setPassword(password);
+
+    return webApiCallerService.post(url, request, LoginResponseDTO.class);
+  }
+
   // REGISTRO
-  public UsuarioDTO crearUsuario(UsuarioDTO dto) {
-    return this.webClient.post()
-        .uri("/api/users")
-        .bodyValue(dto)
-        .retrieve()
-        .bodyToMono(UsuarioDTO.class)
-        .block();
+  @Override
+  public UsuarioDTO crearUsuario(UsuarioDTO dto, String providerOAuth) {
+
+    UsuarioCrearRequestDTO request = new UsuarioCrearRequestDTO();
+    request.setNombre(dto.getNombre());
+    request.setApellido(dto.getApellido());
+    request.setEmail(dto.getEmail());
+    request.setPassword(
+        dto.getPassword() != null ? dto.getPassword() : ""
+    );
+    request.setProviderOAuth(providerOAuth);
+    request.setRolSolicitado(dto.getRol());
+
+    String url = baseUrl + "/api/usuarios";
+    log.info("[ConexionServicioUser] crearUsuario email={} -> POST {}", dto.getEmail(), url);
+
+    try {
+      return webApiCallerService.post(
+          url,
+          request,
+          UsuarioDTO.class
+      );
+
+    } catch (WebClientResponseException e) {
+
+      if (e.getStatusCode() == HttpStatus.CONFLICT) {
+        // usuario ya existía → lo buscamos
+        log.warn("[ConexionServicioUser] crearUsuario: 409 CONFLICT, usuario ya existe; buscamos por email={}", dto.getEmail());
+        return this.findByEmail(dto.getEmail());
+      }
+      throw e;
+    }
+  }
+
+  public AuthResponseDTO autenticar(String email, String password) {
+    return webApiCallerService.login(email, password);
+  }
+
+  @Override
+  public UsuarioDTO crearUsuario(UsuarioNuevoDTO dto) {
+    String url = baseUrl + "/api/usuarios";
+    log.info("[ConexionServicioUser] crearUsuario (nuevo) POST {}", url);
+    return webApiCallerService.post(url, dto, UsuarioDTO.class);
+  }
+
+  @Override
+  public UsuarioDTO buscarUsuarioPorEmail(String email) {
+    String url = baseUrl + "/api/usuarios/search?email=" + URLEncoder.encode(email, StandardCharsets.UTF_8);
+    log.info("[ConexionServicioUser] GET {}", url);
+    return webApiCallerService.get(url, UsuarioDTO.class);
   }
 }

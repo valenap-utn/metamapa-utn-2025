@@ -11,6 +11,7 @@ import ar.edu.utn.frba.dds.metamapa_client.dtos.FiltroDTO;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.FuenteDTO;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.HechoDTOInput;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.HechoDTOOutput;
+import ar.edu.utn.frba.dds.metamapa_client.dtos.LoginResponseDTO;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.OrigenDTO;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.RevisionDTO;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.RolesPermisosDTO;
@@ -18,6 +19,7 @@ import ar.edu.utn.frba.dds.metamapa_client.dtos.SolicitudEdicionDTO;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.SolicitudEliminacionDTO;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.Ubicacion;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.UsuarioDTO;
+import ar.edu.utn.frba.dds.metamapa_client.dtos.UsuarioNuevoDTO;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.usuarios.Permiso;
 import ar.edu.utn.frba.dds.metamapa_client.services.IConexionServicioUser;
 import java.time.LocalDate;
@@ -29,10 +31,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
+
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 @Component
+@Profile("dev")
 public class ClientSeader implements IFuenteDinamica, IFuenteEstatica, IServicioAgregador, IConexionServicioUser {
   private final Map<UUID, ColeccionDTOOutput> coleccion = new HashMap<>();
   private final Map<Long, HechoDTOOutput> hechos = new HashMap<>();
@@ -57,8 +62,8 @@ public class ClientSeader implements IFuenteDinamica, IFuenteEstatica, IServicio
     origenProxy.setTipo("PROXY");
 
     FuenteDTO fuenteColeccionDinamica = new FuenteDTO();
-      fuenteColeccionDinamica.setTipoOrigen("DINAMICA");
-      fuenteColeccionDinamica.setUrl("http://localhost:4000");
+    fuenteColeccionDinamica.setTipoOrigen("DINAMICA");
+    fuenteColeccionDinamica.setUrl("http://localhost:4000");
     FuenteDTO fuenteColeccionProxy = new FuenteDTO();
     fuenteColeccionProxy.setTipoOrigen("PROXY");
     fuenteColeccionProxy.setUrl("http://localhost:6000");
@@ -98,39 +103,39 @@ public class ClientSeader implements IFuenteDinamica, IFuenteEstatica, IServicio
 
 
     HechoDTOOutput hecho = HechoDTOOutput.builder()
-            .titulo("Inundacion Bahia Blanca")
-            .categoria(new Categoria("Inundacion"))
-            .fechaCarga(LocalDateTime.now())
-            .fechaAcontecimiento(LocalDateTime.of(2025, 3, 7, 0, 0))
-            .contenidoMultimedia(contenidoMultimedia)
-            .origen(origenDinamica)
-            .ubicacion(new Ubicacion(-34.914536f,-60.035774f))
-            .idUsuario(usuarioAdmin)
-            .id(this.idHecho.getAndIncrement())
-            .build();
+        .titulo("Inundacion Bahia Blanca")
+        .categoria(new Categoria("Inundacion"))
+        .fechaCarga(LocalDateTime.now())
+        .fechaAcontecimiento(LocalDateTime.of(2025, 3, 7, 0, 0))
+        .contenidoMultimedia(contenidoMultimedia)
+        .origen(origenDinamica)
+        .ubicacion(new Ubicacion(-34.914536f,-60.035774f))
+        .idUsuario(usuarioAdmin)
+        .id(this.idHecho.getAndIncrement())
+        .build();
 
     HechoDTOOutput hecho2 = HechoDTOOutput.builder()
-            .contenidoMultimedia(contenidoMultimedia)
-            .fechaCarga(LocalDateTime.now())
-            .titulo("Bahia Blanca se inunda")
-            .categoria(new Categoria("Inundacion"))
-            .fechaAcontecimiento(LocalDateTime.of(2025, 3, 7, 0 , 0))
-            .idUsuario(usuarioContribuyente)
-            .ubicacion(new Ubicacion(-27.691883f,-67.052886f))
-            .origen(origenDinamica)
-            .id(this.idHecho.getAndIncrement())
-            .build();
+        .contenidoMultimedia(contenidoMultimedia)
+        .fechaCarga(LocalDateTime.now())
+        .titulo("Bahia Blanca se inunda")
+        .categoria(new Categoria("Inundacion"))
+        .fechaAcontecimiento(LocalDateTime.of(2025, 3, 7, 0 , 0))
+        .idUsuario(usuarioContribuyente)
+        .ubicacion(new Ubicacion(-27.691883f,-67.052886f))
+        .origen(origenDinamica)
+        .id(this.idHecho.getAndIncrement())
+        .build();
 
     HechoDTOOutput hecho3 = HechoDTOOutput.builder().origen(origenProxy)
-            .contenidoMultimedia(contenidoMultimedia)
-            .fechaCarga(LocalDateTime.now())
-            .titulo("Bahia Blanca se inunda")
-            .categoria(new Categoria("Inundacion"))
-            .fechaAcontecimiento(LocalDateTime.of(2025, 3, 7, 0 , 0))
-            .idUsuario(usuarioContribuyente)
-            .ubicacion(new Ubicacion(-25.575639f,-54.543917f))
-            .id(this.idHecho.getAndIncrement())
-            .build();
+        .contenidoMultimedia(contenidoMultimedia)
+        .fechaCarga(LocalDateTime.now())
+        .titulo("Bahia Blanca se inunda")
+        .categoria(new Categoria("Inundacion"))
+        .fechaAcontecimiento(LocalDateTime.of(2025, 3, 7, 0 , 0))
+        .idUsuario(usuarioContribuyente)
+        .ubicacion(new Ubicacion(-25.575639f,-54.543917f))
+        .id(this.idHecho.getAndIncrement())
+        .build();
 
     this.hechos.put(hecho.getId(), hecho);
     this.hechos.put(hecho2.getId(), hecho2);
@@ -217,15 +222,15 @@ public class ClientSeader implements IFuenteDinamica, IFuenteEstatica, IServicio
     origenDTO.setTipo("DINAMICA");
     origenDTO.setUrl("http://localhost:4000");
     return HechoDTOOutput.builder()
-            .idUsuario(hecho.getIdUsuario())
-            .fechaAcontecimiento(hecho.getFechaAcontecimiento())
-            .fechaCarga(hecho.getFechaCarga())
-            .ubicacion(hecho.getUbicacion())
-            .contenidoMultimedia(hecho.getContenidoMultimedia())
-            .categoria(hecho.getCategoria())
-            .titulo(hecho.getTitulo())
-            .descripcion(hecho.getDescripcion())
-            .origen(origenDTO).build();
+        .idUsuario(hecho.getIdUsuario())
+        .fechaAcontecimiento(hecho.getFechaAcontecimiento())
+        .fechaCarga(hecho.getFechaCarga())
+        .ubicacion(hecho.getUbicacion())
+        .contenidoMultimedia(hecho.getContenidoMultimedia())
+        .categoria(hecho.getCategoria())
+        .titulo(hecho.getTitulo())
+        .descripcion(hecho.getDescripcion())
+        .origen(origenDTO).build();
   }
 
   @Override
@@ -325,13 +330,13 @@ public class ClientSeader implements IFuenteDinamica, IFuenteEstatica, IServicio
     origenDTO.setUrl("http://localhost:5000");
     for (int i=0; i < 5; i++){
       HechoDTOOutput hecho = HechoDTOOutput.builder()
-              .titulo("Inundacion Bahia Blanca " + i + " prueba")
-              .categoria(new Categoria("Inundacion"))
-              .fechaCarga(LocalDateTime.now())
-              .fechaAcontecimiento(LocalDateTime.of(2025, 3, 7, 0, 0))
-              .origen(origenDTO)
-              .idUsuario(usuarioAdmin)
-              .build();
+          .titulo("Inundacion Bahia Blanca " + i + " prueba")
+          .categoria(new Categoria("Inundacion"))
+          .fechaCarga(LocalDateTime.now())
+          .fechaAcontecimiento(LocalDateTime.of(2025, 3, 7, 0, 0))
+          .origen(origenDTO)
+          .idUsuario(usuarioAdmin)
+          .build();
       hecho.setId(this.idHecho.getAndIncrement());
       this.hechos.put(hecho.getId(), hecho);
     }
@@ -500,6 +505,11 @@ public class ClientSeader implements IFuenteDinamica, IFuenteEstatica, IServicio
   }
 
   @Override
+  public UsuarioDTO crearUsuario(UsuarioDTO dto, String providerOAuth) {
+    return null;
+  }
+
+  //  @Override
   public UsuarioDTO crearUsuario(UsuarioDTO dto) {
     Long id = this.idUsuario.getAndIncrement();
     dto.setId(id);
@@ -510,6 +520,36 @@ public class ClientSeader implements IFuenteDinamica, IFuenteEstatica, IServicio
 
   @Override
   public UsuarioDTO getMe() {
+    return null;
+  }
+
+  @Override
+  public UsuarioDTO findByEmail(String email) {
+    return null;
+  }
+
+  @Override
+  public UsuarioDTO findById(Long id) {
+    return null;
+  }
+
+  @Override
+  public LoginResponseDTO login(String username, String password) {
+    return null;
+  }
+
+  @Override
+  public AuthResponseDTO autenticar(String email, String password) {
+    return null;
+  }
+
+  @Override
+  public UsuarioDTO crearUsuario(UsuarioNuevoDTO dto) {
+    return null;
+  }
+
+  @Override
+  public UsuarioDTO buscarUsuarioPorEmail(String email) {
     return null;
   }
 

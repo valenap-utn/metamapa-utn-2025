@@ -2,6 +2,7 @@ package ar.edu.utn.frba.dds.metamapa_client.web;
 
 import ar.edu.utn.frba.dds.metamapa_client.clients.ClientSeader;
 
+import ar.edu.utn.frba.dds.metamapa_client.clients.IServicioAgregador;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.*;
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -35,12 +36,13 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
-  private final ClientSeader agregador;
+  //  private final ClientSeader agregador;
+  private final IServicioAgregador agregador;
   private final DefaultErrorAttributes defaultErrorAttributes;
   private final WebClient georefWebClient;
 //  private final BackendAPI api;
 
-  public AdminController(ClientSeader agregador, /*, BackendAPI api */DefaultErrorAttributes defaultErrorAttributes, WebClient georefWebClient) {
+  public AdminController(/* ClientSeader agregador */ IServicioAgregador agregador, /*, BackendAPI api */DefaultErrorAttributes defaultErrorAttributes, WebClient georefWebClient) {
     this.agregador = agregador;
 //    this.api = api;
     this.defaultErrorAttributes = defaultErrorAttributes;

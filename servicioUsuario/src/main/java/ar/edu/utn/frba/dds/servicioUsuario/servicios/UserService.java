@@ -17,10 +17,15 @@ import ar.edu.utn.frba.dds.servicioUsuario.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import java.time.LocalDate;
+import java.util.UUID;
+
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 public class UserService {
   private final IUsuarioRepositoryJPA usuarioRepository;
   private final BCryptPasswordEncoder passwordEncoder;
@@ -51,37 +56,61 @@ public class UserService {
     return authResponseDTO;
   }
 
-  public RolesPermisosDTO getRolesYPermisos(String accessToken){
-    String email = JwtUtil.validarToken(accessToken);
-    Usuario usuarios = this.usuarioRepository.findByEmail(email).orElse(null);
+  public RolesPermisosDTO getRolesYPermisos(String email){
+    Usuario usuario = this.usuarioRepository.findByEmail(email).orElse(null);
 
-    if (usuarios == null) {
-      throw new UsuarioNoEncontrado("Esta incorrecto el username o la password");
+    if (usuario == null) {
+      throw new UsuarioNoEncontrado("El usuario no existe");
     }
 
     RolesPermisosDTO rolesPermisosDTO = new RolesPermisosDTO();
-    rolesPermisosDTO.setPermisos(usuarios.getPermisos().stream().map(Permiso::name).toList());
-    rolesPermisosDTO.setRol(usuarios.getRol().name());
+    rolesPermisosDTO.setPermisos(usuario.getPermisos().stream().map(Permiso::name).toList());
+    rolesPermisosDTO.setRol(usuario.getRol().name());
     return rolesPermisosDTO;
   }
 
+
   public UsuarioCreadoDTO crearUsuario(UsuarioNuevoDTO usuario) {
-    if(usuario.getNombre() == null || usuario.getEmail() == null || (usuario.getPassword() == null &&  usuario.getProviderOAuth() == null)) {
+    if (usuario.getNombre() == null || usuario.getEmail() == null
+        || (usuario.getPassword() == null && usuario.getProviderOAuth() == null)) {
       throw new UsuarioInvalido("El perfil creado no cumple con los requisitos mínimos!");
     }
-    Usuario usuarioEncontrado= this.usuarioRepository.findByEmail(usuario.getEmail()).orElse(null);
-    if(usuarioEncontrado != null) {
+
+    Usuario usuarioEncontrado = this.usuarioRepository.findByEmail(usuario.getEmail()).orElse(null);
+    if (usuarioEncontrado != null) {
       throw new UsuarioConflicto("Ya existe un usuario con ese nombre");
     }
+
     Usuario usuarioNuevo = new Usuario();
     usuarioNuevo.setNombre(usuario.getNombre());
-    if (this.quiereSerAdministradorLocal(usuario) && this.leFaltanDatosAdmin(usuario))
-        throw new AdministradorInvalido("No se puede crear un administrador con datos faltantes y que no vaya por Auth0");
+
+    if (this.quiereSerAdministradorLocal(usuario) && this.leFaltanDatosAdmin(usuario)) {
+      throw new AdministradorInvalido("No se puede crear un administrador con datos faltantes y que no vaya por Auth0");
+    }
+
     usuarioNuevo.setApellido(usuario.getApellido());
     usuarioNuevo.setEmail(usuario.getEmail());
     usuarioNuevo.setFechaDeNacimiento(usuario.getFechaDeNacimiento());
-    usuarioNuevo.setRol(Rol.valueOf(usuario.getRolSolicitado()));
-    usuarioNuevo.setPassword(this.passwordEncoder.encode(usuario.getPassword()));
+    String rolStr = usuario.getRolSolicitado();
+    if (rolStr == null || rolStr.isBlank()) {
+      throw new UsuarioInvalido("Debe indicarse un rolSolicitado válido");
+    }
+    usuarioNuevo.setRol(Rol.valueOf(rolStr));
+
+    // Manejo de password según el tipo de usuario
+    if (usuario.getPassword() != null) {
+      // Usuario local: password real
+      usuarioNuevo.setPassword(this.passwordEncoder.encode(usuario.getPassword()));
+    } else if (usuario.getProviderOAuth() != null) {
+      // Usuario OAuth: generamos una password dummy para cumplir NOT NULL
+      String dummy = "OAUTH-" + UUID.randomUUID();
+      usuarioNuevo.setPassword(this.passwordEncoder.encode(dummy));
+    } else {
+      // (Por seguridad, no debería pasar este caso por el if de arriba)
+      usuarioNuevo.setPassword(this.passwordEncoder.encode(UUID.randomUUID().toString()));
+    }
+
+    usuarioNuevo.setProviderOAuth(usuario.getProviderOAuth());
     usuarioNuevo.setFechaCreacion(LocalDate.now());
     this.usuarioRepository.save(usuarioNuevo);
 
@@ -92,6 +121,14 @@ public class UserService {
     UsuarioCreadoDTO usuarioCreadoDTO = new UsuarioCreadoDTO();
     usuarioCreadoDTO.setFechaCreacion(usuarioNuevo.getFechaCreacion());
     usuarioCreadoDTO.setEmail(usuarioNuevo.getEmail());
+
+    // Los campos nuevos
+    usuarioCreadoDTO.setId(usuarioNuevo.getId());
+    usuarioCreadoDTO.setNombre(usuarioNuevo.getNombre());
+    usuarioCreadoDTO.setApellido(usuarioNuevo.getApellido());
+    usuarioCreadoDTO.setFechaDeNacimiento(usuarioNuevo.getFechaDeNacimiento());
+    usuarioCreadoDTO.setRol(usuarioNuevo.getRol().name());
+
     return usuarioCreadoDTO;
   }
 
@@ -108,10 +145,10 @@ public class UserService {
 
     // Validar que el token sea de tipo refresh
     Claims claims = Jwts.parserBuilder()
-            .setSigningKey(JwtUtil.getKey())
-            .build()
-            .parseClaimsJws(request.getRefreshToken())
-            .getBody();
+        .setSigningKey(JwtUtil.getKey())
+        .build()
+        .parseClaimsJws(request.getRefreshToken())
+        .getBody();
 
     if (!"refresh".equals(claims.get("type"))) {
       throw new UsuarioInvalido("El refresh token no es valido");
@@ -126,5 +163,40 @@ public class UserService {
     authResponseDTO.setRefreshToken(request.getRefreshToken());
     return authResponseDTO;
 
+  }
+
+  public UsuarioCreadoDTO getUsuarioPorEmail(String email) {
+    Usuario usuario = this.usuarioRepository.findByEmail(email)
+        .orElseThrow(() -> new UsuarioNoEncontrado("El usuario con el email " + email + " no existe"));
+    return formarUsuarioCreadoDTO(usuario);
+  }
+
+  public UsuarioCreadoDTO getUsuarioPorId(Long id) {
+    Usuario usuario = this.usuarioRepository.findById(id)
+        .orElseThrow(() -> new UsuarioNoEncontrado("El usuario con el id " + id + " no existe"));
+    return formarUsuarioCreadoDTO(usuario);
+  }
+
+  public UsuarioCreadoDTO login(String email, String rawPassword) {
+    log.info("[UserService] login email={}", email);
+
+    if (email == null || rawPassword == null) {
+      throw new UsuarioInvalido("Email y password son obligatorios");
+    }
+
+    var optUsuario = usuarioRepository.findByEmail(email);
+    if (optUsuario.isEmpty()) {
+      log.warn("[UserService] login - usuario no encontrado email={}", email);
+      throw new BadCredentialsException("Usuario o contraseña inválidos");
+    }
+
+    Usuario usuario = optUsuario.get();
+
+    if (!passwordEncoder.matches(rawPassword, usuario.getPassword())) {
+      log.warn("[UserService] login - password inválido para email={}", email);
+      throw new BadCredentialsException("Usuario o contraseña inválidos");
+    }
+    
+    return this.formarUsuarioCreadoDTO(usuario);
   }
 }

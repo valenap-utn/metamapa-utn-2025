@@ -10,9 +10,9 @@ import ar.edu.utn.frba.dds.metamapa_client.dtos.HechoDTOOutput;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.SolicitudEliminacionDTO;
 import java.util.List;
 import java.util.UUID;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import org.springframework.web.util.UriBuilder;
@@ -41,6 +41,21 @@ public class ServicioAgregador implements IServicioAgregador {
             .retrieve().bodyToMono(ConjuntoHechoDTO.class).map(
                     ConjuntoHechoDTO::getHechos
             ).block();
+  }
+
+  @Override
+  public HechoDTOOutput crearHecho(HechoDTOInput hecho, String baseUrl) {
+    return null;
+  }
+
+  @Override
+  public HechoDTOOutput actualizarHecho(HechoDTOInput hecho, String baseUrl) {
+    return null;
+  }
+
+  @Override
+  public HechoDTOOutput revisarHecho(Long idHecho, String baseUrl) {
+    return null;
   }
 
   private UriBuilder uriConFiltros(FiltroDTO filtroDTO, UriBuilder uriBuilder, String path) {
@@ -114,7 +129,7 @@ public class ServicioAgregador implements IServicioAgregador {
       }
       throw e;
     }
-  };
+  }
 
   public ColeccionDTOOutput actualizarColeccion(ColeccionDTOInput coleccion, UUID idColeccion){
     try {
@@ -140,7 +155,47 @@ public class ServicioAgregador implements IServicioAgregador {
   }
 
   @Override
+  public List<HechoDTOOutput> listHechosDelUsuario(Long userId) {
+    return List.of();
+  }
+
+  @Override
   public List<ColeccionDTOOutput> findColecciones() {
     return List.of();
+  }
+
+  @Override
+  public String subirHechosCSV(MultipartFile file, Long idUsuario, String baseUrl) {
+    return "";
+  }
+
+  @Override
+  public HechoDTOOutput aprobarHecho(Long idHecho) {
+    return null;
+  }
+
+  @Override
+  public HechoDTOOutput rechazarHecho(Long idHecho) {
+    return null;
+  }
+
+  @Override
+  public List<SolicitudEdicionDTO> findAllSolicitudesEdicion() {
+    return List.of();
+  }
+
+  @Override
+  public SolicitudEdicionDTO solicitarModificacion(SolicitudEdicionDTO solicitudEdicion, String baseUrl) {
+    return null;
+  }
+
+  @Override
+  public SolicitudEdicionDTO procesarSolicitudEdicion(Long idSolicitud, String baseUrl, RevisionDTO revisionDTO) {
+    return null;
+  }
+
+  @Override
+  public String getNombreUsuario(Long id) {
+    return "";
   }
 }

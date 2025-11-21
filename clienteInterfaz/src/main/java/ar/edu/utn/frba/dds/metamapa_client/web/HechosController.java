@@ -1,6 +1,7 @@
 package ar.edu.utn.frba.dds.metamapa_client.web;
 
 import ar.edu.utn.frba.dds.metamapa_client.clients.ClientSeader;
+import ar.edu.utn.frba.dds.metamapa_client.clients.IServicioAgregador;
 import ar.edu.utn.frba.dds.metamapa_client.clients.utils.JwtUtil;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.*;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.usuarios.Rol;
@@ -11,6 +12,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -38,12 +40,13 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @RequestMapping("/hechos")
 public class HechosController {
-  private final ClientSeader agregador;
+  //  private final ClientSeader agregador;
+  private final IServicioAgregador agregador;
   private final IConexionServicioUser servicioUsuarios;
   private final WebClient georefWebClient;
   private final IUsuarioCuentaService usuarioCuentaService;
 
-  public HechosController(ClientSeader agregador, IConexionServicioUser servicioUsuarios, WebClient georefWebClient, IUsuarioCuentaService usuarioCuentaService) {
+  public HechosController(/* ClientSeader agregador */ IServicioAgregador agregador, IConexionServicioUser servicioUsuarios, WebClient georefWebClient, IUsuarioCuentaService usuarioCuentaService) {
     this.agregador = agregador;
     this.servicioUsuarios = servicioUsuarios;
     this.georefWebClient = georefWebClient;
@@ -96,35 +99,32 @@ public class HechosController {
   }
 
   @PostMapping("/subir-hecho")
-  public String subirHechoPost(@Valid @ModelAttribute("hecho") HechoDTOInput hechoDtoInput, Model model, BindingResult bindingResult, RedirectAttributes redirectAttributes, HttpSession session, Authentication authentication) {
+  public String subirHechoPost(@Valid @ModelAttribute("hecho") HechoDTOInput hechoDtoInput, Model model, BindingResult bindingResult, RedirectAttributes redirectAttributes, HttpSession session,Authentication authentication) {
+    log.info("[HechosController] Entró a POST /hechos/subir-hecho");
+
     if (bindingResult.hasErrors()) {
+      log.warn("[HechosController] Errores de validación al subir hecho: {}", bindingResult.getAllErrors());
+
       redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.hecho", bindingResult);
       redirectAttributes.addFlashAttribute("hecho", hechoDtoInput);
       redirectAttributes.addFlashAttribute("titulo", "Revisá los campos marcados");
       return "redirect:/hechos/subir-hecho";
     }
 
-    //Obtenemos user
-    UsuarioDTO user = usuarioCuentaService.obtenerUsuarioActual(session, authentication);
-    if (user == null || user.getId() == null) {
-      redirectAttributes.addFlashAttribute("error", "No se pudo identificar al usuario actual");
-      return "redirect:/iniciar-sesion";
-    }
-
-    hechoDtoInput.setIdUsuario(user.getId());
-    if (hechoDtoInput.getFechaCarga() == null) {
-      hechoDtoInput.setFechaCarga(LocalDateTime.now());
-    }
-
     try {
+      var usuario = usuarioCuentaService.obtenerUsuarioActual(session, authentication);
+      hechoDtoInput.setIdUsuario(usuario.getId());
 
-      this.agregador.crearHecho(hechoDtoInput, "http://localhost:4000");
-      redirectAttributes.addFlashAttribute("success", "Tu hecho se creó exitosamente, pronto un administrador lo estará revisado !");
-      return "redirect:/main-gral";
+      log.info("[HechosController] Llamando a agregador.crearHecho() usuarioId={}", usuario.getId());
+      agregador.crearHecho(hechoDtoInput, "http://localhost:3000"); // o la baseUrl que uses
+      log.info("[HechosController] Hecho creado OK en agregador");
+
+      redirectAttributes.addFlashAttribute("mensajeOk", "Hecho cargado exitosamente!");
+      return "redirect:/hechos/mis-hechos";
+
     } catch (Exception e) {
-      log.error("Error al crear el hecho", e);
+      log.error("[HechosController] Error al crear el hecho", e);
       redirectAttributes.addFlashAttribute("error", "Ha ocurrido un error al crear el hecho. Volvé a intentarlo");
-      redirectAttributes.addFlashAttribute("hecho", hechoDtoInput);
       return "redirect:/hechos/subir-hecho";
     }
   }
@@ -137,37 +137,60 @@ public class HechosController {
   @PreAuthorize("hasRole('CONTRIBUYENTE')")
   public String misHechos(@RequestParam(defaultValue = "12") int limit, @RequestParam(defaultValue = "12") int step, HttpSession session, Model model, Authentication authentication) {
 
+    log.info("[HechosController] auth principal={} authorities={}", authentication != null ? authentication.getName() : null, authentication != null ? authentication.getAuthorities() : null);
+
     UsuarioDTO usuario = usuarioCuentaService.obtenerUsuarioActual(session, authentication);
 
     if (usuario == null || usuario.getId() == null) {
+      log.warn("[HechosController] Usuario actual nulo o sin ID. usuario={}", usuario);
       model.addAttribute("error", "No se pudo identificar al usuario actual");
       return "redirect:/iniciar-sesion";
     }
 
     Long userId = usuario.getId();
+    log.info("[HechosController] Cargando hechos del usuario id={}", userId);
 
-    // Si no tenemos userId => no seguimos
-    if (userId == null) {
-      return "redirect:/iniciar-sesion";
+    // Hechos en revisión
+    Set<Long> enRevision = Collections.emptySet();
+    try {
+      enRevision = agregador.findAllSolicitudesEdicion().stream()
+          .filter(h -> "PENDIENTE".equalsIgnoreCase(h.getEstado()))
+          .map(SolicitudEdicionDTO::getIdHecho)
+          .collect(Collectors.toSet());
+    } catch (Exception e) {
+      log.error("[HechosController] Error obteniendo solicitudes de edición", e);
+      // si falla, seguimos con conjunto vacío: no filtramos nada por revisión
+      enRevision = Collections.emptySet();
     }
 
-    Set<Long> enRevision = agregador.findAllSolicitudesEdicion().stream()
-        .filter(h -> "PENDIENTE".equalsIgnoreCase(h.getEstado()))
-        .map(SolicitudEdicionDTO::getIdHecho)
-        .collect(Collectors.toSet());
-
-    List<HechoDTOOutput> all = agregador.listHechosDelUsuario(userId).stream()
-        .filter(h -> "APROBAR".equalsIgnoreCase(h.getEstado()))
-        .filter(h -> !enRevision.contains(h.getId()))
-        .sorted((a, b) -> {
-          var ka = (a.getFechaAprobacion() != null ? a.getFechaAprobacion() : a.getFechaCarga());
-          var kb = (b.getFechaAprobacion() != null ? b.getFechaAprobacion() : b.getFechaCarga());
-          if (ka == null && kb == null) return 0;
-          if (ka == null) return 1;
-          if (kb == null) return -1;
-          return kb.compareTo(ka);
-        })
-        .toList();
+    // Hechos del usuario
+    List<HechoDTOOutput> all;
+    try {
+      Set<Long> finalEnRevision = enRevision;
+      all = agregador.listHechosDelUsuario(userId).stream()
+          .filter(h -> "APROBAR".equalsIgnoreCase(h.getEstado()))
+          .filter(h -> !finalEnRevision.contains(h.getId()))
+          .sorted((a, b) -> {
+            var ka = (a.getFechaAprobacion() != null ? a.getFechaAprobacion() : a.getFechaCarga());
+            var kb = (b.getFechaAprobacion() != null ? b.getFechaAprobacion() : b.getFechaCarga());
+            if (ka == null && kb == null) return 0;
+            if (ka == null) return 1;
+            if (kb == null) return -1;
+            return kb.compareTo(ka);
+          })
+          .toList();
+    } catch (Exception e) {
+      log.error("[HechosController] Error consultando hechos del usuario {}", userId, e);
+      model.addAttribute("error", "No se pudieron cargar tus hechos en este momento.");
+      model.addAttribute("items", List.of());
+      model.addAttribute("shown", 0);
+      model.addAttribute("total", 0);
+      model.addAttribute("hasMore", false);
+      model.addAttribute("nextLimit", 0);
+      model.addAttribute("step", step);
+      model.addAttribute("titulo", "Mis Hechos");
+      return "hechos/mis-hechos";
+    }
 
     int total = all.size();
     int shown = Math.min(Math.max(limit, 0), total);
@@ -184,11 +207,13 @@ public class HechosController {
   }
 
   // Para editar el Hecho
-  /* Validamos existencia del Usuario actual,
-   y ventana de 7 días desde fecha de Carga del Hecho
-   Si falla => redirige con flash error (ver si lo queremos cambiar a esto)
-   Sino => renderiza editar.html (reutilizamos subir-hecho con click-to-edit)
- */
+
+  /**
+   * Validamos existencia del Usuario actual,
+   *    y ventana de 7 días desde fecha de Carga del Hecho
+   *    Si falla => redirige con flash error (ver si lo queremos cambiar a esto)
+   *    Sino => renderiza editar.html (reutilizamos subir-hecho con click-to-edit)
+   */
   @GetMapping("/{idHecho}/editar")
   @PreAuthorize("hasRole('CONTRIBUYENTE')")
   public String editar(@PathVariable Long idHecho, HttpSession session, RedirectAttributes ra, Model model, Authentication authentication) {

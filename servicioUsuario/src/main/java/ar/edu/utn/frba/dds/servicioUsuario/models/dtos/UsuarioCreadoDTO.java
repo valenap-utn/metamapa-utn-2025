@@ -7,4 +7,11 @@ import lombok.Data;
 public class UsuarioCreadoDTO {
   private String email;
   private LocalDate fechaCreacion;
+
+  //Campos nuevos para simplificar unas cosiñas
+  private Long id;
+  private String nombre;
+  private String apellido;
+  private LocalDate fechaDeNacimiento;
+  private String rol;
 }

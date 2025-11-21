@@ -17,14 +17,14 @@ public class SecurityConfig {
     System.out.println("=== CONFIGURANDO SECURITY ===");
 
     http
-            .csrf(AbstractHttpConfigurer::disable)
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authorizeHttpRequests(auth -> {
-              auth.requestMatchers("/api/auth/user/roles-permisos").authenticated();
-              auth.requestMatchers("/api/auth", "/api/auth/refresh", "/api/agregador/hechos", "/api/agregador/solicitudes", "/api/usuarios", "/api/fuenteDinamica/hechos").permitAll();
-              auth.anyRequest().authenticated();
-            })
-            .addFilterBefore(new JwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+          .csrf(AbstractHttpConfigurer::disable)
+          .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+          .authorizeHttpRequests(auth -> {
+            auth.requestMatchers("/api/auth/user/roles-permisos").authenticated();
+            auth.requestMatchers("/api/auth", "/api/auth/refresh", "/api/agregador/hechos", "/api/agregador/solicitudes", "/api/usuarios", "/api/fuenteDinamica/hechos", "/api/usuarios/search").permitAll();
+            auth.anyRequest().authenticated();
+          })
+        .addFilterBefore(new JwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
     return http.build();
   }
