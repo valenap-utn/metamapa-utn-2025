@@ -67,7 +67,7 @@ public class AdminController {
 
     //Por el momento al total de fuentes lo hacemos así (después vemos si lo terminamos poniendo o no)
     long totalFuentes = hechos.stream()
-        .map(h -> h.getOrigen())
+        .map(HechoDTOOutput::getOrigen)
         .filter(Objects::nonNull)
         .map(o -> o.getUrl() != null ? o.getUrl() : o.getTipo())
         .filter(Objects::nonNull)

@@ -9,6 +9,7 @@ import ar.edu.utn.frba.dds.metamapa_client.dtos.UsuarioNuevoDTO;
 public interface IConexionServicioUser {
   AuthResponseDTO getTokens(String username, String password);
   RolesPermisosDTO getRolesPermisos(String tokenAcceso);
+//  UsuarioDTO crearUsuario(UsuarioDTO dto, String providerOAuth);
   UsuarioDTO crearUsuario(UsuarioDTO dto, String providerOAuth);
   UsuarioDTO getMe();
   UsuarioDTO findByEmail(String email);

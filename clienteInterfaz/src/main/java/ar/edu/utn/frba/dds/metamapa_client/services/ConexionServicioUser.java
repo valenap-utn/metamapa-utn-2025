@@ -139,12 +139,15 @@ public class ConexionServicioUser implements IConexionServicioUser {
     log.info("[ConexionServicioUser] crearUsuario email={} -> POST {}", dto.getEmail(), url);
 
     try {
-      return webApiCallerService.post(
-          url,
-          request,
-          UsuarioDTO.class
-      );
-
+      return this.webClient
+          .post()
+          .uri(uriBuilder -> uriBuilder
+              .path("/api/usuarios")
+              .build())
+          .bodyValue(dto)
+          .retrieve()
+          .bodyToMono(UsuarioDTO.class)
+          .block();
     } catch (WebClientResponseException e) {
 
       if (e.getStatusCode() == HttpStatus.CONFLICT) {

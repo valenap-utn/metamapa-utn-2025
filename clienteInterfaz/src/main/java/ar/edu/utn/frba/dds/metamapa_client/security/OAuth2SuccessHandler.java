@@ -3,6 +3,7 @@ package ar.edu.utn.frba.dds.metamapa_client.security;
 import ar.edu.utn.frba.dds.metamapa_client.config.RoleMappingProperties;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.AuthResponseDTO;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.UsuarioDTO;
+import ar.edu.utn.frba.dds.metamapa_client.dtos.UsuarioNuevoDTO;
 import ar.edu.utn.frba.dds.metamapa_client.services.IUsuarioCuentaService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -98,10 +99,10 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
     newSession.setAttribute("AUTH_ROLE", role);
 
     // Creamos o recuperamos usuario real (mock o API)
-    UsuarioDTO usuario = usuarioCuentaService.ensureFromOAuth(email, username, provider, role);
-    if (usuario != null && usuario.getId() != null) {
-      newSession.setAttribute("USER_ID", usuario.getId());
-    }
+
+    AuthResponseDTO  responseDTO= usuarioCuentaService.ensureFromOAuth(email, username, provider, role);
+    newSession.setAttribute("accessToken", responseDTO.getAccessToken());
+    newSession.setAttribute("refreshToken", responseDTO.getRefreshToken());
 
     response.sendRedirect(role.equals("ADMINISTRADOR") ? "/admin" : "/main-gral");
   }

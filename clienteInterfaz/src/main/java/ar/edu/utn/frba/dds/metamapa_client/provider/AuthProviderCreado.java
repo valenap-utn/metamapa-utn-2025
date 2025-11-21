@@ -1,5 +1,6 @@
 package ar.edu.utn.frba.dds.metamapa_client.provider;
 
+import ar.edu.utn.frba.dds.metamapa_client.clients.utils.JwtUtil;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.AuthResponseDTO;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.RolesPermisosDTO;
 import ar.edu.utn.frba.dds.metamapa_client.exceptions.FalloEnLaAutenticacion;
@@ -41,8 +42,6 @@ public class AuthProviderCreado implements AuthenticationProvider {
       request.getSession().setAttribute("accessToken", tokensDeAcceso.getAccessToken());
       request.getSession().setAttribute("refreshToken", tokensDeAcceso.getRefreshToken());
       request.getSession().setAttribute("email", email);
-      //request.getSession().setAttribute("idUsuario", tokensDeAcceso.getTokenAcceso());
-
       RolesPermisosDTO rolesPermisos = conexionServicioUser.getRolesPermisos(tokensDeAcceso.getAccessToken());
 
       request.getSession().setAttribute("rol", rolesPermisos.getRol());

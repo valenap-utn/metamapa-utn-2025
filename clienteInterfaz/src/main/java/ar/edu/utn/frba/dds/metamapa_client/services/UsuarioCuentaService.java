@@ -1,11 +1,12 @@
 package ar.edu.utn.frba.dds.metamapa_client.services;
 
+import ar.edu.utn.frba.dds.metamapa_client.clients.utils.JwtUtil;
+import ar.edu.utn.frba.dds.metamapa_client.dtos.AuthResponseDTO;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.UsuarioDTO;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.parameters.P;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
@@ -23,7 +24,7 @@ public class UsuarioCuentaService implements IUsuarioCuentaService {
   }
 
   @Override
-  public UsuarioDTO ensureFromOAuth(String email, String nombre, String provider, String roleHint) {
+  public AuthResponseDTO ensureFromOAuth(String email, String nombre, String provider, String roleHint) {
     log.info("[UsuarioCuentaService] ensureFromOAuth email={} provider={} role={}", email, provider, roleHint);
 
     if (email == null || email.isBlank()) {
@@ -33,10 +34,10 @@ public class UsuarioCuentaService implements IUsuarioCuentaService {
 
     //Intentamos obtener usuario con email desde servicioUsuario
     try{
-      UsuarioDTO existente = conexionServicioUsuario.findByEmail(email);
+      AuthResponseDTO existente = conexionServicioUsuario.autenticar(email, null);
       if(existente != null) {
         log.info("[UsuarioCuentaService] Usuario ya existente id={} email={}",
-            existente.getId(), existente.getEmail());
+            JwtUtil.getId(existente.getAccessToken()), email);
         return existente;
       }
     }catch (Exception e){
@@ -55,12 +56,13 @@ public class UsuarioCuentaService implements IUsuarioCuentaService {
 
     String providerOAuth = (provider == null || provider.isBlank()) ? "OAUTH" : provider;
 
+//    UsuarioDTO creado = conexionServicioUsuario.crearUsuario(nuevo, providerOAuth);
     UsuarioDTO creado = conexionServicioUsuario.crearUsuario(nuevo, providerOAuth);
     log.info("[UsuarioCuentaService] Usuario creado id={} email={}",
         creado != null ? creado.getId() : null,
         creado != null ? creado.getEmail() : null);
 
-    return creado;
+    return conexionServicioUsuario.autenticar(email, null);
   }
 
   @Override
@@ -129,6 +131,8 @@ public class UsuarioCuentaService implements IUsuarioCuentaService {
   public UsuarioDTO findByEmail(String email) {
     return conexionServicioUsuario.findByEmail(email);
   }
+
+
 
   @Override
   public UsuarioDTO findById(Long id) {

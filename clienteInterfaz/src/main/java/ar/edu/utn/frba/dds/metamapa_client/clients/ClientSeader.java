@@ -570,4 +570,8 @@ public class ClientSeader implements IFuenteDinamica, IFuenteEstatica, IServicio
     return this.usuarioDTO.get(email);
   }
 
+  @Override
+  public String subirHechosCSV(MultipartFile archivo, Long idUsuario) {
+    return "";
+  }
 }

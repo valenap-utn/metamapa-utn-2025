@@ -2,7 +2,9 @@ package ar.edu.utn.frba.dds.metamapa_client.services;
 
 import ar.edu.utn.frba.dds.metamapa_client.clients.ClientSeader;
 import ar.edu.utn.frba.dds.metamapa_client.clients.utils.JwtUtil;
+import ar.edu.utn.frba.dds.metamapa_client.dtos.AuthResponseDTO;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.UsuarioDTO;
+import ar.edu.utn.frba.dds.metamapa_client.dtos.UsuarioNuevoDTO;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.core.Authentication;
@@ -21,19 +23,19 @@ public class UsuarioCuentaMockService implements IUsuarioCuentaService {
   }
 
   @Override
-  public UsuarioDTO ensureFromOAuth(String email, String nombre, String provider, String roleHint) {
+  public AuthResponseDTO ensureFromOAuth(String email, String nombre, String provider, String roleHint) {
     if (email == null || email.isBlank()) {
       throw new IllegalArgumentException("Email OAuth2 vacío");
     }
 
     UsuarioDTO existente = clientSeader.obtenerUsuarioPorEmail(email);
-    if (existente != null) return existente;
+    if (existente != null) return null;
 
     UsuarioDTO nuevo = new UsuarioDTO();
     nuevo.setEmail(email);
     nuevo.setNombre(nombre);
     nuevo.setRol(roleHint);
-    return clientSeader.crearUsuario(nuevo);
+    return null;
   }
 
   @Override
