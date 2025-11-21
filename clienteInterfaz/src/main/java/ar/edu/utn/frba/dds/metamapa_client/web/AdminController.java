@@ -2,8 +2,10 @@ package ar.edu.utn.frba.dds.metamapa_client.web;
 
 import ar.edu.utn.frba.dds.metamapa_client.clients.ClientSeader;
 
+import ar.edu.utn.frba.dds.metamapa_client.clients.IFuenteEstatica;
 import ar.edu.utn.frba.dds.metamapa_client.clients.IServicioAgregador;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.*;
+import ar.edu.utn.frba.dds.metamapa_client.services.ConexionServicioUser;
 import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.HashMap;
@@ -13,6 +15,7 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Stream;
 
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.web.servlet.error.DefaultErrorAttributes;
 import org.springframework.http.ResponseEntity;
@@ -40,13 +43,18 @@ public class AdminController {
   private final IServicioAgregador agregador;
   private final DefaultErrorAttributes defaultErrorAttributes;
   private final WebClient georefWebClient;
-//  private final BackendAPI api;
+  private final IFuenteEstatica fuenteEstatica;
+  private final HttpSession session;
+  private final ConexionServicioUser conexionServicioUser;
 
-  public AdminController(/* ClientSeader agregador */ IServicioAgregador agregador, /*, BackendAPI api */DefaultErrorAttributes defaultErrorAttributes, WebClient georefWebClient) {
+
+  public AdminController(IServicioAgregador agregador, DefaultErrorAttributes defaultErrorAttributes, WebClient georefWebClient, IFuenteEstatica fuenteEstatica, HttpSession session, ConexionServicioUser conexionServicioUser) {
     this.agregador = agregador;
-//    this.api = api;
     this.defaultErrorAttributes = defaultErrorAttributes;
     this.georefWebClient = georefWebClient;
+    this.fuenteEstatica = fuenteEstatica;
+    this.session = session;
+    this.conexionServicioUser = conexionServicioUser;
   }
 
 
@@ -192,10 +200,17 @@ public class AdminController {
 
   @PostMapping("/importar-csv")
   @PreAuthorize("hasRole('ADMINISTRADOR')")
-  public String importarCsvPost(@RequestParam("file") MultipartFile file) {
+  public String importarCsvPost(@RequestParam("file") MultipartFile file, RedirectAttributes ra) {
+    Long idUsuario = (Long) session.getAttribute("idUsuario");
+    if(idUsuario == null){
+      ra.addFlashAttribute("error", "No se ha podido identificar el usuario en la sesión.");
+      return "redirect:/";
+    }
 
-    this.agregador.subirHechosCSV(file, 1L, "http://localhost:5000/");
-    return "admins/importar-csv";
+    String mensaje = fuenteEstatica.subirHechosCSV(file,idUsuario);
+
+    ra.addFlashAttribute("success", mensaje);
+    return "redirect:/admin";
   }
 
   // ---------- HECHOS ----------

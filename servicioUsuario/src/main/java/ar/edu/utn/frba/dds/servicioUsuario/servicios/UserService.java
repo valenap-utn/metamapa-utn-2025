@@ -37,15 +37,24 @@ public class UserService {
 
 
   public AuthResponseDTO autenticarUsuario(String username, String password) {
-    Usuario usuario = this.usuarioRepository.findByEmail(username).orElse(null);
+    log.info("[UserService] login email={}", username);
 
-    if (usuario == null) {
-      throw new UsuarioNoEncontrado("Esta incorrecto el username o la password");
-    }
-    if (!passwordEncoder.matches(password, usuario.getPassword()) && usuario.getProviderOAuth() == null) {
-      throw new UsuarioNoEncontrado("Esta incorrecto el username o la password");
+    if (username == null) {
+      throw new UsuarioInvalido("Email y password son obligatorios");
     }
 
+    var optUsuario = usuarioRepository.findByEmail(username);
+    if (optUsuario.isEmpty()) {
+      log.warn("[UserService] login - usuario no encontrado username={}", username);
+      throw new BadCredentialsException("Usuario o contraseña inválidos");
+    }
+
+    Usuario usuario = optUsuario.get();
+
+    if (usuario.getProviderOAuth() == null && !passwordEncoder.matches(password, usuario.getPassword())) {
+      log.warn("[UserService] login - password inválido para email={}", username);
+      throw new BadCredentialsException("Usuario o contraseña inválidos");
+    }
     return this.generarTokens(usuario);
   }
 
@@ -101,13 +110,8 @@ public class UserService {
     if (usuario.getPassword() != null) {
       // Usuario local: password real
       usuarioNuevo.setPassword(this.passwordEncoder.encode(usuario.getPassword()));
-    } else if (usuario.getProviderOAuth() != null) {
-      // Usuario OAuth: generamos una password dummy para cumplir NOT NULL
-      String dummy = "OAUTH-" + UUID.randomUUID();
-      usuarioNuevo.setPassword(this.passwordEncoder.encode(dummy));
-    } else {
-      // (Por seguridad, no debería pasar este caso por el if de arriba)
-      usuarioNuevo.setPassword(this.passwordEncoder.encode(UUID.randomUUID().toString()));
+    } else if (usuario.getProviderOAuth() == null) {
+      throw new UsuarioInvalido("Al usuario le falta la contraseña");
     }
 
     usuarioNuevo.setProviderOAuth(usuario.getProviderOAuth());
@@ -175,28 +179,5 @@ public class UserService {
     Usuario usuario = this.usuarioRepository.findById(id)
         .orElseThrow(() -> new UsuarioNoEncontrado("El usuario con el id " + id + " no existe"));
     return formarUsuarioCreadoDTO(usuario);
-  }
-
-  public UsuarioCreadoDTO login(String email, String rawPassword) {
-    log.info("[UserService] login email={}", email);
-
-    if (email == null || rawPassword == null) {
-      throw new UsuarioInvalido("Email y password son obligatorios");
-    }
-
-    var optUsuario = usuarioRepository.findByEmail(email);
-    if (optUsuario.isEmpty()) {
-      log.warn("[UserService] login - usuario no encontrado email={}", email);
-      throw new BadCredentialsException("Usuario o contraseña inválidos");
-    }
-
-    Usuario usuario = optUsuario.get();
-
-    if (!passwordEncoder.matches(rawPassword, usuario.getPassword())) {
-      log.warn("[UserService] login - password inválido para email={}", email);
-      throw new BadCredentialsException("Usuario o contraseña inválidos");
-    }
-    
-    return this.formarUsuarioCreadoDTO(usuario);
   }
 }

@@ -42,7 +42,7 @@ public class Usuario {
   private List<Permiso> permisos;
   @Column(name = "email")
   private String email;
-  @Column(name = "password", nullable = false)
+  @Column(name = "password")
   private String password;
   @Column(name = "fecha_creacion", nullable = false)
   private LocalDate fechaCreacion;

@@ -1,9 +1,14 @@
 package ar.edu.utn.frba.dds.servicioFuenteEstatica.controllers;
 
+import ar.edu.utn.frba.dds.servicioFuenteEstatica.exceptions.UsuarioNoEncontrado;
 import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.dtos.ConjuntoHechoDTOEstatica;
 import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.dtos.HechoDTOEstatica;
 
 import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.dtos.UsuarioDTO;
+import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.entities.Usuario;
+import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.entities.roles.Permiso;
+import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.entities.roles.Rol;
+import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.repositories.implReal.IUsuarioRepositoryJPA;
 import ar.edu.utn.frba.dds.servicioFuenteEstatica.services.IHechoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -14,31 +19,35 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 
 
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Set;
 
 @RestController
 @RequestMapping("/api/hechos")
 public class HechoGlobalController {
 
-  /* Manejo con HechoService, dado que el Controller no debe conocer directamente la persistencia,
+  /** Manejo con HechoService, dado que el Controller no debe conocer directamente la persistencia,
     sino la lógica de negocio que usa.
     Si el Controller dependiera del Repository, tendría que meter lógica del Service acá y romperia
     con el principio de responsabilidad única.
     => Si mañana cambiara de un repo en memoria a una base de datos real
                                                                    => mi controller ni se entera */
   private final IHechoService hechoService;
+  private final IUsuarioRepositoryJPA usuarioRepository;
 
   @Autowired
-  public HechoGlobalController(IHechoService hechoService) {
+  public HechoGlobalController(IHechoService hechoService, IUsuarioRepositoryJPA usuarioRepository) {
     this.hechoService = hechoService;
+    this.usuarioRepository = usuarioRepository;
   }
 
-  /* Devuelven un ResponseEntity
+  /** Devuelven un ResponseEntity
   * Y qué es el ResponseEntity? Qué hace?
   *   Lo que hace ResponseEntity es en envolver la rta. y darle un HTTP status code claro
   * Y para qué queremos eso?
@@ -51,10 +60,25 @@ public class HechoGlobalController {
     return ResponseEntity.ok(hecho);
   }
 
+  /**
+   * @@RequestPart está diseñado específicamente para gestionar
+   * la carga de archivos (como MultipartFile) y otros datos en
+   * solicitudes multipart.
+   */
   @PostMapping
-  public ResponseEntity<String> importar(@RequestParam("archivo") MultipartFile archivo, @RequestBody UsuarioDTO usuarioDTO) {
-      Set<HechoDTOEstatica> hechosImportados = hechoService.importarDesdeCSV(archivo, usuarioDTO);
-      return ResponseEntity.ok("Importación exitosa. Se importaron " + hechosImportados.size() + " hechos.");
+  public ResponseEntity<String> importar(@RequestPart("archivo") MultipartFile archivo, @RequestPart("usuario") Long idUsuario) {
+    Usuario usuario = this.usuarioRepository.findById(idUsuario).orElseThrow(()->new UsuarioNoEncontrado("No se ha encontrado el usuario con id: " + idUsuario));
+
+    //Mapeamos a DTO para el servicio
+    UsuarioDTO usuarioDTO = new UsuarioDTO();
+    usuarioDTO.setId(usuario.getId());
+    usuarioDTO.setNombre(usuario.getNombre());
+    usuarioDTO.setApellido(usuario.getApellido());
+    usuarioDTO.setRol(Rol.ADMINISTRADOR);
+    usuarioDTO.setPermisos(List.of(Permiso.SUBIDAARCHIVO));
+
+    Set<HechoDTOEstatica> hechosImportados = hechoService.importarDesdeCSV(archivo, usuarioDTO);
+    return ResponseEntity.ok("Importación exitosa. Se importaron " + hechosImportados.size() + " hechos.");
   }
 
   @GetMapping
