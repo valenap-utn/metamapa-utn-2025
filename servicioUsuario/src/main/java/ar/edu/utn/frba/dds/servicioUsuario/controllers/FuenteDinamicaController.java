@@ -1,13 +1,11 @@
 package ar.edu.utn.frba.dds.servicioUsuario.controllers;
 
+import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.ConjuntoHechoDTO;
 import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.HechoDTOInput;
 import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.HechoDTOOutput;
 import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.RevisionDTO;
 import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.SolicitudEdicionDTO;
 import ar.edu.utn.frba.dds.servicioUsuario.servicios.FuenteDinamicaService;
-import java.util.List;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -47,7 +45,7 @@ public class FuenteDinamicaController {
   }
 
   @GetMapping("/hechos/pendientes")
-  public List<HechoDTOOutput> pendientes(String baseUrl){
+  public ConjuntoHechoDTO pendientes(String baseUrl){
     return this.fuenteDinamicaService.findHechosPendientes(baseUrl);
   }
 

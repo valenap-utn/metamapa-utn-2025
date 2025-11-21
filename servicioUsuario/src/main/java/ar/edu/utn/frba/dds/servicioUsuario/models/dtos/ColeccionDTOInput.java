@@ -12,7 +12,8 @@ import lombok.NoArgsConstructor;
 public class ColeccionDTOInput {
   private String titulo;
   private String descripcion;
-  private Long usuario;
+  private Long usuarioID;
+  private UsuarioDTO usuario;
   private List<FuenteDTO> fuentes = new ArrayList<>();
   private List<CriterioDTO> criterios = new ArrayList<>();
   private String algoritmo;

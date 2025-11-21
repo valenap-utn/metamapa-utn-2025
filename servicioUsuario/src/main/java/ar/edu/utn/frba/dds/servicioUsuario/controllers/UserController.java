@@ -8,8 +8,6 @@ import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.UsuarioCreadoDTO;
 import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.UsuarioNuevoDTO;
 import ar.edu.utn.frba.dds.servicioUsuario.servicios.UserService;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;

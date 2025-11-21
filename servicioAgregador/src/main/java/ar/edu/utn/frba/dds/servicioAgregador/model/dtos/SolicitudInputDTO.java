@@ -9,8 +9,12 @@ public class SolicitudInputDTO {
   @NotNull
   private Long idHecho;
 
-  private Long idusuario;
+  private UsuarioDTO usuario;
 
   @NotBlank
   private String justificacion;
+
+  public Long getUsuarioId() {
+    return usuario == null ? null:usuario.getId();
+  }
 }

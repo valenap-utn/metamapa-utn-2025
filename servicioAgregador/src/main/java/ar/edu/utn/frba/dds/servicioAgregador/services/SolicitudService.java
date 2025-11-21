@@ -45,7 +45,11 @@ public class SolicitudService implements ISolicitudService {
         if(hecho == null) {
             throw new HechoNoEncontrado("El hecho no existe");
         }
-        Usuario user = this.userRepository.findById(solicitudInput.getIdusuario()).orElse(null);
+
+        Usuario user = null;
+        if(solicitudInput.getUsuarioId() == null) {
+            user = this.getOrSaveUsuario(solicitudInput.getUsuario());
+        }
         Solicitud solicitud = new Solicitud(hecho, user, solicitudInput.getJustificacion());
         DetectorDeSpam detectorDeSpam = this.detectorDeSpamFactory.crearDetectorDeSpamBasico();
         //se decide modelar la deteccion del spam que se realice antes de agregar la solicitud al repositorio
@@ -65,7 +69,7 @@ public class SolicitudService implements ISolicitudService {
         SolicitudOutputDTO solicitudOutputDTO = new SolicitudOutputDTO();
         solicitudOutputDTO.setIdHecho(solicitud.getHecho().getId());
         solicitudOutputDTO.setJustificacion(solicitud.getJustificacion());
-        solicitudOutputDTO.setIdusuario(solicitud.getUsuario().getId());
+        solicitudOutputDTO.setUsuario(solicitud.getUsuario().getUsuarioDTO());
         solicitudOutputDTO.setEstado(solicitud.getEstado().name());
         solicitudOutputDTO.setId(solicitud.getId());
         return solicitudOutputDTO;

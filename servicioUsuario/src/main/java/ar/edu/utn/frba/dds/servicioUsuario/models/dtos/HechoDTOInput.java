@@ -15,6 +15,6 @@ public class HechoDTOInput {
   private LocalDateTime fechaCarga;
   private ContenidoMultimedia contenidoMultimedia = new ContenidoMultimedia();
   private String contenido;
-  private Long idUsuario;
+  private UsuarioDTO usuario;
   private MultipartFile multipartFile;
 }

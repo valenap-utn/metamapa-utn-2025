@@ -1,7 +1,9 @@
 package ar.edu.utn.frba.dds.servicioAgregador.services;
 
+import ar.edu.utn.frba.dds.servicioAgregador.exceptions.HechoNoEncontrado;
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.ConjuntoHechoCompleto;
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.FiltroDTO;
+import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.HechoDTOCompleto;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Categoria;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.implReal.ICategoriaRepositoryJPA;
@@ -36,6 +38,15 @@ public class HechoService implements IHechoService{
     }
     List<Categoria> categorias = this.categoriaRepository.findAll();
     return this.mapHechoOutput.toConjuntoHechoDTOOutput(hechosDelSistema, categorias);
+  }
+
+  @Override
+  public HechoDTOCompleto findHechoById(Long id) {
+    Hecho hecho = this.hechoRepository.findById(id).orElse(null);
+    if (hecho == null) {
+      throw new HechoNoEncontrado("El hecho con id: " + id + " no existe");
+    }
+    return this.mapHechoOutput.toHechoDTO(hecho);
   }
 
 }

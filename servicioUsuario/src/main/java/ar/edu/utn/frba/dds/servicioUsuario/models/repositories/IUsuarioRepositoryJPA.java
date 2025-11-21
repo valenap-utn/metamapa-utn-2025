@@ -2,7 +2,6 @@ package ar.edu.utn.frba.dds.servicioUsuario.models.repositories;
 
 
 import ar.edu.utn.frba.dds.servicioUsuario.models.entities.Usuario;
-import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 

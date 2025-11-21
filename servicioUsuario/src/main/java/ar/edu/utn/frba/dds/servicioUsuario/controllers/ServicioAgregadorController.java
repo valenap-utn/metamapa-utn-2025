@@ -2,11 +2,14 @@ package ar.edu.utn.frba.dds.servicioUsuario.controllers;
 
 import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.ColeccionDTOInput;
 import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.ColeccionDTOOutput;
+import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.ConjuntoCategorias;
+import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.ConjuntoColeccion;
+import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.ConjuntoHechoDTO;
+import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.ConjuntoSolicitudesEliminacionOutput;
 import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.FiltroDTO;
 import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.HechoDTOOutput;
 import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.SolicitudEliminacionDTO;
 import ar.edu.utn.frba.dds.servicioUsuario.servicios.AgregadorService;
-import java.util.List;
 import java.util.UUID;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,17 +29,17 @@ public class ServicioAgregadorController {
   }
 
   @GetMapping("/hechos")
-  public List<HechoDTOOutput> findAllHechos(FiltroDTO filtros) {
+  public ConjuntoHechoDTO findAllHechos(FiltroDTO filtros) {
     return this.agregadorService.findAllHechos(filtros);
   }
 
   @GetMapping("/colecciones/{coleccionId}/hechos")
-  public List<HechoDTOOutput> findHechosByColeccionId(@PathVariable UUID coleccionId, FiltroDTO filtro) {
+  public  ConjuntoHechoDTO findHechosByColeccionId(@PathVariable UUID coleccionId, FiltroDTO filtro) {
     return this.agregadorService.findHechosByColeccionId(coleccionId, filtro);
   }
 
   @GetMapping("/solicitudes")
-  public List<SolicitudEliminacionDTO> findAllSolicitudes() {
+  public ConjuntoSolicitudesEliminacionOutput findAllSolicitudes() {
     return this.agregadorService.findAllSolicitudes();
   }
 
@@ -76,14 +79,17 @@ public class ServicioAgregadorController {
   }
 
   @GetMapping("/colecciones")
-  public List<ColeccionDTOOutput> findColecciones() {
+  public ConjuntoColeccion findColecciones() {
     return this.agregadorService.findColecciones();
   }
 
   @GetMapping("/usuarios/{id}/hechos")
-  public List<HechoDTOOutput> findHechoByUsuarioId(@PathVariable UUID id){
+  public ConjuntoHechoDTO findHechoByUsuarioId(@PathVariable Long id){
     return this.agregadorService.findHechosByIdUsuario(id);
   }
 
-
+  @GetMapping("/api/categorias")
+  public ConjuntoCategorias findAllCategorias(){
+    return this.agregadorService.findAllCategorias();
+  }
 }
