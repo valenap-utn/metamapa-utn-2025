@@ -45,7 +45,7 @@ public class ConexionServicioUser implements IConexionServicioUser {
   // que para el momento del Constructor todavía no fue Inyectado
   @PostConstruct
   void init(){
-    this.webClient = webClientBuilder.build();
+    this.webClient = this.webClientBuilder.baseUrl(baseUrl).build();
     log.info("[ConexionServicioUser] WebClient inicializado con baseUrl={}", baseUrl);
   }
 
@@ -142,9 +142,8 @@ public class ConexionServicioUser implements IConexionServicioUser {
       return this.webClient
           .post()
           .uri(uriBuilder -> uriBuilder
-              .path("/api/usuarios")
-              .build())
-          .bodyValue(dto)
+              .path("/api/usuarios").build())
+          .bodyValue(request)
           .retrieve()
           .bodyToMono(UsuarioDTO.class)
           .block();

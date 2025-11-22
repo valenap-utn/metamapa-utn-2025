@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -28,6 +29,11 @@ public class HandlerExceptions {
   @ExceptionHandler(value = UsuarioInvalido.class)
   public ResponseEntity<ErrorDTO> handleUsuarioInvalido(UsuarioInvalido error) {
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorDTO(error.getMessage(), error.getTipoError()));
+  }
+
+  @ExceptionHandler(value = BadCredentialsException.class)
+  public ResponseEntity<ErrorDTO> handleUsuarioInvalido(BadCredentialsException error) {
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorDTO(error.getMessage(), "Malas credenciales"));
   }
 
   @ExceptionHandler(value = UsuarioConflicto.class)

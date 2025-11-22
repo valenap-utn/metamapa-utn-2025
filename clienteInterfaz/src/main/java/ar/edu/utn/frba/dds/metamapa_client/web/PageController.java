@@ -1,6 +1,5 @@
 package ar.edu.utn.frba.dds.metamapa_client.web;
 
-import ar.edu.utn.frba.dds.metamapa_client.clients.ClientSeader;
 import ar.edu.utn.frba.dds.metamapa_client.clients.IServicioAgregador;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.ColeccionDTOOutput;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.FiltroDTO;
@@ -10,7 +9,6 @@ import ar.edu.utn.frba.dds.metamapa_client.dtos.UsuarioNuevoDTO;
 import ar.edu.utn.frba.dds.metamapa_client.services.IConexionServicioUser;
 import ar.edu.utn.frba.dds.metamapa_client.services.IUsuarioCuentaService;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.UUID;
 
@@ -23,7 +21,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -100,7 +97,7 @@ public class PageController {
     nuevo.setEmail(form.getEmail());
     nuevo.setFechaDeNacimiento(form.getFechaDeNacimiento());
     nuevo.setPassword(form.getPassword());
-    nuevo.setRolSolicitado(form.getRol());
+    nuevo.setRolSolicitado(form.getRol().toUpperCase());
     nuevo.setProviderOAuth(null); // No viene de OAuth => null
 
 //    conexionServicioUser.crearUsuario(nuevo);

@@ -1,10 +1,12 @@
 package ar.edu.utn.frba.dds.servicioUsuario.models.dtos;
 
 import java.time.LocalDateTime;
+import lombok.Builder;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
 @Data
+@Builder
 public class FiltroDTO {
   String categoria;
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)

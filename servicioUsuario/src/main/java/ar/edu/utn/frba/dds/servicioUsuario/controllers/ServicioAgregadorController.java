@@ -10,13 +10,17 @@ import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.FiltroDTO;
 import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.HechoDTOOutput;
 import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.SolicitudEliminacionDTO;
 import ar.edu.utn.frba.dds.servicioUsuario.servicios.AgregadorService;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -29,7 +33,16 @@ public class ServicioAgregadorController {
   }
 
   @GetMapping("/hechos")
-  public ConjuntoHechoDTO findAllHechos(FiltroDTO filtros) {
+  public ConjuntoHechoDTO findAllHechos(@RequestParam(required = false) String categoria,
+                                        @RequestParam(required = false) LocalDateTime fecha_reporte_desde,
+                                        @RequestParam(required = false)  LocalDateTime fecha_reporte_hasta,
+                                        @RequestParam(required = false) LocalDateTime fecha_acontecimiento_desde,
+                                        @RequestParam(required = false) LocalDateTime fecha_acontecimiento_hasta,
+                                        @RequestParam(required = false) Float latitud,
+                                        @RequestParam(required = false) Float longitud) {
+    FiltroDTO filtros = FiltroDTO.builder()
+            .categoria(categoria).fecha_reporte_desde(fecha_reporte_desde).fecha_reporte_hasta(fecha_reporte_hasta)
+            .fecha_acontecimiento_desde(fecha_acontecimiento_desde).fecha_acontecimiento_hasta(fecha_acontecimiento_hasta).build();
     return this.agregadorService.findAllHechos(filtros);
   }
 

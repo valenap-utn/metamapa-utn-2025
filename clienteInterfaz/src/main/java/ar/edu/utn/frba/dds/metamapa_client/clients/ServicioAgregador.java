@@ -29,7 +29,7 @@ public class ServicioAgregador implements IServicioAgregador {
 
   public List<HechoDTOOutput> findAllHechos(FiltroDTO filtroDTO) {
 
-    return this.agregadorWebClient.get().uri(uriBuilder -> this.uriConFiltros(filtroDTO, uriBuilder, "/api/hechos").build())
+    return this.agregadorWebClient.get().uri(uriBuilder -> this.uriConFiltros(filtroDTO, uriBuilder, "/api/agregador/hechos").build())
             .retrieve()
             .bodyToMono(ConjuntoHechoDTO.class).map(
                     ConjuntoHechoDTO::getHechos
@@ -73,7 +73,7 @@ public class ServicioAgregador implements IServicioAgregador {
   }
 
   public List<SolicitudEliminacionDTO> findAllSolicitudes() {
-    return this.agregadorWebClient.get().uri(uriBuilder -> uriBuilder.path("/api/solicitudes").build())
+    return this.agregadorWebClient.get().uri(uriBuilder -> uriBuilder.path("/api/agregador/solicitudes").build())
             .retrieve().bodyToMono(ConjuntoSolicitudesEliminacionOutput.class)
             .map( ConjuntoSolicitudesEliminacionOutput::getSolicitudes)
             .block();
