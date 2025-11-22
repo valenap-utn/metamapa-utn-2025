@@ -132,6 +132,7 @@ public class PageController {
     String rol = (String) request.getSession().getAttribute("rol");
     if(rol == null) return "redirect:/iniciar-sesion";
     return rol.startsWith("ADMIN") ? "redirect:/admin" : "redirect:/main-gral";
+//    return rol.startsWith("ADMINISTRADOR") ? "redirect:/admin" : "redirect:/main-gral";
   }
 
   @GetMapping("/mi-perfil")
