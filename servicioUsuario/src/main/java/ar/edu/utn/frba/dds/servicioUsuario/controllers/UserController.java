@@ -5,6 +5,7 @@ import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.CredencialesUserDTO;
 import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.RefreshTokenDTO;
 import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.RolesPermisosDTO;
 import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.UsuarioCreadoDTO;
+import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.UsuarioDTO;
 import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.UsuarioNuevoDTO;
 import ar.edu.utn.frba.dds.servicioUsuario.servicios.UserService;
 
@@ -47,6 +48,11 @@ public class UserController {
     return ResponseEntity.ok(this.userService.getRolesYPermisos(username));
   }
 
+  @GetMapping("/servicios/usuarios/{id}/")
+  public ResponseEntity<UsuarioDTO> findUserBy(@PathVariable Long id) {
+    return ResponseEntity.ok(this.userService.getUsuarioServicioPorId(id));
+  }
+
   @PostMapping("/auth/refresh")
   public ResponseEntity<AuthResponseDTO> refresh(@RequestBody RefreshTokenDTO request) {
     try {
@@ -81,4 +87,6 @@ public class UserController {
       return ResponseEntity.notFound().build();
     }
   }
+
+
 }

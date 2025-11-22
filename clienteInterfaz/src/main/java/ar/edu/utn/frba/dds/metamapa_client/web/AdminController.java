@@ -1,12 +1,9 @@
 package ar.edu.utn.frba.dds.metamapa_client.web;
 
-import ar.edu.utn.frba.dds.metamapa_client.clients.ClientSeader;
-
 import ar.edu.utn.frba.dds.metamapa_client.clients.IFuenteEstatica;
 import ar.edu.utn.frba.dds.metamapa_client.clients.IServicioAgregador;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.*;
 import ar.edu.utn.frba.dds.metamapa_client.services.ConexionServicioUser;
-import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.HashMap;
 import java.util.List;
@@ -16,7 +13,6 @@ import java.util.UUID;
 import java.util.stream.Stream;
 
 import jakarta.servlet.http.HttpSession;
-import lombok.RequiredArgsConstructor;
 import org.springframework.boot.web.servlet.error.DefaultErrorAttributes;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -29,8 +25,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;

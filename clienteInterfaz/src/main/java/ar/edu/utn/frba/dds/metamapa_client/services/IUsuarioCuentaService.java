@@ -2,7 +2,6 @@ package ar.edu.utn.frba.dds.metamapa_client.services;
 
 import ar.edu.utn.frba.dds.metamapa_client.dtos.AuthResponseDTO;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.UsuarioDTO;
-import ar.edu.utn.frba.dds.metamapa_client.dtos.UsuarioNuevoDTO;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.security.core.Authentication;
 

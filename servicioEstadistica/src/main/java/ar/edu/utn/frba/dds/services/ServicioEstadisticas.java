@@ -35,10 +35,12 @@ public class ServicioEstadisticas {
     private final List<CalculadorEstadisticas> calculadores;
     private final Cache cache;
     private final ExportadorCSV exportador;
+    private final ClientServicioUsuario servicioUsuario;
 
-    public ServicioEstadisticas(ServicioAgregador agregador) {
+    public ServicioEstadisticas(ServicioAgregador agregador, ClientServicioUsuario servicioUsuario) {
         this.agregador = agregador;
-        this.calculadores = List.of(new CategoriaHoraMayorHechos(), new CategoriaMayorHechos(), new CategoriaProvinciaMayorHechos(),
+      this.servicioUsuario = servicioUsuario;
+      this.calculadores = List.of(new CategoriaHoraMayorHechos(), new CategoriaMayorHechos(), new CategoriaProvinciaMayorHechos(),
                 new ColeccionProvinciaMayorHechos(), new SolicitudesSpamTotal());
         this.cache = new Cache();
         this.exportador = new ExportadorCSV();
@@ -68,12 +70,14 @@ public class ServicioEstadisticas {
         cache.actualizar(conjuntoEstadisticasDTO);
     }
 
-    public ConjuntoEstadisticasDTO obtenerEstadisticas(UsuarioDTO usuarioDTO) {
-        this.verificarUsuario(usuarioDTO);
+    public ConjuntoEstadisticasDTO obtenerEstadisticas(Long idUsuario) {
+        this.verificarUsuario(idUsuario);
         return cache.obtener();
     }
 
-    private void verificarUsuario(UsuarioDTO usuarioDTO) {
+    private void verificarUsuario(Long idUsuario) {
+        UsuarioDTO usuarioDTO = this.servicioUsuario.findUsuarioById(idUsuario);
+
         if (usuarioDTO.getId() == null) {
             throw new UsuarioNoEncontrado("Usuario no encontrado");
         }
@@ -86,8 +90,8 @@ public class ServicioEstadisticas {
         }
     }
 
-    public void exportarCSV(Path destino, UsuarioDTO usuarioDTO) throws IOException {
-        this.verificarUsuario(usuarioDTO);
+    public void exportarCSV(Path destino, Long idUsuario) throws IOException {
+        this.verificarUsuario(idUsuario);
         ConjuntoEstadisticasDTO data = cache.obtener();
         String csv = exportador.generarCSV(data);
         Files.writeString(destino, csv);

@@ -57,13 +57,15 @@ public class ColeccionService implements IColeccionService{
   private final VerificadorNormalizador verificadorNormalizador;
   private final IOrigenRepositoryJPA origenRepository;
   private final ICategoriaRepositoryJPA categoriaRepository;
+  private final ClientServicioUsuario clientServicioUsuario;
+
   public ColeccionService(IColeccionRepositoryJPA coleccionRepository,
                           IUserRepositoryJPA userRepository,
                           IHechoRepositoryJPA hechoRepository,
                           FactoryAlgoritmo algoritmoFactory,
                           FactoryClientFuente clientFuenteFactory,
                           MapColeccionOutput mapperColeccionOutput,
-                          MapHechoOutput mapperHechoOutput, VerificadorNormalizador verificadorNormalizador, IOrigenRepositoryJPA origenRepository, ICategoriaRepositoryJPA categoriaRepository) {
+                          MapHechoOutput mapperHechoOutput, VerificadorNormalizador verificadorNormalizador, IOrigenRepositoryJPA origenRepository, ICategoriaRepositoryJPA categoriaRepository, ClientServicioUsuario clientServicioUsuario) {
     this.coleccionRepository = coleccionRepository;
     this.userRepository = userRepository;
     this.hechoRepository = hechoRepository;
@@ -74,6 +76,7 @@ public class ColeccionService implements IColeccionService{
     this.verificadorNormalizador = verificadorNormalizador;
     this.origenRepository = origenRepository;
     this.categoriaRepository = categoriaRepository;
+    this.clientServicioUsuario = clientServicioUsuario;
   }
 
 
@@ -214,8 +217,10 @@ public class ColeccionService implements IColeccionService{
 
   @Transactional
   @Override
-  public ColeccionDTOOutput eliminarColeccion(UUID id, UsuarioDTO usuariodto) {
-    if(usuariodto.getId() == null) {
+  public ColeccionDTOOutput eliminarColeccion(UUID id, Long idUsuario) {
+    UsuarioDTO usuariodto = this.clientServicioUsuario.findUsuarioById(idUsuario);
+
+    if( usuariodto.getId() == null) {
       throw new UsuarioNoEncontrado("El usuario con el identificador administrado no existe");
     }
     Usuario usuario = this.getOrSaveUsuario(usuariodto);

@@ -2,7 +2,6 @@ package ar.edu.utn.frba.dds.servicioAgregador.controllers;
 
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.ColeccionDTOInput;
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.ColeccionDTOOutput;
-import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.UsuarioDTO;
 import ar.edu.utn.frba.dds.servicioAgregador.services.IColeccionService;
 import java.util.UUID;
 import org.springframework.http.HttpStatus;
@@ -14,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -37,8 +37,8 @@ public class ColeccionAdminController {
   }
 
   @DeleteMapping("/{id}")
-  public ResponseEntity<ColeccionDTOOutput> eliminarColeccion(@PathVariable UUID id, @RequestBody UsuarioDTO usuarioDTO) {
-    return ResponseEntity.status(HttpStatus.NO_CONTENT).body(this.coleccionService.eliminarColeccion(id, usuarioDTO));
+  public ResponseEntity<ColeccionDTOOutput> eliminarColeccion(@PathVariable UUID id, @RequestParam Long idUsuario) {
+    return ResponseEntity.status(HttpStatus.NO_CONTENT).body(this.coleccionService.eliminarColeccion(id, idUsuario));
   }
 
 }

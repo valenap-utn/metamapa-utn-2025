@@ -2,10 +2,7 @@ package ar.edu.utn.frba.dds.metamapa_client.security;
 
 import ar.edu.utn.frba.dds.metamapa_client.config.RoleMappingProperties;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.AuthResponseDTO;
-import ar.edu.utn.frba.dds.metamapa_client.dtos.UsuarioDTO;
-import ar.edu.utn.frba.dds.metamapa_client.dtos.UsuarioNuevoDTO;
 import ar.edu.utn.frba.dds.metamapa_client.services.IUsuarioCuentaService;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;

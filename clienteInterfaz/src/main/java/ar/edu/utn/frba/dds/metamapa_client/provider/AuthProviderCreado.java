@@ -1,10 +1,8 @@
 package ar.edu.utn.frba.dds.metamapa_client.provider;
 
-import ar.edu.utn.frba.dds.metamapa_client.clients.utils.JwtUtil;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.AuthResponseDTO;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.RolesPermisosDTO;
 import ar.edu.utn.frba.dds.metamapa_client.exceptions.FalloEnLaAutenticacion;
-import ar.edu.utn.frba.dds.metamapa_client.services.ConexionServicioUser;
 import ar.edu.utn.frba.dds.metamapa_client.services.IConexionServicioUser;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;

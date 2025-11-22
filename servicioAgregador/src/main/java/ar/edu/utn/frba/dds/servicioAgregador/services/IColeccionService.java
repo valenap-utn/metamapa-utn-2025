@@ -4,7 +4,6 @@ import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.ColeccionDTOInput;
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.ColeccionDTOOutput;
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.ConjuntoHechoCompleto;
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.FiltroDTO;
-import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.UsuarioDTO;
 import java.util.List;
 import java.util.UUID;
 import reactor.core.publisher.Mono;
@@ -19,5 +18,5 @@ public interface IColeccionService {
 
   ColeccionDTOOutput cambiarColeccion(ColeccionDTOInput coleccion, UUID idColeccion);
 
-  ColeccionDTOOutput eliminarColeccion(UUID id, UsuarioDTO usuariodto);
+  ColeccionDTOOutput eliminarColeccion(UUID id, Long idUsuario);
 }

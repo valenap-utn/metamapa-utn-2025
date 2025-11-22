@@ -1,7 +1,6 @@
 package ar.edu.utn.frba.dds.controllers;
 
 import ar.edu.utn.frba.dds.model.dtos.ConjuntoEstadisticasDTO;
-import ar.edu.utn.frba.dds.model.dtos.UsuarioDTO;
 import ar.edu.utn.frba.dds.services.ServicioEstadisticas;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
@@ -25,14 +24,14 @@ public class EstadisticasController {
     }
 
     @GetMapping
-    public ResponseEntity<ConjuntoEstadisticasDTO> consultar(@RequestBody UsuarioDTO usuario) {
-        return ResponseEntity.ok(servicio.obtenerEstadisticas(usuario));
+    public ResponseEntity<ConjuntoEstadisticasDTO> consultar(@RequestParam Long idUsuario) {
+        return ResponseEntity.ok(servicio.obtenerEstadisticas(idUsuario));
     }
 
     @GetMapping("/estadisticas.csv")
-    public ResponseEntity<InputStreamResource> exportar(@RequestBody UsuarioDTO usuarioDTO) throws IOException {
+    public ResponseEntity<InputStreamResource> exportar(@RequestParam Long idUsuario) throws IOException {
         Path tempFile = Files.createTempFile("estadisticas", ".csv");
-        servicio.exportarCSV(tempFile, usuarioDTO);
+        servicio.exportarCSV(tempFile, idUsuario);
 
         ByteArrayInputStream stream = new ByteArrayInputStream(Files.readAllBytes(tempFile));
         InputStreamResource resource = new InputStreamResource(stream);

@@ -1,14 +1,10 @@
 package ar.edu.utn.frba.dds.metamapa_client.web;
 
-import ar.edu.utn.frba.dds.metamapa_client.clients.ClientSeader;
 import ar.edu.utn.frba.dds.metamapa_client.clients.IServicioAgregador;
 import ar.edu.utn.frba.dds.metamapa_client.clients.utils.JwtUtil;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.*;
-import ar.edu.utn.frba.dds.metamapa_client.dtos.usuarios.Rol;
-import ar.edu.utn.frba.dds.metamapa_client.services.ConexionServicioUser;
 import ar.edu.utn.frba.dds.metamapa_client.services.IConexionServicioUser;
 import ar.edu.utn.frba.dds.metamapa_client.services.IUsuarioCuentaService;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
 import java.time.LocalDateTime;
@@ -20,7 +16,6 @@ import java.util.stream.Collectors;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;

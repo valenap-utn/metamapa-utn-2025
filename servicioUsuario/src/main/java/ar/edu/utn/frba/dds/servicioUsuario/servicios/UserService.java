@@ -8,6 +8,7 @@ import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.AuthResponseDTO;
 import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.RefreshTokenDTO;
 import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.RolesPermisosDTO;
 import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.UsuarioCreadoDTO;
+import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.UsuarioDTO;
 import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.UsuarioNuevoDTO;
 import ar.edu.utn.frba.dds.servicioUsuario.models.entities.Permiso;
 import ar.edu.utn.frba.dds.servicioUsuario.models.entities.Rol;
@@ -17,7 +18,6 @@ import ar.edu.utn.frba.dds.servicioUsuario.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import java.time.LocalDate;
-import java.util.UUID;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -179,5 +179,13 @@ public class UserService {
     Usuario usuario = this.usuarioRepository.findById(id)
         .orElseThrow(() -> new UsuarioNoEncontrado("El usuario con el id " + id + " no existe"));
     return formarUsuarioCreadoDTO(usuario);
+  }
+
+  public UsuarioDTO getUsuarioServicioPorId(Long id) {
+    Usuario usuario = this.usuarioRepository.findById(id).orElseThrow(
+            () -> new UsuarioNoEncontrado("El usuario con id " + id + " no existe")
+    );
+
+    return usuario.getUsuarioDTO();
   }
 }
