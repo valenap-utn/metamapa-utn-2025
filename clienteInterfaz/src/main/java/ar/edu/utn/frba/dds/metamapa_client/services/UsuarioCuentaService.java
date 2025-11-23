@@ -16,10 +16,11 @@ import org.springframework.stereotype.Service;
 @Profile("prod")
 @Slf4j
 public class UsuarioCuentaService implements IUsuarioCuentaService {
-
+  private final JwtUtil jwtUtil;
   private final IConexionServicioUser conexionServicioUsuario;
 
-  public UsuarioCuentaService(IConexionServicioUser conexionServicioUsuario) {
+  public UsuarioCuentaService(JwtUtil jwtUtil, IConexionServicioUser conexionServicioUsuario) {
+    this.jwtUtil = jwtUtil;
     this.conexionServicioUsuario = conexionServicioUsuario;
   }
 
@@ -37,7 +38,7 @@ public class UsuarioCuentaService implements IUsuarioCuentaService {
       AuthResponseDTO existente = conexionServicioUsuario.autenticar(email, null);
       if(existente != null) {
         log.info("[UsuarioCuentaService] Usuario ya existente id={} email={}",
-            JwtUtil.getId(existente.getAccessToken()), email);
+            jwtUtil.getId(existente.getAccessToken()), email);
         return existente;
       }
     }catch (Exception e){

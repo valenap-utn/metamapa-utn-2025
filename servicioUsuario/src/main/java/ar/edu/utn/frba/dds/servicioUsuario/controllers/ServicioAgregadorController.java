@@ -12,16 +12,20 @@ import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.SolicitudEliminacionDTO;
 import ar.edu.utn.frba.dds.servicioUsuario.servicios.AgregadorService;
 import java.time.LocalDateTime;
 import java.util.UUID;
+
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@Slf4j
 @RequestMapping("/api/agregador")
 public class ServicioAgregadorController {
   private final AgregadorService agregadorService;
@@ -55,7 +59,7 @@ public class ServicioAgregadorController {
   }
 
   @PostMapping("/solicitudes")
-  public SolicitudEliminacionDTO crearSolicitud(SolicitudEliminacionDTO solicitudEliminacionDTO) {
+  public SolicitudEliminacionDTO crearSolicitud(@RequestBody SolicitudEliminacionDTO solicitudEliminacionDTO) {
     return this.agregadorService.crearSolicitud(solicitudEliminacionDTO);
   }
 
@@ -70,7 +74,7 @@ public class ServicioAgregadorController {
   }
 
   @PutMapping("/colecciones/{idColeccion}")
-  public ColeccionDTOOutput modificarColeccion(ColeccionDTOInput coleccionDTOInput, @PathVariable UUID idColeccion) {
+  public ColeccionDTOOutput modificarColeccion(@RequestBody  ColeccionDTOInput coleccionDTOInput, @PathVariable UUID idColeccion) {
     return this.agregadorService.modificarColeccion(coleccionDTOInput, idColeccion);
   }
 
@@ -80,7 +84,8 @@ public class ServicioAgregadorController {
   }
 
   @PostMapping("/colecciones")
-  public ColeccionDTOOutput crearColeccion(ColeccionDTOInput coleccion){
+  public ColeccionDTOOutput crearColeccion(@RequestBody ColeccionDTOInput coleccion){
+    log.info("[ServicioAgregadorController] coleccion a crear:{}", coleccion.getTitulo());
     return this.agregadorService.crearColeccion(coleccion);
   }
 
@@ -99,7 +104,7 @@ public class ServicioAgregadorController {
     return this.agregadorService.findHechosByIdUsuario(id);
   }
 
-  @GetMapping("/api/categorias")
+  @GetMapping("/categorias")
   public ConjuntoCategorias findAllCategorias(){
     return this.agregadorService.findAllCategorias();
   }

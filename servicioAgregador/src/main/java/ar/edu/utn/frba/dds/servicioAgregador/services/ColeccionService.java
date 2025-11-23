@@ -104,7 +104,8 @@ public class ColeccionService implements IColeccionService{
 
     fuenteColeccions.forEach(fuenteColeccion -> this.saveOrigenHechoNuevo(fuenteColeccion.getOrigen()));
     Coleccion coleccionGuardada = this.coleccionRepository.save(coleccionCreada);
-    return this.mapperColeccionOutput.toColeccionDTOOutput(coleccionGuardada);
+    ColeccionDTOOutput rta = this.mapperColeccionOutput.toColeccionDTOOutput(coleccionGuardada);
+    return rta;
   }
 
 

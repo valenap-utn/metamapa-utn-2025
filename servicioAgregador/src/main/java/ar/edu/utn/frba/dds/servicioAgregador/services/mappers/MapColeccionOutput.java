@@ -2,6 +2,7 @@ package ar.edu.utn.frba.dds.servicioAgregador.services.mappers;
 
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.ColeccionDTOOutput;
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.CriterioDTO;
+import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.FiltroDTO;
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.FuenteDTO;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Categoria;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Coleccion;
@@ -16,6 +17,8 @@ import ar.edu.utn.frba.dds.servicioAgregador.model.entities.filtros.FiltroPorFec
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.filtros.FiltroPorTitulo;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.filtros.FiltroProvincia;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.origenes.Origen;
+
+import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 
@@ -28,6 +31,7 @@ public class MapColeccionOutput {
     coleccionDTOOutput.setTitulo(coleccion.getTitulo());
     coleccionDTOOutput.setDescripcion(coleccion.getDescripcion());
     coleccionDTOOutput.setFuentes(coleccion.getFuenteColeccions().stream().map(this::toFuenteDTO).collect(Collectors.toList()));
+    List<Filtro> filtros = coleccion.getCriteriosDePertenencia();
     coleccionDTOOutput.setCriterios(coleccion.getCriteriosDePertenencia().stream().map(this::toCriterioDTO).toList());
     coleccionDTOOutput.setAlgoritmoDeConsenso(coleccion.getAlgoritmoConsenso().getNombre());
     return coleccionDTOOutput;

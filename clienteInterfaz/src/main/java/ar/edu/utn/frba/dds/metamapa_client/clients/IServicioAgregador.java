@@ -1,5 +1,6 @@
 package ar.edu.utn.frba.dds.metamapa_client.clients;
 
+import ar.edu.utn.frba.dds.metamapa_client.dtos.Categoria;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.ColeccionDTOInput;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.ColeccionDTOOutput;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.FiltroDTO;
@@ -50,5 +51,5 @@ public interface IServicioAgregador {
 
   //Info de usuario
   String getNombreUsuario(Long id);
-
+  List<String> findAllCategorias();
 }

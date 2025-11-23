@@ -15,10 +15,11 @@ import org.springframework.stereotype.Service;
 @Service
 @Profile("dev")
 public class UsuarioCuentaMockService implements IUsuarioCuentaService {
-
+  private final JwtUtil jwtUtil;
   private final ClientSeader clientSeader;
 
-  public UsuarioCuentaMockService(ClientSeader clientSeader) {
+  public UsuarioCuentaMockService(JwtUtil jwtUtil, ClientSeader clientSeader) {
+    this.jwtUtil = jwtUtil;
     this.clientSeader = clientSeader;
   }
 
@@ -72,7 +73,7 @@ public class UsuarioCuentaMockService implements IUsuarioCuentaService {
       String accessToken = (String) session.getAttribute("accessToken");
       if (accessToken != null && !accessToken.isBlank()) {
         try {
-          Long id = JwtUtil.getId(accessToken);
+          Long id = jwtUtil.getId(accessToken);
           if (id != null) {
             UsuarioDTO u = clientSeader.obtenerUsuarioPorId(id);
             if (u != null) {
@@ -80,7 +81,7 @@ public class UsuarioCuentaMockService implements IUsuarioCuentaService {
               return u;
             }
           }
-          String email = JwtUtil.validarToken(accessToken);
+          String email = jwtUtil.validarToken(accessToken);
           if (email != null && !email.isBlank()) {
             UsuarioDTO u = clientSeader.obtenerUsuarioPorEmail(email);
             if (u != null) {

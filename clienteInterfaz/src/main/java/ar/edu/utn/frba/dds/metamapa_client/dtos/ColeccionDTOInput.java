@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 public class ColeccionDTOInput {
   private String titulo;
   private String descripcion;
-  private Long usuario;
+  private Long usuarioID;
   private List<FuenteDTO> fuentes = new ArrayList<>();
   private List<CriterioDTO> criterios = new ArrayList<>();
   private String algoritmo;

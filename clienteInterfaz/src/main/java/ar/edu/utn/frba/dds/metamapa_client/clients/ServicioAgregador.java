@@ -193,5 +193,11 @@ public class ServicioAgregador implements IServicioAgregador {
     return "";
   }
 
-
+  @Override
+  public List<String> findAllCategorias() {
+    return this.agregadorWebClient.get().uri(uriBuilder -> uriBuilder.path("/api/agregador/categorias").build())
+        .retrieve().bodyToMono(ConjuntoCategorias.class)
+        .map(ConjuntoCategorias::getCategorias)
+        .block();
+  }
 }

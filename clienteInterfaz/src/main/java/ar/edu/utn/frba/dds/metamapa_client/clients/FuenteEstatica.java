@@ -1,9 +1,10 @@
 package ar.edu.utn.frba.dds.metamapa_client.clients;
 
+import ar.edu.utn.frba.dds.metamapa_client.clients.utils.JwtUtil;
+import ar.edu.utn.frba.dds.metamapa_client.services.internal.WebApiCallerService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.MultipartBodyBuilder;
 import org.springframework.stereotype.Component;
@@ -14,14 +15,16 @@ import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import java.io.IOException;
 
 @Component
 @Slf4j
 public class FuenteEstatica implements IFuenteEstatica {
   private final WebClient webClient;
-
-  public FuenteEstatica(@Value("${api.servicioFuenteEstatica.url}") String baseUrl) {
+  private final WebApiCallerService webApiCallerService;
+  private final JwtUtil jwtUtil;
+  public FuenteEstatica(@Value("${api.servicioUsuarios.url}") String baseUrl, WebApiCallerService webApiCallerService, JwtUtil jwtUtil) {
+    this.webApiCallerService = webApiCallerService;
+    this.jwtUtil = jwtUtil;
     log.info("[FuenteEstatica] baseUrl configurada = {}", baseUrl);
     this.webClient = WebClient.builder()
         .baseUrl(baseUrl)
@@ -32,7 +35,50 @@ public class FuenteEstatica implements IFuenteEstatica {
             .build()).build();
   }
 
-  public String subirHechosCSV(MultipartFile archivo, Long idUsuario){
+  @Override
+  public String subirHechosCSV(MultipartFile archivo) {
+    log.info("[FuenteEstaticaClient] Enviando CSV a servicioUsuario: file='{}', size={}",
+        archivo.getOriginalFilename(), archivo.getSize());
+
+    try {
+      ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+      HttpServletRequest request = attributes.getRequest();
+
+      String accessToken = (String) request.getSession().getAttribute("accessToken");
+      if (accessToken == null) {
+        throw new IllegalStateException("No hay accessToken en la sesión. El usuario no está logueado.");
+      }
+
+      Long userId = jwtUtil.getId(accessToken);
+      log.info("[FuenteEstaticaClient] idUsuario extraído del token = {}", userId);
+
+      // Armamos multipart para el servicioUsuario
+      MultipartBodyBuilder builder = new MultipartBodyBuilder();
+      builder.part("archivo", archivo.getResource())
+          .filename(archivo.getOriginalFilename())
+          .contentType(archivo.getContentType() != null
+              ? MediaType.parseMediaType(archivo.getContentType())
+              : MediaType.TEXT_PLAIN);
+
+      builder.part("usuario", userId.toString());
+
+      // Llamamos al servicioUsuario
+      return webClient.post()
+          .uri("/api/fuenteEstatica/hechos")
+          .headers(h -> h.setBearerAuth(accessToken))
+          .contentType(MediaType.MULTIPART_FORM_DATA)
+          .body(BodyInserters.fromMultipartData(builder.build()))
+          .retrieve()
+          .bodyToMono(String.class)
+          .block();
+
+    } catch (Exception e) {
+      log.error("[FuenteEstaticaClient] Error subiendo CSV", e);
+      throw new RuntimeException("Error subiendo CSV al servicioUsuario", e);
+    }
+  }
+
+  /*public String subirHechosCSV(MultipartFile archivo, Long idUsuario){
     log.info("[FuenteEstatica] Preparando multipart idUsuario={}", idUsuario);
 
     ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
@@ -72,7 +118,5 @@ public class FuenteEstatica implements IFuenteEstatica {
     } catch (IOException e) {
       throw new RuntimeException("Error leyendo archivo CSV", e);
     }
-  }
-
-
+  }*/
 }

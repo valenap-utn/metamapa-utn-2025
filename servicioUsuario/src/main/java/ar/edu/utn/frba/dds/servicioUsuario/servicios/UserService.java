@@ -29,9 +29,11 @@ import org.springframework.stereotype.Service;
 public class UserService {
   private final IUsuarioRepositoryJPA usuarioRepository;
   private final BCryptPasswordEncoder passwordEncoder;
+  private final JwtUtil jwtUtil;
 
-  public UserService(IUsuarioRepositoryJPA usuarioRepository) {
+  public UserService(IUsuarioRepositoryJPA usuarioRepository, JwtUtil jwtUtil) {
     this.usuarioRepository = usuarioRepository;
+    this.jwtUtil = jwtUtil;
     this.passwordEncoder = new BCryptPasswordEncoder();
   }
 
@@ -60,8 +62,8 @@ public class UserService {
 
   private AuthResponseDTO generarTokens(Usuario usuario) {
     AuthResponseDTO authResponseDTO = new AuthResponseDTO();
-    authResponseDTO.setAccessToken(JwtUtil.generarAccessToken(usuario));
-    authResponseDTO.setRefreshToken(JwtUtil.generarRefreshToken(usuario));
+    authResponseDTO.setAccessToken(jwtUtil.generarAccessToken(usuario));
+    authResponseDTO.setRefreshToken(jwtUtil.generarRefreshToken(usuario));
     return authResponseDTO;
   }
 
@@ -104,7 +106,7 @@ public class UserService {
     if (rolStr == null || rolStr.isBlank()) {
       throw new UsuarioInvalido("Debe indicarse un rolSolicitado válido");
     }
-    usuarioNuevo.setRol(Rol.valueOf(rolStr));
+    usuarioNuevo.setearRol(Rol.valueOf(rolStr));
 
     // Manejo de password según el tipo de usuario
     if (usuario.getPassword() != null) {
@@ -145,11 +147,11 @@ public class UserService {
   }
 
   public AuthResponseDTO hacerElRefrescoDeSesion(RefreshTokenDTO request) {
-    String email = JwtUtil.validarToken(request.getRefreshToken());
+    String email = jwtUtil.validarToken(request.getRefreshToken());
 
     // Validar que el token sea de tipo refresh
     Claims claims = Jwts.parserBuilder()
-        .setSigningKey(JwtUtil.getKey())
+        .setSigningKey(jwtUtil.getKey())
         .build()
         .parseClaimsJws(request.getRefreshToken())
         .getBody();
@@ -161,7 +163,7 @@ public class UserService {
     if (usuario == null) {
       throw new UsuarioNoEncontrado("El usuario no existe");
     }
-    String newAccessToken = JwtUtil.generarAccessToken(usuario);
+    String newAccessToken = jwtUtil.generarAccessToken(usuario);
     AuthResponseDTO authResponseDTO = new AuthResponseDTO();
     authResponseDTO.setAccessToken(newAccessToken);
     authResponseDTO.setRefreshToken(request.getRefreshToken());

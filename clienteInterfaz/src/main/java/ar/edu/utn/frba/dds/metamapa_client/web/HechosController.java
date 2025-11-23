@@ -39,10 +39,12 @@ public class HechosController {
   private final IServicioAgregador agregador;
   private final IUsuarioCuentaService usuarioCuentaService;
   private final IFuenteDinamica fuenteDinamica;
-  public HechosController(IServicioAgregador agregador, IUsuarioCuentaService usuarioCuentaService, IFuenteDinamica fuenteDinamica) {
+  private final JwtUtil jwtUtil;
+  public HechosController(IServicioAgregador agregador, IUsuarioCuentaService usuarioCuentaService, IFuenteDinamica fuenteDinamica, JwtUtil jwtUtil) {
     this.agregador = agregador;
     this.usuarioCuentaService = usuarioCuentaService;
     this.fuenteDinamica = fuenteDinamica;
+    this.jwtUtil = jwtUtil;
   }
 
   @GetMapping("/{idHecho}")
@@ -249,7 +251,7 @@ public class HechosController {
     String accessToken = (String) session.getAttribute("accessToken");
     Long userId = null;
     if (accessToken != null) {
-      userId = JwtUtil.getId(accessToken);
+      userId = jwtUtil.getId(accessToken);
     }
 
     if (justificacion == null || justificacion.trim().length() < 500) {

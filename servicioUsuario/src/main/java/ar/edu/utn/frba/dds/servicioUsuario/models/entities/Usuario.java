@@ -12,6 +12,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.Table;
@@ -37,9 +38,8 @@ public class Usuario {
   private Rol rol;
   @Enumerated(EnumType.STRING)
   @ElementCollection
-  @CollectionTable(name = "permisos", joinColumns =
-  @JoinColumn(name = "usuario_id", referencedColumnName = "id"))
-  private List<Permiso> permisos;
+  @CollectionTable(name = "permisos", joinColumns = @JoinColumn(name = "usuario_id", referencedColumnName = "id"))
+  private List<Permiso> permisos = new ArrayList<>();
   @Column(name = "email")
   private String email;
   @Column(name = "password")
@@ -50,6 +50,19 @@ public class Usuario {
   private String providerOAuth;
 
   public UsuarioDTO getUsuarioDTO() {
-    return UsuarioDTO.builder().id(this.id).nombre(this.nombre).apellido(this.apellido).email(this.email).build();
+    return UsuarioDTO.builder().id(this.id).nombre(this.nombre).apellido(this.apellido)
+        .rol(this.rol).permisos(this.permisos).email(this.email).build();
+  }
+
+  public void setearRol(Rol rol) {
+    this.rol = rol;
+    if (rol == Rol.ADMINISTRADOR){
+      this.permisos.addAll( List.of( Permiso.CREARCOLECCION, Permiso.MODIFICARCOLECCION,
+          Permiso.ELIMINARCOLECCION, Permiso.VISITARESTADISTICAS,
+          Permiso.REVISARHECHO, Permiso.REVISARSOLICITUD, Permiso.SUBIDAARCHIVO));
+    }
+    if(rol == Rol.CONTRIBUYENTE){
+      this.permisos.add(Permiso.MODIFICARHECHO);
+    }
   }
 }

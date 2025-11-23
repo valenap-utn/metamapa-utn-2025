@@ -52,8 +52,10 @@ public class ClientSeader implements IFuenteDinamica, IFuenteEstatica, IServicio
   private final Long usuarioAdmin = 1L;
   private final Long usuarioContribuyente = 2L;
   private final Long usuarioContribuyente2 = 3L;
+  private final JwtUtil jwtUtil;
 
-  public ClientSeader() {
+  public ClientSeader(JwtUtil jwtUtil) {
+    this.jwtUtil = jwtUtil;
     OrigenDTO origenDinamica = new OrigenDTO();
     origenDinamica.setUrl("http://localhost:4000");
     origenDinamica.setTipo("DINAMICA");
@@ -493,14 +495,14 @@ public class ClientSeader implements IFuenteDinamica, IFuenteEstatica, IServicio
   public AuthResponseDTO getTokens(String username, String password) {
     UsuarioDTO usuarioDTO = this.usuarioDTO.get(username);
     AuthResponseDTO responseDTO = new AuthResponseDTO();
-    responseDTO.setAccessToken(JwtUtil.generarAccessToken(usuarioDTO));
-    responseDTO.setRefreshToken(JwtUtil.generarRefreshToken(usuarioDTO));
+    responseDTO.setAccessToken(jwtUtil.generarAccessToken(usuarioDTO));
+    responseDTO.setRefreshToken(jwtUtil.generarRefreshToken(usuarioDTO));
     return responseDTO;
   }
 
   @Override
   public RolesPermisosDTO getRolesPermisos(String tokenAcceso) {
-    String email = JwtUtil.validarToken(tokenAcceso);
+    String email = jwtUtil.validarToken(tokenAcceso);
     UsuarioDTO usuarioDTO = this.usuarioDTO.get(email);
     RolesPermisosDTO rolesPermisosDTO = new RolesPermisosDTO();
     rolesPermisosDTO.setRol(usuarioDTO.getRol().toUpperCase());
@@ -571,6 +573,10 @@ public class ClientSeader implements IFuenteDinamica, IFuenteEstatica, IServicio
     return nombreCompleto.isEmpty() ? "Usuario " + id : nombreCompleto;
   }
 
+  @Override
+  public List<String> findAllCategorias() {
+    return List.of();
+  }
 
 
   public UsuarioDTO obtenerUsuarioPorId(Long id) {
@@ -581,8 +587,13 @@ public class ClientSeader implements IFuenteDinamica, IFuenteEstatica, IServicio
     return this.usuarioDTO.get(email);
   }
 
+//  @Override
+//  public String subirHechosCSV(MultipartFile archivo, Long idUsuario) {
+//    return "";
+//  }
+
   @Override
-  public String subirHechosCSV(MultipartFile archivo, Long idUsuario) {
+  public String subirHechosCSV(MultipartFile archivo) {
     return "";
   }
 }

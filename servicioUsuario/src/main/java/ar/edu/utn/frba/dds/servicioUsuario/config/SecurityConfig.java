@@ -1,6 +1,7 @@
 package ar.edu.utn.frba.dds.servicioUsuario.config;
 
 import ar.edu.utn.frba.dds.servicioUsuario.filters.JwtAuthenticationFilter;
+import ar.edu.utn.frba.dds.servicioUsuario.utils.JwtUtil;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -11,6 +12,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 public class SecurityConfig {
+
+  private final JwtAuthenticationFilter jwtAuthenticationFilter;
+
+  public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
+    this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+  }
 
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -24,7 +31,7 @@ public class SecurityConfig {
             auth.requestMatchers("/api/auth", "/api/auth/refresh", "/api/agregador/hechos", "/api/agregador/solicitudes", "/api/usuarios", "/api/fuenteDinamica/hechos", "/api/usuarios/search").permitAll();
             auth.anyRequest().authenticated();
           })
-        .addFilterBefore(new JwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+        .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
     return http.build();
   }
