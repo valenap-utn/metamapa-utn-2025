@@ -7,7 +7,7 @@ import ar.edu.utn.frba.dds.servicioAgregador.model.entities.origenes.Origen;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Path;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
@@ -75,19 +75,19 @@ public class HechoSpecification {
     });
   }
 
-  private static Specification<Hecho> tieneFechaAcontecimientoFin(LocalDate fechaAcontecimientoHasta) {
+  private static Specification<Hecho> tieneFechaAcontecimientoFin(LocalDateTime fechaAcontecimientoHasta) {
     return ((root, query, cb) -> fechaAcontecimientoHasta == null ? cb.conjunction() : cb.lessThan(root.get(HechoSpecification.FECHAACONTECIMIENTO), fechaAcontecimientoHasta));
   }
 
-  private static Specification<Hecho> tieneFechaAcontecimientoInicio(LocalDate fechaAcontecimientoDesde) {
+  private static Specification<Hecho> tieneFechaAcontecimientoInicio(LocalDateTime fechaAcontecimientoDesde) {
     return ((root, query, cb) -> fechaAcontecimientoDesde == null ? cb.conjunction() : cb.greaterThan(root.get(HechoSpecification.FECHAACONTECIMIENTO), fechaAcontecimientoDesde));
   }
 
-  private static Specification<Hecho> tieneFechaCargaFin(LocalDate fechaReporteHasta) {
+  private static Specification<Hecho> tieneFechaCargaFin(LocalDateTime fechaReporteHasta) {
     return ((root, query, cb) -> fechaReporteHasta == null ? cb.conjunction() : cb.equal(root.get(HechoSpecification.FECHACARGA), fechaReporteHasta));
   }
 
-  private static Specification<Hecho> tieneFechaCargaInicio(LocalDate fechaReporteDesde) {
+  private static Specification<Hecho> tieneFechaCargaInicio(LocalDateTime fechaReporteDesde) {
     return ((root, query, cb) -> fechaReporteDesde == null ? cb.conjunction() : cb.equal(root.get(HechoSpecification.FECHACARGA), fechaReporteDesde));
   }
 }
