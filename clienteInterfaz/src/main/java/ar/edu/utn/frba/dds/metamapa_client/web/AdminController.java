@@ -191,28 +191,14 @@ public class AdminController {
   @PostMapping("/importar-csv")
   @PreAuthorize("hasRole('ADMINISTRADOR')")
   public String importarCsvPost(@RequestParam("file") MultipartFile file, RedirectAttributes ra) {
-
     log.info("POST /admin/importar-csv recibido");
-
-    String email = (String) session.getAttribute("email");
-    String accessToken = (String) session.getAttribute("accessToken");
-
-    if(email == null || accessToken == null){
-      ra.addFlashAttribute("error", "Sesión inválida (email o token faltante).");
-      return "redirect:/";
+    try {
+      String mensaje = fuenteEstatica.subirHechosCSV(file);
+      ra.addFlashAttribute("success", mensaje);
+    } catch (Exception e) {
+      log.error("Error importando CSV", e);
+      ra.addFlashAttribute("error", "Error al importar CSV: " + e.getMessage());
     }
-
-    UsuarioDTO usuarioDTO = this.conexionServicioUser.buscarUsuarioPorEmail(email);
-    if(usuarioDTO == null){
-      ra.addFlashAttribute("error", "Usuario no encontrado.");
-      return "redirect:/";
-    }
-
-    Long idUsuario = usuarioDTO.getId();
-
-    String mensaje = fuenteEstatica.subirHechosCSV(file, idUsuario);
-
-    ra.addFlashAttribute("success", mensaje);
     return "redirect:/admin";
   }
 
