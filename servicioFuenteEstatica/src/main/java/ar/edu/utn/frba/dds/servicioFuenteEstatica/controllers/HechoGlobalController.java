@@ -10,7 +10,9 @@ import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.entities.roles.Permiso;
 import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.entities.roles.Rol;
 import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.repositories.implReal.IUsuarioRepositoryJPA;
 import ar.edu.utn.frba.dds.servicioFuenteEstatica.services.IHechoService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,6 +32,7 @@ import java.util.Set;
 
 @RestController
 @RequestMapping("/api/hechos")
+@Slf4j
 public class HechoGlobalController {
 
   /** Manejo con HechoService, dado que el Controller no debe conocer directamente la persistencia,
@@ -65,9 +68,15 @@ public class HechoGlobalController {
    * la carga de archivos (como MultipartFile) y otros datos en
    * solicitudes multipart.
    */
-  @PostMapping
-  public ResponseEntity<String> importar(@RequestPart("archivo") MultipartFile archivo, @RequestPart("usuario") Long idUsuario) {
-    Usuario usuario = this.usuarioRepository.findById(idUsuario).orElseThrow(()->new UsuarioNoEncontrado("No se ha encontrado el usuario con id: " + idUsuario));
+  @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  public ResponseEntity<String> importar(@RequestPart("archivo") MultipartFile archivo, @RequestPart("usuario") String usuarioIdStr) {
+
+    log.info("[HechoGlobalController] multipart recibido. usuario='{}' archivo='{}'", usuarioIdStr, archivo.getOriginalFilename());
+
+    Long idUsuario = Long.parseLong(usuarioIdStr);
+
+    Usuario usuario = usuarioRepository.findById(idUsuario)
+        .orElseThrow(() -> new UsuarioNoEncontrado("Usuario no encontrado: " + idUsuario));
 
     //Mapeamos a DTO para el servicio
     UsuarioDTO usuarioDTO = new UsuarioDTO();
@@ -77,8 +86,9 @@ public class HechoGlobalController {
     usuarioDTO.setRol(Rol.ADMINISTRADOR);
     usuarioDTO.setPermisos(List.of(Permiso.SUBIDAARCHIVO));
 
-    Set<HechoDTOEstatica> hechosImportados = hechoService.importarDesdeCSV(archivo, usuarioDTO);
-    return ResponseEntity.ok("Importación exitosa. Se importaron " + hechosImportados.size() + " hechos.");
+    Set<HechoDTOEstatica> hechos = hechoService.importarDesdeCSV(archivo, usuarioDTO);
+
+    return ResponseEntity.ok("Importados: " + hechos.size());
   }
 
   @GetMapping

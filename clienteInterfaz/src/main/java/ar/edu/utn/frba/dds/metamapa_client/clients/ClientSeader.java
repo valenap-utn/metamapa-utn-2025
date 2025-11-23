@@ -553,9 +553,14 @@ public class ClientSeader implements IFuenteDinamica, IFuenteEstatica, IServicio
   }
 
   @Override
-  public UsuarioDTO buscarUsuarioPorEmail(String email) {
+  public UsuarioDTO buscarUsuarioPorEmail(String email, String accessToken) {
     return null;
   }
+
+//  @Override
+//  public UsuarioDTO buscarUsuarioPorEmail(String email) {
+//    return null;
+//  }
 
   public String getNombreUsuario(Long id) {
     UsuarioDTO usuario = this.usuariosById.get(id);

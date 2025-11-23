@@ -170,9 +170,8 @@ public class ConexionServicioUser implements IConexionServicioUser {
   }
 
   @Override
-  public UsuarioDTO buscarUsuarioPorEmail(String email) {
-    String url = baseUrl + "/api/usuarios/search?email=" + URLEncoder.encode(email, StandardCharsets.UTF_8);
-    log.info("[ConexionServicioUser] GET {}", url);
-    return webApiCallerService.get(url, UsuarioDTO.class);
+  public UsuarioDTO buscarUsuarioPorEmail(String email, String accessToken) {
+    String url = baseUrl + "/api/usuarios/search?email=" + email;
+    return webApiCallerService.getWithAuth(url, accessToken, UsuarioDTO.class);
   }
 }

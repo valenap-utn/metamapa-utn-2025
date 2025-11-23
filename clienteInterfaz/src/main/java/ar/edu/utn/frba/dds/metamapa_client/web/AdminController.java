@@ -14,6 +14,7 @@ import java.util.UUID;
 import java.util.stream.Stream;
 
 import jakarta.servlet.http.HttpSession;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.web.servlet.error.DefaultErrorAttributes;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -33,6 +34,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/admin")
+@Slf4j
 public class AdminController {
   //  private final ClientSeader agregador;
   private final IServicioAgregador agregador;
@@ -189,13 +191,26 @@ public class AdminController {
   @PostMapping("/importar-csv")
   @PreAuthorize("hasRole('ADMINISTRADOR')")
   public String importarCsvPost(@RequestParam("file") MultipartFile file, RedirectAttributes ra) {
-    Long idUsuario = (Long) session.getAttribute("idUsuario");
-    if(idUsuario == null){
-      ra.addFlashAttribute("error", "No se ha podido identificar el usuario en la sesión.");
+
+    log.info("POST /admin/importar-csv recibido");
+
+    String email = (String) session.getAttribute("email");
+    String accessToken = (String) session.getAttribute("accessToken");
+
+    if(email == null || accessToken == null){
+      ra.addFlashAttribute("error", "Sesión inválida (email o token faltante).");
       return "redirect:/";
     }
 
-    String mensaje = fuenteEstatica.subirHechosCSV(file,idUsuario);
+    UsuarioDTO usuarioDTO = this.conexionServicioUser.buscarUsuarioPorEmail(email);
+    if(usuarioDTO == null){
+      ra.addFlashAttribute("error", "Usuario no encontrado.");
+      return "redirect:/";
+    }
+
+    Long idUsuario = usuarioDTO.getId();
+
+    String mensaje = fuenteEstatica.subirHechosCSV(file, idUsuario);
 
     ra.addFlashAttribute("success", mensaje);
     return "redirect:/admin";

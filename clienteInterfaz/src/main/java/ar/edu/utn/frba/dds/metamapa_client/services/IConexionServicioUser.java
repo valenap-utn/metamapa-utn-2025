@@ -17,5 +17,5 @@ public interface IConexionServicioUser {
   LoginResponseDTO login(String email, String password);
   AuthResponseDTO autenticar(String email, String password);
   UsuarioDTO crearUsuario(UsuarioNuevoDTO dto);
-  UsuarioDTO buscarUsuarioPorEmail(String email);
+  UsuarioDTO buscarUsuarioPorEmail(String email, String accessToken);
 }
