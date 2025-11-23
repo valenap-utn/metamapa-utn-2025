@@ -8,27 +8,29 @@ import ar.edu.utn.frba.dds.metamapa_client.dtos.ConjuntoSolicitudesEliminacionOu
 import ar.edu.utn.frba.dds.metamapa_client.dtos.FiltroDTO;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.HechoDTOOutput;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.SolicitudEliminacionDTO;
+import ar.edu.utn.frba.dds.metamapa_client.services.internal.WebApiCallerService;
 import java.util.List;
 import java.util.UUID;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import org.springframework.web.util.UriBuilder;
 
 @Component
 public class ServicioAgregador implements IServicioAgregador {
-
+  private final String baseUrl;
   private final WebClient agregadorWebClient;
-
-  public ServicioAgregador(WebClient agregadorWebClient) {
+  private final WebApiCallerService webApiCallerService;
+  public ServicioAgregador(@Value("${agregador.api.base-url}") String baseUrl, WebClient agregadorWebClient, WebApiCallerService webApiCallerService) {
+    this.baseUrl = baseUrl;
     this.agregadorWebClient = agregadorWebClient;
+    this.webApiCallerService = webApiCallerService;
   }
 
 
   public List<HechoDTOOutput> findAllHechos(FiltroDTO filtroDTO) {
-
     return this.agregadorWebClient.get().uri(uriBuilder -> this.uriConFiltros(filtroDTO, uriBuilder, "/api/agregador/hechos").build())
             .retrieve()
             .bodyToMono(ConjuntoHechoDTO.class).map(
@@ -37,25 +39,10 @@ public class ServicioAgregador implements IServicioAgregador {
   }
 
   public List<HechoDTOOutput> findHechosByColeccionId(UUID coleccionId, FiltroDTO filtroDTO) {
-    return this.agregadorWebClient.get().uri(uriBuilder -> this.uriConFiltros(filtroDTO, uriBuilder, "/api/colecciones/{id}/hechos").build(coleccionId))
+    return this.agregadorWebClient.get().uri(uriBuilder -> this.uriConFiltros(filtroDTO, uriBuilder, "/api/agregador/colecciones/{id}/hechos").build(coleccionId))
             .retrieve().bodyToMono(ConjuntoHechoDTO.class).map(
                     ConjuntoHechoDTO::getHechos
             ).block();
-  }
-
-  @Override
-  public HechoDTOOutput crearHecho(HechoDTOInput hecho, String baseUrl) {
-    return null;
-  }
-
-  @Override
-  public HechoDTOOutput actualizarHecho(HechoDTOInput hecho, String baseUrl) {
-    return null;
-  }
-
-  @Override
-  public HechoDTOOutput revisarHecho(Long idHecho, String baseUrl) {
-    return null;
   }
 
   private UriBuilder uriConFiltros(FiltroDTO filtroDTO, UriBuilder uriBuilder, String path) {
@@ -110,16 +97,15 @@ public class ServicioAgregador implements IServicioAgregador {
   }
 
   public ColeccionDTOOutput crearColeccion(ColeccionDTOInput coleccion) {
-    return this.agregadorWebClient.post().uri(uriBuilder -> uriBuilder.path("/api/colecciones").build())
-            .bodyValue(coleccion)
-            .retrieve().bodyToMono(ColeccionDTOOutput.class).block();
+    return this.webApiCallerService.post(
+            baseUrl + "/api/agregador/colecciones" , coleccion, ColeccionDTOOutput.class);
   }
 
   public ColeccionDTOOutput revisarColeccion(UUID idColeccion){
     try{
       return agregadorWebClient
           .get()
-          .uri("colecciones/{id}",idColeccion)
+          .uri("/api/agregador/colecciones/{id}",idColeccion)
           .retrieve()
           .bodyToMono(ColeccionDTOOutput.class)
           .block();
@@ -150,23 +136,34 @@ public class ServicioAgregador implements IServicioAgregador {
 
   @Override
   public HechoDTOOutput getHecho(Long idHecho) {
-    //TODO
-    return null;
+    return agregadorWebClient
+            .get()
+            .uri("/api/agregador/hechos/{id}",idHecho)
+            .retrieve()
+            .bodyToMono(HechoDTOOutput.class)
+            .block();
   }
 
   @Override
   public List<HechoDTOOutput> listHechosDelUsuario(Long userId) {
-    return List.of();
+    return agregadorWebClient
+            .get()
+            .uri("/usuarios/{id}/hechos",userId)
+            .retrieve()
+            .bodyToMono(ConjuntoHechoDTO.class)
+            .map(ConjuntoHechoDTO::getHechos)
+            .block();
   }
 
   @Override
   public List<ColeccionDTOOutput> findColecciones() {
-    return List.of();
-  }
-
-  @Override
-  public String subirHechosCSV(MultipartFile file, Long idUsuario, String baseUrl) {
-    return "";
+    return agregadorWebClient
+            .get()
+            .uri(uriBuilder -> uriBuilder.path("/api/agregador/colecciones").build())
+            .retrieve()
+            .bodyToMono(ConjuntoColeccion.class)
+            .map(ConjuntoColeccion::getColecciones)
+            .block();
   }
 
   @Override
@@ -184,10 +181,7 @@ public class ServicioAgregador implements IServicioAgregador {
     return List.of();
   }
 
-  @Override
-  public SolicitudEdicionDTO solicitarModificacion(SolicitudEdicionDTO solicitudEdicion, String baseUrl) {
-    return null;
-  }
+
 
   @Override
   public SolicitudEdicionDTO procesarSolicitudEdicion(Long idSolicitud, String baseUrl, RevisionDTO revisionDTO) {
@@ -198,4 +192,6 @@ public class ServicioAgregador implements IServicioAgregador {
   public String getNombreUsuario(Long id) {
     return "";
   }
+
+
 }

@@ -10,7 +10,7 @@ public interface IFuenteDinamica {
 
   HechoDTOOutput actualizarHecho(HechoDTOInput hecho, String baseUrl);
 
-  HechoDTOOutput revisarHecho(Long idHecho, String baseUrl);
+  HechoDTOOutput revisarHecho(Long idHecho, RevisionDTO revisionDTO, String baseUrl);
 
   SolicitudEdicionDTO solicitarModificacion(SolicitudEdicionDTO solicitudEdicion, String baseUrl);
 

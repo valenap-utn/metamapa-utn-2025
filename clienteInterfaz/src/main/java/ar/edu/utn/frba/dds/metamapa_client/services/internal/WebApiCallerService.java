@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
@@ -26,7 +27,12 @@ public class WebApiCallerService {
     private final String authServiceUrl;
 
     public WebApiCallerService(@Value("${api.servicioUsuarios.url}") String authServiceUrl) {
-        this.webClient = WebClient.builder().build();
+        this.webClient = WebClient.builder()
+                .exchangeStrategies(ExchangeStrategies.builder()
+                        .codecs(codecs -> codecs
+                                .defaultCodecs()
+                                .maxInMemorySize(50 * 1024 * 1024))
+                        .build()).build();
         this.authServiceUrl = authServiceUrl;
     }
 

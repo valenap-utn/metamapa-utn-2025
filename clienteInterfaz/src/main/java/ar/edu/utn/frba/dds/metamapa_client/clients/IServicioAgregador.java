@@ -3,12 +3,10 @@ package ar.edu.utn.frba.dds.metamapa_client.clients;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.ColeccionDTOInput;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.ColeccionDTOOutput;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.FiltroDTO;
-import ar.edu.utn.frba.dds.metamapa_client.dtos.HechoDTOInput;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.HechoDTOOutput;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.RevisionDTO;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.SolicitudEdicionDTO;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.SolicitudEliminacionDTO;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.UUID;
@@ -24,9 +22,6 @@ public interface IServicioAgregador {
   // Hechos
   List<HechoDTOOutput> findAllHechos(FiltroDTO filtro);
   List<HechoDTOOutput> findHechosByColeccionId(UUID coleccionId, FiltroDTO filtro);
-  HechoDTOOutput crearHecho(HechoDTOInput hecho, String baseUrl);
-  HechoDTOOutput actualizarHecho(HechoDTOInput hecho, String baseUrl);
-  HechoDTOOutput revisarHecho(Long idHecho, String baseUrl);
   HechoDTOOutput getHecho(Long idHecho);
   List<HechoDTOOutput> listHechosDelUsuario(Long userId);
 
@@ -44,18 +39,16 @@ public interface IServicioAgregador {
   ColeccionDTOOutput actualizarColeccion(ColeccionDTOInput coleccion, UUID idColeccion);
   List<ColeccionDTOOutput> findColecciones();
 
-  //CSV
-  String subirHechosCSV(MultipartFile file, Long idUsuario, String baseUrl);
-
   //Nuevos hechos
   HechoDTOOutput aprobarHecho(Long idHecho);
   HechoDTOOutput rechazarHecho(Long idHecho);
 
   //Solicitudes de Edicion
   List<SolicitudEdicionDTO> findAllSolicitudesEdicion();
-  SolicitudEdicionDTO solicitarModificacion(SolicitudEdicionDTO solicitudEdicion, String baseUrl);
+
   SolicitudEdicionDTO procesarSolicitudEdicion(Long idSolicitud, String baseUrl, RevisionDTO revisionDTO);
 
   //Info de usuario
   String getNombreUsuario(Long id);
+
 }

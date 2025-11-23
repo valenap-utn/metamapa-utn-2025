@@ -1,5 +1,6 @@
 package ar.edu.utn.frba.dds.metamapa_client.web;
 
+import ar.edu.utn.frba.dds.metamapa_client.clients.IFuenteDinamica;
 import ar.edu.utn.frba.dds.metamapa_client.clients.IFuenteEstatica;
 import ar.edu.utn.frba.dds.metamapa_client.clients.IServicioAgregador;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.*;
@@ -40,15 +41,17 @@ public class AdminController {
   private final IFuenteEstatica fuenteEstatica;
   private final HttpSession session;
   private final ConexionServicioUser conexionServicioUser;
+  private final IFuenteDinamica fuenteDinamica;
 
 
-  public AdminController(IServicioAgregador agregador, DefaultErrorAttributes defaultErrorAttributes, WebClient georefWebClient, IFuenteEstatica fuenteEstatica, HttpSession session, ConexionServicioUser conexionServicioUser) {
+  public AdminController(IServicioAgregador agregador, DefaultErrorAttributes defaultErrorAttributes, WebClient georefWebClient, IFuenteEstatica fuenteEstatica, HttpSession session, ConexionServicioUser conexionServicioUser, IFuenteDinamica fuenteDinamica) {
     this.agregador = agregador;
     this.defaultErrorAttributes = defaultErrorAttributes;
     this.georefWebClient = georefWebClient;
     this.fuenteEstatica = fuenteEstatica;
     this.session = session;
     this.conexionServicioUser = conexionServicioUser;
+    this.fuenteDinamica = fuenteDinamica;
   }
 
 
@@ -86,15 +89,6 @@ public class AdminController {
   public String crearColeccion(Model model) {
     model.addAttribute("coleccion", new ColeccionDTOInput());
     model.addAttribute("titulo", "Crear Coleccion");
-
-    //Agregado provincia resp
-    ProvinciaResp provinciasResponse = georefWebClient.get()
-        .uri("/provincias?campos=id,nombre")
-        .retrieve()
-        .bodyToMono(ProvinciaResp.class)
-        .block();
-
-    model.addAttribute("provincias", provinciasResponse.getProvincias());
 
     return "admins/crear-coleccion";
   }
@@ -269,15 +263,22 @@ public class AdminController {
   @PostMapping("/gest-nuevosHechos/{id}/aprobar")
   @PreAuthorize("hasRole('ADMINISTRADOR')")
   public String aprobarHecho(@PathVariable("id") Long id, RedirectAttributes ra) {
-    this.agregador.aprobarHecho(id);
+    this.revisarHecho(id, "ACEPTADA", "El hecho ha sido aceptado por el administrador.");
     ra.addFlashAttribute("success", "Hecho aprobado correctamente.");
     return "redirect:/admin/gest-nuevosHechos";
+  }
+
+  private void revisarHecho(Long id, String estado, String comentario) {
+    RevisionDTO revisionDTO = new RevisionDTO();
+    revisionDTO.setEstado(estado);
+    revisionDTO.setComentario(comentario);
+    this.fuenteDinamica.revisarHecho(id, revisionDTO, "http://localhost:4000");
   }
 
   @PostMapping("/gest-nuevosHechos/{id}/rechazar")
   @PreAuthorize("hasRole('ADMINISTRADOR')")
   public String rechazarHecho(@PathVariable("id") Long id, RedirectAttributes ra) {
-    this.agregador.rechazarHecho(id);
+    this.revisarHecho(id, "RECHAZADA", "El hecho ha sido rechazado por el administrador.");
     ra.addFlashAttribute("success", "Hecho rechazado correctamente.");
     return "redirect:/admin/gest-nuevosHechos";
   }
@@ -340,7 +341,6 @@ public class AdminController {
   public ResponseEntity<Void> rechazarSolicitudEdicion(@PathVariable("idSolicitud") Long idSolicitud) {
     RevisionDTO revision = new RevisionDTO();
     revision.setEstado("RECHAZAR");
-//    revision.setEstado("CANCELADA");
     revision.setComentario("Edición rechazada por el administrador");
 
     this.agregador.procesarSolicitudEdicion(idSolicitud, "http://localhost:4000/", revision);

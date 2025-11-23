@@ -5,7 +5,7 @@ import ar.edu.utn.frba.dds.servicioAgregador.model.entities.filtros.FiltroDepart
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.filtros.FiltroMunicipio;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.filtros.FiltroProvincia;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.filtros.FiltroUbicacion;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,10 +14,10 @@ import lombok.Getter;
 @Getter
 public class FiltroDTO {
   String categoria;
-  LocalDate fecha_reporte_desde;
-  LocalDate fecha_reporte_hasta;
-  LocalDate fecha_acontecimiento_desde;
-  LocalDate fecha_acontecimiento_hasta;
+  LocalDateTime fecha_reporte_desde;
+  LocalDateTime fecha_reporte_hasta;
+  LocalDateTime fecha_acontecimiento_desde;
+  LocalDateTime fecha_acontecimiento_hasta;
   Float latitud;
   Float longitud;
   Boolean curada;

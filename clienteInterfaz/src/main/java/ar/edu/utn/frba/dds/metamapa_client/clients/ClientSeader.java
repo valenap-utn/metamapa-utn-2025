@@ -243,6 +243,11 @@ public class ClientSeader implements IFuenteDinamica, IFuenteEstatica, IServicio
   }
 
   @Override
+  public HechoDTOOutput revisarHecho(Long idHecho, RevisionDTO revisionDTO, String baseUrl) {
+    return null;
+  }
+
+
   public HechoDTOOutput revisarHecho(Long idHecho, String baseUrl) {
     return this.hechos.get(idHecho);
   }
@@ -323,7 +328,6 @@ public class ClientSeader implements IFuenteDinamica, IFuenteEstatica, IServicio
     return solicitudEdicionDTO;
   }
 
-  @Override
   public String subirHechosCSV(MultipartFile archivo, Long idUsuario, String baseURL) {
     OrigenDTO origenDTO = new OrigenDTO();
     origenDTO.setTipo("ESTATICA");
@@ -561,6 +565,8 @@ public class ClientSeader implements IFuenteDinamica, IFuenteEstatica, IServicio
     String nombreCompleto = (nombre + " " + apellido).trim();
     return nombreCompleto.isEmpty() ? "Usuario " + id : nombreCompleto;
   }
+
+
 
   public UsuarioDTO obtenerUsuarioPorId(Long id) {
     return this.usuariosById.get(id);

@@ -1,9 +1,9 @@
 package ar.edu.utn.frba.dds.metamapa_client.web;
 
+import ar.edu.utn.frba.dds.metamapa_client.clients.IFuenteDinamica;
 import ar.edu.utn.frba.dds.metamapa_client.clients.IServicioAgregador;
 import ar.edu.utn.frba.dds.metamapa_client.clients.utils.JwtUtil;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.*;
-import ar.edu.utn.frba.dds.metamapa_client.services.IConexionServicioUser;
 import ar.edu.utn.frba.dds.metamapa_client.services.IUsuarioCuentaService;
 import jakarta.servlet.http.HttpSession;
 
@@ -37,15 +37,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class HechosController {
   //  private final ClientSeader agregador;
   private final IServicioAgregador agregador;
-  private final IConexionServicioUser servicioUsuarios;
-  private final WebClient georefWebClient;
   private final IUsuarioCuentaService usuarioCuentaService;
-
-  public HechosController(/* ClientSeader agregador */ IServicioAgregador agregador, IConexionServicioUser servicioUsuarios, WebClient georefWebClient, IUsuarioCuentaService usuarioCuentaService) {
+  private final IFuenteDinamica fuenteDinamica;
+  public HechosController(IServicioAgregador agregador, IUsuarioCuentaService usuarioCuentaService, IFuenteDinamica fuenteDinamica) {
     this.agregador = agregador;
-    this.servicioUsuarios = servicioUsuarios;
-    this.georefWebClient = georefWebClient;
     this.usuarioCuentaService = usuarioCuentaService;
+    this.fuenteDinamica = fuenteDinamica;
   }
 
   @GetMapping("/{idHecho}")
@@ -60,18 +57,8 @@ public class HechosController {
   @GetMapping("/nav-hechos")
   public String navHechos(Model model) {
     FiltroDTO filtroDTO = new FiltroDTO();
-
-    ProvinciaResp provinciasResponse = georefWebClient.get()
-        .uri("/provincias?campos=id,nombre")
-        .retrieve()
-        .bodyToMono(ProvinciaResp.class)
-        .block();
-
-    List<UbicacionDTO> provincias = provinciasResponse.getProvincias();
-
     List<HechoDTOOutput> hechos = this.agregador.findAllHechos(filtroDTO);
 
-    model.addAttribute("provincias", provincias);
     model.addAttribute("hechos", hechos);
     model.addAttribute("filtros", filtroDTO);
     model.addAttribute("titulo", "Listado de todos los hechos");
@@ -111,7 +98,7 @@ public class HechosController {
       hechoDtoInput.setIdUsuario(usuario.getId());
 
       log.info("[HechosController] Llamando a agregador.crearHecho() usuarioId={}", usuario.getId());
-      agregador.crearHecho(hechoDtoInput, "http://localhost:3000"); // o la baseUrl que uses
+      fuenteDinamica.crearHecho(hechoDtoInput, "http://localhost:3000"); // o la baseUrl que uses
       log.info("[HechosController] Hecho creado OK en agregador");
 
       redirectAttributes.addFlashAttribute("mensajeOk", "Hecho cargado exitosamente!");
@@ -155,7 +142,6 @@ public class HechosController {
     } catch (Exception e) {
       log.error("[HechosController] Error obteniendo solicitudes de edición", e);
       // si falla, seguimos con conjunto vacío: no filtramos nada por revisión
-      enRevision = Collections.emptySet();
     }
 
     // Hechos del usuario
@@ -219,28 +205,11 @@ public class HechosController {
       return "redirect:/main-gral";
     }
 
-    Long userId = usuario.getId();
-
-    // Obtenemos el hecho
-    HechoDTOOutput hecho = agregador.revisarHecho(idHecho, "http://localhost:3000");
+    HechoDTOOutput hecho = agregador.getHecho(idHecho);
     if (hecho == null) {
       ra.addFlashAttribute("error", "El hecho no existe.");
       return "redirect:/hechos/mis-hechos";
     }
-
-    // Validamos que el hecho sea del usuario actual
-    if (!userId.equals(hecho.getIdUsuario())) {
-      ra.addFlashAttribute("error", "No podés editar un hecho que no es tuyo.");
-      return "redirect:/hechos/mis-hechos";
-    }
-
-    //Validamos la ventana de 7 días de poder editar (desde la fecha de carga)
-    boolean editable = hecho.getFechaCarga() != null && LocalDateTime.now().isBefore(hecho.getFechaCarga().plusDays(7));
-    if (!editable) {
-      ra.addFlashAttribute("error", "La edición está disponible solo durante los primeros 7 días");
-      return "redirect:/hechos/mis-hechos";
-    }
-
     //Enviamos datos a la vista
     model.addAttribute("hecho", hecho);
     model.addAttribute("titulo", "Editar Hecho");
@@ -259,35 +228,14 @@ public class HechosController {
 
     Long userId = usuario.getId();
 
-    // Verificamos que el hecho exista y sea del usuario
-    HechoDTOOutput hechoOriginal = agregador.revisarHecho(idHecho, "http://localhost:3000");
-    if (hechoOriginal == null) {
-      ra.addFlashAttribute("error", "El hecho que intentas editar no existe.");
-      return "redirect:/hechos/mis-hechos";
-    }
-
-    if (!userId.equals(hechoOriginal.getIdUsuario())) {
-      ra.addFlashAttribute("error", "No podés editar un hecho que no es tuyo.");
-      return "redirect:/hechos/mis-hechos";
-    }
-
-    // Validamos la ventana de 7 días
-    boolean editable = hechoOriginal.getFechaCarga() != null
-        && LocalDateTime.now().isBefore(hechoOriginal.getFechaCarga().plusDays(7));
-
-    if (!editable) {
-      ra.addFlashAttribute("error", "La edición está disponible solo durante los primeros 7 días desde la carga.");
-      return "redirect:/hechos/mis-hechos";
-    }
-
     // Creamos la solicitud
     SolicitudEdicionDTO solicitud = new SolicitudEdicionDTO();
     solicitud.setIdHecho(idHecho);
     solicitud.setEstado("PENDIENTE");
     solicitud.setFechaSolicitud(LocalDateTime.now());
     solicitud.setPropuesta(hechoDtoInput);
-
-    this.agregador.solicitarModificacion(solicitud, "http://localhost:4000");
+    solicitud.setIdusuario(userId);
+    this.fuenteDinamica.solicitarModificacion(solicitud, "http://localhost:4000");
 
     ra.addFlashAttribute("success", "Tu edición fue enviada a revisión. Aparecerá nuevamente cuando sea aprobada.");
 
