@@ -4,6 +4,7 @@ import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.ConjuntoHechoCompleto;
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.FiltroDTO;
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.HechoDTOCompleto;
 import ar.edu.utn.frba.dds.servicioAgregador.services.IHechoService;
+import java.time.LocalDateTime;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,10 +31,10 @@ public class HechoController {
 
   @GetMapping
   public ResponseEntity<ConjuntoHechoCompleto> getHechos(@RequestParam(required = false) String categoria,
-                                                         @RequestParam(required = false) @DateTimeFormat(pattern = "ddmmyyyy") LocalDate fecha_reporte_desde,
-                                                         @RequestParam(required = false) @DateTimeFormat(pattern = "ddmmyyyy") LocalDate fecha_reporte_hasta,
-                                                         @RequestParam(required = false) @DateTimeFormat(pattern = "ddmmyyyy") LocalDate fecha_acontecimiento_desde,
-                                                         @RequestParam(required = false) @DateTimeFormat(pattern = "ddmmyyyy") LocalDate fecha_acontecimiento_hasta,
+                                                         @RequestParam(required = false)  LocalDateTime fecha_reporte_desde,
+                                                         @RequestParam(required = false) LocalDateTime fecha_reporte_hasta,
+                                                         @RequestParam(required = false) LocalDateTime fecha_acontecimiento_desde,
+                                                         @RequestParam(required = false) LocalDateTime fecha_acontecimiento_hasta,
                                                          @RequestParam(required = false) Float latitud,
                                                          @RequestParam(required = false) Float longitud,
                                                          @RequestParam(required = false) boolean entiemporeal,

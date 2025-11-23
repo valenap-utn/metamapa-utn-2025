@@ -3,6 +3,7 @@ package ar.edu.utn.frba.dds.metamapa_client.web;
 import ar.edu.utn.frba.dds.metamapa_client.clients.IFuenteDinamica;
 import ar.edu.utn.frba.dds.metamapa_client.clients.IFuenteEstatica;
 import ar.edu.utn.frba.dds.metamapa_client.clients.IServicioAgregador;
+import ar.edu.utn.frba.dds.metamapa_client.clients.utils.JwtUtil;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.*;
 import ar.edu.utn.frba.dds.metamapa_client.services.ConexionServicioUser;
 
@@ -201,14 +202,14 @@ public class AdminController {
       ra.addFlashAttribute("error", "Sesión inválida (email o token faltante).");
       return "redirect:/";
     }
-
-    UsuarioDTO usuarioDTO = this.conexionServicioUser.buscarUsuarioPorEmail(email);
+    Long idUsuario = JwtUtil.getId(accessToken);
+    UsuarioDTO usuarioDTO = this.conexionServicioUser.buscarUsuarioPorEmail(email, accessToken);
     if(usuarioDTO == null){
       ra.addFlashAttribute("error", "Usuario no encontrado.");
       return "redirect:/";
     }
 
-    Long idUsuario = usuarioDTO.getId();
+    Long idUsuario2 = usuarioDTO.getId();
 
     String mensaje = fuenteEstatica.subirHechosCSV(file, idUsuario);
 
