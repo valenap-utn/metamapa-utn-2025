@@ -8,9 +8,13 @@ import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.RevisionDTO;
 import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.SolicitudEdicionDTO;
 import ar.edu.utn.frba.dds.servicioUsuario.models.entities.Usuario;
 import ar.edu.utn.frba.dds.servicioUsuario.models.repositories.IUsuarioRepositoryJPA;
+import org.springframework.http.MediaType;
+import org.springframework.http.client.MultipartBodyBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -38,14 +42,24 @@ public class FuenteDinamicaService {
     return this.usuarioRepository.findByEmail(email).orElseThrow(() -> new UsuarioNoEncontrado("El usuario indicado no existe"));
   }
 
-  public HechoDTOOutput crearHecho(HechoDTOInput hecho, String baseUrl) {
+  public HechoDTOOutput crearHecho(HechoDTOInput hecho, MultipartFile contenidoMultimedia, String baseUrl) {
     Usuario usuario = null;
     if (hecho.getId() != null) {
       usuario = this.usuarioRepository.findById(hecho.getIdUsuario()).orElse(null);
     }
     hecho.setUsuario(usuario != null ? usuario.getUsuarioDTO(): null);
+    MultipartBodyBuilder builder = new MultipartBodyBuilder();
+    if (contenidoMultimedia != null) {
+      builder.part("contenidomultimedia", contenidoMultimedia.getResource());
+    }
+
+    builder.part("hecho", hecho);
+
     return initWebClient(baseUrl).post().uri(uriBuilder -> uriBuilder.path("/api/hechos").build())
-            .bodyValue(hecho).retrieve().bodyToMono(HechoDTOOutput.class).block();
+            .contentType(MediaType.MULTIPART_FORM_DATA)
+            .body(BodyInserters.fromMultipartData(builder.build()))
+            .retrieve()
+            .bodyToMono(HechoDTOOutput.class).block();
   }
 
 

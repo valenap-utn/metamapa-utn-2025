@@ -27,15 +27,16 @@ public class MultimediaRepository implements IMultimediaRepository {
   @Override
   public ContenidoMultimedia saveFile(MultipartFile contenidoMultimedia ) {
     Path direccionFinal;
+    direccionFinal = path.resolve(Objects.requireNonNull(contenidoMultimedia.getOriginalFilename()));
     try {
-      direccionFinal = path.resolve(Objects.requireNonNull(contenidoMultimedia.getOriginalFilename()));
       Files.copy(contenidoMultimedia.getInputStream(), direccionFinal);
     } catch (Exception e) {
       if (e instanceof FileAlreadyExistsException) {
-        throw new ArchivoYaExiste("El archivo ya existe.");
+        System.out.println("El archivo ya existe");
+       // throw new ArchivoYaExiste("El archivo ya existe.");
+      } else {
+        throw new RuntimeException(e.getMessage());
       }
-
-      throw new RuntimeException(e.getMessage());
     }
     return new ContenidoMultimedia(contenidoMultimedia.getOriginalFilename(), direccionFinal.toString());
   }

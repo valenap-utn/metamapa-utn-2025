@@ -17,4 +17,16 @@ public class HechoDTOInput {
   private String contenido;
   private Long idUsuario;
   private MultipartFile contenidoMultimediaFile;
+
+  public HechoDTOInputMultipart getMultipart() {
+    return HechoDTOInputMultipart.builder()
+            .titulo(titulo).id(id)
+            .descripcion(descripcion)
+            .categoria(categoria).ubicacion(ubicacion)
+            .fechaAcontecimiento(fechaAcontecimiento).fechaCarga(fechaCarga)
+            .contenido(contenido)
+            .contenidoMultimedia(contenidoMultimedia)
+            .idUsuario(idUsuario)
+            .build();
+  }
 }

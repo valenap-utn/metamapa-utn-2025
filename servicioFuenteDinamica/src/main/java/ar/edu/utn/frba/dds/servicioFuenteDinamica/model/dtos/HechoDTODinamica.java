@@ -5,7 +5,7 @@ import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.ContenidoMultim
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.Ubicacion;
 import java.time.LocalDateTime;
 import lombok.Data;
-import org.springframework.web.multipart.MultipartFile;
+
 
 @Data
 public class HechoDTODinamica  {
@@ -19,9 +19,4 @@ public class HechoDTODinamica  {
   private ContenidoMultimedia contenidoMultimedia;
   private String contenido;
   private UsuarioDTO usuario;
-  private MultipartFile contenidoMultimediaFile;
-
-  public Long getIdUsuario() {
-    return usuario.getId();
-  }
 }

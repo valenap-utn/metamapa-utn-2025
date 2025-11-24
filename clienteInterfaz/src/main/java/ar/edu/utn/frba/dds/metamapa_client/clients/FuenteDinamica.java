@@ -8,6 +8,8 @@ import ar.edu.utn.frba.dds.metamapa_client.dtos.SolicitudEdicionDTO;
 import ar.edu.utn.frba.dds.metamapa_client.services.internal.WebApiCallerService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
+import org.springframework.http.client.MultipartBodyBuilder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -17,6 +19,7 @@ public class FuenteDinamica implements IFuenteDinamica {
   private final WebApiCallerService webApiCallerService;
   @Value("${api.servicioUsuarios.url}")
   private  String baseUsuarioUrl;
+
   public FuenteDinamica(WebApiCallerService webApiCallerService) {
     this.webApiCallerService = webApiCallerService;
   }
@@ -32,8 +35,11 @@ public class FuenteDinamica implements IFuenteDinamica {
   }
 
   public HechoDTOOutput crearHecho(HechoDTOInput hecho, String baseUrl) {
-    return initWebClient(baseUsuarioUrl).post().uri(uriBuilder -> uriBuilder.path("/api/fuenteDinamica/hechos").queryParam("baseUrl", baseUrl).build())
-            .bodyValue(hecho).retrieve().bodyToMono(HechoDTOOutput.class).block();
+    MultipartBodyBuilder builder = new MultipartBodyBuilder();
+    builder.part("contenidomultimedia", hecho.getContenidoMultimediaFile().getResource());
+      builder.part("hecho",hecho.getMultipart());
+
+    return webApiCallerService.postMultipart(baseUsuarioUrl + "/api/fuenteDinamica/hechos?baseUrl=" + baseUrl, builder, HechoDTOOutput.class );
   }
 
   public HechoDTOOutput actualizarHecho(HechoDTOInput hecho, String baseUrl) {

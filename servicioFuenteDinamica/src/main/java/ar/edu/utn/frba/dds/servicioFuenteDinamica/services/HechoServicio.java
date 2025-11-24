@@ -51,7 +51,7 @@ public class HechoServicio implements IHechoServicio {
         hecho.setFechaAcontecimiento(input.getFechaAcontecimiento());
         UsuarioDTO usuarioDTO = input.getUsuario();
         Usuario usuario = null;
-        if (usuarioDTO.getId() != null) {
+        if (usuarioDTO != null && usuarioDTO.getId() != null) {
            usuario = this.getOrSaveUsuario(usuarioDTO);
         }
 

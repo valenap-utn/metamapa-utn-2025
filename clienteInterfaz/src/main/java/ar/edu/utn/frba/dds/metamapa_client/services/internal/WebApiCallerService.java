@@ -9,9 +9,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.client.MultipartBodyBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
@@ -195,6 +198,25 @@ public class WebApiCallerService {
                     .retrieve()
                     .bodyToMono(responseType)
                     .block()
+        );
+    }
+
+    public <T> T postMultipart(String url, MultipartBodyBuilder body, Class<T> responseType) {
+        return executeWithTokenRetry(accessToken ->
+                        webClient
+                                .post()
+                                .uri(url)
+                                .contentType(MediaType.MULTIPART_FORM_DATA)
+//                .header("Authorization", "Bearer " + accessToken)
+                                .headers(h -> {
+                                    if (accessToken != null) {
+                                        h.setBearerAuth(accessToken);
+                                    }
+                                })
+                                .body(BodyInserters.fromMultipartData(body.build()))
+                                .retrieve()
+                                .bodyToMono(responseType)
+                                .block()
         );
     }
 

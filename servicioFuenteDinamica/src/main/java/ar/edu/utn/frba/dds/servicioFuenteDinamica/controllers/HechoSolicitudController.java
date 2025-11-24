@@ -8,6 +8,7 @@ import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.Solicitud;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.Hecho;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.services.IHechoServicio;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.services.ISolicitudServicio;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,9 +26,9 @@ public class HechoSolicitudController {
         this.solicitudServicio = solicitudServicio;
     }
 
-    @PostMapping("/hechos")
-    public ResponseEntity<HechoDTODinamica> crearHecho(@RequestBody HechoDTODinamica hecho) {
-        return ResponseEntity.ok(this.toHechoDTO(this.hechoServicio.crearHecho(hecho, hecho.getContenidoMultimediaFile())));
+    @PostMapping(value = "/hechos", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<HechoDTODinamica> crearHecho(@RequestPart("hecho") HechoDTODinamica hecho, @RequestPart(value = "contenidomultimedia", required = false) MultipartFile contenidoMultimedia) {
+        return ResponseEntity.ok(this.toHechoDTO(this.hechoServicio.crearHecho(hecho, contenidoMultimedia)));
     }
 
     @GetMapping("/hechos")

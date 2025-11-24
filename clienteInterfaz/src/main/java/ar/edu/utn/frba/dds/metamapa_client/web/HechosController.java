@@ -112,9 +112,12 @@ public class HechosController {
       fuenteDinamica.crearHecho(hechoDtoInput, this.urlFuenteDinamica); // o la baseUrl que uses
       log.info("[HechosController] Hecho creado OK en agregador");
 
-      redirectAttributes.addFlashAttribute("mensajeOk", "Hecho cargado exitosamente!");
-      return "redirect:/hechos/mis-hechos";
+      if (userId != null) {
+        redirectAttributes.addFlashAttribute("mensajeOk", "Hecho cargado exitosamente!");
+        return "redirect:/hechos/mis-hechos";
+      }
 
+      return "redirect:/hechos/subir-hecho";
     } catch (Exception e) {
       log.error("[HechosController] Error al crear el hecho", e);
       redirectAttributes.addFlashAttribute("error", "Ha ocurrido un error al crear el hecho. Volvé a intentarlo");

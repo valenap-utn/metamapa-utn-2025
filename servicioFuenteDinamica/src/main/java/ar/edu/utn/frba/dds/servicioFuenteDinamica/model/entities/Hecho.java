@@ -77,7 +77,7 @@ public class Hecho implements Revisable{
     @Column(name = "es_anonimo")
     @Setter @Getter private Boolean esAnonimo = false;
 
-    @ManyToOne(fetch = FetchType.EAGER) // o .LAZY
+    @ManyToOne()
     @JoinColumn(name = "usuario_id", referencedColumnName = "id")
     @Setter @Getter private Usuario usuario;
 
