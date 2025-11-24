@@ -273,9 +273,14 @@ public class ClientSeader implements IFuenteDinamica, IFuenteEstatica, IServicio
     return hecho;
   }
 
+  @Override
+  public List<SolicitudEdicionDTO> findAllSolicitudesEdicion() {
+    return List.of();
+  }
+
 
   //Solicitudes de EDICIÓN
-  public List<SolicitudEdicionDTO> findAllSolicitudesEdicion() {
+  public List<SolicitudEdicionDTO> findAllSolicitudesEdicion(String baseUrl) {
     return new ArrayList<>(this.solicitudesEdicion.values());
   }
 
@@ -387,14 +392,14 @@ public class ClientSeader implements IFuenteDinamica, IFuenteEstatica, IServicio
   }
 
   @Override
-  public SolicitudEliminacionDTO cancelarSolicitud(Long idSolicitud) {
+  public SolicitudEliminacionDTO cancelarSolicitud(Long idSolicitud, RevisionDTO revisionDTO) {
     SolicitudEliminacionDTO solicitudEliminacionDTO = this.solicitudesEliminacion.get(idSolicitud);
     solicitudEliminacionDTO.setEstado("CANCELADA");
     return solicitudEliminacionDTO;
   }
 
   @Override
-  public SolicitudEliminacionDTO aceptarSolicitud(Long idSolicitud) {
+  public SolicitudEliminacionDTO aceptarSolicitud(Long idSolicitud, RevisionDTO revisionDTO) {
     SolicitudEliminacionDTO solicitudEliminacionDTO = this.solicitudesEliminacion.get(idSolicitud);
     if(solicitudEliminacionDTO == null)return null;
 

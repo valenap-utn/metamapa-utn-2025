@@ -39,13 +39,18 @@ public class FuenteDinamicaService {
   }
 
   public HechoDTOOutput crearHecho(HechoDTOInput hecho, String baseUrl) {
-
+    Usuario usuario = null;
+    if (hecho.getId() != null) {
+      usuario = this.usuarioRepository.findById(hecho.getIdUsuario()).orElse(null);
+    }
+    hecho.setUsuario(usuario != null ? usuario.getUsuarioDTO(): null);
     return initWebClient(baseUrl).post().uri(uriBuilder -> uriBuilder.path("/api/hechos").build())
             .bodyValue(hecho).retrieve().bodyToMono(HechoDTOOutput.class).block();
   }
 
 
   public HechoDTOOutput revisarHecho(Long idHecho, String baseUrl) {
+    Usuario usuario = this.obtenerUsuario();
     return initWebClient(baseUrl).put().uri(uriBuilder -> uriBuilder.path("/api/hechos/{id}/revisados").build(idHecho))
             .retrieve().bodyToMono(HechoDTOOutput.class).block();
   }

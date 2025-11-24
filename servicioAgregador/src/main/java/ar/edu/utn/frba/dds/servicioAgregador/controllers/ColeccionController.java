@@ -70,7 +70,10 @@ public class ColeccionController {
       return ResponseEntity.ok(this.coleccionService.getHechosPorColeccion(id, filtro)) ;
   }
 
-
+  @GetMapping("/{id}")
+  public ColeccionDTOOutput getColeccionById(@PathVariable UUID id){
+    return this.coleccionService.findColeccionById(id);
+  }
 
 }
 

@@ -19,4 +19,6 @@ public interface IColeccionService {
   ColeccionDTOOutput cambiarColeccion(ColeccionDTOInput coleccion, UUID idColeccion);
 
   ColeccionDTOOutput eliminarColeccion(UUID id, Long idUsuario);
+
+  ColeccionDTOOutput findColeccionById(UUID id);
 }

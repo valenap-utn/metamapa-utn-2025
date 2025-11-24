@@ -6,4 +6,5 @@ import lombok.Data;
 @Data
 public class ConjuntoHechoDTO {
   List<HechoDTOOutput> hechos;
+  List<String> categorias;
 }

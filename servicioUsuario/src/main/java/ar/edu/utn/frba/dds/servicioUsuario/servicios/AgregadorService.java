@@ -9,6 +9,7 @@ import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.ConjuntoHechoDTO;
 import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.ConjuntoSolicitudesEliminacionOutput;
 import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.FiltroDTO;
 import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.HechoDTOOutput;
+import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.RevisionDTO;
 import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.SolicitudEliminacionDTO;
 import ar.edu.utn.frba.dds.servicioUsuario.models.entities.Usuario;
 import ar.edu.utn.frba.dds.servicioUsuario.models.repositories.IUsuarioRepositoryJPA;
@@ -70,17 +71,18 @@ public class AgregadorService {
             .block();
   }
 
-  public SolicitudEliminacionDTO cancelarSolicitud(Long idSolicitud) {
+  public SolicitudEliminacionDTO cancelarSolicitud(Long idSolicitud, RevisionDTO revisionDTO) {
     Usuario usuario = this.obtenerUsuario();
-    return this.webClient.patch().uri(uriBuilder -> uriBuilder.path("/api/solicitudes/{id}").build(idSolicitud))
+    revisionDTO.setUsuario(usuario.getUsuarioDTO());
+    return this.webClient.post().uri(uriBuilder -> uriBuilder.path("/api/solicitudes/{id}/eliminados").build(idSolicitud))
             .retrieve().bodyToMono(SolicitudEliminacionDTO.class)
             .block();
   }
 
-  public SolicitudEliminacionDTO aceptarSolicitud(Long idSolicitud) {
+  public SolicitudEliminacionDTO aceptarSolicitud(Long idSolicitud, RevisionDTO revisionDTO) {
     Usuario usuario = this.obtenerUsuario();
-
-    return this.webClient.delete().uri(uriBuilder -> uriBuilder.path("/api/solicitudes/{id}").build(idSolicitud))
+    revisionDTO.setUsuario(usuario.getUsuarioDTO());
+    return this.webClient.post().uri(uriBuilder -> uriBuilder.path("/api/solicitudes/{id}/eliminados").build(idSolicitud))
             .retrieve().bodyToMono(SolicitudEliminacionDTO.class)
             .block();
   }
@@ -131,5 +133,10 @@ public class AgregadorService {
   public ConjuntoCategorias findAllCategorias() {
     return this.webClient.get().uri(uriBuilder -> uriBuilder.path("/api/categorias").build())
             .retrieve().bodyToMono(ConjuntoCategorias.class).block();
+  }
+
+  public ColeccionDTOOutput findColeccionById(UUID idColeccion) {
+    return this.webClient.get().uri(uriBuilder -> uriBuilder.path("/api/colecciones/{idColeccion}").build(idColeccion))
+            .retrieve().bodyToMono(ColeccionDTOOutput.class).block();
   }
 }

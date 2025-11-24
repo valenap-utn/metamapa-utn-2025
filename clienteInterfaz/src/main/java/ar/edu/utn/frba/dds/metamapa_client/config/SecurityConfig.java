@@ -43,7 +43,7 @@ public class SecurityConfig {
                 .requestMatchers(
                 "/", "/index", "/iniciar-sesion", "/crear-cuenta",
                 "/main-gral", "/colecciones", "/terminos", "/privacidad",
-                "/hechos/**",
+                "/hechos/**", "/colecciones/{id}/nav-hechos",
                 "/css/**", "/js/**", "/components/**", "/images/**",
                 "/favicon.ico", "/error/**",
                 "/auth/**", "/oauth2/**", "/login/**"

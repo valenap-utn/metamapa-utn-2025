@@ -4,6 +4,7 @@ import ar.edu.utn.frba.dds.metamapa_client.dtos.HechoDTOInput;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.HechoDTOOutput;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.RevisionDTO;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.SolicitudEdicionDTO;
+import java.util.List;
 
 public interface IFuenteDinamica {
   HechoDTOOutput crearHecho(HechoDTOInput hecho, String baseUrl);
@@ -15,4 +16,6 @@ public interface IFuenteDinamica {
   SolicitudEdicionDTO solicitarModificacion(SolicitudEdicionDTO solicitudEdicion, String baseUrl);
 
   SolicitudEdicionDTO  procesarSolicitudEdicion(Long idSolicitud, String baseUrl, RevisionDTO revisionDTO);
+
+  List<SolicitudEdicionDTO> findAllSolicitudesEdicion(String baseUrl);
 }

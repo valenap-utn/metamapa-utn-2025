@@ -16,5 +16,5 @@ public class HechoDTOInput {
   private ContenidoMultimedia contenidoMultimedia = new ContenidoMultimedia();
   private String contenido;
   private Long idUsuario;
-  private MultipartFile multipartFile;
+  private MultipartFile contenidoMultimediaFile;
 }

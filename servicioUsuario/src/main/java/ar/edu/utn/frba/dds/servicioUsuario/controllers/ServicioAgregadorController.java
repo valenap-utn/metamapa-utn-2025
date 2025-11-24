@@ -8,6 +8,7 @@ import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.ConjuntoHechoDTO;
 import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.ConjuntoSolicitudesEliminacionOutput;
 import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.FiltroDTO;
 import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.HechoDTOOutput;
+import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.RevisionDTO;
 import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.SolicitudEliminacionDTO;
 import ar.edu.utn.frba.dds.servicioUsuario.servicios.AgregadorService;
 import java.time.LocalDateTime;
@@ -63,14 +64,14 @@ public class ServicioAgregadorController {
     return this.agregadorService.crearSolicitud(solicitudEliminacionDTO);
   }
 
-  @DeleteMapping("/solicitudes/{idSolicitud}")
-  public SolicitudEliminacionDTO cancelarSolicitud(@PathVariable Long idSolicitud) {
-    return this.agregadorService.cancelarSolicitud(idSolicitud);
+  @DeleteMapping("/solicitudes/{idSolicitud}/eliminados")
+  public SolicitudEliminacionDTO cancelarSolicitud(@PathVariable Long idSolicitud, @RequestBody RevisionDTO revisionDTO) {
+    return this.agregadorService.cancelarSolicitud(idSolicitud, revisionDTO);
   }
 
-  @PutMapping("/solicitudes/{idSolicitud}")
-  public SolicitudEliminacionDTO aceptarSolicitud(@PathVariable Long idSolicitud) {
-    return this.agregadorService.aceptarSolicitud(idSolicitud);
+  @PutMapping("/solicitudes/{idSolicitud}/aceptados")
+  public SolicitudEliminacionDTO aceptarSolicitud(@PathVariable Long idSolicitud, @RequestBody RevisionDTO revisionDTO) {
+    return this.agregadorService.aceptarSolicitud(idSolicitud, revisionDTO);
   }
 
   @PutMapping("/colecciones/{idColeccion}")
@@ -81,6 +82,11 @@ public class ServicioAgregadorController {
   @DeleteMapping("/colecciones/{idColeccion}")
   public ColeccionDTOOutput eliminarColeccion(@PathVariable UUID idColeccion){
     return this.agregadorService.eliminarColeccion(idColeccion);
+  }
+
+  @GetMapping("/colecciones/{idColeccion}")
+  public ColeccionDTOOutput findColeccion(@PathVariable UUID idColeccion){
+    return this.agregadorService.findColeccionById(idColeccion);
   }
 
   @PostMapping("/colecciones")

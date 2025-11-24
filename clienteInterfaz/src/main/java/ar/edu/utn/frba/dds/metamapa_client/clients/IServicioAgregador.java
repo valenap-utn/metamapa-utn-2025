@@ -1,6 +1,5 @@
 package ar.edu.utn.frba.dds.metamapa_client.clients;
 
-import ar.edu.utn.frba.dds.metamapa_client.dtos.Categoria;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.ColeccionDTOInput;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.ColeccionDTOOutput;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.FiltroDTO;
@@ -29,8 +28,8 @@ public interface IServicioAgregador {
   //Solicitudes de Eliminacion
   List<SolicitudEliminacionDTO> findAllSolicitudes();
   SolicitudEliminacionDTO crearSolicitud(SolicitudEliminacionDTO solicitudEliminacionDTO);
-  SolicitudEliminacionDTO cancelarSolicitud(Long idSolicitud);
-  SolicitudEliminacionDTO aceptarSolicitud(Long idSolicitud);
+  SolicitudEliminacionDTO cancelarSolicitud(Long idSolicitud, RevisionDTO revisionDTO);
+  SolicitudEliminacionDTO aceptarSolicitud(Long idSolicitud, RevisionDTO revisionDTO);
 
   //Colecciones
   ColeccionDTOOutput modificarColeccion(ColeccionDTOInput coleccionDTOInput, UUID coleccionId);

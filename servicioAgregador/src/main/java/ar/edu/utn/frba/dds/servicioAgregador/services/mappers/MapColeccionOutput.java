@@ -2,7 +2,6 @@ package ar.edu.utn.frba.dds.servicioAgregador.services.mappers;
 
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.ColeccionDTOOutput;
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.CriterioDTO;
-import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.FiltroDTO;
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.FuenteDTO;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Categoria;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Coleccion;
@@ -46,7 +45,7 @@ public class MapColeccionOutput {
       case "TITULO" -> new FiltroPorTitulo(criterioDTO.getTitulo());
       case "CATEGORIA" -> new FiltroPorCategoria(new Categoria(criterioDTO.getCategoria()));
       case "DESCRIPCION" -> new FiltroPorDescripcion(criterioDTO.getDescripcion());
-      case "FECHAACONTECIMENTO" ->
+      case "FECHAACONTECIMIENTO" ->
               new FiltroPorFechaAcontecimiento(criterioDTO.getFechaAcontecimientoInicial(), criterioDTO.getFechaAcontecimientoFinal());
       case "FECHACARGA" ->
               new FiltroPorFechaCarga(criterioDTO.getFechaCargaInicial(), criterioDTO.getFechaCargaFinal());

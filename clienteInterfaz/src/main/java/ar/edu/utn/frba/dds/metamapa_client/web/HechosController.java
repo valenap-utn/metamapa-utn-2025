@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -29,6 +30,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -40,6 +42,8 @@ public class HechosController {
   private final IUsuarioCuentaService usuarioCuentaService;
   private final IFuenteDinamica fuenteDinamica;
   private final JwtUtil jwtUtil;
+  @Value("${api.servicioFuenteDinamica.url}")
+  private String urlFuenteDinamica;
   public HechosController(IServicioAgregador agregador, IUsuarioCuentaService usuarioCuentaService, IFuenteDinamica fuenteDinamica, JwtUtil jwtUtil) {
     this.agregador = agregador;
     this.usuarioCuentaService = usuarioCuentaService;
@@ -96,11 +100,16 @@ public class HechosController {
     }
 
     try {
-      var usuario = usuarioCuentaService.obtenerUsuarioActual(session, authentication);
-      hechoDtoInput.setIdUsuario(usuario.getId());
+      //var usuario = usuarioCuentaService.obtenerUsuarioActual(session, authentication);
+      String accessToken = (String) session.getAttribute("accessToken");
+      Long userId = null;
+      if (accessToken != null) {
+        userId = jwtUtil.getId(accessToken);
+      }
+      hechoDtoInput.setIdUsuario(userId);
 
-      log.info("[HechosController] Llamando a agregador.crearHecho() usuarioId={}", usuario.getId());
-      fuenteDinamica.crearHecho(hechoDtoInput, "http://localhost:3000"); // o la baseUrl que uses
+      log.info("[HechosController] Llamando a agregador.crearHecho() usuarioId={}", userId);
+      fuenteDinamica.crearHecho(hechoDtoInput, this.urlFuenteDinamica); // o la baseUrl que uses
       log.info("[HechosController] Hecho creado OK en agregador");
 
       redirectAttributes.addFlashAttribute("mensajeOk", "Hecho cargado exitosamente!");
@@ -237,7 +246,7 @@ public class HechosController {
     solicitud.setFechaSolicitud(LocalDateTime.now());
     solicitud.setPropuesta(hechoDtoInput);
     solicitud.setIdusuario(userId);
-    this.fuenteDinamica.solicitarModificacion(solicitud, "http://localhost:4000");
+    this.fuenteDinamica.solicitarModificacion(solicitud, this.urlFuenteDinamica);
 
     ra.addFlashAttribute("success", "Tu edición fue enviada a revisión. Aparecerá nuevamente cuando sea aprobada.");
 

@@ -80,7 +80,7 @@
                                 <select id="tipoFuente" class="mm-input">
                                     <option value="" disabled selected>Seleccioná la fuente</option>
                                     <option value="DINAMICA">Dinámica</option>
-                                    <option value="ESTATICA">Estática</option>
+                                    <option value="DATASET">Estática</option>
                                     <option value="PROXY">Proxy</option>
                                 </select>
                             </div>
@@ -165,7 +165,9 @@
                   <input type="text" style="display:none"
                          th:field="*{criterios[__${j.index}__].tipo}"
                          th:value="${c.tipo}"/>
-
+                    <div style="display: none;" th:each="categoria : ${categorias}">
+                                            <option th:text="${categoria}"></option>
+                                        </div>
                   <input th:if="${c.titulo != null}" type="text" style="display:none"
                          th:field="*{criterios[__${j.index}__].titulo}"
                          th:value="${c.titulo}"/>

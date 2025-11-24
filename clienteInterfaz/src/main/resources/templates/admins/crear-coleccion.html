@@ -66,7 +66,7 @@
                                         <select id="tipoFuente" name="tipoFuente" class="mm-input" required >
                                             <option value="" disabled selected>Seleccioná la fuente necesitada</option>
                                             <option value="DINAMICA">Dinámica</option>
-                                            <option value="ESTATICA">Estática</option>
+                                            <option value="DATASET">Estática</option>
                                             <option value="PROXY">Proxy</option>
                                         </select>
                                     </div>
@@ -159,6 +159,9 @@
                                         <button type="button" class="chip__remove" aria-label="Quitar criterio">
                                             <span aria-hidden="true">×</span>
                                         </button>
+                                        <div style="display: none;" th:each="categoria : ${categorias}">
+                                            <option th:text="${categoria}"></option>
+                                        </div>
                                     </span>
                                 </div>
                                 <span id="criteriosHidden"></span>

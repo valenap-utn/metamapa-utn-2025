@@ -239,6 +239,12 @@ public class ColeccionService implements IColeccionService{
     return this.mapperColeccionOutput.toColeccionDTOOutput(coleccion);
   }
 
+  @Override
+  public ColeccionDTOOutput findColeccionById(UUID id) {
+    Coleccion coleccion = this.coleccionRepository.findById(id).orElseThrow(() -> new ColeccionNoEncontrada("La colección de id: " + id + " no existe"));
+    return this.mapperColeccionOutput.toColeccionDTOOutput(coleccion);
+  }
+
 
   private List<Hecho> getHechosClient(Origen origen, FiltroDTO filtro) {
     ClientFuente client = this.clientFuenteFactory.getClientPorOrigen(origen);

@@ -3,7 +3,6 @@ package ar.edu.utn.frba.dds.metamapa_client.web;
 import ar.edu.utn.frba.dds.metamapa_client.clients.IFuenteDinamica;
 import ar.edu.utn.frba.dds.metamapa_client.clients.IFuenteEstatica;
 import ar.edu.utn.frba.dds.metamapa_client.clients.IServicioAgregador;
-import ar.edu.utn.frba.dds.metamapa_client.clients.utils.JwtUtil;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.*;
 import ar.edu.utn.frba.dds.metamapa_client.services.ConexionServicioUser;
 
@@ -16,6 +15,7 @@ import java.util.stream.Stream;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.error.DefaultErrorAttributes;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -29,7 +29,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -40,17 +39,16 @@ public class AdminController {
   //  private final ClientSeader agregador;
   private final IServicioAgregador agregador;
   private final DefaultErrorAttributes defaultErrorAttributes;
-  private final WebClient georefWebClient;
   private final IFuenteEstatica fuenteEstatica;
   private final HttpSession session;
   private final ConexionServicioUser conexionServicioUser;
   private final IFuenteDinamica fuenteDinamica;
+  @Value("${api.servicioFuenteDinamica.url}")
+  private String urlFuenteDinamica;
 
-
-  public AdminController(IServicioAgregador agregador, DefaultErrorAttributes defaultErrorAttributes, WebClient georefWebClient, IFuenteEstatica fuenteEstatica, HttpSession session, ConexionServicioUser conexionServicioUser, IFuenteDinamica fuenteDinamica) {
+  public AdminController(IServicioAgregador agregador, DefaultErrorAttributes defaultErrorAttributes, IFuenteEstatica fuenteEstatica, HttpSession session, ConexionServicioUser conexionServicioUser, IFuenteDinamica fuenteDinamica) {
     this.agregador = agregador;
     this.defaultErrorAttributes = defaultErrorAttributes;
-    this.georefWebClient = georefWebClient;
     this.fuenteEstatica = fuenteEstatica;
     this.session = session;
     this.conexionServicioUser = conexionServicioUser;
@@ -90,6 +88,8 @@ public class AdminController {
   @GetMapping("/crear-coleccion")
   @PreAuthorize("hasRole('ADMINISTRADOR')")
   public String crearColeccion(Model model) {
+    List<String> categorias = this.agregador.findAllCategorias();
+    model.addAttribute("categorias", categorias);
     model.addAttribute("coleccion", new ColeccionDTOInput());
     model.addAttribute("titulo", "Crear Coleccion");
 
@@ -125,6 +125,8 @@ public class AdminController {
     in.setAlgoritmo(out.getAlgoritmoDeConsenso());
     in.setCriterios(out.getCriterios() != null ? out.getCriterios() : List.of());
 
+    List<String> categorias = this.agregador.findAllCategorias();
+    model.addAttribute("categorias", categorias);
     model.addAttribute("coleccionId", out.getId());
     model.addAttribute("coleccion", in);
     model.addAttribute("titulo", "Modificar Coleccion");
@@ -274,7 +276,7 @@ public class AdminController {
     RevisionDTO revisionDTO = new RevisionDTO();
     revisionDTO.setEstado(estado);
     revisionDTO.setComentario(comentario);
-    this.fuenteDinamica.revisarHecho(id, revisionDTO, "http://localhost:4000");
+    this.fuenteDinamica.revisarHecho(id, revisionDTO, this.urlFuenteDinamica);
   }
 
   @PostMapping("/gest-nuevosHechos/{id}/rechazar")
@@ -289,7 +291,7 @@ public class AdminController {
   @GetMapping("/gest-solEdicion")
   @PreAuthorize("hasRole('ADMINISTRADOR')")
   public String solicitudesEdicion(Model model, @RequestParam(value = "estado", required = false, defaultValue = "PENDIENTE") String estado, @RequestParam(value = "q", required = false, defaultValue = "") String q) {
-    List<SolicitudEdicionDTO> solicitudes = this.agregador.findAllSolicitudesEdicion();
+    List<SolicitudEdicionDTO> solicitudes = this.fuenteDinamica.findAllSolicitudesEdicion(this.urlFuenteDinamica);
 
     List<Map<String, Object>> vms = solicitudes.stream()
         .filter(h -> "TODAS".equalsIgnoreCase(estado) || estado.equalsIgnoreCase(h.getEstado()))
@@ -331,10 +333,10 @@ public class AdminController {
   @PreAuthorize("hasRole('ADMINISTRADOR')")
   public ResponseEntity<Void> aprobarSolicitudEdicion(@PathVariable("idSolicitud") Long idSolicitud) {
     RevisionDTO revision = new RevisionDTO();
-    revision.setEstado("ACEPTAR");
+    revision.setEstado("ACEPTADA");
     revision.setComentario("Solicitud de edición aprobada por el administrador");
 
-    this.agregador.procesarSolicitudEdicion(idSolicitud, "http://localhost:4000/", revision);
+    this.fuenteDinamica.procesarSolicitudEdicion(idSolicitud, this.urlFuenteDinamica, revision);
     return ResponseEntity.noContent().build(); //204 en caso de exito !
   }
 
@@ -342,10 +344,10 @@ public class AdminController {
   @PreAuthorize("hasRole('ADMINISTRADOR')")
   public ResponseEntity<Void> rechazarSolicitudEdicion(@PathVariable("idSolicitud") Long idSolicitud) {
     RevisionDTO revision = new RevisionDTO();
-    revision.setEstado("RECHAZAR");
+    revision.setEstado("RECHAZADA");
     revision.setComentario("Edición rechazada por el administrador");
 
-    this.agregador.procesarSolicitudEdicion(idSolicitud, "http://localhost:4000/", revision);
+    this.fuenteDinamica.procesarSolicitudEdicion(idSolicitud, this.urlFuenteDinamica, revision);
     return ResponseEntity.noContent().build(); //204 en caso de exito !
   }
 
@@ -411,15 +413,23 @@ public class AdminController {
   @PostMapping("/gest-solEliminacion/{id}/aceptar")
   @PreAuthorize("hasRole('ADMINISTRADOR')")
   public ResponseEntity<Void> aceptarSolicitud(@PathVariable("id") Long id) {
-    this.agregador.aceptarSolicitud(id);
+    RevisionDTO revision = new RevisionDTO();
+    revision.setComentario("El administrador ha aceptado la solicitud");
+    revision.setEstado("ACEPTADA");
+    this.agregador.aceptarSolicitud(id, revision);
     return ResponseEntity.noContent().build(); //204 en caso de exito !
   }
+
+
 
   //Rechazar solicitud
   @PostMapping("/gest-solEliminacion/{id}/cancelar")
   @PreAuthorize("hasRole('ADMINISTRADOR')")
   public ResponseEntity<Void> cancelarSolicitud(@PathVariable("id") Long id) {
-    this.agregador.cancelarSolicitud(id);
+    RevisionDTO revision = new RevisionDTO();
+    revision.setComentario("El administrador ha rechazado la solicitud");
+    revision.setEstado("RECHAZADA");
+    this.agregador.cancelarSolicitud(id, revision);
     return ResponseEntity.noContent().build();
   }
 
