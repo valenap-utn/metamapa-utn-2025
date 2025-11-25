@@ -44,12 +44,49 @@
                                    th:field="*{ubicacion.longitud}">
                         </div>
                     </div>
+                    <!-- Categoría -->
+                    <div class="mm-field">
+                        <label for="categoria" class="mm-label">Categoría</label>
+                        <select id="categoria" name="categoria" class="mm-input" required th:field="*{categoria.nombre}" th:classappend="${#fields.hasErrors('categoria.nombre')} ? ' is-invalid' : ''" onchange="modificarCategoria(this)">
+                            <option value="" disabled selected>Seleccioná una categoría…</option>
+                            <option value="EVENTO_SANITARIO">Evento sanitario</option>
+                            <option value="">Crear una categoria…</option>
+                            <option value="CONTAMINACION">Contaminación</option>
+                            <option value="DERRAME">Derrame</option>
+                            <th:block th:each="categoriaAgregador : ${categorias}">
+                                <option th:text="${categoriaAgregador}" th:value="${categoriaAgregador}"></option>
+                            </th:block>
+                            <!-- agregá más si aplica -->
+                        </select>
+                        <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('categoria.nombre')}" th:errors="*{categoria.nombre}">
+                            Error en categoría
+                        </div>
+                    </div>
+                    <!-- Fecha acontecimiento -->
+                    <div class="mm-field">
+                        <label for="fechaAcontecimiento" class="mm-label">Fecha del acontecimiento</label>
+                        <input id="fechaAcontecimiento" name="fechaAcontecimiento" type="datetime-local" class="mm-input" required th:field="*{fechaAcontecimiento}" th:classappend="${#fields.hasErrors('fechaAcontecimiento')} ? ' is-invalid' : ''">
+                        <span th:text="${'Fecha actual: ' + hecho.fechaAcontecimiento}"></span>
+                        <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('fechaAcontecimiento')}" th:errors="*{fechaAcontecimiento}">
+                            Error en fecha
+                        </div>
+                    </div>
+
+                    <div class="mm-field">
+                        <label id="categoriaInputLabel" for="categoriaInput" style="display: none;" class="mm-label">Categoría</label>
+                        <input id="categoriaInput" style="display: none;" class="mm-input"  type="text">
+                    </div>
+
 
                     <!-- Imagen (opcional) -->
                     <div class="mm-field mm-col-span-2">
                         <label class="mm-label" for="imagenNueva">Imagen</label>
-                        <input id="imagenNueva" name="imagenNueva" type="file" accept="image/*" class="mm-input mm-input--file">
+                        <input id="imagenNueva" multiple name="imagenNueva" type="file" accept="image/*, video/*" class="mm-input mm-input--file" th:field="*{contenidoMultimediaFile}">
                         <small class="mm-help">Si no seleccionás una imagen, se mantiene la actual.</small>
+                    </div>
+                    <div style="display: none;">
+                        <input id="idUsuario" type="number" th:field="*{idUsuario}">
+                        <input id="fechaCarga" name="fechaCarga" type="datetime-local"  th:field="*{fechaCarga}">
                     </div>
 
                     <!-- (Opcional) Fecha de acontecimiento si editás eso -->
@@ -65,6 +102,31 @@
                     <button class="mm-btn-primary" type="submit">Guardar cambios</button>
                 </div>
             </form>
+            <script>
+                const categoriaSelect = document.getElementById('categoria');
+                const categoriaInput = document.getElementById('categoriaInput');
+                const categoriaInputLabel = document.getElementById('categoriaInputLabel');
+
+                function modificarCategoria(el) {
+                    const option = el.value
+                    console.log(el.id)
+                    if (option === "") {
+                        categoriaSelect.required = false
+                        categoriaInput.required = true
+                        categoriaInput.style.display = "block"
+                        categoriaInputLabel.style.display = "block"
+                        categoriaSelect.setAttribute("name", "")
+                        categoriaInput.setAttribute("name", "categoria.nombre")
+                    } else {
+                        categoriaSelect.required = true
+                        categoriaInput.required = false
+                        categoriaInput.style.display = "none"
+                        categoriaInputLabel.style.display = "none"
+                        categoriaSelect.setAttribute("name", "categoria.nombre")
+                        categoriaInput.setAttribute("name", "")
+                    }
+                }
+            </script>
         </div>
     </section>
 </body>

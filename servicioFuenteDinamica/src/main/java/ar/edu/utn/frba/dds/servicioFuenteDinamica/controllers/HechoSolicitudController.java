@@ -1,10 +1,12 @@
 package ar.edu.utn.frba.dds.servicioFuenteDinamica.controllers;
 
+import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos.ConjuntoCategorias;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos.ConjuntoHechoDTODinamica;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos.ConjuntoSolicitud;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos.HechoDTODinamica;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos.RevisionDTO;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos.SolicitudDTO;
+import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.Categoria;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.Solicitud;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.Hecho;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.services.IHechoServicio;
@@ -68,9 +70,9 @@ public class HechoSolicitudController {
         return ResponseEntity.ok(this.toHechoDTO(hecho));
     }
 
-    @PostMapping("/solicitudes")
-    public ResponseEntity<SolicitudDTO> crearSolicitud(@RequestBody SolicitudDTO solicitud) {
-        return ResponseEntity.ok(this.toSolicitudDTO(solicitudServicio.crearSolicitud(solicitud)));
+    @PostMapping(value = "/solicitudes", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<SolicitudDTO> crearSolicitud(@RequestPart("solicitud") SolicitudDTO solicitud, @RequestPart(value ="contenidomultimedia", required = false) MultipartFile contenidoMultimedia) {
+        return ResponseEntity.ok(this.toSolicitudDTO(solicitudServicio.crearSolicitud(solicitud, contenidoMultimedia)));
     }
 
     @PutMapping("/solicitudes/{id}")
@@ -94,5 +96,18 @@ public class HechoSolicitudController {
         ConjuntoSolicitud conjuntoSolicitud = new ConjuntoSolicitud();
         conjuntoSolicitud.setSolicitudes(solicituds.stream().map(this::toSolicitudDTO).toList());
         return ResponseEntity.ok(conjuntoSolicitud);
+    }
+
+    @GetMapping("/hechos/{idHecho}")
+    public ResponseEntity<HechoDTODinamica> findHechoById(@PathVariable Long idHecho) {
+        return ResponseEntity.ok(this.toHechoDTO(this.hechoServicio.findHechoById(idHecho)));
+    }
+
+    @GetMapping("/categorias")
+    public ResponseEntity<ConjuntoCategorias> obtenerCategorias() {
+        List<Categoria> categorias = this.hechoServicio.findAllCategorias();
+        ConjuntoCategorias conjuntoCategorias = new ConjuntoCategorias();
+        conjuntoCategorias.setCategorias(categorias.stream().map(Categoria::getNombre).toList());
+        return ResponseEntity.ok(conjuntoCategorias);
     }
 }

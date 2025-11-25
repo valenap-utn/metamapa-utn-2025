@@ -2,6 +2,7 @@ package ar.edu.utn.frba.dds.servicioFuenteDinamica.services;
 
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos.HechoDTODinamica;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos.RevisionDTO;
+import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.Categoria;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.Hecho;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,4 +19,8 @@ public interface IHechoServicio {
   Hecho revisarHecho(Long id, RevisionDTO revisionDTO);
 
   Hecho marcarComoEliminado(Long id);
+
+  Hecho findHechoById(Long idHecho);
+
+  List<Categoria> findAllCategorias();
 }

@@ -21,6 +21,6 @@ public class HechoModificacion {
   private LocalDateTime fechaAcontecimiento;
   @Embedded
   private ContenidoMultimedia contenidoMultimedia;
-  @Column(name = "hechomod_contenido", nullable = false)
+  @Column(name = "hechomod_contenido")
   private String contenido;
 }

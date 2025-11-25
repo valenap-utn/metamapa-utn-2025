@@ -9,6 +9,7 @@ import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos.RevisionDTO;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos.SolicitudDTO;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos.UsuarioDTO;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.Categoria;
+import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.ContenidoMultimedia;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.HechoModificacion;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.RevisarEstado;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.Usuario;
@@ -17,6 +18,7 @@ import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.Hecho;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.Solicitud;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.roles.Permiso;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.roles.Rol;
+import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.repositories.IMultimediaRepository;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.repositories.implReal.IHechoRepositoryJPA;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.repositories.implReal.ISolicitudRepositoryJPA;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.repositories.implReal.IUsuarioRepositoryJPA;
@@ -24,6 +26,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class SolicitudServicio implements ISolicitudServicio {
@@ -31,16 +34,18 @@ public class SolicitudServicio implements ISolicitudServicio {
     private final IHechoRepositoryJPA hechoRepository;
     private final RevisarEstado revisadorHechosSolicitud;
     private final IUsuarioRepositoryJPA usuarioRepository;
+    private final IMultimediaRepository contentMultimediaRepository;
 
-    public SolicitudServicio(ISolicitudRepositoryJPA solicitudRepository, IHechoRepositoryJPA hechoRepository, RevisarEstado revisadorHechosSolicitud, IUsuarioRepositoryJPA usuarioRepository) {
+    public SolicitudServicio(ISolicitudRepositoryJPA solicitudRepository, IHechoRepositoryJPA hechoRepository, RevisarEstado revisadorHechosSolicitud, IUsuarioRepositoryJPA usuarioRepository, IMultimediaRepository contentMultimediaRepository) {
       this.solicitudRepository = solicitudRepository;
       this.hechoRepository = hechoRepository;
       this.revisadorHechosSolicitud = revisadorHechosSolicitud;
       this.usuarioRepository = usuarioRepository;
+      this.contentMultimediaRepository = contentMultimediaRepository;
     }
 
     @Override
-    public Solicitud crearSolicitud(SolicitudDTO solicitudDTO) {
+    public Solicitud crearSolicitud(SolicitudDTO solicitudDTO, MultipartFile contenidoMultimedia) {
         Hecho hecho = hechoRepository.findById(solicitudDTO.getIdHecho()).orElseThrow(() -> new HechoNoEncontrado("Hecho no encontrado"));
         if (solicitudDTO.getUsuario() == null) {
             throw new UsuarioSinPermiso("Solo se le permiten modificar hechos a los usuarios con cuenta");
@@ -59,7 +64,11 @@ public class SolicitudServicio implements ISolicitudServicio {
         solicitud.setEstado(Estado.EN_REVISION);
         HechoModificacion hechoModificacion = this.getHechoModificacion(solicitudDTO);
         solicitud.setHechoModificacion(hechoModificacion);
-
+        hechoModificacion.setContenidoMultimedia(hecho.getContenidoMultimedia());
+        if (contenidoMultimedia != null ) {
+            ContenidoMultimedia contMultimediaHecho = this.contentMultimediaRepository.saveFile(contenidoMultimedia);
+            hechoModificacion.setContenidoMultimedia(contMultimediaHecho);
+        }
         return solicitudRepository.save(solicitud);
     }
 

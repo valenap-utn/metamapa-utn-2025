@@ -7,6 +7,7 @@ import ar.edu.utn.frba.dds.servicioFuenteDinamica.exceptions.UsuarioSinPermiso;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos.HechoDTODinamica;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos.RevisionDTO;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos.UsuarioDTO;
+import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.Categoria;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.ContenidoMultimedia;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.RevisarEstado;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.Usuario;
@@ -15,6 +16,7 @@ import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.Hecho;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.roles.Permiso;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.roles.Rol;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.repositories.IMultimediaRepository;
+import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.repositories.implReal.ICategoriaRepositoryJPA;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.repositories.implReal.IHechoRepositoryJPA;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.repositories.implReal.IUsuarioRepositoryJPA;
 import java.util.Optional;
@@ -31,12 +33,14 @@ public class HechoServicio implements IHechoServicio {
     private final IMultimediaRepository contentMultimediaRepository;
     private final RevisarEstado revisadorHechosSolicitud;
     private final IUsuarioRepositoryJPA userRepository;
+    private final ICategoriaRepositoryJPA categoriaRepository;
 
-    public HechoServicio(IHechoRepositoryJPA hechoRepository, IMultimediaRepository contentMultimediaRepository, RevisarEstado revisadorHechosSolicitud, IUsuarioRepositoryJPA userRepository) {
+    public HechoServicio(IHechoRepositoryJPA hechoRepository, IMultimediaRepository contentMultimediaRepository, RevisarEstado revisadorHechosSolicitud, IUsuarioRepositoryJPA userRepository, ICategoriaRepositoryJPA categoriaRepository) {
         this.hechoRepository = hechoRepository;
         this.contentMultimediaRepository = contentMultimediaRepository;
         this.revisadorHechosSolicitud = revisadorHechosSolicitud;
       this.userRepository = userRepository;
+      this.categoriaRepository = categoriaRepository;
     }
 
     @Override
@@ -116,5 +120,15 @@ public class HechoServicio implements IHechoServicio {
         hecho.setEliminado(true);
         hechoRepository.save(hecho);
         return hecho;
+    }
+
+    @Override
+    public Hecho findHechoById(Long idHecho) {
+        return this.hechoRepository.findById(idHecho).orElseThrow(() -> new HechoNoEncontrado("El hecho con id: " + idHecho + " no fue encontrado"));
+    }
+
+    @Override
+    public List<Categoria> findAllCategorias() {
+        return this.categoriaRepository.findAll();
     }
 }

@@ -111,8 +111,38 @@ const drop = document.getElementById('dropzone');
 const input = document.getElementById('mediaInput');
 const preview = document.getElementById('mediaPreview');
 const btnPrev3 = document.getElementById('btnPrev3');
-
+const categoriaSelect = document.getElementById('categoria');
+const categoriaInput = document.getElementById('categoriaInput');
+const categoriaInputLabel = document.getElementById('categoriaInputLabel');
 let MEDIA_FILES = [];
+
+//categoriaInput.addEventListener('input', validate);
+//categoriaInput.addEventListener('change', validate);
+function modificarCategoria(el) {
+    const option = el.value
+    console.log(el.id)
+    if (option === "") {
+        categoriaSelect.required = false
+        categoriaInput.required = true
+        categoriaInput.style.display = "block"
+        categoriaInputLabel.style.display = "block"
+        categoriaSelect.setAttribute("name", "")
+        categoriaInput.setAttribute("name", "categoria.nombre")
+    } else {
+        categoriaSelect.required = true
+        categoriaInput.required = false
+        categoriaInput.style.display = "none"
+        categoriaInputLabel.style.display = "none"
+        categoriaSelect.setAttribute("name", "categoria.nombre")
+        categoriaInput.setAttribute("name", "")
+    }
+}
+
+/*function validate() {
+    const ok =  categoriaInput.value !== ' '
+    categoriaInput.classList.toggle('is-invalid', !ok);
+    return ok
+}*/
 
 btnPrev3?.addEventListener('click', () => gotoStep(2));
 

@@ -12,5 +12,5 @@ public class SolicitudEdicionDTO {
   private String justificacion;
   private String estado;
   private LocalDateTime fechaSolicitud;
-  private HechoDTOInput propuesta; //cambios propuestos
+  private HechoDTOInputMultipart propuesta; //cambios propuestos
 }

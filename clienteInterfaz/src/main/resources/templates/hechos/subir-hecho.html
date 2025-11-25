@@ -96,18 +96,21 @@
                         <!-- Categoría -->
                         <div class="mm-field">
                             <label for="categoria" class="mm-label">Categoría</label>
-                            <select id="categoria" name="categoria" class="mm-input" required th:field="*{categoria.nombre}" th:classappend="${#fields.hasErrors('categoria.nombre')} ? ' is-invalid' : ''">
+                            <select id="categoria" name="categoria" class="mm-input" required th:field="*{categoria.nombre}" th:classappend="${#fields.hasErrors('categoria.nombre')} ? ' is-invalid' : ''" onchange="modificarCategoria(this)">
                                 <option value="" disabled selected>Seleccioná una categoría…</option>
                                 <option value="EVENTO_SANITARIO">Evento sanitario</option>
+                                <option value="">Crear una categoria…</option>
                                 <option value="CONTAMINACION">Contaminación</option>
                                 <option value="DERRAME">Derrame</option>
+                                <th:block th:each="categoriaAgregador : ${categorias}">
+                                    <option th:text="${categoriaAgregador}" th:value="${categoriaAgregador}"></option>
+                                </th:block>
                                 <!-- agregá más si aplica -->
                             </select>
                             <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('categoria.nombre')}" th:errors="*{categoria.nombre}">
                                 Error en categoría
                             </div>
                         </div>
-
                         <!-- Fecha acontecimiento -->
                         <div class="mm-field">
                             <label for="fechaAcontecimiento" class="mm-label">Fecha del acontecimiento</label>
@@ -115,6 +118,11 @@
                             <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('fechaAcontecimiento')}" th:errors="*{fechaAcontecimiento}">
                                 Error en fecha
                             </div>
+                        </div>
+
+                        <div class="mm-field">
+                            <label id="categoriaInputLabel" for="categoriaInput" style="display: none;" class="mm-label">Categoría</label>
+                            <input id="categoriaInput" style="display: none;" class="mm-input"  type="text">
                         </div>
 
                         <!-- Descripción -->

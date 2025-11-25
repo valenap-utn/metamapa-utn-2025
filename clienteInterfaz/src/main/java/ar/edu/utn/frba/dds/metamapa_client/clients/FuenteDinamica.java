@@ -1,5 +1,6 @@
 package ar.edu.utn.frba.dds.metamapa_client.clients;
 
+import ar.edu.utn.frba.dds.metamapa_client.dtos.ConjuntoCategorias;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.ConjuntoHechoDTO;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.ConjuntoSolicitudesEdicionOutput;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.HechoDTOInput;
@@ -7,6 +8,8 @@ import ar.edu.utn.frba.dds.metamapa_client.dtos.HechoDTOOutput;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.RevisionDTO;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.SolicitudEdicionDTO;
 import ar.edu.utn.frba.dds.metamapa_client.services.internal.WebApiCallerService;
+import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.client.MultipartBodyBuilder;
@@ -50,8 +53,19 @@ public class FuenteDinamica implements IFuenteDinamica {
     return this.webApiCallerService.post(baseUsuarioUrl + "/api/fuenteDinamica/hechos/" + idHecho +"/revisados?baseUrl="+ baseUrl, revisionDTO, HechoDTOOutput.class);
   }
 
-  public SolicitudEdicionDTO solicitarModificacion(SolicitudEdicionDTO solicitudEdicion, String baseUrl) {
-    return this.webApiCallerService.post(baseUsuarioUrl + "/api/fuenteDinamica/solicitudes?baseUrl=" + baseUrl, solicitudEdicion, SolicitudEdicionDTO.class);
+  public SolicitudEdicionDTO solicitarModificacion(HechoDTOInput hechoDtoInput, Long userId, String baseUrl) {
+    // Creamos la solicitud
+    SolicitudEdicionDTO solicitud = new SolicitudEdicionDTO();
+    solicitud.setIdHecho(hechoDtoInput.getId());
+    solicitud.setEstado("PENDIENTE");
+    solicitud.setFechaSolicitud(LocalDateTime.now());
+    solicitud.setPropuesta(hechoDtoInput.getMultipart());
+    solicitud.setIdusuario(userId);
+    solicitud.setJustificacion("Cambios en el Hecho");
+    MultipartBodyBuilder builder = new MultipartBodyBuilder();
+    builder.part("contenidomultimedia", hechoDtoInput.getContenidoMultimediaFile().getResource());
+    builder.part("solicitud", solicitud);
+    return this.webApiCallerService.postMultipart(baseUsuarioUrl + "/api/fuenteDinamica/solicitudes?baseUrl=" + baseUrl, builder, SolicitudEdicionDTO.class);
   }
 
   public SolicitudEdicionDTO  procesarSolicitudEdicion(Long idSolicitud, String baseUrl, RevisionDTO revisionDTO) {
@@ -70,5 +84,17 @@ public class FuenteDinamica implements IFuenteDinamica {
   public List<HechoDTOOutput> listHechosDelUsuario(Long userId, String baseUrl) {
     return this.webApiCallerService.get(
             this.baseUsuarioUrl + "/api/fuenteDinamica/usuarios/"+ userId +"/hechos?baseUrl=" + baseUrl, ConjuntoHechoDTO.class).getHechos();
+  }
+
+  @Override
+  public HechoDTOOutput getHecho(Long idHecho, String urlFuenteDinamica) {
+    return this.webApiCallerService.get(
+            this.baseUsuarioUrl + "/api/fuenteDinamica/hechos/"+ idHecho +"?baseUrl=" + urlFuenteDinamica, HechoDTOOutput.class);
+  }
+
+  @Override
+  public Collection<String> findAllCategorias(String urlFuenteDinamica) {
+    return this.webApiCallerService.get(
+            this.baseUsuarioUrl + "/api/fuenteDinamica/categorias?baseUrl=" + urlFuenteDinamica, ConjuntoCategorias.class).getCategorias();
   }
 }

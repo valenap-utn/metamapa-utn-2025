@@ -10,6 +10,7 @@ import ar.edu.utn.frba.dds.metamapa_client.dtos.CriterioDTO;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.FiltroDTO;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.FuenteDTO;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.HechoDTOInput;
+import ar.edu.utn.frba.dds.metamapa_client.dtos.HechoDTOInputMultipart;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.HechoDTOOutput;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.LoginResponseDTO;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.OrigenDTO;
@@ -25,6 +26,7 @@ import ar.edu.utn.frba.dds.metamapa_client.services.IConexionServicioUser;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -249,6 +251,11 @@ public class ClientSeader implements IFuenteDinamica, IFuenteEstatica, IServicio
     return null;
   }
 
+  @Override
+  public SolicitudEdicionDTO solicitarModificacion(HechoDTOInput hechoDtoInput, Long userId, String baseUrl) {
+    return null;
+  }
+
 
   public HechoDTOOutput revisarHecho(Long idHecho, String baseUrl) {
     return this.hechos.get(idHecho);
@@ -290,16 +297,15 @@ public class ClientSeader implements IFuenteDinamica, IFuenteEstatica, IServicio
   }
 
   @Override
-  public SolicitudEdicionDTO solicitarModificacion(SolicitudEdicionDTO solicitudEdicion, String baseUrl) {
-    if(solicitudEdicion == null)return null;
-    Long idSolicitudEdicion = this.idSolicitudEdicion.getAndIncrement();
-    solicitudEdicion.setId(idSolicitudEdicion);
-    if(solicitudEdicion.getEstado() == null)solicitudEdicion.setEstado("PENDIENTE");
-    if(solicitudEdicion.getFechaSolicitud() == null)solicitudEdicion.setFechaSolicitud(LocalDateTime.now());
-//    this.solicitudesEdicion.put(solicitudEdicion.getId(), solicitudEdicion);
-    this.solicitudesEdicion.put(idSolicitudEdicion, solicitudEdicion);
-    return solicitudEdicion;
+  public HechoDTOOutput getHecho(Long idHecho, String urlFuenteDinamica) {
+    return null;
   }
+
+  @Override
+  public Collection<String> findAllCategorias(String urlFuenteDinamica) {
+    return List.of();
+  }
+
 
   @Override
   public SolicitudEdicionDTO procesarSolicitudEdicion(Long idSolicitud, String baseUrl, RevisionDTO revisionDTO) {
@@ -312,7 +318,7 @@ public class ClientSeader implements IFuenteDinamica, IFuenteEstatica, IServicio
 
     if("ACEPTAR".equalsIgnoreCase(nuevoEstado)){
       HechoDTOOutput original = this.hechos.get(solicitudEdicionDTO.getIdHecho());
-      HechoDTOInput p = solicitudEdicionDTO.getPropuesta();
+      HechoDTOInputMultipart p = solicitudEdicionDTO.getPropuesta();
       if(original != null && p != null){
         if(p.getTitulo() != null){
           original.setTitulo(p.getTitulo());

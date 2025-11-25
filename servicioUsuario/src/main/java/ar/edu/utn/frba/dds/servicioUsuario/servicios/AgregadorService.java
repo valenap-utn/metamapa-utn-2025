@@ -97,7 +97,7 @@ public class AgregadorService {
 
   public ColeccionDTOOutput eliminarColeccion(UUID idColeccion) {
     Usuario usuario = this.obtenerUsuario();
-    return this.webClient.delete().uri(uriBuilder -> uriBuilder.path("/api/colecciones/{id}").build(idColeccion))
+    return this.webClient.delete().uri(uriBuilder -> uriBuilder.path("/api/colecciones/{id}").queryParam("idUsuario", usuario.getId()).build(idColeccion))
             .retrieve().bodyToMono(ColeccionDTOOutput.class).block();
   }
 

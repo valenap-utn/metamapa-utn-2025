@@ -1,5 +1,6 @@
 package ar.edu.utn.frba.dds.servicioUsuario.controllers;
 
+import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.ConjuntoCategorias;
 import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.ConjuntoHechoDTO;
 import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.ConjuntoSolicitudesEdicionOutput;
 import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.HechoDTOInput;
@@ -38,9 +39,9 @@ public class FuenteDinamicaController {
     return this.fuenteDinamicaService.revisarHecho(id, baseUrl, revisionDTO);
   }
 
-  @PostMapping("/solicitudes")
-  public SolicitudEdicionDTO solicitarModificacion(@RequestBody SolicitudEdicionDTO solicitudEdicion, @RequestParam String baseUrl) {
-    return this.fuenteDinamicaService.solicitarModificacion(solicitudEdicion, baseUrl);
+  @PostMapping(value = "/solicitudes", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  public SolicitudEdicionDTO solicitarModificacion(@RequestPart("solicitud") SolicitudEdicionDTO solicitudEdicion, @RequestPart(value = "contenidomultimedia", required = false) MultipartFile contenidoMultimedia, @RequestParam String baseUrl) {
+    return this.fuenteDinamicaService.solicitarModificacion(solicitudEdicion, contenidoMultimedia, baseUrl);
   }
 
   @PutMapping("/solicitudes/{idSolicitud}")
@@ -49,7 +50,7 @@ public class FuenteDinamicaController {
   }
 
   @GetMapping("/hechos/pendientes")
-  public ConjuntoHechoDTO pendientes(@RequestParam String baseUrl){
+  public ConjuntoHechoDTO hechosPendientes(@RequestParam String baseUrl){
     return this.fuenteDinamicaService.findHechosPendientes(baseUrl);
   }
 
@@ -59,8 +60,18 @@ public class FuenteDinamicaController {
   }
 
   @GetMapping("/usuarios/{id}/hechos")
-  public ConjuntoHechoDTO hechoUsuario(@PathVariable Long id, @RequestParam String baseUrl){
+  public ConjuntoHechoDTO hechosUsuario(@PathVariable Long id, @RequestParam String baseUrl){
     return this.fuenteDinamicaService.findHechosPorUsuario(id, baseUrl);
+  }
+
+  @GetMapping("/hechos/{id}")
+  public HechoDTOOutput hechoById(@PathVariable Long id, @RequestParam String baseUrl){
+    return this.fuenteDinamicaService.findHechoById(id, baseUrl);
+  }
+
+  @GetMapping("/categorias")
+  public ConjuntoCategorias findAllCategorias(@RequestParam String baseUrl){
+    return this.fuenteDinamicaService.findAllCategorias(baseUrl);
   }
 
 }

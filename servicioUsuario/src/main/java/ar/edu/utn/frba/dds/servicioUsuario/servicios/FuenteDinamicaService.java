@@ -1,6 +1,7 @@
 package ar.edu.utn.frba.dds.servicioUsuario.servicios;
 
 import ar.edu.utn.frba.dds.servicioUsuario.exceptions.UsuarioNoEncontrado;
+import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.ConjuntoCategorias;
 import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.ConjuntoHechoDTO;
 import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.ConjuntoSolicitudesEdicionOutput;
 import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.HechoDTOInput;
@@ -74,12 +75,20 @@ public class FuenteDinamicaService {
             .bodyValue(revisionDTO).retrieve().bodyToMono(HechoDTOOutput.class).block();
   }
 
-  public SolicitudEdicionDTO solicitarModificacion(SolicitudEdicionDTO solicitudEdicion, String baseUrl) {
+  public SolicitudEdicionDTO solicitarModificacion(SolicitudEdicionDTO solicitudEdicion, MultipartFile contenidoMultimedia, String baseUrl) {
+    Usuario usuario = this.obtenerUsuario();
+    solicitudEdicion.setUsuario(usuario.getUsuarioDTO());
+    MultipartBodyBuilder builder = new MultipartBodyBuilder();
+    if (contenidoMultimedia != null) {
+      builder.part("contenidomultimedia", contenidoMultimedia.getResource());
+    }
+    builder.part("solicitud", solicitudEdicion);
+
     return initWebClient(baseUrl).post().uri(uriBuilder -> uriBuilder.path("/api/solicitudes").build())
-            .bodyValue(solicitudEdicion)
+            .contentType(MediaType.MULTIPART_FORM_DATA)
+            .body(BodyInserters.fromMultipartData(builder.build()))
             .retrieve()
-            .bodyToMono(SolicitudEdicionDTO.class)
-            .block();
+            .bodyToMono(SolicitudEdicionDTO.class).block();
   }
 
   public SolicitudEdicionDTO  procesarSolicitudEdicion(Long idSolicitud, String baseUrl, RevisionDTO revisionDTO) {
@@ -107,5 +116,17 @@ public class FuenteDinamicaService {
             .retrieve()
             .bodyToMono(ConjuntoHechoDTO.class)
             .block();
+  }
+
+  public HechoDTOOutput findHechoById(Long id, String baseUrl) {
+    return this.initWebClient(baseUrl).get().uri(uriBuilder -> uriBuilder.path("/api/hechos/{id}").build(id))
+            .retrieve()
+            .bodyToMono(HechoDTOOutput.class)
+            .block();
+  }
+
+  public ConjuntoCategorias findAllCategorias(String baseUrl) {
+    return this.initWebClient(baseUrl).get().uri(uriBuilder -> uriBuilder.path("/api/categorias").build())
+            .retrieve().bodyToMono(ConjuntoCategorias.class).block();
   }
 }

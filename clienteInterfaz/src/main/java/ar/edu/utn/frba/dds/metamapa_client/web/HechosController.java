@@ -81,7 +81,9 @@ public class HechosController {
 
   @GetMapping("/subir-hecho")
   public String subirHecho(Model model) {
+    List<String> categorias = this.agregador.findAllCategorias();
     model.addAttribute("hecho", new HechoDTOInput());
+    model.addAttribute("categorias", categorias);
     return "hechos/subir-hecho";
   }
 
@@ -218,13 +220,27 @@ public class HechosController {
       return "redirect:/main-gral";
     }
 
-    HechoDTOOutput hecho = agregador.getHecho(idHecho);
+    HechoDTOOutput hecho = fuenteDinamica.getHecho(idHecho, this.urlFuenteDinamica);
     if (hecho == null) {
       ra.addFlashAttribute("error", "El hecho no existe.");
       return "redirect:/hechos/mis-hechos";
     }
     //Enviamos datos a la vista
-    model.addAttribute("hecho", hecho);
+    HechoDTOInput hechoInput = new HechoDTOInput();
+    hechoInput.setId(hecho.getId());
+    hechoInput.setDescripcion(hecho.getDescripcion());
+    hechoInput.setTitulo(hecho.getTitulo());
+    hechoInput.setUbicacion(hecho.getUbicacion());
+    hechoInput.setContenidoMultimedia(hecho.getContenidoMultimedia());
+    hechoInput.setCategoria(hecho.getCategoria());
+    hechoInput.setFechaAcontecimiento(hecho.getFechaAcontecimiento());
+    hechoInput.setFechaCarga(hechoInput.getFechaCarga());
+    hechoInput.setIdUsuario(hecho.getIdUsuario());
+
+    List<String> categorias = this.agregador.findAllCategorias();
+    categorias.addAll(this.fuenteDinamica.findAllCategorias(this.urlFuenteDinamica));
+    model.addAttribute("hecho", hechoInput);
+    model.addAttribute("categorias", categorias);
     model.addAttribute("titulo", "Editar Hecho");
     return "hechos/editar";
   }
@@ -241,14 +257,8 @@ public class HechosController {
 
     Long userId = usuario.getId();
 
-    // Creamos la solicitud
-    SolicitudEdicionDTO solicitud = new SolicitudEdicionDTO();
-    solicitud.setIdHecho(idHecho);
-    solicitud.setEstado("PENDIENTE");
-    solicitud.setFechaSolicitud(LocalDateTime.now());
-    solicitud.setPropuesta(hechoDtoInput);
-    solicitud.setIdusuario(userId);
-    this.fuenteDinamica.solicitarModificacion(solicitud, this.urlFuenteDinamica);
+    hechoDtoInput.setId(idHecho);
+    this.fuenteDinamica.solicitarModificacion(hechoDtoInput, userId, this.urlFuenteDinamica);
 
     ra.addFlashAttribute("success", "Tu edición fue enviada a revisión. Aparecerá nuevamente cuando sea aprobada.");
 
