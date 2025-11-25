@@ -23,7 +23,9 @@ import ar.edu.utn.frba.dds.utils.ExportadorCSV;
 import ar.edu.utn.frba.dds.utils.SolicitudesSpamTotal;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
@@ -51,12 +53,11 @@ public class ServicioEstadisticas {
         List<Solicitud> solicitudes = agregador.obtenerSolicitudes();
         List<ColeccionDTO> colecciones = agregador.obtenerColecciones();
         List<Hecho> hechos = agregador.obtenerHechos();
-        colecciones.forEach(coleccion -> hechos.stream().filter(
-                hecho -> coleccion.getFuentes().stream().anyMatch(
-                        fuenteDTO -> hecho.getOrigen().equals(fuenteDTO)
-                )
-        ).forEach(
-                hecho -> hecho.agregarTituloColeccion(coleccion.getTitulo())
+        colecciones.forEach(coleccion ->
+            hechos.stream().
+                filter(hecho -> coleccion.getFuentes().stream()
+                    .anyMatch(fuenteDTO -> hecho.getOrigen().equals(fuenteDTO)))
+                .forEach(hecho -> hecho.agregarTituloColeccion(coleccion.getTitulo())
         ));
         ConjuntoEstadisticasDTO conjuntoEstadisticasDTO = new ConjuntoEstadisticasDTO();
         DatoCalculo datosNecesarios = new DatoCalculo();
@@ -75,6 +76,17 @@ public class ServicioEstadisticas {
         return cache.obtener();
     }
 
+    /**
+     * Para el controller que expone /estadisticas.csv
+     * Devuelve un stream de bytes en memoria listo para mandar por HTTP.
+     */
+    public ByteArrayInputStream exportarCSV(Long idUsuario){
+        this.verificarUsuario(idUsuario);
+        ConjuntoEstadisticasDTO data = cache.obtener();
+        String csv = exportador.generarCSV(data);
+        return new ByteArrayInputStream(csv.getBytes(StandardCharsets.UTF_8));
+    }
+
     private void verificarUsuario(Long idUsuario) {
         UsuarioDTO usuarioDTO = this.servicioUsuario.findUsuarioById(idUsuario);
 
@@ -90,7 +102,10 @@ public class ServicioEstadisticas {
         }
     }
 
-    public void exportarCSV(Path destino, Long idUsuario) throws IOException {
+    /**
+     * Si queremos mantener que escribe en disco para uso interno/cron
+     */
+    public void exportarCSVEnArchivo(Path destino, Long idUsuario) throws IOException {
         this.verificarUsuario(idUsuario);
         ConjuntoEstadisticasDTO data = cache.obtener();
         String csv = exportador.generarCSV(data);

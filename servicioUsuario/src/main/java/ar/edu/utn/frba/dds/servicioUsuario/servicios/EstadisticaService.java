@@ -22,7 +22,12 @@ public class EstadisticaService {
   }
 
   public ConjuntoEstadisticasDTO getEstadisticas() {
-    return this.webClient.get().uri(uriBuilder -> uriBuilder.path("/estadisticas").build())
+    Usuario usuario = this.obtenerUsuario();
+    return this.webClient.get()
+        .uri(uriBuilder -> uriBuilder
+            .path("/estadisticas")
+            .queryParam("idUsuario", usuario.getId())
+            .build())
             .retrieve()
             .bodyToMono(ConjuntoEstadisticasDTO.class).block();
   }
@@ -33,9 +38,25 @@ public class EstadisticaService {
     return this.usuarioRepository.findByEmail(email).orElseThrow(() -> new UsuarioNoEncontrado("El usuario indicado no existe"));
   }
 
-  public MultipartFile getEstadisticasEnCSV() {
+  /**
+   * MultipartFile es para subir archivos desde el cliente al servidor.
+   * Para descargar archivos, lo normal es trabajar con byte[] (o Resource) y headers HTTP.
+   * MultipartFile es una abstracción de Spring que representa una parte de una request multipart/form-data
+   */
+  /*public MultipartFile getEstadisticasEnCSV() {
     return this.webClient.get().uri(uriBuilder -> uriBuilder.path("/estadisticas/estadisticas.csv").build())
             .retrieve()
             .bodyToMono(MultipartFile.class).block();
+  }*/
+  public byte[] getEstadisticasEnCSV() {
+    Usuario usuario = this.obtenerUsuario();
+
+    return this.webClient.get()
+        .uri(uriBuilder -> uriBuilder
+            .path("/estadisticas/estadisticas.csv")
+            .queryParam("idUsuario", usuario.getId())
+            .build())
+        .retrieve()
+        .bodyToMono(byte[].class).block();
   }
 }

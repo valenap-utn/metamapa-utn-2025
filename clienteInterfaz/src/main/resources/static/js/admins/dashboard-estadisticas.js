@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // === 1) Barras: Hechos por provincia (colección) ===
-    new Chart(document.getElementById('chartProvColeccion'), {
+    /*new Chart(document.getElementById('chartProvColeccion'), {
         type: 'bar',
         data: {
             labels: ['Buenos Aires', 'Santa Fe', 'Córdoba', 'Mendoza', 'Neuquén'],
@@ -86,5 +86,109 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     });
+    */
+
+    const findStat = (data,nombre) =>
+        (data.estadisticas || []).find(e => e.nombre === nombre) || {datos: []};
+    fetch('/api/admin/dashboard-estadisticas/data')
+        .then(res => {
+            if(!res.ok) throw new Error(`No se pudieron cargar las estadísticas`);
+            return res.json();
+        })
+        .then(data => {
+            // === Barras: Hechos por provincia (colección) ===
+            const estProvCol = findStat(data, 'COLECCIONPROVINCIAMAYORHECHOS');
+            const provLabels = estProvCol.datos.map(d => d.primerCriterio); // provincia
+            const provValues = estProvCol.datos.map(d => d.cantidad ?? 0);
+
+            new Chart(document.getElementById('chartProvColeccion'), {
+                type: 'bar',
+                data: {
+                    labels: provLabels,
+                    datasets: [{
+                        label: 'Hechos',
+                        data: provValues,
+                        backgroundColor: C.brand500,
+                        borderRadius: 8
+                    }]
+                },
+                options: baseXY
+            });
+            const top = estProvCol.datos[0];
+            if (top) {
+                const chipColeccion = document.getElementById('chip-colect-province');
+                const chipProvincia = document.getElementById('chip-provincia');
+                const chipCant = document.getElementById('chip-prov-cantidad');
+
+                chipColeccion && (chipColeccion.textContent = top.segundoCriterio || '-');
+                chipProvincia && (chipProvincia.textContent = top.primerCriterio || '-');
+                chipCant && (chipCant.textContent = top.cantidad ?? '-');
+            }
+
+            // === Barras horizontales: Hechos por categoría ===
+            const estCategorias = findStat(data, 'CATEGORIATOP');
+            const catLabels = estCategorias.datos.map(d => d.primerCriterio);   // nombre categoría
+            const catValues = estCategorias.datos.map(d => d.cantidad ?? 0);
+
+            new Chart(document.getElementById('chartCategorias'), {
+                type: 'bar',
+                data: {
+                    labels: catLabels,
+                    datasets: [{
+                        data: catValues,
+                        backgroundColor: [C.brand500, C.accent, '#C9DEEC', '#B7CFE2', '#9FBBD2'],
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    ...baseXY,
+                    indexAxis: 'y'
+                }
+            });
+
+            // === Doughnut: Porcentaje de spam ===
+            const estSpam = findStat(data, 'SOLICITUDESSPAM');
+            const spamData = estSpam.datos[0] || {};
+            const spamCount = spamData.cantidad ?? 0;
+            const totalCount = spamData.total ?? 0;
+            const spamPct = totalCount > 0 ? Math.round((spamCount * 100) / totalCount) : 0;
+            const validPct = 100 - spamPct;
+
+            new Chart(document.getElementById('chartSpam'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['Spam', 'Válidas'],
+                    datasets: [{
+                        data: [spamPct, validPct],
+                        backgroundColor: [C.red, C.softGreen],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '62%',
+                    plugins: {
+                        legend: {position: 'bottom'},
+                        tooltip: {
+                            callbacks: {
+                                label: ctx => `${ctx.label}: ${ctx.raw}%`
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Actualizar textos de resumen
+            const chipSpamPorcentaje = document.getElementById('chip-spam-porcentaje');
+            const chipSpamTotal = document.getElementById('chip-spam-total');
+            chipSpamPorcentaje && (chipSpamPorcentaje.textContent = `${spamPct}%`);
+            chipSpamTotal && (chipSpamTotal.textContent = totalCount);
+        })
+        .catch(err => {
+            console.error(err);
+        });
+
 });
+
 

@@ -1,6 +1,8 @@
 package ar.edu.utn.frba.dds.metamapa_client.clients;
 
+import ar.edu.utn.frba.dds.metamapa_client.dtos.ConjuntoEstadisticasDTO;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.EstadisticaDTO;
+import ar.edu.utn.frba.dds.metamapa_client.services.internal.WebApiCallerService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -10,25 +12,22 @@ import reactor.core.publisher.Mono;
 
 @Component
 public class ServicioDeEstadistica {
+    private final WebApiCallerService webApiCallerService;
+    private final String baseUrl;
 
-    private WebClient initWebClient(String baseUrl) {
-        return WebClient.builder().baseUrl(baseUrl)
-                .exchangeStrategies(ExchangeStrategies
-                        .builder()
-                        .codecs(codecs -> codecs
-                                .defaultCodecs()
-                                .maxInMemorySize(50 * 1024 * 1024))
-                        .build()).build();
+    public ServicioDeEstadistica(WebApiCallerService webApiCallerService, @Value("${api.servicioUsuarios.url}") String baseUrl) {
+        this.webApiCallerService = webApiCallerService;
+        this.baseUrl = baseUrl;
     }
 
-    public EstadisticaDTO obtenerEstadistica(EstadisticaDTO estadistica, String baseUrl) {
-        return initWebClient(baseUrl).post().uri(uriBuilder -> uriBuilder.path("/api/estadisticas/{clave}").build(estadistica.getClave()))
-                .accept(MediaType.APPLICATION_JSON).retrieve().bodyToMono(EstadisticaDTO.class).block();
+    public ConjuntoEstadisticasDTO obtenerEstadisticas() {
+        String url = baseUrl + "/api/estadisticas";
+        return webApiCallerService.get(url, ConjuntoEstadisticasDTO.class);
     }
 
-    public byte[] exportarCSV(EstadisticaDTO estadistica, String baseUrl) {
-        return initWebClient(baseUrl).post().uri(uriBuilder -> uriBuilder.path("/api/estadisticas/{clave}/exportar").build(estadistica.getClave()))
-                .accept(MediaType.valueOf("text/csv")).retrieve().bodyToMono(byte[].class).block();
+    public byte[] exportarCSV() {
+        String url = baseUrl + "/api/estadisticas/csv";
+        return webApiCallerService.get(url, byte[].class);
     }
 }
 
