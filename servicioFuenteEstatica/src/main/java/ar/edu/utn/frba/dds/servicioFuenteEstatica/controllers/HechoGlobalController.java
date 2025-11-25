@@ -1,5 +1,6 @@
 package ar.edu.utn.frba.dds.servicioFuenteEstatica.controllers;
 
+import ar.edu.utn.frba.dds.servicioFuenteEstatica.exceptions.ArchivoVacioException;
 import ar.edu.utn.frba.dds.servicioFuenteEstatica.exceptions.UsuarioNoEncontrado;
 import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.dtos.ConjuntoHechoDTOEstatica;
 import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.dtos.HechoDTOEstatica;
@@ -42,12 +43,10 @@ public class HechoGlobalController {
     => Si mañana cambiara de un repo en memoria a una base de datos real
                                                                    => mi controller ni se entera */
   private final IHechoService hechoService;
-  private final IUsuarioRepositoryJPA usuarioRepository;
 
   @Autowired
   public HechoGlobalController(IHechoService hechoService, IUsuarioRepositoryJPA usuarioRepository) {
     this.hechoService = hechoService;
-    this.usuarioRepository = usuarioRepository;
   }
 
   /** Devuelven un ResponseEntity
@@ -68,23 +67,14 @@ public class HechoGlobalController {
    * la carga de archivos (como MultipartFile) y otros datos en
    * solicitudes multipart.
    */
-  @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-  public ResponseEntity<String> importar(@RequestPart("archivo") MultipartFile archivo, @RequestPart("usuario") String usuarioIdStr) {
-
-    log.info("[HechoGlobalController] multipart recibido. usuario='{}' archivo='{}'", usuarioIdStr, archivo.getOriginalFilename());
-
-    Long idUsuario = Long.parseLong(usuarioIdStr);
-
-    Usuario usuario = usuarioRepository.findById(idUsuario)
-        .orElseThrow(() -> new UsuarioNoEncontrado("Usuario no encontrado: " + idUsuario));
-
-    //Mapeamos a DTO para el servicio
-    UsuarioDTO usuarioDTO = new UsuarioDTO();
-    usuarioDTO.setId(usuario.getId());
-    usuarioDTO.setNombre(usuario.getNombre());
-    usuarioDTO.setApellido(usuario.getApellido());
-    usuarioDTO.setRol(Rol.ADMINISTRADOR);
-    usuarioDTO.setPermisos(List.of(Permiso.SUBIDAARCHIVO));
+  @PostMapping( consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  public ResponseEntity<String> importar(@RequestPart("archivo") MultipartFile archivo, @RequestPart("usuario") UsuarioDTO usuarioDTO) {
+    if (usuarioDTO == null || usuarioDTO.getId() == null ) {
+      throw new UsuarioNoEncontrado("El usuario no existe");
+    } else if (archivo == null ||archivo.isEmpty()) {
+      throw new ArchivoVacioException("El archivo está vacio");
+    }
+    log.info("[HechoGlobalController] multipart recibido. usuario='{}' archivo='{}'", usuarioDTO.getId(), archivo.getOriginalFilename());
 
     Set<HechoDTOEstatica> hechos = hechoService.importarDesdeCSV(archivo, usuarioDTO);
 

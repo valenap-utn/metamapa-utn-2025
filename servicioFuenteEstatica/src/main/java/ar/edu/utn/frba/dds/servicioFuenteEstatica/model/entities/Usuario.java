@@ -23,7 +23,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Builder
 public class Usuario {
-  @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Id
   @Getter @Setter private Long id;
 
   @Column(name = "email")

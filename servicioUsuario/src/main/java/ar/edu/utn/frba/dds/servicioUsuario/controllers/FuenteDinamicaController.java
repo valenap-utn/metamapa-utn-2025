@@ -1,6 +1,7 @@
 package ar.edu.utn.frba.dds.servicioUsuario.controllers;
 
 import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.ConjuntoHechoDTO;
+import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.ConjuntoSolicitudesEdicionOutput;
 import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.HechoDTOInput;
 import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.HechoDTOOutput;
 import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.RevisionDTO;
@@ -48,8 +49,13 @@ public class FuenteDinamicaController {
   }
 
   @GetMapping("/hechos/pendientes")
-  public ConjuntoHechoDTO pendientes(String baseUrl){
+  public ConjuntoHechoDTO pendientes(@RequestParam String baseUrl){
     return this.fuenteDinamicaService.findHechosPendientes(baseUrl);
+  }
+
+  @GetMapping("/solicitudes")
+  public ConjuntoSolicitudesEdicionOutput findAllSolicitudes(@RequestParam String baseUrl){
+    return this.fuenteDinamicaService.findAllSolicitudes(baseUrl);
   }
 
 }

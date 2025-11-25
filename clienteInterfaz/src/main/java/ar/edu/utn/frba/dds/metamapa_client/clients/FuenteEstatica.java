@@ -22,9 +22,13 @@ public class FuenteEstatica implements IFuenteEstatica {
   private final WebClient webClient;
   private final WebApiCallerService webApiCallerService;
   private final JwtUtil jwtUtil;
-  public FuenteEstatica(@Value("${api.servicioUsuarios.url}") String baseUrl, WebApiCallerService webApiCallerService, JwtUtil jwtUtil) {
+  private final String baseUrl;
+  private final String baseUrlEstatica;
+  public FuenteEstatica(@Value("${api.servicioFuenteEstatica.url}") String baseUrlEstatica, @Value("${api.servicioUsuarios.url}") String baseUrl, WebApiCallerService webApiCallerService, JwtUtil jwtUtil) {
     this.webApiCallerService = webApiCallerService;
     this.jwtUtil = jwtUtil;
+    this.baseUrl = baseUrl;
+    this.baseUrlEstatica = baseUrlEstatica;
     log.info("[FuenteEstatica] baseUrl configurada = {}", baseUrl);
     this.webClient = WebClient.builder()
         .baseUrl(baseUrl)
@@ -54,23 +58,12 @@ public class FuenteEstatica implements IFuenteEstatica {
 
       // Armamos multipart para el servicioUsuario
       MultipartBodyBuilder builder = new MultipartBodyBuilder();
-      builder.part("archivo", archivo.getResource())
-          .filename(archivo.getOriginalFilename())
-          .contentType(archivo.getContentType() != null
-              ? MediaType.parseMediaType(archivo.getContentType())
-              : MediaType.TEXT_PLAIN);
-
-      builder.part("usuario", userId.toString());
+      builder.part("archivo", archivo.getResource());
+      builder.part("usuario", userId);
 
       // Llamamos al servicioUsuario
-      return webClient.post()
-          .uri("/api/fuenteEstatica/hechos")
-          .headers(h -> h.setBearerAuth(accessToken))
-          .contentType(MediaType.MULTIPART_FORM_DATA)
-          .body(BodyInserters.fromMultipartData(builder.build()))
-          .retrieve()
-          .bodyToMono(String.class)
-          .block();
+      return this.webApiCallerService.postMultipart(this.baseUrl+ "/api/fuenteEstatica/hechos?baseUrl=" + this.baseUrlEstatica,
+              builder, String.class);
 
     } catch (Exception e) {
       log.error("[FuenteEstaticaClient] Error subiendo CSV", e);

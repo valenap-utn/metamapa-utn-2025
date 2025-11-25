@@ -19,6 +19,7 @@ import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.roles.Rol;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.repositories.implReal.IHechoRepositoryJPA;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.repositories.implReal.ISolicitudRepositoryJPA;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.repositories.implReal.IUsuarioRepositoryJPA;
+import java.util.List;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -101,5 +102,10 @@ public class SolicitudServicio implements ISolicitudServicio {
             this.hechoRepository.save(hecho);
         }
         return solicitudRepository.save(solicitud);
+    }
+
+    @Override
+    public List<Solicitud> findAllSolicitudes() {
+        return this.solicitudRepository.findAll();
     }
 }

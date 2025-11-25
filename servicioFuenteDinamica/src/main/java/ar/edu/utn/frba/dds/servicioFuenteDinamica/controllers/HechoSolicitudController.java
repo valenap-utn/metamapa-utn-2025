@@ -1,6 +1,7 @@
 package ar.edu.utn.frba.dds.servicioFuenteDinamica.controllers;
 
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos.ConjuntoHechoDTODinamica;
+import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos.ConjuntoSolicitud;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos.HechoDTODinamica;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos.RevisionDTO;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos.SolicitudDTO;
@@ -83,5 +84,13 @@ public class HechoSolicitudController {
         solicitudDTO.setEstado(solicitud.getNombreEstado());
         solicitudDTO.setIdHecho(solicitud.getIdHecho());
         return solicitudDTO;
+    }
+
+    @GetMapping("/solicitudes")
+    public ResponseEntity<ConjuntoSolicitud> obtenerSolicituds() {
+        List<Solicitud> solicituds = this.solicitudServicio.findAllSolicitudes();
+        ConjuntoSolicitud conjuntoSolicitud = new ConjuntoSolicitud();
+        conjuntoSolicitud.setSolicitudes(solicituds.stream().map(solicitud -> this.toSolicitudDTO(solicitud)).toList());
+        return ResponseEntity.ok(conjuntoSolicitud);
     }
 }

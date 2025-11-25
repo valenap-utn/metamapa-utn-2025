@@ -2,6 +2,7 @@ package ar.edu.utn.frba.dds.servicioUsuario.servicios;
 
 import ar.edu.utn.frba.dds.servicioUsuario.exceptions.UsuarioNoEncontrado;
 import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.ConjuntoHechoDTO;
+import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.ConjuntoSolicitudesEdicionOutput;
 import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.HechoDTOInput;
 import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.HechoDTOOutput;
 import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.RevisionDTO;
@@ -87,6 +88,13 @@ public class FuenteDinamicaService {
     return this.initWebClient(baseUrl).get().uri(uriBuilder -> uriBuilder.path("/api/hechos").queryParam("pendientes", true).build())
             .retrieve()
             .bodyToMono(ConjuntoHechoDTO.class)
+            .block();
+  }
+
+  public ConjuntoSolicitudesEdicionOutput findAllSolicitudes(String baseUrl) {
+    return this.initWebClient(baseUrl).get().uri(uriBuilder -> uriBuilder.path("/api/solicitudes").build())
+            .retrieve()
+            .bodyToMono(ConjuntoSolicitudesEdicionOutput.class)
             .block();
   }
 }

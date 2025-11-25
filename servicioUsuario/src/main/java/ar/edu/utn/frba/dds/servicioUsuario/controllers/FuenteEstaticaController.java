@@ -1,6 +1,7 @@
 package ar.edu.utn.frba.dds.servicioUsuario.controllers;
 
 import ar.edu.utn.frba.dds.servicioUsuario.servicios.FuenteEstaticaService;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -18,8 +19,8 @@ public class FuenteEstaticaController {
     this.fuenteEstaticaService = fuenteEstaticaService;
   }
 
-  @PostMapping("/hechos")
-  public String subirHechosCSV(@RequestPart("archivo") MultipartFile archivo, @RequestPart("usuario") Long idUsuario) {
-    return this.fuenteEstaticaService.subirHechosCSV(archivo, idUsuario);
+  @PostMapping(value = "/hechos", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  public String subirHechosCSV(@RequestPart("archivo") MultipartFile archivo, @RequestPart("usuario") Long idUsuario, @RequestParam String baseUrl) {
+    return this.fuenteEstaticaService.subirHechosCSV(archivo, idUsuario, baseUrl);
   }
 }
