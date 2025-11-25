@@ -23,7 +23,23 @@ public class EstadisticasController {
         this.servicio = servicio;
     }
 
-    @GetMapping
+    @GetMapping //JSON para el dashboard
+    public ConjuntoEstadisticasDTO obtener(@RequestParam("idUsuario") Long idUsuario) {
+        return servicio.obtenerEstadisticas(idUsuario);
+    }
+
+    @GetMapping("/estadisticas.csv")
+    public ResponseEntity<InputStreamResource> exportarCSV(@RequestParam("idUsuario") Long idUsuario) throws IOException {
+        ByteArrayInputStream is = servicio.exportarCSV(idUsuario);
+        InputStreamResource resource = new InputStreamResource(is);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=estadisticas.csv")
+                .contentType(MediaType.parseMediaType("text/csv"))
+                .body(resource);
+    }
+
+    /*@GetMapping
     public ResponseEntity<ConjuntoEstadisticasDTO> consultar(@RequestParam Long idUsuario) {
         return ResponseEntity.ok(servicio.obtenerEstadisticas(idUsuario));
     }
@@ -40,7 +56,7 @@ public class EstadisticasController {
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=estadisticas.csv")
                 .contentType(MediaType.parseMediaType("text/csv"))
                 .body(resource);
-    }
+    }*/
 
     @GetMapping("/recalcular")
     public Boolean recalcular() {

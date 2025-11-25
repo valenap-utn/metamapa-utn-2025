@@ -3,6 +3,7 @@ package ar.edu.utn.frba.dds.metamapa_client.web;
 import ar.edu.utn.frba.dds.metamapa_client.clients.IFuenteDinamica;
 import ar.edu.utn.frba.dds.metamapa_client.clients.IFuenteEstatica;
 import ar.edu.utn.frba.dds.metamapa_client.clients.IServicioAgregador;
+import ar.edu.utn.frba.dds.metamapa_client.clients.ServicioDeEstadistica;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.*;
 import ar.edu.utn.frba.dds.metamapa_client.services.ConexionServicioUser;
 
@@ -17,6 +18,8 @@ import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.error.DefaultErrorAttributes;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -28,6 +31,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -43,16 +47,18 @@ public class AdminController {
   private final HttpSession session;
   private final ConexionServicioUser conexionServicioUser;
   private final IFuenteDinamica fuenteDinamica;
+  private final ServicioDeEstadistica servicioDeEstadistica;
   @Value("${api.servicioFuenteDinamica.url}")
   private String urlFuenteDinamica;
 
-  public AdminController(IServicioAgregador agregador, DefaultErrorAttributes defaultErrorAttributes, IFuenteEstatica fuenteEstatica, HttpSession session, ConexionServicioUser conexionServicioUser, IFuenteDinamica fuenteDinamica) {
+  public AdminController(IServicioAgregador agregador, DefaultErrorAttributes defaultErrorAttributes, IFuenteEstatica fuenteEstatica, HttpSession session, ConexionServicioUser conexionServicioUser, IFuenteDinamica fuenteDinamica, ServicioDeEstadistica servicioDeEstadistica) {
     this.agregador = agregador;
     this.defaultErrorAttributes = defaultErrorAttributes;
     this.fuenteEstatica = fuenteEstatica;
     this.session = session;
     this.conexionServicioUser = conexionServicioUser;
     this.fuenteDinamica = fuenteDinamica;
+    this.servicioDeEstadistica = servicioDeEstadistica;
   }
 
 
@@ -248,22 +254,6 @@ public class AdminController {
     return "admins/gest-nuevosHechos";
   }
 
-/*
-  @PostMapping("/gest-nuevosHechos/{id}/aprobar")
-  @PreAuthorize("hasRole('ADMINISTRADOR')")
-  public ResponseEntity<Void> aprobarHecho(@PathVariable("id") Long id) {
-    this.agregador.aprobarHecho(id);
-    return ResponseEntity.noContent().build(); //204 en caso de exito !
-  }
-
-  @PostMapping("/gest-nuevosHechos/{id}/rechazar")
-  @PreAuthorize("hasRole('ADMINISTRADOR')")
-  public ResponseEntity<Void> rechazarHecho(@PathVariable("id") Long id) {
-    this.agregador.rechazarHecho(id);
-    return ResponseEntity.noContent().build(); //204 en caso de exito !
-  }
-*/
-
   @PostMapping("/gest-nuevosHechos/{id}/aprobar")
   @PreAuthorize("hasRole('ADMINISTRADOR')")
   public String aprobarHecho(@PathVariable("id") Long id, RedirectAttributes ra) {
@@ -436,8 +426,23 @@ public class AdminController {
   @GetMapping("/dashboard-estadisticas")
   @PreAuthorize("hasRole('ADMINISTRADOR')")
   public String estadisticas() {
-
     return "admins/dashboard-estadisticas";
   }
 
+  @GetMapping("/dashboard-estadisticas/data")
+  @ResponseBody
+  @PreAuthorize("hasRole('ADMINISTRADOR')")
+  public ConjuntoEstadisticasDTO estadisticasData() {
+    return servicioDeEstadistica.obtenerEstadisticas();
+  }
+
+  @GetMapping("/dashboard-estadisticas/exportar")
+  @PreAuthorize("hasRole('ADMINISTRADOR')")
+  public ResponseEntity<byte[]> exportarCsv() {
+    byte[] csv = servicioDeEstadistica.exportarCSV();
+    return ResponseEntity.ok()
+        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=estadisticas.csv")
+        .contentType(MediaType.parseMediaType("text/csv"))
+        .body(csv);
+  }
 }

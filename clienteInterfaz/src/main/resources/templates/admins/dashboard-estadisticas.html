@@ -22,9 +22,14 @@
                         <canvas id="chartProvColeccion" class="mm-chart"></canvas>
                     </div>
 
-                    <p>Colección <span class="mm-chip">Desastres Naturales</span></p>
+                    <!--<p>Colección <span class="mm-chip">Desastres Naturales</span></p>
                     <p>Provincia <span class="mm-chip">Buenos Aires</span></p>
-                    <p>Cantidad de hechos <span class="mm-chip mm-chip--strong">100000</span></p>
+                    <p>Cantidad de hechos <span class="mm-chip mm-chip&#45;&#45;strong">100000</span></p>-->
+                    <div class="mm-stat__details">
+                        <p>Colección:<span class="mm-chip" id="chip-colect-province">-</span></p>
+                        <p>Provincia:<span class="mm-chip" id="chip-provincia">-</span></p>
+                        <p>Cantidad de hechos:<span class="mm-chip mm-chip--strong" id="chip-prov-cantidad">-</span></p>
+                    </div>
                 </article>
 
                 <article class="mm-card mm-stat">
@@ -35,22 +40,22 @@
                         <canvas id="chartCategorias" class="mm-chart"></canvas>
                     </div>
 
-                    <p>Categoría <span class="mm-chip">Defensa civil</span></p>
-                    <p>Cantidad de hechos <span class="mm-chip mm-chip--strong">250000</span></p>
+                    <!--<p>Categoría <span class="mm-chip">Defensa civil</span></p>
+                    <p>Cantidad de hechos <span class="mm-chip mm-chip&#45;&#45;strong">250000</span></p>-->
                 </article>
 
-                <article class="mm-card mm-stat">
+                <!--<article class="mm-card mm-stat">
                     <h3 class="mm-stat__title">Provincia con mayor cantidad de hechos de una categoría</h3>
                     <p>Provincia <span class="mm-chip">Neuquén</span></p>
                     <p>Categoría <span class="mm-chip">Defensa Civil</span></p>
-                    <p>Cantidad de hechos <span class="mm-chip mm-chip--strong">324234</span></p>
-                </article>
+                    <p>Cantidad de hechos <span class="mm-chip mm-chip&#45;&#45;strong">324234</span></p>
+                </article>-->
 
-                <article class="mm-card mm-stat">
+                <!--<article class="mm-card mm-stat">
                     <h3 class="mm-stat__title">Hora con más hechos para una categoría</h3>
                     <p>Categoría <span class="mm-chip">Defensa civil</span></p>
-                    <p>Hora del día <span class="mm-chip mm-chip--strong">19:04</span></p>
-                </article>
+                    <p>Hora del día <span class="mm-chip mm-chip&#45;&#45;strong">19:04</span></p>
+                </article>-->
 
                 <article class="mm-card mm-stat">
                     <h3 class="mm-stat__title">Porcentaje de solicitudes con spam</h3>
@@ -60,8 +65,13 @@
                         <canvas id="chartSpam" class="mm-chart"></canvas>
                     </div>
 
-                    <p>Total <span class="mm-chip mm-chip--strong">90%</span></p>
-                    <p>Cantidad de hechos total <span class="mm-chip">1.000.000</span></p>
+                    <!--<p>Total <span class="mm-chip mm-chip&#45;&#45;strong">90%</span></p>
+                    <p>Cantidad de hechos total <span class="mm-chip">1.000.000</span></p>-->
+
+                    <div class="mm-stat__details">
+                        <p>Porcentaje de spam:<span class="mm-chip mm-chip--strong" id="chip-spam-porcentaje">-</span></p>
+                        <p>Cantidad total de solicitudes:<span class="mm-chip" id="chip-spam-total">-</span></p>
+                    </div>
                 </article>
             </div>
 
