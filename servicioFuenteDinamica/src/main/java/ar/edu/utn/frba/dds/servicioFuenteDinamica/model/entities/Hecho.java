@@ -16,7 +16,6 @@ import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -80,6 +79,9 @@ public class Hecho implements Revisable{
     @ManyToOne()
     @JoinColumn(name = "usuario_id", referencedColumnName = "id")
     @Setter @Getter private Usuario usuario;
+
+    @Column(name = "fecha_aprobacion")
+    @Setter @Getter private LocalDateTime fechaAprobacion;
 
     public Hecho() {
         this.fechaCarga = LocalDateTime.now();

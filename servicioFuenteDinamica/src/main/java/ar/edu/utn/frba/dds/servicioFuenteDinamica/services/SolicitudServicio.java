@@ -3,6 +3,7 @@ package ar.edu.utn.frba.dds.servicioFuenteDinamica.services;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.exceptions.EstadoIncorrecto;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.exceptions.HechoNoEncontrado;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.exceptions.SolicitudNoEncontrada;
+import ar.edu.utn.frba.dds.servicioFuenteDinamica.exceptions.TiempoVencidoHecho;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.exceptions.UsuarioSinPermiso;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos.RevisionDTO;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos.SolicitudDTO;
@@ -19,6 +20,8 @@ import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.roles.Rol;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.repositories.implReal.IHechoRepositoryJPA;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.repositories.implReal.ISolicitudRepositoryJPA;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.repositories.implReal.IUsuarioRepositoryJPA;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.stereotype.Service;
 
@@ -44,9 +47,13 @@ public class SolicitudServicio implements ISolicitudServicio {
         }
         Usuario usuario = this.getOrSaveUsuario(solicitudDTO.getUsuario());
 
-        if(!hecho.getUsuario().equals(usuario)) {
+        if(!hecho.getUsuario().equals(usuario) ) {
             throw new UsuarioSinPermiso("El usuario solicitante no coincide con el que creo el hecho");
         }
+        if (Duration.between(hecho.getFechaCarga(), LocalDateTime.now()).toDays() >= 7) {
+            throw new TiempoVencidoHecho("Ya no se puede modificar el hecho.");
+        }
+
         Solicitud solicitud = new Solicitud(hecho, usuario, solicitudDTO.getJustificacion());
         solicitud.setHecho(hecho);
         solicitud.setEstado(Estado.EN_REVISION);

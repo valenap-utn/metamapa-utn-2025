@@ -20,4 +20,5 @@ public class HechoDTOOutput {
   private ContenidoMultimedia contenidoMultimedia;
   private UsuarioDTO usuario;
   private OrigenDTO origen;
+  private LocalDateTime fechaAprobacion;
 }

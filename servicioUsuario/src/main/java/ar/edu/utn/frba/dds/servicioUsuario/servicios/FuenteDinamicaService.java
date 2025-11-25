@@ -45,7 +45,7 @@ public class FuenteDinamicaService {
 
   public HechoDTOOutput crearHecho(HechoDTOInput hecho, MultipartFile contenidoMultimedia, String baseUrl) {
     Usuario usuario = null;
-    if (hecho.getId() != null) {
+    if (hecho.getIdUsuario() != null) {
       usuario = this.usuarioRepository.findById(hecho.getIdUsuario()).orElse(null);
     }
     hecho.setUsuario(usuario != null ? usuario.getUsuarioDTO(): null);
@@ -64,10 +64,14 @@ public class FuenteDinamicaService {
   }
 
 
-  public HechoDTOOutput revisarHecho(Long idHecho, String baseUrl) {
+  public HechoDTOOutput revisarHecho(Long idHecho, String baseUrl, RevisionDTO revisionDTO) {
     Usuario usuario = this.obtenerUsuario();
+    if (usuario == null) {
+      throw new UsuarioNoEncontrado("El usuario no existe");
+    }
+    revisionDTO.setUsuario(usuario.getUsuarioDTO());
     return initWebClient(baseUrl).put().uri(uriBuilder -> uriBuilder.path("/api/hechos/{id}/revisados").build(idHecho))
-            .retrieve().bodyToMono(HechoDTOOutput.class).block();
+            .bodyValue(revisionDTO).retrieve().bodyToMono(HechoDTOOutput.class).block();
   }
 
   public SolicitudEdicionDTO solicitarModificacion(SolicitudEdicionDTO solicitudEdicion, String baseUrl) {
@@ -95,6 +99,13 @@ public class FuenteDinamicaService {
     return this.initWebClient(baseUrl).get().uri(uriBuilder -> uriBuilder.path("/api/solicitudes").build())
             .retrieve()
             .bodyToMono(ConjuntoSolicitudesEdicionOutput.class)
+            .block();
+  }
+
+  public ConjuntoHechoDTO findHechosPorUsuario(Long id, String baseUrl) {
+    return this.initWebClient(baseUrl).get().uri(uriBuilder -> uriBuilder.path("/api/hechos").queryParam("idUsuario", id).build())
+            .retrieve()
+            .bodyToMono(ConjuntoHechoDTO.class)
             .block();
   }
 }

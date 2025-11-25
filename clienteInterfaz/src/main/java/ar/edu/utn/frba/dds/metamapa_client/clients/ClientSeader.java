@@ -285,6 +285,11 @@ public class ClientSeader implements IFuenteDinamica, IFuenteEstatica, IServicio
   }
 
   @Override
+  public List<HechoDTOOutput> listHechosDelUsuario(Long userId, String baseUrl) {
+    return List.of();
+  }
+
+  @Override
   public SolicitudEdicionDTO solicitarModificacion(SolicitudEdicionDTO solicitudEdicion, String baseUrl) {
     if(solicitudEdicion == null)return null;
     Long idSolicitudEdicion = this.idSolicitudEdicion.getAndIncrement();

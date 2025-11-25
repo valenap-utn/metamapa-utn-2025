@@ -1,5 +1,6 @@
 package ar.edu.utn.frba.dds.metamapa_client.clients;
 
+import ar.edu.utn.frba.dds.metamapa_client.dtos.ConjuntoHechoDTO;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.ConjuntoSolicitudesEdicionOutput;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.HechoDTOInput;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.HechoDTOOutput;
@@ -8,7 +9,6 @@ import ar.edu.utn.frba.dds.metamapa_client.dtos.SolicitudEdicionDTO;
 import ar.edu.utn.frba.dds.metamapa_client.services.internal.WebApiCallerService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.MediaType;
 import org.springframework.http.client.MultipartBodyBuilder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.ExchangeStrategies;
@@ -64,5 +64,11 @@ public class FuenteDinamica implements IFuenteDinamica {
             baseUsuarioUrl + "/api/fuenteDinamica/solicitudes" + "?baseUrl=" + baseUrl,
             ConjuntoSolicitudesEdicionOutput.class
     ).getSolicitudes();
+  }
+
+  @Override
+  public List<HechoDTOOutput> listHechosDelUsuario(Long userId, String baseUrl) {
+    return this.webApiCallerService.get(
+            this.baseUsuarioUrl + "/api/fuenteDinamica/usuarios/"+ userId +"/hechos?baseUrl=" + baseUrl, ConjuntoHechoDTO.class).getHechos();
   }
 }

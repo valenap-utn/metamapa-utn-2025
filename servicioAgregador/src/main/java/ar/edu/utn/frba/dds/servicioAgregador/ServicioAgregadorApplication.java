@@ -7,7 +7,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
-//@EnableScheduling
+@EnableScheduling
 @PropertySource("classpath:coleccionDocumentos.properties")
 @PropertySource("classpath:metodosDeComparacion.properties")
 @ConfigurationPropertiesScan

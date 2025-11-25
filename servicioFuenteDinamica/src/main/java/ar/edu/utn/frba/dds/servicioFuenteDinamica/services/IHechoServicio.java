@@ -12,7 +12,7 @@ import java.util.List;
 public interface IHechoServicio {
   Hecho crearHecho(HechoDTODinamica input, MultipartFile contenidoMultimedia);
 
-  List<Hecho> obtenerHechosPublicos(Boolean pendientes);
+  List<Hecho> obtenerHechosPublicos(Boolean pendientes, Long idUsuario);
 
 
   Hecho revisarHecho(Long id, RevisionDTO revisionDTO);

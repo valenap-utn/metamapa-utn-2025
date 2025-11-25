@@ -30,7 +30,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -149,8 +148,8 @@ public class HechosController {
     // Hechos en revisión
     Set<Long> enRevision = Collections.emptySet();
     try {
-      enRevision = agregador.findAllSolicitudesEdicion().stream()
-          .filter(h -> "PENDIENTE".equalsIgnoreCase(h.getEstado()))
+      enRevision = fuenteDinamica.findAllSolicitudesEdicion(this.urlFuenteDinamica).stream()
+          .filter(h -> "EN_REVISION".equalsIgnoreCase(h.getEstado()))
           .map(SolicitudEdicionDTO::getIdHecho)
           .collect(Collectors.toSet());
     } catch (Exception e) {
@@ -162,8 +161,8 @@ public class HechosController {
     List<HechoDTOOutput> all;
     try {
       Set<Long> finalEnRevision = enRevision;
-      all = agregador.listHechosDelUsuario(userId).stream()
-          .filter(h -> "APROBAR".equalsIgnoreCase(h.getEstado()))
+      all = fuenteDinamica.listHechosDelUsuario(userId, this.urlFuenteDinamica).stream()
+          .filter(h -> "ACEPTADA".equalsIgnoreCase(h.getEstado()))
           .filter(h -> !finalEnRevision.contains(h.getId()))
           .sorted((a, b) -> {
             var ka = (a.getFechaAprobacion() != null ? a.getFechaAprobacion() : a.getFechaCarga());

@@ -19,4 +19,6 @@ public class HechoDTODinamica  {
   private ContenidoMultimedia contenidoMultimedia;
   private String contenido;
   private UsuarioDTO usuario;
+  private String estado;
+  private LocalDateTime fechaAprobacion;
 }

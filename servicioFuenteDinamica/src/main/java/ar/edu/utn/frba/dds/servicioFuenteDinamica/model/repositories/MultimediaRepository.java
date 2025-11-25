@@ -1,6 +1,5 @@
 package ar.edu.utn.frba.dds.servicioFuenteDinamica.model.repositories;
 
-import ar.edu.utn.frba.dds.servicioFuenteDinamica.exceptions.ArchivoYaExiste;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.ContenidoMultimedia;
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;

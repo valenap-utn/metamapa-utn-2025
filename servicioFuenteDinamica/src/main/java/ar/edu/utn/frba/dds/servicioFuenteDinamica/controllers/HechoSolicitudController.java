@@ -33,8 +33,8 @@ public class HechoSolicitudController {
     }
 
     @GetMapping("/hechos")
-    public ResponseEntity<ConjuntoHechoDTODinamica> obtenerHechos( @RequestParam(required = false) Boolean pendientes) {
-        List<HechoDTODinamica> hechos = hechoServicio.obtenerHechosPublicos(pendientes).stream().map(this::toHechoDTO).toList();
+    public ResponseEntity<ConjuntoHechoDTODinamica> obtenerHechos( @RequestParam(required = false) Boolean pendientes, @RequestParam(required = false) Long idUsuario) {
+        List<HechoDTODinamica> hechos = hechoServicio.obtenerHechosPublicos(pendientes, idUsuario).stream().map(this::toHechoDTO).toList();
         ConjuntoHechoDTODinamica conjuntoHechos = new ConjuntoHechoDTODinamica();
         conjuntoHechos.setHechos(hechos);
         return ResponseEntity.ok(conjuntoHechos);
@@ -51,6 +51,8 @@ public class HechoSolicitudController {
         hechoDTO.setTitulo(hecho.getTitulo());
         hechoDTO.setUbicacion(hecho.getUbicacion());
         hechoDTO.setUsuario(hecho.getUsuarioDTO());
+        hechoDTO.setEstado(hecho.getEstado().name());
+        hechoDTO.setFechaAprobacion(hecho.getFechaAprobacion());
         return hechoDTO;
     }
 
@@ -90,7 +92,7 @@ public class HechoSolicitudController {
     public ResponseEntity<ConjuntoSolicitud> obtenerSolicituds() {
         List<Solicitud> solicituds = this.solicitudServicio.findAllSolicitudes();
         ConjuntoSolicitud conjuntoSolicitud = new ConjuntoSolicitud();
-        conjuntoSolicitud.setSolicitudes(solicituds.stream().map(solicitud -> this.toSolicitudDTO(solicitud)).toList());
+        conjuntoSolicitud.setSolicitudes(solicituds.stream().map(this::toSolicitudDTO).toList());
         return ResponseEntity.ok(conjuntoSolicitud);
     }
 }

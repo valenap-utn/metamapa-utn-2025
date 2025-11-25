@@ -34,8 +34,8 @@ public class FuenteDinamicaController {
   }
 
   @PostMapping("/hechos/{id}/revisados")
-  public HechoDTOOutput revisarHecho(@PathVariable Long id, @RequestParam String baseUrl) {
-    return this.fuenteDinamicaService.revisarHecho(id, baseUrl);
+  public HechoDTOOutput revisarHecho(@PathVariable Long id, @RequestParam String baseUrl, @RequestBody RevisionDTO revisionDTO) {
+    return this.fuenteDinamicaService.revisarHecho(id, baseUrl, revisionDTO);
   }
 
   @PostMapping("/solicitudes")
@@ -56,6 +56,11 @@ public class FuenteDinamicaController {
   @GetMapping("/solicitudes")
   public ConjuntoSolicitudesEdicionOutput findAllSolicitudes(@RequestParam String baseUrl){
     return this.fuenteDinamicaService.findAllSolicitudes(baseUrl);
+  }
+
+  @GetMapping("/usuarios/{id}/hechos")
+  public ConjuntoHechoDTO hechoUsuario(@PathVariable Long id, @RequestParam String baseUrl){
+    return this.fuenteDinamicaService.findHechosPorUsuario(id, baseUrl);
   }
 
 }

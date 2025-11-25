@@ -18,4 +18,6 @@ public interface IFuenteDinamica {
   SolicitudEdicionDTO  procesarSolicitudEdicion(Long idSolicitud, String baseUrl, RevisionDTO revisionDTO);
 
   List<SolicitudEdicionDTO> findAllSolicitudesEdicion(String baseUrl);
+
+  List<HechoDTOOutput> listHechosDelUsuario(Long userId, String baseUrl);
 }

@@ -65,9 +65,12 @@ public class HechoServicio implements IHechoServicio {
     }
 
     @Override
-    public List<Hecho> obtenerHechosPublicos(Boolean pendientes) {
+    public List<Hecho> obtenerHechosPublicos(Boolean pendientes, Long idUsuario) {
         if (pendientes != null && pendientes) {
             return hechoRepository.findHechosByEstado(Estado.EN_REVISION);
+        }
+        if (idUsuario != null) {
+            return hechoRepository.findHechosByIdUsuario(idUsuario);
         }
         return this.hechoRepository.findAll();
     }
@@ -91,7 +94,10 @@ public class HechoServicio implements IHechoServicio {
         if (!usuario.tienePermisoDe(Permiso.REVISARHECHO, Rol.ADMINISTRADOR)) {
             throw new UsuarioSinPermiso("El usuario suministrado no tiene permiso para revisar el hecho");
         }
-        this.revisadorHechosSolicitud.revisar(hecho, revisionDTO.getEstado(), revisionDTO.getComentario());
+        Estado estado= this.revisadorHechosSolicitud.revisar(hecho, revisionDTO.getEstado(), revisionDTO.getComentario());
+        if (estado == Estado.ACEPTADA) {
+            hecho.setFechaAprobacion(LocalDateTime.now());
+        }
         return hechoRepository.save(hecho);
     }
 
