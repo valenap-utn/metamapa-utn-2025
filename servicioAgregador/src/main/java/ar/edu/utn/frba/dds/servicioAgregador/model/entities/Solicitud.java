@@ -46,7 +46,7 @@ public class Solicitud {
     @Getter @Setter private String justificacionCambioEstado;
 
     public Solicitud(Hecho hecho, Usuario usuario, String justificacion) {
-        if (justificacion.length() < 500) {
+        if (justificacion.length() < 500 && usuario == null) {
             throw new SolicitudError("La justificación debe tener como minimo 500 caracteres");
         }
         this.usuario = usuario;
