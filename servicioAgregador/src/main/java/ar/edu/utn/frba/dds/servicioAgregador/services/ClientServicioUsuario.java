@@ -10,12 +10,12 @@ public class ClientServicioUsuario {
   private final WebClient webClient;
 
 
-  public ClientServicioUsuario(@Value("{client.servicio.usuario}") String baseURL) {
+  public ClientServicioUsuario(@Value("${client.servicio.usuario}") String baseURL) {
     this.webClient = WebClient.builder().baseUrl(baseURL).build();
   }
 
   public UsuarioDTO findUsuarioById(Long id) {
-    return this.webClient.get().uri(uriBuilder -> uriBuilder.path("/api/{id}").build(id))
+    return this.webClient.get().uri(uriBuilder -> uriBuilder.path("/api/usuarios/{id}").build(id))
             .retrieve().bodyToMono(UsuarioDTO.class).block();
   }
 }

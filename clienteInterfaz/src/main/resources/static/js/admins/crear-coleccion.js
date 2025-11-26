@@ -4,11 +4,11 @@
     const urlEl = document.getElementById('url');
     const addBtn = document.getElementById('addFuente');
     const cont = document.getElementById('fuentesContainer');
-    const hidden = document.getElementById('fuentesHidden');
-    if (!tipoEl || !urlEl || !addBtn || !cont || !hidden) return;
+
+    if (!tipoEl || !urlEl || !addBtn || !cont) return;
 
     const fuentes = []; // {tipo, url}
-
+    agregarFuentesYaHechas(fuentes)
     // Normaliza: agrega https:// si falta y recorta espacios
     function normalizeUrl(v) {
         let s = (v || '').trim();
@@ -62,7 +62,6 @@
     addBtn.addEventListener('click', () => {
         const tipo = (tipoEl.value || '').trim() || '—';
         const url = normalizeUrl(urlEl.value);
-
         if (!urlOk(url)) {
             urlEl.classList.add('is-invalid');
             urlEl.focus();
@@ -91,7 +90,22 @@
             addBtn.click();
         }
     });
+    function agregarFuentesYaHechas(fuentes) {
+        const container = document.getElementById("fuentesContainer")
+        const fuentesExistentes = container.querySelectorAll("span.chip")
+        if(fuentesExistentes.length > 0) {
+            fuentesExistentes.forEach((fuente, indice) => {
+                const tipo = document.getElementById(`fuentes[${indice}].tipoOrigen`).value
+                const url = document.getElementById(`fuentes[${indice}].url`).value
+                fuentes.push({tipo, url});
+                fuente.querySelector('.chip__remove').addEventListener('click', () => {
+                    fuentes.splice(indice, 1);
+                    render();
+                });
+            })
 
+        }
+    }
     validate();
     render();
 })();
@@ -102,11 +116,10 @@
     const wrap = document.getElementById('critValorWrap');
     const addBtn = document.getElementById('addCriterio');
     const chips = document.getElementById('criteriosChips');
-    const hidden = document.getElementById('criteriosHidden');
-    if (!tipoSel || !wrap || !addBtn || !chips || !hidden) return;
+    if (!tipoSel || !wrap || !addBtn || !chips) return;
 
     const criterios = []; // { tipo, label, ...valores }
-    agregarCriteriosYaHechos(criterios)
+
     const todayISO = () => new Date().toISOString().slice(0, 10);
 
     // --- configuraciones por tipo ---
@@ -151,12 +164,50 @@
             }
         },
 
-        UBICACION: {
-            label: 'Ubicación',
+        UBICACIONPROVINCIA: {
+            label: 'Ubicación Provincia',
             render() {
                 wrap.innerHTML = `
           <label class="mm-label" for="critValorUbic">Valor</label>
-          <input id="critValorUbic" class="mm-input" placeholder="Provincia / Ciudad / zona…"/>
+          <input id="critValorUbic" class="mm-input" placeholder="Provincia"/>
+        `;
+            },
+            read() {
+                const el = document.getElementById('critValorUbic');
+                const v = (el?.value || '').trim();
+                if (!v) {
+                    el?.classList.add('is-invalid');
+                    return null;
+                }
+                el.classList.remove('is-invalid');
+                return {value: v};
+            }
+        },
+        UBICACIONMUNICIPIO: {
+            label: 'Ubicación Municipio',
+            render() {
+                wrap.innerHTML = `
+          <label class="mm-label" for="critValorUbic">Valor</label>
+          <input id="critValorUbic" class="mm-input" placeholder="Provincia"/>
+        `;
+            },
+            read() {
+                const el = document.getElementById('critValorUbic');
+                const v = (el?.value || '').trim();
+                if (!v) {
+                    el?.classList.add('is-invalid');
+                    return null;
+                }
+                el.classList.remove('is-invalid');
+                return {value: v};
+            }
+        },
+        UBICACIONDEPARTAMENTO: {
+            label: 'Ubicación Departamento',
+            render() {
+                wrap.innerHTML = `
+          <label class="mm-label" for="critValorUbic">Valor</label>
+          <input id="critValorUbic" class="mm-input" placeholder="Provincia"/>
         `;
             },
             read() {
@@ -175,16 +226,16 @@
         FECHAACONTECIMIENTO: multiDateCfg('Fecha de acontecimiento', false),
         FECHACARGA: multiDateCfg('Fecha de carga', true)
     };
-
+    agregarCriteriosYaHechos(criterios)
     // fecha exacta (un solo input)
     function multiDateCfg(label, esConCargaActual) {
         return {
             label,
             render() {
                 wrap.innerHTML = `
-          <label class="mm-label" for="critFechaInicial">${label}</label>
+          <label class="mm-label" for="critFechaInicial">${label} inicial</label>
           <input id="critFechaInicial" type="datetime-local" class="mm-input" >
-          <label class="mm-label" for="critFechaFinal">${label}</label>
+          <label class="mm-label" for="critFechaFinal">${label} final</label>
           <input id="critFechaFinal" type="datetime-local" class="mm-input" value="${esConCargaActual ? todayISO(): ''}" >
         `;
             },
@@ -292,6 +343,12 @@
         } else if(c.tipo === "FECHACARGA") {
             return `<input type="datetime-local" style="display: none;" name="criterios[${i}].fechaCargaInicial" value="${c.desde}"/>` +
                 `<input type="datetime-local" style="display: none;" name="criterios[${i}].fechaCargaFinal" value="${c.hasta}"/>`
+        } else if(c.tipo === "UBICACIONPROVINCIA") {
+            return `<input type="text" style="display: none;" name="criterios[${i}].provincia" value="${c.value}"/>`
+        } else if (c.tipo === "UBICACIONMUNICIPIO") {
+            return `<input type="text" style="display: none;" name="criterios[${i}].municipio" value="${c.value}"/>`
+        } else if (c.tipo === "UBICACIONDEPARTAMENTO") {
+            return `<input type="text" style="display: none;" name="criterios[${i}].departamento" value="${c.value}"/>`
         }
         return ""
     }
@@ -307,32 +364,45 @@
         const criteriosExistentes = container.querySelectorAll("span.mm-chip")
         if(criteriosExistentes.length > 0) {
             criteriosExistentes.forEach((criterio, indice) => {
-                const inputTipo = criterio.getElementById("Criterio."+ indice).value
-
+                const inputTipo = document.getElementById("Criterio."+ indice).value
                 const cfg = CFG[inputTipo];
                 if (!cfg) return;
 
-                const val = cfg.read();
-                if (!val) return;
-
-                const label = buildLabel(cfg.label, val);
+                let val = undefined
 
                 if (inputTipo === "TITULO") {
-                    const titulo = criterio.getElementsByName(`criterios[${indice}].titulo`).item(0).value
-                    criterios.push({tipo: inputTipo,label, value: titulo })
+                    const titulo = document.getElementById(`criterios[${indice}].titulo`).value
+                    val = {value: titulo }
                 } else if (inputTipo === "CATEGORIA") {
-                    const categoria = criterio.getElementsByName(`criterios[${indice}].categoria`).item(0).value
-                    criterios.push({tipo: inputTipo,label, text: categoria })
+                    const categoria = document.getElementById(`criterios[${indice}].categoria`).value
+                    val = {text: categoria,  value: categoria}
                 } else if (inputTipo === "FECHACARGA") {
-                    const fechaInicial = criterio.getElementsByName(`criterios[${indice}].fechaAcontecimientoInicial`).item(0).value
-                    const fechaFinal = criterio.getElementsByName(`criterios[${indice}].fechaAcontecimientoFinal`).item(0).value
-                    criterios.push({tipo: inputTipo,label, desde: fechaInicial, hasta: fechaFinal })
+                    const fechaInicial = document.getElementById(`criterios[${indice}].fechaAcontecimientoInicial`).value
+                    const fechaFinal = document.getElementById(`criterios[${indice}].fechaAcontecimientoFinal`).value
+                    val = {desde: fechaInicial, hasta: fechaFinal }
                 } else if (inputTipo === "FECHAACONTECIMIENTO") {
-                    const fechaInicial = criterio.getElementsByName(`criterios[${indice}].fechaCargaInicial`).item(0).value
-                    const fechaFinal = criterio.getElementsByName(`criterios[${indice}].fechaCargaFinal`).item(0).value
-                    criterios.push({tipo: inputTipo, label, desde: fechaInicial, hasta: fechaFinal})
+                    const fechaInicial = document.getElementById(`criterios[${indice}].fechaCargaInicial`).value
+                    const fechaFinal = document.getElementById(`criterios[${indice}].fechaCargaFinal`).value
+                    val = {desde: fechaInicial, hasta: fechaFinal}
+                } else if(inputTipo === "UBICACIONPROVINCIA") {
+                    const provincia = document.getElementById(`criterios[${indice}].provincia`).value
+                    val = {value: provincia}
+                } else if (inputTipo === "UBICACIONMUNICIPIO") {
+                    const municipio = document.getElementById(`criterios[${indice}].municipio`).value
+                    val = {value: municipio}
+                } else if (inputTipo === "UBICACIONDEPARTAMENTO") {
+                    const departamento = document.getElementById(`criterios[${indice}].departamento`).value
+                    val = {value: departamento}
                 }
+                const label = buildLabel(cfg.label, val);
+                criterios.push({tipo:  inputTipo, label, ...val});
+                criterio.querySelector('.chip__remove').addEventListener('click', () => {
+                    criterios.splice(indice, 1);
+                    renderChips();
+                    persist();
+                });
             })
+
         }
     }
 })();

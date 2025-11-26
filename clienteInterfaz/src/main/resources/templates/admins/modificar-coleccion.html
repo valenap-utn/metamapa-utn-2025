@@ -109,10 +109,12 @@
               <span class="chip" th:each="f, i : *{fuentes}">
                 <!-- inputs ocultos indexados -->
                 <input type="text" style="display:none"
+                       th:id="${'fuentes[' + i.index +'].tipoOrigen'}"
                        th:field="*{fuentes[__${i.index}__].tipoOrigen}"
                        th:value="${f.tipoOrigen}"/>
                 <input type="text" style="display:none"
                        th:field="*{fuentes[__${i.index}__].url}"
+                       th:id="${'fuentes[' + i.index +'].url'}"
                        th:value="${f.url}"/>
 
                 <strong th:text="${f.tipoOrigen}">DINAMICA</strong> ·
@@ -139,7 +141,9 @@
                                         <option value="CATEGORIA">Categoría</option>
                                         <option value="FECHAACONTECIMIENTO">Fecha de acontecimiento</option>
                                         <option value="FECHACARGA">Fecha de carga</option>
-                                        <option value="UBICACION">Ubicación</option>
+                                        <option value="UBICACIONPROVINCIA">Provincia</option>
+                                        <option value="UBICACIONMUNICIPIO">Municipio</option>
+                                        <option value="UBICACIONDEPARTAMENTO">Departamento</option>
                                         <option value="TITULO">Título contiene</option>
                                     </select>
                                 </div>
@@ -160,36 +164,54 @@
 
                             <!-- Chips existentes renderizados por Thymeleaf -->
                             <div id="criteriosChips" class="mm-chips" aria-live="polite">
-                <span class="mm-chip" th:each="c, j : *{criterios}">
+                                <span class="mm-chip" th:each="c, j : *{criterios}">
                   <!-- inputs ocultos indexados -->
                   <input type="text" style="display:none"
+                         th:id="${'Criterio.' + j.index}"
                          th:field="*{criterios[__${j.index}__].tipo}"
                          th:value="${c.tipo}"/>
                     <div style="display: none;" th:each="categoria : ${categorias}">
                                             <option th:text="${categoria}"></option>
                                         </div>
                   <input th:if="${c.titulo != null}" type="text" style="display:none"
+                         th:id="${'criterios[' + j.index +'].titulo'}"
                          th:field="*{criterios[__${j.index}__].titulo}"
                          th:value="${c.titulo}"/>
 
                   <input th:if="${c.categoria != null}" type="text" style="display:none"
+                         th:id="${'criterios[' + j.index +'].categoria'}"
                          th:field="*{criterios[__${j.index}__].categoria}"
                          th:value="${c.categoria}"/>
 
                   <input th:if="${c.tipo.equalsIgnoreCase('FECHAACONTECIMIENTO')}" type="datetime-local" style="display:none"
                          th:field="*{criterios[__${j.index}__].fechaAcontecimientoInicial}"
+                         th:id="${'criterios[' + j.index +'].fechaAcontecimientoInicial'}"
                          th:value="${c.fechaAcontecimientoInicial}"/>
                   <input th:if="${c.tipo.equalsIgnoreCase('FECHAACONTECIMIENTO')}" type="datetime-local" style="display:none"
                          th:field="*{criterios[__${j.index}__].fechaAcontecimientoFinal}"
+                         th:id="${'criterios[' + j.index +'].fechaAcontecimientoFinal'}"
                          th:value="${c.fechaAcontecimientoFinal}"/>
 
                   <input th:if="${c.tipo.equalsIgnoreCase('FECHACARGA')}" type="datetime-local" style="display:none"
                          th:field="*{criterios[__${j.index}__].fechaCargaInicial}"
+                         th:id="${'criterios[' + j.index +'].fechaCargaInicial'}"
                          th:value="${c.fechaCargaInicial}"/>
                   <input th:if="${c.tipo.equalsIgnoreCase('FECHACARGA')}" type="datetime-local" style="display:none"
                          th:field="*{criterios[__${j.index}__].fechaCargaFinal}"
+                         th:id="${'criterios[' + j.index +'].fechaCargaFinal'}"
                          th:value="${c.fechaCargaFinal}"/>
-
+                  <input th:if="${c.tipo.equalsIgnoreCase('UBICACIONPROVINCIA')}" type="text" style="display:none"
+                         th:field="*{criterios[__${j.index}__].provincia}"
+                         th:id="${'criterios[' + j.index +'].provincia'}"
+                         th:value="${c.provincia}"/>
+                  <input th:if="${c.tipo.equalsIgnoreCase('UBICACIONMUNICIPIO')}" type="text" style="display:none"
+                         th:field="*{criterios[__${j.index}__].municipio}"
+                         th:id="${'criterios[' + j.index +'].municipio'}"
+                         th:value="${c.municipio}"/>
+                  <input th:if="${c.tipo.equalsIgnoreCase('UBICACIONDEPARTAMENTO')}" type="text" style="display:none"
+                         th:field="*{criterios[__${j.index}__].departamento}"
+                         th:id="${'criterios[' + j.index +'].departamento'}"
+                         th:value="${c.departamento}"/>
                     <!-- Etiquetas visibles -->
                   <b th:if="${c.tipo.equalsIgnoreCase('TITULO')}"
                      th:text="${'Título: ' + c.titulo}"></b>
@@ -203,7 +225,12 @@
                      th:text="${'Fecha de carga: ' +
                                (c.fechaCargaInicial != null ? c.fechaCargaInicial : '-') + '→' +
                                (c.fechaCargaFinal != null ? c.fechaCargaFinal : '-') }"></b>
-
+                  <b th:if="${c.tipo.equalsIgnoreCase('UBICACIONPROVINCIA')}"
+                     th:text="${'Ubicación Provincia: ' + c.provincia}"></b>
+                  <b th:if="${c.tipo.equalsIgnoreCase('UBICACIONMUNICIPIO')}"
+                     th:text="${'Ubicación Municipio: ' + c.municipio}"></b>
+                  <b th:if="${c.tipo.equalsIgnoreCase('UBICACIONDEPARTAMENTO')}"
+                     th:text="${'Ubicación Departamento: ' + c.departamento}"></b>
                   <button type="button" class="chip__remove" aria-label="Quitar criterio">
                     <span aria-hidden="true">×</span>
                   </button>
@@ -222,6 +249,7 @@
             </form>
         </div>
     </section>
+    <script type="module" th:src="@{/js/admins/crear-coleccion.js}"></script>
 </main>
 </body>
 </html>

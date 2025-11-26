@@ -18,5 +18,7 @@ public class CriterioDTO {
   private String titulo;
   private String descripcion;
   private String categoria;
-  private Ubicacion ubicacion;
+  private String provincia;
+  private String municipio;
+  private String departamento;
 }

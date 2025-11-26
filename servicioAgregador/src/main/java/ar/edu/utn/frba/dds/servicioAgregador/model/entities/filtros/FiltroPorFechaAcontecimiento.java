@@ -26,7 +26,7 @@ public class FiltroPorFechaAcontecimiento extends FiltroPorFecha {
         CriterioDTO criterioDTO = new CriterioDTO();
         criterioDTO.setFechaAcontecimientoInicial(this.getDesde());
         criterioDTO.setFechaAcontecimientoFinal(this.getHasta());
-        criterioDTO.setTipo("FECHAACONTECIMENTO");
+        criterioDTO.setTipo("FECHAACONTECIMIENTO");
         return criterioDTO;
     }
 }
