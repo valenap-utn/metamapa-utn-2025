@@ -61,8 +61,8 @@ const data = '../../data/solicitudes-eliminacion.json';
         const all = payload.solicitudes;
         const counts = {
             TOTAL: all.length,
-            PENDIENTE: all.filter(s=>s.estado==='PENDIENTE').length,
-            APROBADA:  all.filter(s=>s.estado==='APROBADA').length,
+            PENDIENTE: all.filter(s=>s.estado==='EN_REVISION').length,
+            APROBADA:  all.filter(s=>s.estado==='ACEPTADA').length,
             RECHAZADA: all.filter(s=>s.estado==='RECHAZADA').length
         };
         setText('#count-todas', counts.TOTAL);
@@ -145,8 +145,8 @@ const data = '../../data/solicitudes-eliminacion.json';
 
     function badgeFor(estado){
         switch(estado){
-            case 'PENDIENTE': return { txt:'Pendiente', cls:'badge-brand' };
-            case 'APROBADA':  return { txt:'Aprobada',  cls:'badge-neutral' };
+            case 'EN_REVISION': return { txt:'EN_REVISION', cls:'badge-brand' };
+            case 'ACEPTADA':  return { txt:'ACEPTADA',  cls:'badge-neutral' };
             case 'RECHAZADA': return { txt:'Rechazada', cls:'badge-neutral' };
             default:          return { txt:estado,      cls:'badge-neutral' };
         }

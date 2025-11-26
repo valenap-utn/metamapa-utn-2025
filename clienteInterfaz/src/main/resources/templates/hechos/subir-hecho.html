@@ -129,7 +129,7 @@
                         <div class="mm-field" style="grid-column: 1 / -1;">
                             <label for="descripcion" class="mm-label">Descripción</label>
                             <textarea id="descripcion" name="descripcion" class="mm-input mm-input--textarea"
-                                      minlength="500" required data-min-guest="500" data-min-auth="0"
+                                      required
                                       placeholder="Contá brevemente qué ocurrió…" th:field="*{descripcion}" th:classappend="${#fields.hasErrors('descripcion')} ? ' is-invalid' : ''"></textarea>
 <!--                            <div id="descCounter" class="form-text">0 / 500</div>-->
                             <div class="d-flex justify-content-between mt-1">
@@ -183,8 +183,47 @@
         </div>
     </section>
 
+
+    <!--  Pop-up de que se creó el hecho !  -->
+    <div class="modal fade" id="modalExitoHecho" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content mm-modal">
+                <div class="modal-header">
+                    <h5 class="modal-title">¡Hecho enviado con éxito!</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    El hecho fue cargado y se encuentra en proceso de revisión por un administrador.
+                </div>
+                <div class="modal-footer">
+                    <a th:href="@{/main-gral}" class="btn btn-primary">Volver al inicio</a>
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Seguir cargando</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script th:src="@{/js/commons.js}"></script>
     <script th:src="@{/js/subir-hecho.js}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+            crossorigin="anonymous"></script>
+
+    <script th:inline="javascript">
+        document.addEventListener("DOMContentLoaded", function () {
+            var exito = /*[[${exitoSubirHecho}]]*/ false;
+
+            if (exito) {
+                var modalEl = document.getElementById('modalExitoHecho');
+                if (modalEl) {
+                    var modal = new bootstrap.Modal(modalEl);
+                    modal.show();
+                }
+            }
+        });
+    </script>
+
+
     <script>
         (function(){
             const form = document.getElementById('form-hecho');

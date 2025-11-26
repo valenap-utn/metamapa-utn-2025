@@ -8,6 +8,7 @@ import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.HechoDTOOutput;
 import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.RevisionDTO;
 import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.SolicitudEdicionDTO;
 import ar.edu.utn.frba.dds.servicioUsuario.servicios.FuenteDinamicaService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/fuenteDinamica")
+@Slf4j
 public class FuenteDinamicaController {
   private final FuenteDinamicaService fuenteDinamicaService;
 
@@ -72,6 +74,13 @@ public class FuenteDinamicaController {
   @GetMapping("/categorias")
   public ConjuntoCategorias findAllCategorias(@RequestParam String baseUrl){
     return this.fuenteDinamicaService.findAllCategorias(baseUrl);
+  }
+
+  //Paara nuevos hechos
+  @GetMapping("/nuevos-hechos")
+  public ConjuntoHechoDTO findNuevosHechos(@RequestParam String baseUrl, @RequestParam(required = false,defaultValue = "TODAS")String estado){
+    log.info("Pidiendo los nuevos hechos  fuente dinamica...");
+    return this.fuenteDinamicaService.findNuevosHechos(baseUrl, estado);
   }
 
 }

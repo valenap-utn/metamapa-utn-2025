@@ -33,7 +33,7 @@
             <span style="display: none;" id="hechoId" th:text="${hecho.id}"></span>
             <div class="col-12 col-md-6">
                 <small class="mm-label d-block">Categoría</small>
-                <span id="hCategoria" th:text="${'Categoría: ' + hecho.getCategoria().getNombre()}">-</span>
+                <span id="hCategoria" th:text="${hecho.getCategoria() != null ? hecho.getCategoria().getNombre() : -'-'}">-</span>
             </div>
 
             <div class="col-12 col-md-6">
@@ -48,7 +48,7 @@
 
             <div class="col-12 col-md-6">
                 <small class="mm-label d-block">Origen</small>
-                <span id="hOrigen" th:text="${hecho.getOrigen().getTipo()}">—</span>
+                <span id="hOrigen" th:text="${hecho.getOrigen() != null ? hecho.getOrigen().getTipo() : '—'}">—</span>
             </div>
         </div>
 

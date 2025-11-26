@@ -71,7 +71,7 @@ public class FuenteDinamicaService {
       throw new UsuarioNoEncontrado("El usuario no existe");
     }
     revisionDTO.setUsuario(usuario.getUsuarioDTO());
-    return initWebClient(baseUrl).put().uri(uriBuilder -> uriBuilder.path("/api/hechos/{id}/revisados").build(idHecho))
+    return initWebClient(baseUrl).post().uri(uriBuilder -> uriBuilder.path("/api/hechos/{id}/revisados").build(idHecho))
             .bodyValue(revisionDTO).retrieve().bodyToMono(HechoDTOOutput.class).block();
   }
 
@@ -128,5 +128,18 @@ public class FuenteDinamicaService {
   public ConjuntoCategorias findAllCategorias(String baseUrl) {
     return this.initWebClient(baseUrl).get().uri(uriBuilder -> uriBuilder.path("/api/categorias").build())
             .retrieve().bodyToMono(ConjuntoCategorias.class).block();
+  }
+
+  //Para hechos nuevos
+  public ConjuntoHechoDTO findNuevosHechos(String baseUrl, String estado) {
+    return this.initWebClient(baseUrl)
+        .get()
+        .uri(uriBuilder -> uriBuilder
+            .path("/api/nuevos-hechos")
+            .queryParam("estado",estado)
+            .build())
+        .retrieve()
+        .bodyToMono(ConjuntoHechoDTO.class)
+        .block();
   }
 }

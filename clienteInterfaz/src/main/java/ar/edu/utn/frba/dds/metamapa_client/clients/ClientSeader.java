@@ -306,6 +306,11 @@ public class ClientSeader implements IFuenteDinamica, IFuenteEstatica, IServicio
     return List.of();
   }
 
+  @Override
+  public List<HechoDTOOutput> findHechosNuevos(String baseUrl, String estado) {
+    return List.of();
+  }
+
 
   @Override
   public SolicitudEdicionDTO procesarSolicitudEdicion(Long idSolicitud, String baseUrl, RevisionDTO revisionDTO) {

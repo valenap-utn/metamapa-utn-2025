@@ -4,5 +4,6 @@ public enum Estado {
     EN_REVISION,
     ACEPTADA,
     ACEPTADA_CON_CAMBIOS,
-    RECHAZADA
+    RECHAZADA,
+    TODAS
 }

@@ -20,6 +20,8 @@ import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.repositories.implReal.IC
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.repositories.implReal.IHechoRepositoryJPA;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.repositories.implReal.IUsuarioRepositoryJPA;
 import java.util.Optional;
+
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -27,6 +29,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
+@Slf4j
 public class HechoServicio implements IHechoServicio {
 
     private final IHechoRepositoryJPA hechoRepository;
@@ -131,4 +134,26 @@ public class HechoServicio implements IHechoServicio {
     public List<Categoria> findAllCategorias() {
         return this.categoriaRepository.findAll();
     }
+
+    @Override
+    public List<Hecho> obtenerHechosNuevos(String estadoRaw) {
+        // Normalizamos el string que vino por query param
+        String estado = estadoRaw == null ? "" : estadoRaw.trim().toUpperCase();
+        List<Estado> estadosModerables = List.of(
+            Estado.EN_REVISION,
+            Estado.ACEPTADA,
+            Estado.RECHAZADA
+        );
+        if (estado.isEmpty() || "TODAS".equals(estado) || "TODOS".equals(estado)) {
+            return hechoRepository.findHechosByEstadoIn(estadosModerables);
+        }
+        try {
+            Estado estadoFinal = Estado.valueOf(estado);
+            return hechoRepository.findHechosByEstado(estadoFinal);
+        } catch (IllegalArgumentException e) {
+            log.info("[HechoServicio] Valor inválido para estado='" + estado + "', devolviendo todos los estados moderables.");
+            return hechoRepository.findHechosByEstadoIn(estadosModerables);
+        }
+    }
+
 }

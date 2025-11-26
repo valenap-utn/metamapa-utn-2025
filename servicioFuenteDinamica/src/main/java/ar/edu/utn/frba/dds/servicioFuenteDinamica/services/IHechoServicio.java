@@ -23,4 +23,6 @@ public interface IHechoServicio {
   Hecho findHechoById(Long idHecho);
 
   List<Categoria> findAllCategorias();
+
+  List<Hecho> obtenerHechosNuevos(String estado);
 }

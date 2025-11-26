@@ -16,13 +16,13 @@
             <button type="submit" class="mm-seg__btn" th:classappend="${estado}=='TODAS' ? 'is-active' : ''" name="estado" value="TODAS" th:attr="aria-selected=${estado}=='TODAS'">
                 Todos <span class="mm-seg__badge" id="count-todas" th:text="${countTodas}">0</span>
             </button>
-            <button type="submit" class="mm-seg__btn" th:classappend="${estado}=='PENDIENTE' ? 'is-active' : ''" name="estado" value="PENDIENTE" th:attr="aria-selected=${estado}=='PENDIENTE'">
+            <button type="submit" class="mm-seg__btn" th:classappend="${estado}=='EN_REVISION' ? 'is-active' : ''" name="estado" value="EN_REVISION" th:attr="aria-selected=${estado}=='EN_REVISION'">
                 Pendientes <span class="mm-seg__badge" id="count-pend" th:text="${countPend}">0</span>
             </button>
-            <button type="submit" class="mm-seg__btn" th:classappend="${estado}=='APROBAR' ? 'is-active' : ''" name="estado" value="APROBAR" th:attr="aria-selected=${estado}=='APROBAR'">
+            <button type="submit" class="mm-seg__btn" th:classappend="${estado}=='ACEPTADA' ? 'is-active' : ''" name="estado" value="ACEPTADA" th:attr="aria-selected=${estado}=='ACEPTADA'">
                 Aprobados <span class="mm-seg__badge" id="count-apr" th:text="${countApro}">0</span>
             </button>
-            <button type="submit" class="mm-seg__btn" th:classappend="${estado}=='RECHAZAR' ? 'is-active' : ''"  name="estado" value="RECHAZAR" th:attr="aria-selected=${estado}=='RECHAZAR'">
+            <button type="submit" class="mm-seg__btn" th:classappend="${estado}=='RECHAZADA' ? 'is-active' : ''"  name="estado" value="RECHAZADA" th:attr="aria-selected=${estado}=='RECHAZADA'">
                 Rechazados <span class="mm-seg__badge" id="count-cancel" th:text="${countRech}">0</span>
             </button>
         </div>
@@ -44,8 +44,8 @@
                     </h3>
 
                     <div class="mm-req__meta">
-                        <span class="badge" th:classappend="${h.estado}=='PENDIENTE' ? ' badge-brand' : ' badge-neutral'" th:text="${h.estado}">
-                            PENDIENTE
+                        <span class="badge" th:classappend="${h.estado}=='EN_REVISION' ? ' badge-brand' : ' badge-neutral'" th:text="${h.estado}">
+                            EN REVISION
                         </span>
 
                         <span class="badge badge-neutral" th:text="${'Creado por ' + (h.idUsuario != null ? ('Usuario ' + h.idUsuario) : 'Anónimo')}">
@@ -57,7 +57,7 @@
                 </div>
 
                 <!-- Acciones -->
-                <div class="mm-req__actions" th:if="${h.estado}=='PENDIENTE'">
+                <div class="mm-req__actions" th:if="${h.estado}=='EN_REVISION'">
                     <form th:action="@{|/admin/gest-nuevosHechos/${h.id}/aprobar|}" method="post" style="display: inline">
                         <input type="hidden" name="estado" th:value="${estado}">
                         <input type="hidden" name="q" th:value="${q}">
@@ -82,7 +82,7 @@
                 <p class="m-0"><strong>Ubicación:</strong>
                     <span th:text="${h.ubicacion != null ? (h.ubicacion.latitud + ', ' + h.ubicacion.longitud) : '—'}">—</span>
                 </p>
-                <p class="m-0"><a class="blue-link" th:href="@{|/hechos/${h.id}|}">Ver detalle</a></p>
+                <p class="m-0"><a class="blue-link" th:href="@{|/admin/gest-nuevosHechos/${h.id}|}">Ver detalle</a></p>
             </div>
         </li>
     </ul>
@@ -108,8 +108,8 @@
 </script>
 
 <script>
-    const EST_APR  = 'APROBADO';
-    const EST_RECH = 'RECHAZADO';
+    const EST_APR  = 'ACEPTADA';
+    const EST_RECH = 'RECHAZADA';
     const section = document.querySelector('section.mm-card');
 
     function inc(id, delta) {
@@ -144,7 +144,7 @@
         const nuevoEstado = isApprove ? EST_APR : EST_RECH;
 
         const badge = li.querySelector('.mm-req__meta .badge');
-        const prevBadgeTxt  = badge?.textContent ?? 'PENDIENTE';
+        const prevBadgeTxt  = badge?.textContent ?? 'EN_REVISION';
         const prevBadgeClass = badge?.className ?? 'badge';
 
         // UI: actualizar badge y contadores

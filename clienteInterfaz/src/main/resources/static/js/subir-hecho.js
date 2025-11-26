@@ -67,30 +67,26 @@ btnPrev2?.addEventListener('click', () => gotoStep(1));
 // --- Reglas de descripción según sesión ---
 const desc = document.getElementById('descripcion');
 const counter = document.getElementById('descCounter');
+const descReq = document.getElementById('descReq');
 
 function applyDescRules(){
-    const auth   = (window.MM && MM.getAuth) ? MM.getAuth() : { loggedIn:false, role:'VISUALIZADOR' };
-    const isAnon = !auth.loggedIn || auth.role === 'VISUALIZADOR';
+    // En "subir hecho" no exigimos mínimo de 500 nunca
+    desc.required = true;              // o false si la querés 100% opcional
+    desc.removeAttribute('minlength'); // nos aseguramos de que no quede nada viejo
 
-    // Siempre requerida; el mínimo depende del rol
-    desc.required = true;
-    if (isAnon) {
-        desc.setAttribute('minlength', '500');
-    } else {
-        desc.removeAttribute('minlength'); // logueado: sin mínimo
-    }
-    // Refresca el contador con el formato correcto
     const len = (desc.value || '').trim().length;
-    counter.textContent = isAnon ? `${len} / 500` : `${len}`;
+    counter.textContent = `${len}`;
+    if (descReq) {
+        descReq.textContent;
+    }
 }
 
 // Contador dinámico (respeta si hay mínimo o no)
 desc?.addEventListener('input', () => {
-    const auth   = (window.MM && MM.getAuth) ? MM.getAuth() : { loggedIn:false, role:'VISUALIZADOR' };
-    const isAnon = !auth.loggedIn || auth.role === 'VISUALIZADOR';
     const len = (desc.value || '').trim().length;
-    counter.textContent = isAnon ? `${len} \/ 500` : `${len}`;
+    counter.textContent = `${len}`;
 });
+
 
 btnNext2?.addEventListener('click', () => {
     const scope = document.querySelector('.mm-step[data-step="2"]');
@@ -137,12 +133,6 @@ function modificarCategoria(el) {
         categoriaInput.setAttribute("name", "")
     }
 }
-
-/*function validate() {
-    const ok =  categoriaInput.value !== ' '
-    categoriaInput.classList.toggle('is-invalid', !ok);
-    return ok
-}*/
 
 btnPrev3?.addEventListener('click', () => gotoStep(2));
 
@@ -199,33 +189,6 @@ input?.addEventListener('change', (e) => addFiles(e.target.files));
 );
 drop?.addEventListener('drop', e => addFiles(e.dataTransfer.files));
 
-// ===== Envío del formulario (multimedia opcional) =====
-/*form?.addEventListener('submit', (e) => {
-    // Validación global mínima:
-    if (!latEl.value || !lngEl.value) {
-        e.preventDefault();
-        gotoStep(1);
-        return;
-    }
-    if (!form.checkValidity()) {
-        e.preventDefault();
-        gotoStep(2);
-        return;
-    }
-
-    // Ejemplo de envío con FormData (AJUSTAR endpoint)
-    e.preventDefault(); // quitá esto cuando tengas backend
-    const fd = new FormData(form);
-    MEDIA_FILES.forEach((f, i) => fd.append('media[]', f, f.name));
-
-    // fetch('/api/hechos', { method:'POST', body: fd })
-    //   .then(r => r.ok ? alert('Hecho enviado ✅') : alert('Error al enviar'))
-    //   .catch(()=> alert('Error de red'));
-
-    console.log('Form listo para enviar', Object.fromEntries(fd.entries()), MEDIA_FILES);
-    alert('Simulación: Hecho enviado ✅');
-});
-*/
 // (opcional) permitir retroceder clickeando los “steps” solo hacia atrás
 dots.forEach(li => {
     li.addEventListener('click', () => {

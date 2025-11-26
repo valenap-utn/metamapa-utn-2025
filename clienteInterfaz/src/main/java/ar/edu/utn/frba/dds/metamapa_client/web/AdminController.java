@@ -217,12 +217,14 @@ public class AdminController {
   @GetMapping("/gest-nuevosHechos")
   @PreAuthorize("hasRole('ADMINISTRADOR')")
   public String gestNuevosHechos(Model model, @RequestParam(value = "estado", required = false, defaultValue = "TODAS") String estado, @RequestParam(value = "q", required = false, defaultValue = "") String q) {
-    List<HechoDTOOutput> hechos = this.agregador.findAllHechos(new FiltroDTO());
+    List<HechoDTOOutput> hechos = this.fuenteDinamica.findHechosNuevos(urlFuenteDinamica,estado);
+
+    hechos.forEach(h -> log.info("Hecho {} estado='{}'", h.getId(), h.getEstado()));
 
     long total = hechos.size();
-    long pendientes = hechos.stream().filter(h -> "PENDIENTE".equals(h.getEstado())).count();
-    long aprobados = hechos.stream().filter(h -> "APROBAR".equals(h.getEstado())).count();
-    long rechazados = hechos.stream().filter(h -> "RECHAZAR".equals(h.getEstado())).count();
+    long pendientes = hechos.stream().filter(h -> "EN_REVISION".equals(h.getEstado())).count();
+    long aprobados = hechos.stream().filter(h -> "ACEPTADA".equals(h.getEstado())).count();
+    long rechazados = hechos.stream().filter(h -> "RECHAZADA".equals(h.getEstado())).count();
 
     //Filtro por Estado
     Stream<HechoDTOOutput> filtrados = hechos.stream();
@@ -271,10 +273,20 @@ public class AdminController {
 
   @PostMapping("/gest-nuevosHechos/{id}/rechazar")
   @PreAuthorize("hasRole('ADMINISTRADOR')")
-  public String rechazarHecho(@PathVariable("id") Long id, RedirectAttributes ra) {
+  public String rechazarHecho(@PathVariable Long id, RedirectAttributes ra) {
     this.revisarHecho(id, "RECHAZADA", "El hecho ha sido rechazado por el administrador.");
     ra.addFlashAttribute("success", "Hecho rechazado correctamente.");
     return "redirect:/admin/gest-nuevosHechos";
+  }
+
+  //Para ver detalle del hecho (desde fuente dinámica)
+  @GetMapping("/gest-nuevosHechos/{id}")
+  @PreAuthorize("hasRole('ADMINISTRADOR')")
+  public String verHechoEnModeracion(@PathVariable Long id, Model model) {
+    HechoDTOOutput hecho = this.fuenteDinamica.getHecho(id, urlFuenteDinamica);
+    model.addAttribute("hecho", hecho);
+    model.addAttribute("titulo", "Detalle del hecho en moderación");
+    return "hechos/hecho-completo";
   }
 
   //Para solicitudes de Edición
@@ -302,7 +314,7 @@ public class AdminController {
         }).toList();
 
     long total = solicitudes.size();
-    long pendientes = solicitudes.stream().filter(h -> "PENDIENTE".equals(h.getEstado())).count();
+    long pendientes = solicitudes.stream().filter(h -> "EN_REVISION".equals(h.getEstado())).count();
     long aceptadas = solicitudes.stream().filter(h -> "ACEPTAR".equals(h.getEstado())).count();
     long canceladas = solicitudes.stream().filter(h -> "CANCELADA".equals(h.getEstado())).count();
 

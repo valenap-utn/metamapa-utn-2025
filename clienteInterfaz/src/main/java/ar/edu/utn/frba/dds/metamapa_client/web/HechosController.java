@@ -117,8 +117,8 @@ public class HechosController {
         redirectAttributes.addFlashAttribute("mensajeOk", "Hecho cargado exitosamente!");
         return "redirect:/hechos/mis-hechos";
       }
-
-      return "redirect:/hechos/subir-hecho";
+      redirectAttributes.addFlashAttribute("exitoSubirHecho", true);
+      return "redirect:/main-gral";
     } catch (Exception e) {
       log.error("[HechosController] Error al crear el hecho", e);
       redirectAttributes.addFlashAttribute("error", "Ha ocurrido un error al crear el hecho. Volvé a intentarlo");
@@ -283,7 +283,8 @@ public class HechosController {
     solicitud.setIdHecho(idHecho);
     solicitud.setIdusuario(userId);
     solicitud.setJustificacion(justificacion);
-    solicitud.setEstado("PENDIENTE");
+//    solicitud.setEstado("PENDIENTE");
+    solicitud.setEstado("EN_REVISION");
     solicitud.setFechaSolicitud(LocalDateTime.now());
     this.agregador.crearSolicitud(solicitud);
     return ResponseEntity.ok().build(); //200 en caso de éxito!

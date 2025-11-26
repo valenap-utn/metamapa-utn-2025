@@ -110,4 +110,13 @@ public class HechoSolicitudController {
         conjuntoCategorias.setCategorias(categorias.stream().map(Categoria::getNombre).toList());
         return ResponseEntity.ok(conjuntoCategorias);
     }
+
+    //Para nuevos hechos
+    @GetMapping("/nuevos-hechos")
+    public ResponseEntity<ConjuntoHechoDTODinamica> obtenerHechosNuevos(@RequestParam(required = false,defaultValue = "TODAS")String estado) {
+        List<Hecho> hechos = this.hechoServicio.obtenerHechosNuevos(estado);
+        ConjuntoHechoDTODinamica conjunto = new ConjuntoHechoDTODinamica();
+        conjunto.setHechos(hechos.stream().map(this::toHechoDTO).toList());
+        return ResponseEntity.ok(conjunto);
+    }
 }
