@@ -216,8 +216,8 @@ public class AdminController {
   //Para gestionar Nuevos Hechos (Aprobar o Rechazar)
   @GetMapping("/gest-nuevosHechos")
   @PreAuthorize("hasRole('ADMINISTRADOR')")
-  public String gestNuevosHechos(Model model, @RequestParam(value = "estado", required = false, defaultValue = "TODAS") String estado, @RequestParam(value = "q", required = false, defaultValue = "") String q) {
-    List<HechoDTOOutput> hechos = this.fuenteDinamica.findHechosNuevos(urlFuenteDinamica,estado);
+  public String gestNuevosHechos(Model model, @RequestParam(value = "estado", required = false, defaultValue = "TODAS") String estado, @RequestParam(value = "q", required = false, defaultValue = "") String q, @RequestParam(value = "nroPagina", required = false, defaultValue = "0") Integer nroPagina) {
+    List<HechoDTOOutput> hechos = this.fuenteDinamica.findHechosNuevos(urlFuenteDinamica,estado, nroPagina);
 
     hechos.forEach(h -> log.info("Hecho {} estado='{}'", h.getId(), h.getEstado()));
 
@@ -246,7 +246,7 @@ public class AdminController {
     model.addAttribute("hechos", filtradosList);
     model.addAttribute("estado", estado);
     model.addAttribute("q", q);
-
+    model.addAttribute("nroPagina", nroPagina);
     model.addAttribute("countTodas", total);
     model.addAttribute("countPend", pendientes);
     model.addAttribute("countApro", aprobados);
@@ -292,14 +292,14 @@ public class AdminController {
   //Para solicitudes de Edición
   @GetMapping("/gest-solEdicion")
   @PreAuthorize("hasRole('ADMINISTRADOR')")
-  public String solicitudesEdicion(Model model, @RequestParam(value = "estado", required = false, defaultValue = "PENDIENTE") String estado, @RequestParam(value = "q", required = false, defaultValue = "") String q) {
+  public String solicitudesEdicion(Model model, @RequestParam(value = "estado", required = false, defaultValue = "EN_REVISION") String estado, @RequestParam(value = "q", required = false, defaultValue = "") String q) {
     List<SolicitudEdicionDTO> solicitudes = this.fuenteDinamica.findAllSolicitudesEdicion(this.urlFuenteDinamica);
 
     List<Map<String, Object>> vms = solicitudes.stream()
         .filter(h -> "TODAS".equalsIgnoreCase(estado) || estado.equalsIgnoreCase(h.getEstado()))
         .map(h -> {
-          HechoDTOOutput original = this.agregador.getHecho(h.getIdHecho());
-          String nombreUsuario = this.agregador.getNombreUsuario(original.getIdUsuario());
+          HechoDTOOutput original = this.fuenteDinamica.getHecho(h.getIdHecho(), this.urlFuenteDinamica);
+          String nombreUsuario = original.getUsuario() != null ? original.getUsuario().getEmail() : "Anónimo";
           return Map.of("sol", h, "orig", original, "nombreUsuario", nombreUsuario);
         })
         .filter(vm -> {
@@ -315,8 +315,8 @@ public class AdminController {
 
     long total = solicitudes.size();
     long pendientes = solicitudes.stream().filter(h -> "EN_REVISION".equals(h.getEstado())).count();
-    long aceptadas = solicitudes.stream().filter(h -> "ACEPTAR".equals(h.getEstado())).count();
-    long canceladas = solicitudes.stream().filter(h -> "CANCELADA".equals(h.getEstado())).count();
+    long aceptadas = solicitudes.stream().filter(h -> "ACEPTADA".equals(h.getEstado())).count();
+    long canceladas = solicitudes.stream().filter(h -> "RECHAZADA".equals(h.getEstado())).count();
 
     model.addAttribute("items", vms);
     model.addAttribute("estado", estado);
@@ -333,24 +333,24 @@ public class AdminController {
 
   @PostMapping("/gest-solEdicion/{idSolicitud}/aprobar")
   @PreAuthorize("hasRole('ADMINISTRADOR')")
-  public ResponseEntity<Void> aprobarSolicitudEdicion(@PathVariable("idSolicitud") Long idSolicitud) {
+  public String aprobarSolicitudEdicion(@PathVariable("idSolicitud") Long idSolicitud) {
     RevisionDTO revision = new RevisionDTO();
     revision.setEstado("ACEPTADA");
     revision.setComentario("Solicitud de edición aprobada por el administrador");
 
     this.fuenteDinamica.procesarSolicitudEdicion(idSolicitud, this.urlFuenteDinamica, revision);
-    return ResponseEntity.noContent().build(); //204 en caso de exito !
+    return "redirect:/admin/gest-solEdicion"; //204 en caso de exito !
   }
 
   @PostMapping("/gest-solEdicion/{idSolicitud}/rechazar")
   @PreAuthorize("hasRole('ADMINISTRADOR')")
-  public ResponseEntity<Void> rechazarSolicitudEdicion(@PathVariable("idSolicitud") Long idSolicitud) {
+  public String rechazarSolicitudEdicion(@PathVariable("idSolicitud") Long idSolicitud) {
     RevisionDTO revision = new RevisionDTO();
     revision.setEstado("RECHAZADA");
     revision.setComentario("Edición rechazada por el administrador");
 
     this.fuenteDinamica.procesarSolicitudEdicion(idSolicitud, this.urlFuenteDinamica, revision);
-    return ResponseEntity.noContent().build(); //204 en caso de exito !
+    return "redirect:/admin/gest-solEdicion"; //204 en caso de exito !
   }
 
 
@@ -414,12 +414,12 @@ public class AdminController {
   //Aceptar solicitud
   @PostMapping("/gest-solEliminacion/{id}/aceptar")
   @PreAuthorize("hasRole('ADMINISTRADOR')")
-  public ResponseEntity<Void> aceptarSolicitud(@PathVariable("id") Long id) {
+  public String aceptarSolicitud(@PathVariable("id") Long id) {
     RevisionDTO revision = new RevisionDTO();
     revision.setComentario("El administrador ha aceptado la solicitud");
     revision.setEstado("ACEPTADA");
     this.agregador.aceptarSolicitud(id, revision);
-    return ResponseEntity.noContent().build(); //204 en caso de exito !
+    return "redirect:/admin/gest-solEliminacion"; //204 en caso de exito !
   }
 
 
@@ -427,12 +427,12 @@ public class AdminController {
   //Rechazar solicitud
   @PostMapping("/gest-solEliminacion/{id}/cancelar")
   @PreAuthorize("hasRole('ADMINISTRADOR')")
-  public ResponseEntity<Void> cancelarSolicitud(@PathVariable("id") Long id) {
+  public String cancelarSolicitud(@PathVariable("id") Long id) {
     RevisionDTO revision = new RevisionDTO();
     revision.setComentario("El administrador ha rechazado la solicitud");
     revision.setEstado("RECHAZADA");
     this.agregador.cancelarSolicitud(id, revision);
-    return ResponseEntity.noContent().build();
+    return "redirect:/admin/gest-solEliminacion";
   }
 
   @GetMapping("/dashboard-estadisticas")

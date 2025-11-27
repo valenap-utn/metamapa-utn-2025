@@ -5,5 +5,4 @@ public enum Estado {
     RECHAZADA,
     PENDIENTE,
     SPAM
-
 }

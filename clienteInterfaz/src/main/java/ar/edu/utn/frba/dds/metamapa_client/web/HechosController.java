@@ -282,8 +282,7 @@ public class HechosController {
     solicitud.setIdHecho(idHecho);
     solicitud.setIdusuario(userId);
     solicitud.setJustificacion(justificacion);
-//    solicitud.setEstado("PENDIENTE");
-    solicitud.setEstado("EN_REVISION");
+    solicitud.setEstado("PENDIENTE");
     solicitud.setFechaSolicitud(LocalDateTime.now());
     this.agregador.crearSolicitud(solicitud);
     return ResponseEntity.ok().build(); //200 en caso de éxito!

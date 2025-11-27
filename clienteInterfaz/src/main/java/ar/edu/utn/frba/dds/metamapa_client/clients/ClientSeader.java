@@ -307,7 +307,7 @@ public class ClientSeader implements IFuenteDinamica, IFuenteEstatica, IServicio
   }
 
   @Override
-  public List<HechoDTOOutput> findHechosNuevos(String baseUrl, String estado) {
+  public List<HechoDTOOutput> findHechosNuevos(String baseUrl, String estado, Integer nroPagina) {
     return List.of();
   }
 

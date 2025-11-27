@@ -78,9 +78,9 @@ public class FuenteDinamicaController {
 
   //Paara nuevos hechos
   @GetMapping("/nuevos-hechos")
-  public ConjuntoHechoDTO findNuevosHechos(@RequestParam String baseUrl, @RequestParam(required = false,defaultValue = "TODAS")String estado){
+  public ConjuntoHechoDTO findNuevosHechos(@RequestParam String baseUrl, @RequestParam(required = false,defaultValue = "TODAS")String estado, @RequestParam(required = false, defaultValue = "0") Integer nroPagina){
     log.info("Pidiendo los nuevos hechos  fuente dinamica...");
-    return this.fuenteDinamicaService.findNuevosHechos(baseUrl, estado);
+    return this.fuenteDinamicaService.findNuevosHechos(baseUrl, estado, nroPagina);
   }
 
 }

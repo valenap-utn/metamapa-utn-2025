@@ -1,6 +1,5 @@
 package ar.edu.utn.frba.dds.metamapa_client.clients;
 
-import ar.edu.utn.frba.dds.metamapa_client.dtos.FiltroDTO;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.HechoDTOInput;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.HechoDTOOutput;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.RevisionDTO;
@@ -27,5 +26,5 @@ public interface IFuenteDinamica {
 
   Collection<String> findAllCategorias(String urlFuenteDinamica);
 
-  List<HechoDTOOutput> findHechosNuevos(String baseUrl, String estado);
+  List<HechoDTOOutput> findHechosNuevos(String baseUrl, String estado, Integer nroPagina);
 }

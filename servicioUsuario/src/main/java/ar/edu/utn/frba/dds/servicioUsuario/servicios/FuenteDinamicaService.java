@@ -92,6 +92,8 @@ public class FuenteDinamicaService {
   }
 
   public SolicitudEdicionDTO  procesarSolicitudEdicion(Long idSolicitud, String baseUrl, RevisionDTO revisionDTO) {
+    Usuario usuario = this.obtenerUsuario();
+    revisionDTO.setUsuario(usuario.getUsuarioDTO());
     return this.initWebClient(baseUrl).put().uri(uriBuilder -> uriBuilder.path("/api/solicitudes/{id}").build(idSolicitud)).bodyValue(revisionDTO)
             .retrieve().bodyToMono(SolicitudEdicionDTO.class)
             .block();
@@ -131,12 +133,13 @@ public class FuenteDinamicaService {
   }
 
   //Para hechos nuevos
-  public ConjuntoHechoDTO findNuevosHechos(String baseUrl, String estado) {
+  public ConjuntoHechoDTO findNuevosHechos(String baseUrl, String estado, Integer nroPagina) {
     return this.initWebClient(baseUrl)
         .get()
         .uri(uriBuilder -> uriBuilder
             .path("/api/nuevos-hechos")
             .queryParam("estado",estado)
+                .queryParam("nroPagina",nroPagina)
             .build())
         .retrieve()
         .bodyToMono(ConjuntoHechoDTO.class)

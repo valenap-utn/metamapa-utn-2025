@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.reactive.function.client.WebClientException;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 @ControllerAdvice
 public class HandlerExceptions {
@@ -39,6 +41,11 @@ public class HandlerExceptions {
   @ExceptionHandler(value = UsuarioConflicto.class)
   public ResponseEntity<ErrorDTO> handleUsuarioConflicto(UsuarioConflicto error) {
     return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorDTO(error.getMessage(), error.getTipoError()));
+  }
+
+  @ExceptionHandler(value = WebClientException.class)
+  public ResponseEntity<ErrorDTO> handleWebClientException(WebClientResponseException error) {
+    return ResponseEntity.status(error.getStatusCode()).body(error.getResponseBodyAs(ErrorDTO.class));
   }
 
 }

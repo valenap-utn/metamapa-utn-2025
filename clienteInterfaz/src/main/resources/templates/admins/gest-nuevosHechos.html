@@ -25,7 +25,9 @@
             <button type="submit" class="mm-seg__btn" th:classappend="${estado}=='RECHAZADA' ? 'is-active' : ''"  name="estado" value="RECHAZADA" th:attr="aria-selected=${estado}=='RECHAZADA'">
                 Rechazados <span class="mm-seg__badge" id="count-cancel" th:text="${countRech}">0</span>
             </button>
+            <input type="number" min="0" name="nroPagina" class="mm-input" th:value="${nroPagina}">
         </div>
+
 
         <div class="mm-search">
             <input id="searchBox" class="mm-input" placeholder="Buscar por título o justificación…" name="q" th:value="${q}">
@@ -48,11 +50,11 @@
                             EN REVISION
                         </span>
 
-                        <span class="badge badge-neutral" th:text="${'Creado por ' + (h.idUsuario != null ? ('Usuario ' + h.idUsuario) : 'Anónimo')}">
+                        <span class="badge badge-neutral" th:text="${'Creado por ' + (h.usuario != null ? ('Usuario ' + h.usuario.nombre + ' ' + h.usuario.apellido ) : 'Anónimo')}">
                                 Creado por Anónimo
                         </span>
                         <span class="badge badge-neutral" th:text="${h.fechaCarga != null ? 'Cargado: ' + #temporals.format(h.fechaCarga, 'dd/MM/yyyy HH:mm') : ''}"></span>
-                        <span class="badge badge-neutral" th:text="${h.idUsuario != null ? 'Usuario ' + h.idUsuario : 'Anónimo'}"></span>
+                        <span class="badge badge-neutral" th:text="${h.usuario != null ? 'Usuario ' + h.usuario.nombre + ' ' + h.usuario.apellido : 'Anónimo'}"></span>
                     </div>
                 </div>
 
@@ -81,6 +83,9 @@
                 <p class="m-0"><strong>Descripción:</strong> <span th:text="${h.descripcion ?: '—'}">—</span></p>
                 <p class="m-0"><strong>Ubicación:</strong>
                     <span th:text="${h.ubicacion != null ? (h.ubicacion.latitud + ', ' + h.ubicacion.longitud) : '—'}">—</span>
+                </p>
+                <p class="m-0"><strong>Fecha del acontecimiento:</strong>
+                    <span th:text="${h.fechaAcontecimiento != null ? h.fechaAcontecimiento : '—'}">—</span>
                 </p>
                 <p class="m-0"><a class="blue-link" th:href="@{|/admin/gest-nuevosHechos/${h.id}|}">Ver detalle</a></p>
             </div>

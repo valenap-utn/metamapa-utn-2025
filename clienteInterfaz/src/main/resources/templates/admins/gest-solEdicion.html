@@ -26,13 +26,13 @@
       <button type="submit" class="mm-seg__btn" th:classappend="${estado}=='TODAS' ? 'is-active' : ''" name="estado" value="TODAS" th:attr="aria-selected=${estado}=='TODAS'">
         Todas <span class="mm-seg__badge" id="count-todas" th:text="${countTodas}">0</span>
       </button>
-      <button type="submit" class="mm-seg__btn" th:classappend="${estado}=='PENDIENTE' ? 'is-active' : ''" name="estado" value="PENDIENTE" th:attr="aria-selected=${estado}=='PENDIENTE'">
+      <button type="submit" class="mm-seg__btn" th:classappend="${estado}=='EN_REVISION' ? 'is-active' : ''" name="estado" value="EN_REVISION" th:attr="aria-selected=${estado}=='EN_REVISION'">
         Pendientes <span class="mm-seg__badge" id="count-pend" th:text="${countPend}">0</span>
       </button>
-      <button type="submit" class="mm-seg__btn" th:classappend="${estado}=='ACEPTAR' ? 'is-active' : ''" name="estado" value="ACEPTAR" th:attr="aria-selected=${estado}=='ACEPTAR'">
+      <button type="submit" class="mm-seg__btn" th:classappend="${estado}=='ACEPTADA' ? 'is-active' : ''" name="estado" value="ACEPTADA" th:attr="aria-selected=${estado}=='ACEPTADA'">
         Aceptadas <span class="mm-seg__badge" id="count-apr" th:text="${countAcep}">0</span>
       </button>
-      <button type="submit" class="mm-seg__btn" th:classappend="${estado}=='RECHAZAR' ? 'is-active' : ''"  name="estado" value="RECHAZAR" th:attr="aria-selected=${estado}=='RECHAZAR'">
+      <button type="submit" class="mm-seg__btn" th:classappend="${estado}=='RECHAZADA' ? 'is-active' : ''"  name="estado" value="RECHAZADA" th:attr="aria-selected=${estado}=='RECHAZADA'">
         Rechazadas <span class="mm-seg__badge" id="count-cancel" th:text="${countCancel}">0</span>
       </button>
     </div>
@@ -54,7 +54,7 @@
           </h3>
 
           <div class="mm-req__meta">
-            <span class="badge" style="margin: 10px 0 10px 0;" th:classappend="${sol['estado']}=='PENDIENTE' ? ' badge-brand' : ' badge-neutral'" th:text="${sol['estado']}">
+            <span class="badge" style="margin: 10px 0 10px 0;" th:classappend="${sol['estado']}=='EN_REVISION' ? ' badge-brand' : ' badge-neutral'" th:text="${sol['estado']}">
                 PENDIENTE
             </span>
 
@@ -70,7 +70,7 @@
         </div>
 
         <!-- Acciones -->
-        <div class="mm-req__actions" th:if="${sol['estado']}=='PENDIENTE'">
+        <div class="mm-req__actions" th:if="${sol['estado']}=='EN_REVISION'">
           <form th:action="@{|/admin/gest-solEdicion/${sol['id']}/aprobar|}" method="post" style="display: inline">
             <input type="hidden" name="estado" th:value="${estado}">
             <input type="hidden" name="q" th:value="${q}">

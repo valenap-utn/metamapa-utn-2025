@@ -3,7 +3,6 @@ package ar.edu.utn.frba.dds.metamapa_client.clients;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.ConjuntoCategorias;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.ConjuntoHechoDTO;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.ConjuntoSolicitudesEdicionOutput;
-import ar.edu.utn.frba.dds.metamapa_client.dtos.FiltroDTO;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.HechoDTOInput;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.HechoDTOOutput;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.RevisionDTO;
@@ -100,8 +99,8 @@ public class FuenteDinamica implements IFuenteDinamica {
   }
 
   @Override
-  public List<HechoDTOOutput> findHechosNuevos(String baseUrl, String estado) {
-    String url = this.baseUsuarioUrl + "/api/fuenteDinamica/nuevos-hechos" + "?baseUrl=" + baseUrl + "&estado=" + estado;
+  public List<HechoDTOOutput> findHechosNuevos(String baseUrl, String estado, Integer nroPagina) {
+    String url = this.baseUsuarioUrl + "/api/fuenteDinamica/nuevos-hechos" + "?baseUrl=" + baseUrl + "&estado=" + estado + "&nroPagina=" + nroPagina;
     return this.webApiCallerService.get(url, ConjuntoHechoDTO.class).getHechos();
   }
 }

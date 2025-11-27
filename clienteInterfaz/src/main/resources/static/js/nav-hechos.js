@@ -447,7 +447,7 @@ document.addEventListener("click", (e) => {
         btnEnviar.disabled = len < MIN;
         txt.classList.toggle("is-invalid", len < MIN);
     });
-
+/*
     btnEnviar.addEventListener("click", async () => {
         const hechoId = window._hechoIdSeleccionado;
         const justificacion = txt.value.trim();
@@ -480,7 +480,7 @@ document.addEventListener("click", (e) => {
             btnEnviar.disabled = false;
         }
     });
-
+*/
     function showToast(message, cls = "bg-dark") {
         let area = document.getElementById("toastArea");
         if (!area) {

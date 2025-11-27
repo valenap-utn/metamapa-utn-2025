@@ -11,6 +11,7 @@ import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.FiltroDTO;
 import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.HechoDTOOutput;
 import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.RevisionDTO;
 import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.SolicitudEliminacionDTO;
+import ar.edu.utn.frba.dds.servicioUsuario.models.dtos.UsuarioDTO;
 import ar.edu.utn.frba.dds.servicioUsuario.models.entities.Usuario;
 import ar.edu.utn.frba.dds.servicioUsuario.models.repositories.IUsuarioRepositoryJPA;
 import java.util.UUID;
@@ -69,6 +70,12 @@ public class AgregadorService {
   }
 
   public SolicitudEliminacionDTO crearSolicitud(SolicitudEliminacionDTO solicitudEliminacionDTO) {
+    UsuarioDTO usuario = null;
+    if (solicitudEliminacionDTO.getIdusuario() != null) {
+      Usuario usuarioBuscado = this.usuarioRepository.findById(solicitudEliminacionDTO.getIdusuario()).orElse(null);
+      usuario = usuarioBuscado == null ? null : usuarioBuscado.getUsuarioDTO();
+    }
+    solicitudEliminacionDTO.setUsuario(usuario);
     return this.webClient.post().uri(uriBuilder -> uriBuilder.path("/api/solicitudes").build())
             .bodyValue(solicitudEliminacionDTO).retrieve()
             .bodyToMono(SolicitudEliminacionDTO.class)
