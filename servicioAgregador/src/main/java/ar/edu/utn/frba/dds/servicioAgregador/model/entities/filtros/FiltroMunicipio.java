@@ -10,8 +10,8 @@ import lombok.NoArgsConstructor;
 @DiscriminatorValue("UBICACIONMUNICIPIO")
 @NoArgsConstructor
 public class FiltroMunicipio extends FiltroUbicacion{
-  public FiltroMunicipio(String valor) {
-    super(valor);
+  public FiltroMunicipio(String valor, Double cantidadAceptable) {
+    super(valor, cantidadAceptable);
   }
 
   @Override

@@ -164,15 +164,18 @@
 
                             <!-- Chips existentes renderizados por Thymeleaf -->
                             <div id="criteriosChips" class="mm-chips" aria-live="polite">
+                                <div style="display: none;" id="containerCategorias" >
+                                    <th:block th:each="categoria : ${categorias}">
+                                        <option th:text="${categoria}" class="categoria-agregador"></option>
+                                    </th:block>
+                                </div>
                                 <span class="mm-chip" th:each="c, j : *{criterios}">
                   <!-- inputs ocultos indexados -->
                   <input type="text" style="display:none"
                          th:id="${'Criterio.' + j.index}"
                          th:field="*{criterios[__${j.index}__].tipo}"
                          th:value="${c.tipo}"/>
-                    <div style="display: none;" th:each="categoria : ${categorias}">
-                                            <option th:text="${categoria}"></option>
-                                        </div>
+
                   <input th:if="${c.titulo != null}" type="text" style="display:none"
                          th:id="${'criterios[' + j.index +'].titulo'}"
                          th:field="*{criterios[__${j.index}__].titulo}"
@@ -250,6 +253,20 @@
         </div>
     </section>
     <script type="module" th:src="@{/js/admins/crear-coleccion.js}"></script>
+    <script>
+        function modificarCategoria(el) {
+            const categoriaInputLabel = document.getElementById('critValorCategoriaInputLabel')
+            const categoriaInput = document.getElementById('critValorCategoriaInput')
+            const option = el.value
+            if (option === "") {
+                categoriaInput.style.display = "block"
+                categoriaInputLabel.style.display = "block"
+            } else {
+                categoriaInput.style.display = "none"
+                categoriaInputLabel.style.display = "none"
+            }
+        }
+    </script>
 </main>
 </body>
 </html>

@@ -14,7 +14,7 @@ public interface IHechoRepositoryJPA extends JpaRepository<Hecho, Long> {
   @Query("SELECT h FROM Hecho h WHERE h.estado = :estado1 ")
   List<Hecho> findHechosByEstado(@Param("estado1") Estado estado1);
 
-  @Query("SELECT h FROM Hecho h INNER JOIN Usuario  u ON u.id = h.id WHERE u.id = :idUsuario ")
+  @Query("SELECT h FROM Hecho h WHERE h.usuario.id = :idUsuario ")
   List<Hecho> findHechosByIdUsuario(@Param("idUsuario")Long idUsuario);
 
   @Query("SELECT h FROM Hecho h WHERE h.estado IN :estados")

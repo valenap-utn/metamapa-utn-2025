@@ -21,17 +21,18 @@
                             <p class="mm-card-sub" th:text="${coleccion.descripcion != null ? coleccion.descripcion : 'Colección sin descripción.' }"></p>
                         </div>
                     </div>
+                        <ul class="mm-meta">
+                            <li th:each="filtro : ${coleccion.criterios}" th:if="${ filtro.getTipo().equals('FECHACARGA') or filtro.getTipo().equals('FECHAACONTECIMENTO')}" class="mm-chip">Desde: <span th:text="${ filtro.fechaAcontecimientoInicial != null ? filtro.fechaAcontecimientoInicial : (filtro.fechaCargaInicial != null ? filtro.fechaCargaInicial : '--')}"></span></li>
+                            <li th:each="filtro : ${coleccion.criterios}" th:if="${ filtro.getTipo().equals('FECHACARGA') or filtro.getTipo().equals('FECHAACONTECIMENTO')}" class="mm-chip">Hasta: <span th:text="${ filtro.fechaAcontecimientoFinal != null ? filtro.fechaAcontecimientoFinal : (filtro.fechaCargaFinal != null ? filtro.fechaCargaFinal : '--')}"></span></li>
+                            <li th:each="filtro : ${coleccion.criterios}" class="mm-chip" th:if="${filtro.getTipo().equalsIgnoreCase('UBICACIONPROVINCIA')}"  th:text="${filtro.provincia}"></li>
+                            <li th:each="filtro : ${coleccion.criterios}" class="mm-chip" th:if="${filtro.getTipo().equalsIgnoreCase('UBICACIONMUNICIPIO')}"  th:text="${filtro.municipio}"></li>
+                            <li th:each="filtro : ${coleccion.criterios}" class="mm-chip" th:if="${filtro.getTipo().equalsIgnoreCase('UBICACIONDEPARTAMENTO')}"  th:text="${filtro.departamento}"></li>
+                            <li th:each="filtro : ${coleccion.criterios}" class="mm-chip" th:if="${filtro.getTipo().equalsIgnoreCase('CATEGORIA')}" th:text="${filtro.categoria}"></li>
+                        </ul>
 
-                    <ul class="mm-meta">
-                        <th:block th:each="filtroFecha : ${coleccion.criterios}" th:if="${ filtroFecha.getTipo().equals('FECHACARGA') or filtroFecha.getTipo().equals('FECHAACONTECIMENTO')}" >
-                                <li class="mm-chip">Desde: <span th:text="${ filtroFecha.fechaAcontecimientoInicial != null ? filtroFecha.fechaAcontecimientoInicial : (filtroFecha.fechaCargaInicial != null ? filtroFecha.fechaCargaInicial : filtroFecha.fechaCargaFinal)}"></span></li>
-                                <li class="mm-chip">Hasta: <span th:text="${ filtroFecha.fechaAcontecimientoInicial != null ? filtroFecha.fechaAcontecimientoInicial : (filtroFecha.fechaCargaInicial != null ? filtroFecha.fechaCargaInicial : filtroFecha.fechaCargaFinal)}"></span></li>
-                        </th:block>
-                    </ul>
 
-                    <ul class="mm-meta" style="margin-top:6px" >
-                        <li class="mm-chip" th:each="filtroCategoria : ${coleccion.criterios}" th:if="${filtroCategoria.getTipo().equalsIgnoreCase('CATEGORIA')}" th:text="${filtroCategoria.categoria}"></li>
-                    </ul>
+
+
 
                     <div class="accordion mm-accordion" th:id="${'acc-'+ coleccion.id}">
                         <div class="accordion-item">

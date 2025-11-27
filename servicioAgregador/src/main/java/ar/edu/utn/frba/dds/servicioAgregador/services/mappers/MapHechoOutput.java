@@ -9,10 +9,15 @@ import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.origenes.Origen;
 import java.util.List;
 import java.util.stream.Collectors;
+import lombok.Getter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
 public class MapHechoOutput {
+  @Getter
+  @Value("${api.filtroUbicacion.cantidadAceptable}")
+  private Double cantidadAceptableUbicacion;
   public ConjuntoHechoCompleto toConjuntoHechoDTOOutput(List<Hecho> hechos, List<Categoria> categorias) {
     ConjuntoHechoCompleto conjuntoDeHechos = new ConjuntoHechoCompleto();
     List<HechoDTOCompleto> hechosDTO =  hechos.stream().map(this::toHechoDTO).toList();

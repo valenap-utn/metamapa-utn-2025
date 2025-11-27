@@ -110,18 +110,21 @@
     render();
 })();
 
+
+
 //JS para CRITERIOS de PERTENENCIA
 (function () {
     const tipoSel = document.getElementById('critTipo');
     const wrap = document.getElementById('critValorWrap');
     const addBtn = document.getElementById('addCriterio');
     const chips = document.getElementById('criteriosChips');
+    const categorias = []
     if (!tipoSel || !wrap || !addBtn || !chips) return;
 
     const criterios = []; // { tipo, label, ...valores }
 
     const todayISO = () => new Date().toISOString().slice(0, 10);
-
+    cargarCategorias(categorias)
     // --- configuraciones por tipo ---
     const CFG = {
         CATEGORIA: {
@@ -129,17 +132,31 @@
             render() {
                 wrap.innerHTML = `
           <label class="mm-label" for="critValorCategoria">Valor</label>
-          <select id="critValorCategoria" class="mm-input" >
+          <select id="critValorCategoria" class="mm-input" onchange="modificarCategoria(this)" >
             <option value="" disabled selected>Seleccioná una categoría…</option>
             <option value="EVENTO_SANITARIO">Evento sanitario</option>
+            <option value="">Crear una categoria…</option>
             <option value="CONTAMINACION">Contaminación</option>
             <option value="DERRAME">Derrame</option>
+            ${mapearCategorias()}
           </select>
+          <label class="mm-label" style="display: none;" id="critValorCategoriaInputLabel" for="critValorCategoria">Categoria</label>
+          <input id="critValorCategoriaInput" style="display: none;"  class="mm-input" type="text">
         `;
             },
             read() {
                 const el = document.getElementById('critValorCategoria');
-                return el && el.value ? {value: el.value, text: el.options[el.selectedIndex].text} : null;
+                const valorEl = el && (el.value !== "") ? {value: el.value, text: el.options[el.selectedIndex].text} : null;
+                if (valorEl != null)
+                    return valorEl;
+                const el2 = document.getElementById('critValorCategoriaInput');
+                const v = (el2?.value || '').trim();
+                if (v.length < 3) {
+                    el2?.classList.add('is-invalid');
+                    return null;
+                }
+                el2.classList.remove('is-invalid');
+                return {value: el2.value, text: el2.value};
             }
         },
 
@@ -227,6 +244,22 @@
         FECHACARGA: multiDateCfg('Fecha de carga', true)
     };
     agregarCriteriosYaHechos(criterios)
+
+    function cargarCategorias(categorias) {
+        const categoriasContainer = document.getElementById('containerCategorias')
+        const categoriasElement = categoriasContainer.querySelectorAll('option.categoria-agregador')
+        if (categoriasElement.length > 0){
+            categoriasElement.forEach((categoria, indice) => categorias.push({valueCategoria: categoria.text}))
+        }
+    }
+
+    function mapearCategorias() {
+        const valor = categorias.map(categoria => `<option value="${categoria.valueCategoria}">${categoria.valueCategoria}</option>`).reduce((categoriaPrevia, categoriaActual) => categoriaPrevia + '\n'+ categoriaActual, "")
+        console.log(valor)
+        return valor
+    }
+
+
     // fecha exacta (un solo input)
     function multiDateCfg(label, esConCargaActual) {
         return {
@@ -406,3 +439,4 @@
         }
     }
 })();
+

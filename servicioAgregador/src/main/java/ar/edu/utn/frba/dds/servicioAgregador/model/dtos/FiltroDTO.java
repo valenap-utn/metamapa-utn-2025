@@ -28,13 +28,15 @@ public class FiltroDTO {
   String municipio;
 
   public boolean tieneFiltroUbicacion() {
-    return this.getProvincia() != null || this.getDepartamento() != null || this.getMunicipio() != null;
+    return (this.getProvincia() != null && !this.getProvincia().isEmpty())
+            || (this.getDepartamento() != null && !this.getDepartamento().isEmpty())
+            || (this.getMunicipio() != null && !this.getMunicipio().isEmpty());
   }
 
-  public List<Hecho> filtrarPorUbicacion(List<Hecho> hechos) {
-    FiltroProvincia filtroProvincia = new FiltroProvincia(provincia);
-    FiltroDepartamento filtroDepartamento = new FiltroDepartamento(departamento);
-    FiltroMunicipio filtroMunicipio = new FiltroMunicipio(municipio);
+  public List<Hecho> filtrarPorUbicacion(List<Hecho> hechos, Double cantidadAceptable) {
+    FiltroProvincia filtroProvincia = new FiltroProvincia(provincia, cantidadAceptable);
+    FiltroDepartamento filtroDepartamento = new FiltroDepartamento(departamento, cantidadAceptable);
+    FiltroMunicipio filtroMunicipio = new FiltroMunicipio(municipio, cantidadAceptable);
     List<FiltroUbicacion> listaCriterios = List.of(filtroProvincia, filtroDepartamento, filtroMunicipio);
     return hechos.stream().filter(hecho -> listaCriterios.stream().allMatch(filtro -> filtro.hechoCumple(hecho))).toList();
   }

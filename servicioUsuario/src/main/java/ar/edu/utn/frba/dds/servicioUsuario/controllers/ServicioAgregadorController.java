@@ -41,17 +41,33 @@ public class ServicioAgregadorController {
                                         @RequestParam(required = false)  LocalDateTime fecha_reporte_hasta,
                                         @RequestParam(required = false) LocalDateTime fecha_acontecimiento_desde,
                                         @RequestParam(required = false) LocalDateTime fecha_acontecimiento_hasta,
-                                        @RequestParam(required = false) Float latitud,
-                                        @RequestParam(required = false) Float longitud) {
+                                        @RequestParam(required = false) String provincia,
+                                        @RequestParam(required = false) String departamento,
+                                        @RequestParam(required = false) String municipio) {
     FiltroDTO filtros = FiltroDTO.builder()
             .categoria(categoria).fecha_reporte_desde(fecha_reporte_desde).fecha_reporte_hasta(fecha_reporte_hasta)
-            .fecha_acontecimiento_desde(fecha_acontecimiento_desde).fecha_acontecimiento_hasta(fecha_acontecimiento_hasta).build();
+            .fecha_acontecimiento_desde(fecha_acontecimiento_desde).fecha_acontecimiento_hasta(fecha_acontecimiento_hasta)
+            .provincia(provincia).municipio(municipio).departamento(departamento)
+            .build();
     return this.agregadorService.findAllHechos(filtros);
   }
 
   @GetMapping("/colecciones/{coleccionId}/hechos")
-  public  ConjuntoHechoDTO findHechosByColeccionId(@PathVariable UUID coleccionId, FiltroDTO filtro) {
-    return this.agregadorService.findHechosByColeccionId(coleccionId, filtro);
+  public  ConjuntoHechoDTO findHechosByColeccionId(@PathVariable UUID coleccionId,
+                                                   @RequestParam(required = false) String categoria,
+                                                   @RequestParam(required = false) LocalDateTime fecha_reporte_desde,
+                                                   @RequestParam(required = false)  LocalDateTime fecha_reporte_hasta,
+                                                   @RequestParam(required = false) LocalDateTime fecha_acontecimiento_desde,
+                                                   @RequestParam(required = false) LocalDateTime fecha_acontecimiento_hasta,
+                                                   @RequestParam(required = false) String provincia,
+                                                   @RequestParam(required = false) String departamento,
+                                                   @RequestParam(required = false) String municipio) {
+    FiltroDTO filtros = FiltroDTO.builder()
+            .categoria(categoria).fecha_reporte_desde(fecha_reporte_desde).fecha_reporte_hasta(fecha_reporte_hasta)
+            .fecha_acontecimiento_desde(fecha_acontecimiento_desde).fecha_acontecimiento_hasta(fecha_acontecimiento_hasta)
+            .provincia(provincia).municipio(municipio).departamento(departamento)
+            .build();
+    return this.agregadorService.findHechosByColeccionId(coleccionId, filtros);
   }
 
   @GetMapping("/solicitudes")

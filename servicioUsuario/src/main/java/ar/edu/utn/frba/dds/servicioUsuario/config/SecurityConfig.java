@@ -32,7 +32,7 @@ public class SecurityConfig {
             auth.requestMatchers(HttpMethod.GET, "/api/agregador/colecciones", "/api/agregador/colecciones/{coleccionId}",
                     "/api/agregador/colecciones/{coleccionId}/hechos", "/api/agregador/usuarios/{id}/hechos",
                     "/api/agregador/categorias", "/api/agregador/hechos/{idHecho}",
-                    "/api/usuarios/{id}").permitAll();
+                    "/api/usuarios/{id}", "/api/servicios/usuarios/{id}/").permitAll();
             auth.requestMatchers("/api/auth/user/roles-permisos").authenticated();
             auth.anyRequest().authenticated();
           })

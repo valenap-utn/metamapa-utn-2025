@@ -34,7 +34,7 @@ public class HechoService implements IHechoService{
     Specification<Hecho> especificacionFiltros = HechoSpecification.filterBy(filtroDTO, null);
     List<Hecho> hechosDelSistema = this.hechoRepository.findAll(especificacionFiltros);
     if(filtroDTO.tieneFiltroUbicacion()) {
-      hechosDelSistema = filtroDTO.filtrarPorUbicacion(hechosDelSistema);
+      hechosDelSistema = filtroDTO.filtrarPorUbicacion(hechosDelSistema, this.mapHechoOutput.getCantidadAceptableUbicacion());
     }
     List<Categoria> categorias = this.categoriaRepository.findAll();
     return this.mapHechoOutput.toConjuntoHechoDTOOutput(hechosDelSistema, categorias);

@@ -22,8 +22,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 
 @Component
 @Profile("prod")
@@ -164,9 +162,15 @@ public class ConexionServicioUser implements IConexionServicioUser {
 
   @Override
   public UsuarioDTO crearUsuario(UsuarioNuevoDTO dto) {
-    String url = baseUrl + "/api/usuarios";
-    log.info("[ConexionServicioUser] crearUsuario (nuevo) POST {}", url);
-    return webApiCallerService.post(url, dto, UsuarioDTO.class);
+    log.info("[ConexionServicioUser] crearUsuario (nuevo) POST {}", baseUrl + "/api/usuarios");
+    return this.webClient
+            .post()
+            .uri(uriBuilder -> uriBuilder
+                    .path("/api/usuarios").build())
+            .bodyValue(dto)
+            .retrieve()
+            .bodyToMono(UsuarioDTO.class)
+            .block();
   }
 
   @Override

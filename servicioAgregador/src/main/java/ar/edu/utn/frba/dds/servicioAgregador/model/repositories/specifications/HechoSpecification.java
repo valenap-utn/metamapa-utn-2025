@@ -14,8 +14,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class HechoSpecification {
   private static final String ORIGEN = "origen_id";
-  private static final String FECHAACONTECIMIENTO = "fecha_acontecimiento";
-  private static final String FECHACARGA = "fecha_carga";
+  private static final String FECHAACONTECIMIENTO = "fechaAcontecimiento";
+  private static final String FECHACARGA = "fechaCarga";
   private static final String CATEGORIA = "categoria_id";
   private static final String CATEGORIANOMBRE = "nombre";
   private static final String ELIMINADO = "eliminado";

@@ -53,7 +53,10 @@ public class AgregadorService {
               .queryParam("fecha_acontecimiento_desde", filtroDTO.getFecha_acontecimiento_desde())
               .queryParam("fecha_acontecimiento_hasta", filtroDTO.getFecha_acontecimiento_hasta())
               .queryParam("latitud", filtroDTO.getLatitud())
-              .queryParam("longitud", filtroDTO.getLongitud());
+              .queryParam("longitud", filtroDTO.getLongitud())
+              .queryParam("provincia", filtroDTO.getProvincia())
+              .queryParam("municipio", filtroDTO.getMunicipio())
+              .queryParam("departamento", filtroDTO.getDepartamento());
     }
     return uriAMedioConstruir;
   }

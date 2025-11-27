@@ -12,8 +12,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class FiltroDepartamento extends FiltroUbicacion{
 
-  public FiltroDepartamento(String valor) {
-    super(valor);
+  public FiltroDepartamento(String valor, Double cantidadAceptable) {
+    super(valor, cantidadAceptable);
   }
 
   @Override

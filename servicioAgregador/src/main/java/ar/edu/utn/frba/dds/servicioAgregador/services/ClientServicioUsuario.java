@@ -15,7 +15,7 @@ public class ClientServicioUsuario {
   }
 
   public UsuarioDTO findUsuarioById(Long id) {
-    return this.webClient.get().uri(uriBuilder -> uriBuilder.path("/api/usuarios/{id}").build(id))
+    return this.webClient.get().uri(uriBuilder -> uriBuilder.path("/api/servicios/usuarios/{id}/").build(id))
             .retrieve().bodyToMono(UsuarioDTO.class).block();
   }
 }

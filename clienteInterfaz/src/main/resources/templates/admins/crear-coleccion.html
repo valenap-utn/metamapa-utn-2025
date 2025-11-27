@@ -173,10 +173,13 @@
                                         <button type="button" class="chip__remove" aria-label="Quitar criterio">
                                             <span aria-hidden="true">×</span>
                                         </button>
-                                        <div style="display: none;" th:each="categoria : ${categorias}">
-                                            <option th:text="${categoria}"></option>
-                                        </div>
+
                                     </span>
+                                    <div style="display: none;" id="containerCategorias">
+                                        <th:block th:each="categoria : ${categorias}">
+                                            <option th:text="${categoria}" class="categoria-agregador"></option>
+                                        </th:block>
+                                    </div>
                                 </div>
                                 <span id="criteriosHidden"></span>
                                 <!--<input type="hidden" id="criteriosHidden" name="criterios">-->
@@ -194,6 +197,19 @@
     </main>
 
     <script type="module" th:src="@{/js/admins/crear-coleccion.js}"></script>
-
+    <script>
+        function modificarCategoria(el) {
+            const categoriaInputLabel = document.getElementById('critValorCategoriaInputLabel')
+            const categoriaInput = document.getElementById('critValorCategoriaInput')
+            const option = el.value
+            if (option === "") {
+                categoriaInput.style.display = "block"
+                categoriaInputLabel.style.display = "block"
+            } else {
+                categoriaInput.style.display = "none"
+                categoriaInputLabel.style.display = "none"
+            }
+        }
+    </script>
 </body>
 </html>

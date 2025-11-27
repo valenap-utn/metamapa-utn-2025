@@ -168,7 +168,7 @@ public class ColeccionService implements IColeccionService{
   @Override
   @Transactional
   public List<ColeccionDTOOutput> getAllColecciones(){
-    List<Coleccion> colecciones = this.coleccionRepository.findAll();
+    List<Coleccion> colecciones = this.coleccionRepository.findAllByEliminada(Boolean.FALSE);
     return colecciones.stream().map(this.mapperColeccionOutput::toColeccionDTOOutput).collect(Collectors.toList());
   }
 
@@ -261,7 +261,7 @@ public class ColeccionService implements IColeccionService{
 
     }
     if(filtro.tieneFiltroUbicacion()) {
-      hechos = filtro.filtrarPorUbicacion(hechos);
+      hechos = filtro.filtrarPorUbicacion(hechos, this.mapperColeccionOutput.getCantidadAceptableUbicacion());
     }
     fuenteColeccion.actualizarHechos(hechos);
   }

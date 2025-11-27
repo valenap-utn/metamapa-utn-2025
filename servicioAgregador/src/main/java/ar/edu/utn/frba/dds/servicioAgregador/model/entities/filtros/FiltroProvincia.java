@@ -12,9 +12,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class FiltroProvincia extends FiltroUbicacion{
 
-  public FiltroProvincia(String valor) {
-    super(valor);
+  public FiltroProvincia(String valor, Double cantidadAceptable) {
+    super(valor, cantidadAceptable);
   }
+
   @Override
   protected String getValorHechoUbicacion(Hecho unHecho) {
     return unHecho.getProvincia();

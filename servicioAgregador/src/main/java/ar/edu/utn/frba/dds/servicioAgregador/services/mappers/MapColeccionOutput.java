@@ -19,11 +19,15 @@ import ar.edu.utn.frba.dds.servicioAgregador.model.entities.origenes.Origen;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import lombok.Getter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
 public class MapColeccionOutput {
-
+  @Getter
+  @Value("${api.filtroUbicacion.cantidadAceptable}")
+  private Double cantidadAceptableUbicacion;
   public ColeccionDTOOutput toColeccionDTOOutput(Coleccion coleccion) {
     ColeccionDTOOutput coleccionDTOOutput = new ColeccionDTOOutput();
     coleccionDTOOutput.setId(coleccion.getId());
@@ -49,9 +53,9 @@ public class MapColeccionOutput {
               new FiltroPorFechaAcontecimiento(criterioDTO.getFechaAcontecimientoInicial(), criterioDTO.getFechaAcontecimientoFinal());
       case "FECHACARGA" ->
               new FiltroPorFechaCarga(criterioDTO.getFechaCargaInicial(), criterioDTO.getFechaCargaFinal());
-      case "UBICACIONPROVINCIA" -> new FiltroProvincia(criterioDTO.getProvincia());
-      case "UBICACIONMUNICIPIO" -> new FiltroMunicipio(criterioDTO.getMunicipio());
-      case "UBICACIONDEPARTAMENTO" -> new FiltroDepartamento(criterioDTO.getDepartamento());
+      case "UBICACIONPROVINCIA" -> new FiltroProvincia(criterioDTO.getProvincia(), this.cantidadAceptableUbicacion);
+      case "UBICACIONMUNICIPIO" -> new FiltroMunicipio(criterioDTO.getMunicipio(), this.cantidadAceptableUbicacion);
+      case "UBICACIONDEPARTAMENTO" -> new FiltroDepartamento(criterioDTO.getDepartamento(), this.cantidadAceptableUbicacion);
       default -> null;
     };
   }

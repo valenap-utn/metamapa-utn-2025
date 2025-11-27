@@ -8,7 +8,6 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
-import jakarta.persistence.Transient;
 import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,19 +22,20 @@ public abstract class FiltroUbicacion  extends Filtro{
   @Getter
   @Setter
   private String valorUbicacion;
-  @Transient
+  @Column(name = "cantidad_aceptable_ubicacion")
   @Getter
   @Setter
   @Value("${api.filtroUbicacion.cantidadAceptable}")
   private Double cantidadAceptable;
 
-  public FiltroUbicacion(String valorUbicacion) {
+  public FiltroUbicacion(String valorUbicacion, Double cantidadAceptable) {
     this.valorUbicacion = valorUbicacion;
+    this.cantidadAceptable = cantidadAceptable;
   }
 
   @Override
   public boolean hechoCumple(Hecho unHecho){
-    if (valorUbicacion == null) {
+    if (valorUbicacion == null || valorUbicacion.isEmpty()) {
       return true;
     }
     TFIDFCalculadoraPalabras calculadora = new TFIDFCalculadoraPalabras();

@@ -116,7 +116,6 @@ let MEDIA_FILES = [];
 //categoriaInput.addEventListener('change', validate);
 function modificarCategoria(el) {
     const option = el.value
-    console.log(el.id)
     if (option === "") {
         categoriaSelect.required = false
         categoriaInput.required = true

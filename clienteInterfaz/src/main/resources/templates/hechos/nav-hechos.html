@@ -63,14 +63,35 @@
                 <div class="mm-adv__body">
                     <div class="mm-adv__grid">
                         <div class="form-group col-search">
-                            <label for="fTexto" class="form-label">Buscar por texto</label>
+                            <label for="fProvincia" class="form-label">Buscar por provincia</label>
 
-                            <input id="fTexto" type="text"
+                            <input id="fProvincia" type="text"
                                    class="form-control style-ap-filtros mm-kw-input"
-                                   placeholder="palabra clave, ej: río, humo…"
+                                   placeholder="Ej: Buenos Aires"
+                                   th:field="*{provincia}"
                                    style="box-shadow: var(--shadow-sm);">
 
-                            <div id="kwChips" class="mm-chips" aria-live="polite"></div>
+                            <div id="kwChipsProvincia" class="mm-chips" aria-live="polite"></div>
+                        </div>
+                        <div class="form-group col-search">
+                            <label for="fMunicipio" class="form-label">Buscar por Municipio</label>
+
+                            <input id="fMunicipio" type="text"
+                                   class="form-control style-ap-filtros mm-kw-input"
+                                   placeholder="Ej: La Matanza"
+                                   style="box-shadow: var(--shadow-sm);" th:field="*{municipio}">
+                            <div id="kwChipsMunicipio" class="mm-chips" aria-live="polite"></div>
+                        </div>
+                        <div class="form-group col-search">
+                            <label for="fDepartamento" class="form-label">Buscar por Departamento</label>
+
+                            <input id="fDepartamento" type="text"
+                                   class="form-control style-ap-filtros mm-kw-input"
+                                   placeholder="Ej: Vicente Lopéz"
+                                   th:field="*{departamento}"
+                                   style="box-shadow: var(--shadow-sm);">
+
+                            <div id="kwChipsDepartamento" class="mm-chips" aria-live="polite"></div>
                         </div>
 
                         <div class="form-group col-crea-des">
