@@ -15,6 +15,9 @@ import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.entities.roles.Permiso;
 import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.entities.roles.Rol;
 import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.repositories.implReal.IHechoRepositoryJPA;
 import ar.edu.utn.frba.dds.servicioFuenteEstatica.model.repositories.implReal.IUsuarioRepositoryJPA;
+import java.util.List;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -27,6 +30,8 @@ public class HechoService implements IHechoService {
   private final IHechosDAO hechosDAO;
   private final IHechoRepositoryJPA hechoRepository;
   private final IUsuarioRepositoryJPA usuarioRepository;
+  @Value("${api.value.tamanio.pagina}")
+  private Integer tamanioPagina;
 
   public HechoService(IHechosDAO hechosDAO, IHechoRepositoryJPA hechoRepository, IUsuarioRepositoryJPA usuarioRepository) {
     this.hechosDAO = hechosDAO;
@@ -66,10 +71,20 @@ public class HechoService implements IHechoService {
     return hechos.stream().map(this::toHechoDTOEstatica).collect(Collectors.toSet());
   }
 
-  public Set<HechoDTOEstatica> obtenerTodos() {
-    return hechoRepository.findAll().stream()
-        .map(this::toHechoDTOEstatica)
-        .collect(Collectors.toSet());
+  public Set<HechoDTOEstatica> obtenerTodos(Boolean servicioAgregador, Integer nroPagina) {
+    if (nroPagina == null || nroPagina < 0) {
+      nroPagina = 0;
+    }
+    PageRequest pageable = PageRequest.of(nroPagina, this.tamanioPagina);
+    List<Hecho> hechos = null;
+    if (servicioAgregador != null && servicioAgregador) {
+      hechos = hechoRepository.findAllByEntregadoAAgregador(pageable, Boolean.FALSE).getContent();
+      hechos.forEach(Hecho::marcarEntregadoAAgregador);
+      this.hechoRepository.saveAll(hechos);
+    } else {
+     hechos = hechoRepository.findAll(pageable).getContent();
+    }
+    return hechos.stream().map(this::toHechoDTOEstatica).collect(Collectors.toSet());
   }
 
   public HechoDTOEstatica marcarEliminadoHecho(Long idHecho) {

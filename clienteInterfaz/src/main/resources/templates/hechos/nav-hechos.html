@@ -105,6 +105,11 @@
                             <input id="fCreacionHasta" type="datetime-local"
                                    class="form-control chip style-ap-filtros" th:field="*{fecha_reporte_hasta}">
                         </div>
+                        <div class="form-group col-crea-has">
+                            <label for="fPaginado" class="form-label">Número de página</label>
+                            <input id="fPaginado" type="number" min="0"
+                                   class="form-control chip style-ap-filtros" th:field="*{nroPagina}">
+                        </div>
                     </div>
                 </div>
             </details>

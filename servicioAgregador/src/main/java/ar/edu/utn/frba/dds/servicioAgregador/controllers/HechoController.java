@@ -41,7 +41,8 @@ public class HechoController {
                                                          @RequestParam(required = false) String provincia,
                                                          @RequestParam(required = false) String departamento,
                                                          @RequestParam(required = false) String municipio,
-                                                         @RequestParam(required = false) Long idUsuario){
+                                                         @RequestParam(required = false) Long idUsuario,
+                                                         @RequestParam(required = false) Integer nroPagina){
       FiltroDTO filtro = FiltroDTO.builder()
               .fecha_acontecimiento_desde(fecha_acontecimiento_desde)
               .fecha_acontecimiento_hasta(fecha_acontecimiento_hasta)
@@ -55,6 +56,7 @@ public class HechoController {
               .municipio(municipio)
               .provincia(provincia)
               .idUsuario(idUsuario)
+              .nroPagina(nroPagina)
               .build();
 
       return ResponseEntity.ok(this.hechoService.findAll(filtro));

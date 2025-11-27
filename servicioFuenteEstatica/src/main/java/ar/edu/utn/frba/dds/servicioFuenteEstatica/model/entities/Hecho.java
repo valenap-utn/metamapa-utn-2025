@@ -61,6 +61,9 @@ public class Hecho {
     @Setter @Getter
     private String nombreArchivo;
 
+    @Column(name = "entregado_agregador")
+    @Setter @Getter private Boolean entregadoAAgregador = false;
+
     public Hecho(HechoValueObject infoHecho, String nombreArchivo) {
         this.titulo = infoHecho.getTitulo();
         this.descripcion = infoHecho.getDescripcion();
@@ -74,6 +77,14 @@ public class Hecho {
 
     public Long getIdUsuario() {
         return usuario.getId();
+    }
+
+    public void marcarEntregadoAAgregador() {
+        this.entregadoAAgregador = true;
+    }
+
+    public void marcarParaEnviarAgregador() {
+        this.entregadoAAgregador = false;
     }
 
 }

@@ -24,4 +24,5 @@ public class FiltroDTO {
   private String provincia;
   private String departamento;
   private String municipio;
+  private Integer nroPagina;
 }

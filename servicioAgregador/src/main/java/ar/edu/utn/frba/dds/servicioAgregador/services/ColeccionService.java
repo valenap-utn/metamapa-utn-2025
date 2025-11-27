@@ -38,6 +38,8 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.Setter;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -58,6 +60,8 @@ public class ColeccionService implements IColeccionService{
   private final IOrigenRepositoryJPA origenRepository;
   private final ICategoriaRepositoryJPA categoriaRepository;
   private final ClientServicioUsuario clientServicioUsuario;
+  @Value("${api.value.tamanio.pagina}")
+  private Integer tamanioPagina;
 
   public ColeccionService(IColeccionRepositoryJPA coleccionRepository,
                           IUserRepositoryJPA userRepository,
@@ -184,7 +188,7 @@ public class ColeccionService implements IColeccionService{
     if(filtro.getCurada()){
       hechos = hechos.stream().filter(hecho -> hecho.estaCuradoPor(coleccion.getAlgoritmoConsenso())).toList();
     }
-    List<Categoria> categorias = this.categoriaRepository.findAll();
+    List<Categoria> categorias = this.categoriaRepository.findAll(PageRequest.of(0, this.tamanioPagina)).getContent();
     return this.mapperHechoOutput.toConjuntoHechoDTOOutput(hechos, categorias);
   }
 
@@ -256,8 +260,12 @@ public class ColeccionService implements IColeccionService{
     if(filtro.getEntiemporeal() &&  fuenteColeccion.getOrigen().getTipo() == TipoOrigen.PROXY) {
       hechos.addAll(this.getHechosClient(fuenteColeccion.getOrigen(), filtro));
     } else {
+      if (filtro.getNroPagina() == null || filtro.getNroPagina() < 0) {
+        filtro.setNroPagina(0);
+      }
+      PageRequest pageable = PageRequest.of(filtro.getNroPagina(), this.tamanioPagina);
       Specification<Hecho> especificacionFiltros = HechoSpecification.filterBy(filtro, fuenteColeccion.getOrigen());
-      hechos.addAll(this.hechoRepository.findAll(especificacionFiltros));
+      hechos.addAll(this.hechoRepository.findAll(especificacionFiltros, pageable).getContent());
 
     }
     if(filtro.tieneFiltroUbicacion()) {

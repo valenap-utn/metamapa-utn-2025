@@ -115,6 +115,7 @@ public class SolicitudServicio implements ISolicitudServicio {
             hecho.setContenido(solicitud.getHechoModificacion().getContenido());
             hecho.setFechaAcontecimiento(solicitud.getHechoModificacion().getFechaAcontecimiento());
             hecho.setContenidoMultimedia(solicitud.getHechoModificacion().getContenidoMultimedia());
+            hecho.marcarParaEnviarAgregador();
             this.hechoRepository.save(hecho);
         }
         return solicitudRepository.save(solicitud);

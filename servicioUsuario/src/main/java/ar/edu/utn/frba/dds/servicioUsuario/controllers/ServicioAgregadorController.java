@@ -43,11 +43,12 @@ public class ServicioAgregadorController {
                                         @RequestParam(required = false) LocalDateTime fecha_acontecimiento_hasta,
                                         @RequestParam(required = false) String provincia,
                                         @RequestParam(required = false) String departamento,
-                                        @RequestParam(required = false) String municipio) {
+                                        @RequestParam(required = false) String municipio,
+                                        @RequestParam(required = false) Integer nroPagina) {
     FiltroDTO filtros = FiltroDTO.builder()
             .categoria(categoria).fecha_reporte_desde(fecha_reporte_desde).fecha_reporte_hasta(fecha_reporte_hasta)
             .fecha_acontecimiento_desde(fecha_acontecimiento_desde).fecha_acontecimiento_hasta(fecha_acontecimiento_hasta)
-            .provincia(provincia).municipio(municipio).departamento(departamento)
+            .provincia(provincia).municipio(municipio).departamento(departamento).nroPagina(nroPagina)
             .build();
     return this.agregadorService.findAllHechos(filtros);
   }

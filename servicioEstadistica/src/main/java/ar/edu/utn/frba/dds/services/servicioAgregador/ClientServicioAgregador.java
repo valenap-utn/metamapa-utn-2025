@@ -12,6 +12,7 @@ import ar.edu.utn.frba.dds.model.entities.Solicitud;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 
 @Component
@@ -19,7 +20,13 @@ public class ClientServicioAgregador implements ServicioAgregador {
   private final WebClient webClient;
 
   public ClientServicioAgregador(@Value("${api.url.servicioAgregador}") String baseUrl) {
-    this.webClient = WebClient.builder().baseUrl(baseUrl).build();
+    this.webClient = WebClient.builder().baseUrl(baseUrl)
+            .exchangeStrategies(ExchangeStrategies
+            .builder()
+            .codecs(codecs -> codecs
+                    .defaultCodecs()
+                    .maxInMemorySize(50 * 1024 * 1024))
+            .build()).build();
   }
 
 

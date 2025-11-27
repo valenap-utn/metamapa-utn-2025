@@ -267,7 +267,6 @@ public class HechosController {
 
   //Solicitudes de Eliminación
   @PostMapping("/{idHecho}/solicitud-eliminacion")
-  @PreAuthorize("hasRole('CONTRIBUYENTE')")
   public ResponseEntity<?> crearSolicitudEliminacion(@PathVariable Long idHecho, @RequestParam String justificacion, HttpSession session) {
     String accessToken = (String) session.getAttribute("accessToken");
     Long userId = null;

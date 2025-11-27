@@ -39,6 +39,7 @@ public class ClientFuente {
 
   private URI uriSegunSusFiltros(UriBuilder uriBuilder, FiltroDTO filtroDTO) {
     UriBuilder uriAMedioConstruir = uriBuilder.path("/api/hechos");
+    uriAMedioConstruir.queryParam("servicioAgregador", Boolean.TRUE);
     if(filtroDTO != null) {
       uriAMedioConstruir.queryParam("categoria", filtroDTO.getCategoria())
               .queryParam("fecha_reporte_desde", filtroDTO.getFecha_reporte_desde())

@@ -50,7 +50,8 @@ public class ColeccionController {
                                           @RequestParam(required = false) boolean entiemporeal,
                                                          @RequestParam(required = false) String provincia,
                                                          @RequestParam(required = false) String departamento,
-                                                         @RequestParam(required = false) String municipio) {
+                                                         @RequestParam(required = false) String municipio,
+                                                         @RequestParam(required = false) Integer nroPagina) {
       FiltroDTO filtro = FiltroDTO.builder()
               .fecha_acontecimiento_desde(fecha_acontecimiento_desde)
               .fecha_acontecimiento_hasta(fecha_acontecimiento_hasta)
@@ -65,6 +66,7 @@ public class ColeccionController {
               .departamento(departamento)
               .municipio(municipio)
               .provincia(provincia)
+              .nroPagina(nroPagina)
               .build();
 
       return ResponseEntity.ok(this.coleccionService.getHechosPorColeccion(id, filtro)) ;

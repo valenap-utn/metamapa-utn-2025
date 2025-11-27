@@ -83,6 +83,9 @@ public class Hecho implements Revisable{
     @Column(name = "fecha_aprobacion")
     @Setter @Getter private LocalDateTime fechaAprobacion;
 
+    @Column(name = "entregado_agregador")
+    @Setter @Getter private Boolean entregadoAAgregador = false;
+
     public Hecho() {
         this.fechaCarga = LocalDateTime.now();
         this.eliminado = false;
@@ -110,5 +113,13 @@ public class Hecho implements Revisable{
 
     public UsuarioDTO getUsuarioDTO() {
         return this.usuario == null? null: this.usuario.getUsuarioDTO();
+    }
+
+    public void marcarEntregadoAAgregador() {
+        this.entregadoAAgregador = true;
+    }
+
+    public void marcarParaEnviarAgregador() {
+        this.entregadoAAgregador = false;
     }
 }

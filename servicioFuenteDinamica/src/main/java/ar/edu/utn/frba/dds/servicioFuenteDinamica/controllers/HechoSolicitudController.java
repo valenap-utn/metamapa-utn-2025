@@ -3,6 +3,7 @@ package ar.edu.utn.frba.dds.servicioFuenteDinamica.controllers;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos.ConjuntoCategorias;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos.ConjuntoHechoDTODinamica;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos.ConjuntoSolicitud;
+import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos.FiltroDTODinamica;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos.HechoDTODinamica;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos.RevisionDTO;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos.SolicitudDTO;
@@ -35,8 +36,10 @@ public class HechoSolicitudController {
     }
 
     @GetMapping("/hechos")
-    public ResponseEntity<ConjuntoHechoDTODinamica> obtenerHechos( @RequestParam(required = false) Boolean pendientes, @RequestParam(required = false) Long idUsuario) {
-        List<HechoDTODinamica> hechos = hechoServicio.obtenerHechosPublicos(pendientes, idUsuario).stream().map(this::toHechoDTO).toList();
+    public ResponseEntity<ConjuntoHechoDTODinamica> obtenerHechos( @RequestParam(required = false) Boolean pendientes, @RequestParam(required = false) Long idUsuario, @RequestParam(required = false) Boolean servicioAgregador, @RequestParam(required = false) Integer nroPagina) {
+        FiltroDTODinamica filtroDTODinamica = FiltroDTODinamica.builder()
+                .nroPagina(nroPagina).servicioAgregador(servicioAgregador).idUsuario(idUsuario).pendientes(pendientes).build();
+        List<HechoDTODinamica> hechos = hechoServicio.obtenerHechosPublicos(filtroDTODinamica).stream().map(this::toHechoDTO).toList();
         ConjuntoHechoDTODinamica conjuntoHechos = new ConjuntoHechoDTODinamica();
         conjuntoHechos.setHechos(hechos);
         return ResponseEntity.ok(conjuntoHechos);
@@ -113,8 +116,8 @@ public class HechoSolicitudController {
 
     //Para nuevos hechos
     @GetMapping("/nuevos-hechos")
-    public ResponseEntity<ConjuntoHechoDTODinamica> obtenerHechosNuevos(@RequestParam(required = false,defaultValue = "TODAS")String estado) {
-        List<Hecho> hechos = this.hechoServicio.obtenerHechosNuevos(estado);
+    public ResponseEntity<ConjuntoHechoDTODinamica> obtenerHechosNuevos(@RequestParam(required = false,defaultValue = "TODAS")String estado, @RequestParam(required = false) Integer nroPagina) {
+        List<Hecho> hechos = this.hechoServicio.obtenerHechosNuevos(estado, nroPagina);
         ConjuntoHechoDTODinamica conjunto = new ConjuntoHechoDTODinamica();
         conjunto.setHechos(hechos.stream().map(this::toHechoDTO).toList());
         return ResponseEntity.ok(conjunto);

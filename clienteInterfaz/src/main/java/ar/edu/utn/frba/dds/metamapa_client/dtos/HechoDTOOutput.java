@@ -26,7 +26,7 @@ public class HechoDTOOutput {
   private ContenidoMultimedia contenidoMultimedia;
   private Long idUsuario;
   private OrigenDTO origen;
-
+  private UsuarioDTO usuario;
   private String estado;
   private LocalDateTime fechaAprobacion;
 }

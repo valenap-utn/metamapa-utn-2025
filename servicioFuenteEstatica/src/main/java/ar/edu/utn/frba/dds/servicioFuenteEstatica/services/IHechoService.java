@@ -9,9 +9,10 @@ import java.util.Set;
 public interface IHechoService {
   Set<HechoDTOEstatica> importarDesdeCSV(MultipartFile archivo, UsuarioDTO usuario);
 
-  Set<HechoDTOEstatica> obtenerTodos();
 
   HechoDTOEstatica marcarEliminadoHecho(Long idHecho);
 
   void eliminarTodo();
+
+  Set<HechoDTOEstatica> obtenerTodos(Boolean servicioAgregador, Integer nroPagina);
 }

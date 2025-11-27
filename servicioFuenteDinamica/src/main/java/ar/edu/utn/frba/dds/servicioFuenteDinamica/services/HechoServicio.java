@@ -4,6 +4,7 @@ import ar.edu.utn.frba.dds.servicioFuenteDinamica.exceptions.HechoNoEncontrado;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.exceptions.HechoYaEliminado;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.exceptions.UsuarioNoEncontrado;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.exceptions.UsuarioSinPermiso;
+import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos.FiltroDTODinamica;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos.HechoDTODinamica;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos.RevisionDTO;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos.UsuarioDTO;
@@ -22,6 +23,8 @@ import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.repositories.implReal.IU
 import java.util.Optional;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -37,6 +40,8 @@ public class HechoServicio implements IHechoServicio {
     private final RevisarEstado revisadorHechosSolicitud;
     private final IUsuarioRepositoryJPA userRepository;
     private final ICategoriaRepositoryJPA categoriaRepository;
+    @Value("${api.value.tamanio.pagina}")
+    private Integer tamanioPagina;
 
     public HechoServicio(IHechoRepositoryJPA hechoRepository, IMultimediaRepository contentMultimediaRepository, RevisarEstado revisadorHechosSolicitud, IUsuarioRepositoryJPA userRepository, ICategoriaRepositoryJPA categoriaRepository) {
         this.hechoRepository = hechoRepository;
@@ -72,14 +77,24 @@ public class HechoServicio implements IHechoServicio {
     }
 
     @Override
-    public List<Hecho> obtenerHechosPublicos(Boolean pendientes, Long idUsuario) {
-        if (pendientes != null && pendientes) {
-            return hechoRepository.findHechosByEstado(Estado.EN_REVISION);
+    public List<Hecho> obtenerHechosPublicos(FiltroDTODinamica filtro) {
+        if (filtro.getNroPagina() == null || filtro.getNroPagina() < 0) {
+            filtro.setNroPagina(0);
         }
-        if (idUsuario != null) {
-            return hechoRepository.findHechosByIdUsuario(idUsuario);
+        PageRequest pageable = PageRequest.of(filtro.getNroPagina(), this.tamanioPagina);
+        if (filtro.getPendientes() != null && filtro.getPendientes()) {
+            return hechoRepository.findHechosByEstado(pageable, Estado.EN_REVISION).getContent();
         }
-        return this.hechoRepository.findAll();
+        if (filtro.getIdUsuario() != null) {
+            return hechoRepository.findHechosByIdUsuario(pageable, filtro.getIdUsuario()).getContent();
+        }
+        if (filtro.getServicioAgregador() != null && filtro.getServicioAgregador()) {
+            List<Hecho> hechos =  this.hechoRepository.findAllByEntregadoAAgregador(pageable, Boolean.FALSE).getContent();
+            hechos.forEach(Hecho::marcarEntregadoAAgregador);
+            this.hechoRepository.saveAll(hechos);
+            return hechos;
+        }
+        return this.hechoRepository.findAll(pageable).getContent();
     }
 
     private Usuario getOrSaveUsuario(UsuarioDTO usuarioDTO) {
@@ -136,7 +151,7 @@ public class HechoServicio implements IHechoServicio {
     }
 
     @Override
-    public List<Hecho> obtenerHechosNuevos(String estadoRaw) {
+    public List<Hecho> obtenerHechosNuevos(String estadoRaw, Integer nroPagina) {
         // Normalizamos el string que vino por query param
         String estado = estadoRaw == null ? "" : estadoRaw.trim().toUpperCase();
         List<Estado> estadosModerables = List.of(
@@ -144,15 +159,19 @@ public class HechoServicio implements IHechoServicio {
             Estado.ACEPTADA,
             Estado.RECHAZADA
         );
+        if (nroPagina == null || nroPagina < 0) {
+            nroPagina = 0;
+        }
+        PageRequest pageable = PageRequest.of(nroPagina, this.tamanioPagina);
         if (estado.isEmpty() || "TODAS".equals(estado) || "TODOS".equals(estado)) {
-            return hechoRepository.findHechosByEstadoIn(estadosModerables);
+            return hechoRepository.findHechosByEstadoIn(pageable,estadosModerables).getContent();
         }
         try {
             Estado estadoFinal = Estado.valueOf(estado);
-            return hechoRepository.findHechosByEstado(estadoFinal);
+            return hechoRepository.findHechosByEstado(pageable, estadoFinal).getContent();
         } catch (IllegalArgumentException e) {
             log.info("[HechoServicio] Valor inválido para estado='" + estado + "', devolviendo todos los estados moderables.");
-            return hechoRepository.findHechosByEstadoIn(estadosModerables);
+            return hechoRepository.findHechosByEstadoIn(pageable, estadosModerables).getContent();
         }
     }
 

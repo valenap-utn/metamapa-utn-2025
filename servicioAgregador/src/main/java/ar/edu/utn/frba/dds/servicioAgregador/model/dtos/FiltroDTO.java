@@ -9,9 +9,11 @@ import java.time.LocalDateTime;
 import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 
 @Builder
 @Getter
+@Setter
 public class FiltroDTO {
   String categoria;
   LocalDateTime fecha_reporte_desde;
@@ -26,6 +28,7 @@ public class FiltroDTO {
   String provincia;
   String departamento;
   String municipio;
+  Integer nroPagina;
 
   public boolean tieneFiltroUbicacion() {
     return (this.getProvincia() != null && !this.getProvincia().isEmpty())

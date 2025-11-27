@@ -82,8 +82,8 @@ public class HechoGlobalController {
   }
 
   @GetMapping
-  public ResponseEntity<ConjuntoHechoDTOEstatica> getAll() {
-    Set<HechoDTOEstatica> todosLosHechos = hechoService.obtenerTodos();
+  public ResponseEntity<ConjuntoHechoDTOEstatica> getAll(@RequestParam(required = false) Boolean servicioAgregador, @RequestParam(required = false) Integer nroPagina) {
+    Set<HechoDTOEstatica> todosLosHechos = hechoService.obtenerTodos(servicioAgregador, nroPagina);
     ConjuntoHechoDTOEstatica conjuntoHechos = new ConjuntoHechoDTOEstatica();
     conjuntoHechos.setHechos(todosLosHechos.stream().toList());
     return ResponseEntity.ok(conjuntoHechos);

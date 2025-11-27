@@ -1,5 +1,6 @@
 package ar.edu.utn.frba.dds.servicioFuenteDinamica.services;
 
+import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos.FiltroDTODinamica;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos.HechoDTODinamica;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos.RevisionDTO;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.Categoria;
@@ -13,7 +14,7 @@ import java.util.List;
 public interface IHechoServicio {
   Hecho crearHecho(HechoDTODinamica input, MultipartFile contenidoMultimedia);
 
-  List<Hecho> obtenerHechosPublicos(Boolean pendientes, Long idUsuario);
+  List<Hecho> obtenerHechosPublicos(FiltroDTODinamica filtro);
 
 
   Hecho revisarHecho(Long id, RevisionDTO revisionDTO);
@@ -24,5 +25,5 @@ public interface IHechoServicio {
 
   List<Categoria> findAllCategorias();
 
-  List<Hecho> obtenerHechosNuevos(String estado);
+  List<Hecho> obtenerHechosNuevos(String estado, Integer nroPagina);
 }

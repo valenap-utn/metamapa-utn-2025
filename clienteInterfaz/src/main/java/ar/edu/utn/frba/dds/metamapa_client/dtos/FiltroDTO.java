@@ -23,5 +23,6 @@ public class FiltroDTO {
   private String provincia;
   private String municipio;
   private String departamento;
+  private Integer nroPagina = 0;
 
 }
