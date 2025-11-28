@@ -418,7 +418,9 @@ if (document.getElementById('btnAplicar')) {
 // ===== Modal "Solicitud de eliminación" =====
 document.addEventListener("click", (e) => {
     const btn = e.target.closest(".js-open-solicitud");
-    if (!btn) return;
+    if (!btn) {
+        return;
+    }
 
     window._hechoIdSeleccionado = Number(btn.dataset.id);
 
@@ -427,6 +429,8 @@ document.addEventListener("click", (e) => {
     if (label && titulo) label.textContent = `Solicitud de eliminación – ${titulo}`;
 
     const modalEl = document.getElementById("modalSolicitud");
+    const input = document.getElementById('inputIDHecho')
+    input.setAttribute( 'value',`${Number(btn.dataset.id)}`)
     const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
     modal.show();
 });

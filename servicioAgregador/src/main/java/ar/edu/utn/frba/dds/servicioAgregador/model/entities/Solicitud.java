@@ -2,6 +2,7 @@ package ar.edu.utn.frba.dds.servicioAgregador.model.entities;
 
 
 import ar.edu.utn.frba.dds.servicioAgregador.exceptions.SolicitudError;
+import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.UsuarioDTO;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -85,4 +86,8 @@ public class Solicitud {
   public boolean noEsPendiente() {
         return this.estado != Estado.PENDIENTE;
   }
+
+    public UsuarioDTO getUsuarioDTO() {
+        return this.usuario != null ? this.usuario.getUsuarioDTO() : null;
+    }
 }

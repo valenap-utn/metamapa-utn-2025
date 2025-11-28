@@ -1,5 +1,6 @@
 package ar.edu.utn.frba.dds.metamapa_client.clients;
 
+import ar.edu.utn.frba.dds.metamapa_client.clients.utils.JwtUtil;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.*;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.ColeccionDTOInput;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.ColeccionDTOOutput;
@@ -9,10 +10,14 @@ import ar.edu.utn.frba.dds.metamapa_client.dtos.FiltroDTO;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.HechoDTOOutput;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.SolicitudEliminacionDTO;
 import ar.edu.utn.frba.dds.metamapa_client.services.internal.WebApiCallerService;
+import jakarta.servlet.http.HttpSession;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.servlet.server.Session;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
@@ -23,10 +28,12 @@ public class ServicioAgregador implements IServicioAgregador {
   private final String baseUrl;
   private final WebClient agregadorWebClient;
   private final WebApiCallerService webApiCallerService;
-  public ServicioAgregador(@Value("${agregador.api.base-url}") String baseUrl, WebClient agregadorWebClient, WebApiCallerService webApiCallerService) {
+  private final JwtUtil jwtUtil;
+  public ServicioAgregador(@Value("${agregador.api.base-url}") String baseUrl, WebClient agregadorWebClient, WebApiCallerService webApiCallerService, JwtUtil jwtUtil) {
     this.baseUrl = baseUrl;
     this.agregadorWebClient = agregadorWebClient;
     this.webApiCallerService = webApiCallerService;
+    this.jwtUtil = jwtUtil;
   }
 
 
@@ -70,9 +77,25 @@ public class ServicioAgregador implements IServicioAgregador {
     ).getSolicitudes();
   }
 
-  public SolicitudEliminacionDTO crearSolicitud(SolicitudEliminacionDTO solicitudEliminacionDTO) {
-    return this.agregadorWebClient.post().uri(uriBuilder -> uriBuilder.path("/api/solicitudes").build())
-            .bodyValue(solicitudEliminacionDTO).retrieve()
+  public SolicitudEliminacionDTO crearSolicitud(Long idHecho, String justificacion, HttpSession session) {
+    String accessToken = (String) session.getAttribute("accessToken");
+    Long userId = null;
+    if (accessToken != null) {
+      userId = jwtUtil.getId(accessToken);
+    }
+
+    if (justificacion == null || justificacion.trim().length() < 500) {
+      //return ResponseEntity.badRequest().body("La justificación debe tener al menos 500 caracteres");
+    }
+
+    SolicitudEliminacionDTO solicitud = new SolicitudEliminacionDTO();
+    solicitud.setIdHecho(idHecho);
+    solicitud.setIdusuario(userId);
+    solicitud.setJustificacion(justificacion);
+    solicitud.setEstado("PENDIENTE");
+    solicitud.setFechaSolicitud(LocalDateTime.now());
+    return this.agregadorWebClient.post().uri(uriBuilder -> uriBuilder.path("/api/agregador/solicitudes").build())
+            .bodyValue(solicitud).retrieve()
             .bodyToMono(SolicitudEliminacionDTO.class)
             .block();
   }
@@ -83,8 +106,8 @@ public class ServicioAgregador implements IServicioAgregador {
   }
 
   public SolicitudEliminacionDTO aceptarSolicitud(Long idSolicitud, RevisionDTO revisionDTO) {
-    return this.webApiCallerService.put(
-            baseUrl + "/api/agregador/colecciones/" + idSolicitud +"/aceptados", revisionDTO, SolicitudEliminacionDTO.class);
+    return this.webApiCallerService.post(
+            baseUrl + "/api/agregador/solicitudes/" + idSolicitud +"/aceptados", revisionDTO, SolicitudEliminacionDTO.class);
   }
 
   public ColeccionDTOOutput modificarColeccion(ColeccionDTOInput coleccionDTOInput, UUID coleccionId) {

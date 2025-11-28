@@ -62,12 +62,13 @@ public class ServicioAgregadorController {
                                                    @RequestParam(required = false) LocalDateTime fecha_acontecimiento_hasta,
                                                    @RequestParam(required = false) String provincia,
                                                    @RequestParam(required = false) String departamento,
-                                                   @RequestParam(required = false) String municipio) {
+                                                   @RequestParam(required = false) String municipio,
+                                                   @RequestParam(required = false) Integer nroPagina) {
     FiltroDTO filtros = FiltroDTO.builder()
             .categoria(categoria).fecha_reporte_desde(fecha_reporte_desde).fecha_reporte_hasta(fecha_reporte_hasta)
             .fecha_acontecimiento_desde(fecha_acontecimiento_desde).fecha_acontecimiento_hasta(fecha_acontecimiento_hasta)
             .provincia(provincia).municipio(municipio).departamento(departamento)
-            .build();
+            .nroPagina(nroPagina).build();
     return this.agregadorService.findHechosByColeccionId(coleccionId, filtros);
   }
 
@@ -81,12 +82,12 @@ public class ServicioAgregadorController {
     return this.agregadorService.crearSolicitud(solicitudEliminacionDTO);
   }
 
-  @DeleteMapping("/solicitudes/{idSolicitud}/eliminados")
+  @PostMapping("/solicitudes/{idSolicitud}/eliminados")
   public SolicitudEliminacionDTO cancelarSolicitud(@PathVariable Long idSolicitud, @RequestBody RevisionDTO revisionDTO) {
     return this.agregadorService.cancelarSolicitud(idSolicitud, revisionDTO);
   }
 
-  @PutMapping("/solicitudes/{idSolicitud}/aceptados")
+  @PostMapping("/solicitudes/{idSolicitud}/aceptados")
   public SolicitudEliminacionDTO aceptarSolicitud(@PathVariable Long idSolicitud, @RequestBody RevisionDTO revisionDTO) {
     return this.agregadorService.aceptarSolicitud(idSolicitud, revisionDTO);
   }

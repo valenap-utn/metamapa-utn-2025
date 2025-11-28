@@ -47,7 +47,7 @@ public class SolicitudService implements ISolicitudService {
         }
 
         Usuario user = null;
-        if(solicitudInput.getUsuarioId() == null) {
+        if(solicitudInput.getUsuarioId() != null) {
             user = this.getOrSaveUsuario(solicitudInput.getUsuario());
         }
         Solicitud solicitud = new Solicitud(hecho, user, solicitudInput.getJustificacion());
@@ -69,7 +69,7 @@ public class SolicitudService implements ISolicitudService {
         SolicitudOutputDTO solicitudOutputDTO = new SolicitudOutputDTO();
         solicitudOutputDTO.setIdHecho(solicitud.getHecho().getId());
         solicitudOutputDTO.setJustificacion(solicitud.getJustificacion());
-        solicitudOutputDTO.setUsuario(solicitud.getUsuario().getUsuarioDTO());
+        solicitudOutputDTO.setUsuario(solicitud.getUsuarioDTO());
         solicitudOutputDTO.setEstado(solicitud.getEstado().name());
         solicitudOutputDTO.setId(solicitud.getId());
         return solicitudOutputDTO;

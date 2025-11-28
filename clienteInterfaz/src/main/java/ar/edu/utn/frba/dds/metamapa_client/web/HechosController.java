@@ -7,7 +7,6 @@ import ar.edu.utn.frba.dds.metamapa_client.dtos.*;
 import ar.edu.utn.frba.dds.metamapa_client.services.IUsuarioCuentaService;
 import jakarta.servlet.http.HttpSession;
 
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -18,7 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -57,6 +55,12 @@ public class HechosController {
     model.addAttribute("hecho", hecho);
     model.addAttribute("urlColeccion", urlColeccion);
     return "hechos/hecho-completo";
+  }
+
+  @PostMapping("/{idHecho}/solicitud-eliminacion")
+  public String solicitudEliminacion(@PathVariable Long idHecho,@RequestParam(required = false) String justificacion,  @RequestParam(required = false) String urlColeccion, HttpSession session) {
+    this.agregador.crearSolicitud(idHecho, justificacion, session);
+    return "redirect:/hechos/"+idHecho + "?urlColeccion=" + urlColeccion;
   }
 
   @GetMapping("/nav-hechos")
@@ -266,27 +270,13 @@ public class HechosController {
   }
 
   //Solicitudes de Eliminación
-  @PostMapping("/{idHecho}/solicitud-eliminacion")
-  public ResponseEntity<?> crearSolicitudEliminacion(@PathVariable Long idHecho, @RequestParam String justificacion, HttpSession session) {
-    String accessToken = (String) session.getAttribute("accessToken");
-    Long userId = null;
-    if (accessToken != null) {
-      userId = jwtUtil.getId(accessToken);
-    }
-
-    if (justificacion == null || justificacion.trim().length() < 500) {
-      return ResponseEntity.badRequest().body("La justificación debe tener al menos 500 caracteres");
-    }
-
-    SolicitudEliminacionDTO solicitud = new SolicitudEliminacionDTO();
-    solicitud.setIdHecho(idHecho);
-    solicitud.setIdusuario(userId);
-    solicitud.setJustificacion(justificacion);
-    solicitud.setEstado("PENDIENTE");
-    solicitud.setFechaSolicitud(LocalDateTime.now());
-    this.agregador.crearSolicitud(solicitud);
-    return ResponseEntity.ok().build(); //200 en caso de éxito!
+  @PostMapping("/nav-hechos/solicitud-eliminacion")
+  public String crearSolicitudEliminacion(@RequestParam(required = false) Long idHecho, @RequestParam(required = false) String justificacion, HttpSession session) {
+    this.agregador.crearSolicitud(idHecho, justificacion, session);
+    return "redirect:/hechos/nav-hechos" ; //200 en caso de éxito!
   }
+
+
 
 
   //-------------------------------------

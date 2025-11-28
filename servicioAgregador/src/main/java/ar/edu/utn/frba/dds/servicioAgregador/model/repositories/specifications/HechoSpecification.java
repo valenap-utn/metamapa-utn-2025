@@ -70,8 +70,8 @@ public class HechoSpecification {
       if(categoria == null || categoria.isEmpty())
         return cb.conjunction();
 
-      Join<Hecho, Categoria> categoriaJoin = root.join(HechoSpecification.CATEGORIA, JoinType.INNER);
-      return cb.equal(categoriaJoin.get(HechoSpecification.CATEGORIANOMBRE), categoriaJoin);
+      Path<Categoria> categoriaJoin = root.get("categoria");
+      return cb.equal(categoriaJoin.get(HechoSpecification.CATEGORIANOMBRE), categoria);
     });
   }
 

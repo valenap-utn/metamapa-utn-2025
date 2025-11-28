@@ -386,8 +386,8 @@ public class AdminController {
     //Contadores
     long total = solicitudesVM.size();
     long pendientes = solicitudesVM.stream().filter(h -> "PENDIENTE".equals(h.solicitud.getEstado())).count();
-    long aceptadas = solicitudesVM.stream().filter(h -> "ACEPTAR".equals(h.solicitud.getEstado())).count();
-    long canceladas = solicitudesVM.stream().filter(h -> "CANCELADA".equals(h.solicitud.getEstado())).count();
+    long aceptadas = solicitudesVM.stream().filter(h -> "ACEPTADA".equals(h.solicitud.getEstado())).count();
+    long canceladas = solicitudesVM.stream().filter(h -> "RECHAZADA".equals(h.solicitud.getEstado())).count();
 
     //Filtros (por estado y/o búsqueda)
     String qNorm = q.trim().toLowerCase();

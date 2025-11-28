@@ -86,6 +86,7 @@ public class AgregadorService {
     Usuario usuario = this.obtenerUsuario();
     revisionDTO.setUsuario(usuario.getUsuarioDTO());
     return this.webClient.post().uri(uriBuilder -> uriBuilder.path("/api/solicitudes/{id}/eliminados").build(idSolicitud))
+            .bodyValue(revisionDTO)
             .retrieve().bodyToMono(SolicitudEliminacionDTO.class)
             .block();
   }
@@ -93,7 +94,8 @@ public class AgregadorService {
   public SolicitudEliminacionDTO aceptarSolicitud(Long idSolicitud, RevisionDTO revisionDTO) {
     Usuario usuario = this.obtenerUsuario();
     revisionDTO.setUsuario(usuario.getUsuarioDTO());
-    return this.webClient.post().uri(uriBuilder -> uriBuilder.path("/api/solicitudes/{id}/eliminados").build(idSolicitud))
+    return this.webClient.post().uri(uriBuilder -> uriBuilder.path("/api/solicitudes/{id}/aceptados").build(idSolicitud))
+            .bodyValue(revisionDTO)
             .retrieve().bodyToMono(SolicitudEliminacionDTO.class)
             .block();
   }

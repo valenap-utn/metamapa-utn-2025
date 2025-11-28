@@ -115,21 +115,23 @@
                 <h5 class="modal-title" id="modalSolicitudLabel">Solicitud de eliminacion</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
+            <form method="post" th:with="baseUrl=('/hechos/'+ ${hecho.id + '/solicitud-eliminacion'})" th:action="@{${baseUrl}}" >
+                <!-- Cuerpo -->
+                <div class="modal-body">
+                    <p id="modalSolicitudDesc" class="mb-2">Explicanos por qué crees que este hecho debe eliminarse de MetaMapa.</p>
+                    <label for="justificacion" class="form-label">Justificación</label>
+                    <textarea id="justificacion" class="form-control" rows="6" aria-describedby="just-counter" placeholder="Minimo 500 caracteres..." name="justificacion"></textarea>
 
-            <!-- Cuerpo -->
-            <div class="modal-body">
-                <p id="modalSolicitudDesc" class="mb-2">Explicanos por qué crees que este hecho debe eliminarse de MetaMapa.</p>
-                <label for="justificacion" class="form-label">Justificación</label>
-                <textarea id="justificacion" class="form-control" rows="6" aria-describedby="just-counter" placeholder="Minimo 500 caracteres..."></textarea>
+                    <div id="just-counter" class="form-text">0 / 500 </div>
+                    <input style="display: none;" type="text" name="urlColeccion" th:value="${urlColeccion}">
+                </div>
 
-                <div id="just-counter" class="form-text">0 / 500 </div>
-            </div>
-
-            <!-- Pie -->
-            <div class="modal-footer">
-                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-primary mm-btn-primary" id="btn-enviar" disabled> Enviar solicitud</button>
-            </div>
+                <!-- Pie -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary mm-btn-primary" id="btn-enviar" disabled> Enviar solicitud</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>

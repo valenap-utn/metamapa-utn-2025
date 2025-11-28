@@ -19,10 +19,10 @@
                 <button type="submit" class="mm-seg__btn" th:classappend="${estado}=='PENDIENTE' ? 'is-active' : ''" name="estado" value="PENDIENTE" th:attr="aria-selected=${estado}=='PENDIENTE'">
                     Pendientes <span class="mm-seg__badge" id="count-pend" th:text="${countPend}">0</span>
                 </button>
-                <button type="submit" class="mm-seg__btn" th:classappend="${estado}=='ACEPTAR' ? 'is-active' : ''" name="estado" value="ACEPTAR" th:attr="aria-selected=${estado}=='ACEPTAR'">
+                <button type="submit" class="mm-seg__btn" th:classappend="${estado}=='ACEPTADA' ? 'is-active' : ''" name="estado" value="ACEPTADA" th:attr="aria-selected=${estado}=='ACEPTADA'">
                     Aceptadas <span class="mm-seg__badge" id="count-apr" th:text="${countAcep}">0</span>
                 </button>
-                <button type="submit" class="mm-seg__btn" th:classappend="${estado}=='CANCELADA' ? 'is-active' : ''"  name="estado" value="CANCELADA" th:attr="aria-selected=${estado}=='CANCELADA'">
+                <button type="submit" class="mm-seg__btn" th:classappend="${estado}=='RECHAZADA' ? 'is-active' : ''"  name="estado" value="RECHAZADA" th:attr="aria-selected=${estado}=='RECHAZADA'">
                     Canceladas <span class="mm-seg__badge" id="count-cancel" th:text="${countCancel}">0</span>
                 </button>
             </div>
@@ -48,7 +48,7 @@
                                 PENDIENTE
                             </span>
 
-                            <span class="badge badge-neutral" th:text="${'Creado por ' + (solicitudesVM.solicitud.idusuario != null ? ('Usuario ' + solicitudesVM.solicitud.idusuario) : 'Anónimo')}">
+                            <span class="badge badge-neutral" th:text="${'Creado por ' + (solicitudesVM.solicitud.usuario != null ? (solicitudesVM.solicitud.usuario.nombre + ' ' + solicitudesVM.solicitud.usuario.apellido + ' ' + solicitudesVM.solicitud.usuario.email) : 'Anónimo')}">
                                 Creado por Anónimo
                             </span>
                         </div>
@@ -76,7 +76,7 @@
 
                 <div class="mm-req__body">
                     <p class="m-0"><strong>Justificación:</strong>
-                        <span th:text="${solicitudesVM.solicitud.justificacion ?: '—'}">—</span></p>
+                        <span  th:text="${solicitudesVM.solicitud.justificacion ?: '—'}">—</span></p>
                     <p class="m-0"><strong>Hecho referenciado:</strong>
                         <a class="blue-link" th:href="${solicitudesVM.urlHecho}" th:text="${solicitudesVM.tituloHecho}">—</a></p>
                 </div>

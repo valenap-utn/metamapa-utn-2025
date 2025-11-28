@@ -152,15 +152,16 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                             aria-label="Cerrar"></button>
                 </div>
-                <form method="post">
+                <form method="post" th:with="baseUrl=(${urlColeccion} != null ? ${urlColeccion} + '/solicitud-eliminacion' : '/hechos/nav-hechos/solicitud-eliminacion')" th:action="@{${baseUrl}}" >
                     <div class="modal-body">
                         <p id="modalSolicitudDesc" class="mb-2">Explicanos por qué creés que este hecho
                             debe eliminarse de MetaMapa.</p>
                         <label for="justificacion" class="form-label">Justificación</label>
                         <textarea id="justificacion" class="form-control" rows="6"
                                   aria-describedby="just-counter"
-                                  placeholder="Mínimo 500 caracteres..." name="justificacion"></textarea>
+                                  placeholder="Mínimo 500 caracteres..." name="justificacion" ></textarea>
                         <div id="just-counter" class="form-text">0 / 500</div>
+                        <input style="display: none;" type="number" id="inputIDHecho" name="idHecho" >
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">

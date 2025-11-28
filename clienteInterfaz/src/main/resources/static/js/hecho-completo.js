@@ -256,6 +256,7 @@ function initMap(h) {
     });
 
     // Enviar solicitud
+    /*
     btnEnviar.addEventListener('click', async () => {
         const justificacion = txt.value.trim(); // lee el texto y le saca espacios y saltos de linea al inicio y al final asi 500 espacios no cuentan
         if (justificacion.length < MIN) return; // doble verificacion (front y back)
@@ -293,7 +294,7 @@ function initMap(h) {
             btnEnviar.disabled = false;
         }
     });
-
+*/
     // Toasts básicos con Bootstrap
     function showToast(message, cls = 'bg-dark') {
         // contenedor si no existe

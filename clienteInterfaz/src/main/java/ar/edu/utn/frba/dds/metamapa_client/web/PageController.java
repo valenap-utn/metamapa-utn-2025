@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -81,6 +82,12 @@ public class PageController {
     model.addAttribute("filtros", filtroDTO);
     model.addAttribute("urlColeccion", "/colecciones/" + id + "/nav-hechos");
     return "hechos/nav-hechos";
+  }
+
+  @PostMapping("/colecciones/{id}/nav-hechos/solicitud-eliminacion")
+  public String crearSolicitudEliminacion(@PathVariable String id , @RequestParam(required = false) Long idHecho, @RequestParam(required = false) String justificacion, HttpSession session) {
+    this.cliente.crearSolicitud(idHecho, justificacion, session);
+    return "redirect:/colecciones/" + id + "/nav-hechos" ; //200 en caso de éxito!
   }
 
   @GetMapping("/crear-cuenta")

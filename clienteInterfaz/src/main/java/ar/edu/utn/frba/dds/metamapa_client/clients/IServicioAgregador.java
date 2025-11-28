@@ -8,6 +8,7 @@ import ar.edu.utn.frba.dds.metamapa_client.dtos.RevisionDTO;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.SolicitudEdicionDTO;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.SolicitudEliminacionDTO;
 
+import jakarta.servlet.http.HttpSession;
 import java.util.List;
 import java.util.UUID;
 
@@ -27,7 +28,6 @@ public interface IServicioAgregador {
 
   //Solicitudes de Eliminacion
   List<SolicitudEliminacionDTO> findAllSolicitudes();
-  SolicitudEliminacionDTO crearSolicitud(SolicitudEliminacionDTO solicitudEliminacionDTO);
   SolicitudEliminacionDTO cancelarSolicitud(Long idSolicitud, RevisionDTO revisionDTO);
   SolicitudEliminacionDTO aceptarSolicitud(Long idSolicitud, RevisionDTO revisionDTO);
 
@@ -51,4 +51,6 @@ public interface IServicioAgregador {
   //Info de usuario
   String getNombreUsuario(Long id);
   List<String> findAllCategorias();
+
+  SolicitudEliminacionDTO crearSolicitud(Long idHecho, String justificacion, HttpSession session);
 }

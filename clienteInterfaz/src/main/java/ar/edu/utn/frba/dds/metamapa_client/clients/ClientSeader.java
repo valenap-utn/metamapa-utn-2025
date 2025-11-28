@@ -23,6 +23,7 @@ import ar.edu.utn.frba.dds.metamapa_client.dtos.UsuarioDTO;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.UsuarioNuevoDTO;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.usuarios.Permiso;
 import ar.edu.utn.frba.dds.metamapa_client.services.IConexionServicioUser;
+import jakarta.servlet.http.HttpSession;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -398,7 +399,7 @@ public class ClientSeader implements IFuenteDinamica, IFuenteEstatica, IServicio
     return new ArrayList<>(this.solicitudesEliminacion.values());
   }
 
-  @Override
+
   public SolicitudEliminacionDTO crearSolicitud(SolicitudEliminacionDTO solicitudEliminacionDTO) {
     Long id = this.idSolicitudEliminacion.getAndIncrement();
     solicitudEliminacionDTO.setId(id);
@@ -597,6 +598,11 @@ public class ClientSeader implements IFuenteDinamica, IFuenteEstatica, IServicio
   @Override
   public List<String> findAllCategorias() {
     return List.of();
+  }
+
+  @Override
+  public SolicitudEliminacionDTO crearSolicitud(Long idHecho, String justificacion, HttpSession session) {
+    return null;
   }
 
 
