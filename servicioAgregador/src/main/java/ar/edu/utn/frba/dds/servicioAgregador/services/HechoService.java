@@ -58,4 +58,9 @@ public class HechoService implements IHechoService{
     return this.mapHechoOutput.toHechoDTO(hecho);
   }
 
+  @Override
+  public Long getCantidad() {
+    return this.hechoRepository.count();
+  }
+
 }

@@ -62,4 +62,8 @@ public class HechoController {
       return ResponseEntity.ok(this.hechoService.findAll(filtro));
   }
 
+  @GetMapping("/cantidad")
+  public ResponseEntity<Long> getCantidad(){
+    return ResponseEntity.ok(this.hechoService.getCantidad());
+  }
 }

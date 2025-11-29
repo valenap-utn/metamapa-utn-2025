@@ -2,6 +2,7 @@ package ar.edu.utn.frba.dds.metamapa_client.clients;
 
 import ar.edu.utn.frba.dds.metamapa_client.dtos.ColeccionDTOInput;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.ColeccionDTOOutput;
+import ar.edu.utn.frba.dds.metamapa_client.dtos.ConjuntoHechoDTO;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.FiltroDTO;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.HechoDTOOutput;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.RevisionDTO;
@@ -21,8 +22,8 @@ import java.util.UUID;
 
 public interface IServicioAgregador {
   // Hechos
-  List<HechoDTOOutput> findAllHechos(FiltroDTO filtro);
-  List<HechoDTOOutput> findHechosByColeccionId(UUID coleccionId, FiltroDTO filtro);
+  ConjuntoHechoDTO findAllHechos(FiltroDTO filtro);
+  ConjuntoHechoDTO findHechosByColeccionId(UUID coleccionId, FiltroDTO filtro);
   HechoDTOOutput getHecho(Long idHecho);
   List<HechoDTOOutput> listHechosDelUsuario(Long userId);
 
@@ -53,4 +54,8 @@ public interface IServicioAgregador {
   List<String> findAllCategorias();
 
   SolicitudEliminacionDTO crearSolicitud(Long idHecho, String justificacion, HttpSession session);
+
+  Long getCantidadHechos();
+
+  long getCantidadFuentes();
 }

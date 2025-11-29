@@ -50,7 +50,7 @@ public class Hecho {
     @Column(name = "descripcion", columnDefinition = "TEXT")
     @Setter @Getter private String descripcion;
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne
     @JoinColumn(referencedColumnName = "id", nullable = false, name = "categoria_id")
     @Setter @Getter private Categoria categoria;
 
@@ -169,5 +169,9 @@ public class Hecho {
 
   public UsuarioDTO getUsuarioDTO() {
     return this.usuario == null? null: this.usuario.getUsuarioDTO();
+  }
+
+  public Long getIdOrigen() {
+      return this.origen == null ? null : this.origen.getId();
   }
 }

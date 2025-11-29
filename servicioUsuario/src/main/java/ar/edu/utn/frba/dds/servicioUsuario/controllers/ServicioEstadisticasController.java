@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/estadisticas")
@@ -21,8 +20,8 @@ public class ServicioEstadisticasController {
   }
 
   @GetMapping
-  public ConjuntoEstadisticasDTO getEstadisticas() {
-    return this.estadisticaService.getEstadisticas();
+  public ResponseEntity<ConjuntoEstadisticasDTO> getEstadisticas() {
+    return ResponseEntity.ok(this.estadisticaService.getEstadisticas());
   }
 
   @GetMapping("/csv")
@@ -33,9 +32,4 @@ public class ServicioEstadisticasController {
         .contentType(MediaType.parseMediaType("text/csv"))
         .body(csv);
   }
-
-  /*@GetMapping("/csv")
-  public MultipartFile getEstadisticasEnCSV() {
-    return this.estadisticaService.getEstadisticasEnCSV();
-  }*/
 }

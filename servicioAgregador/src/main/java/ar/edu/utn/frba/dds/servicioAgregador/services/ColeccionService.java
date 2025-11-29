@@ -34,6 +34,7 @@ import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -44,6 +45,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 @Service
 public class ColeccionService implements IColeccionService{
@@ -108,8 +110,7 @@ public class ColeccionService implements IColeccionService{
 
     fuenteColeccions.forEach(fuenteColeccion -> this.saveOrigenHechoNuevo(fuenteColeccion.getOrigen()));
     Coleccion coleccionGuardada = this.coleccionRepository.save(coleccionCreada);
-    ColeccionDTOOutput rta = this.mapperColeccionOutput.toColeccionDTOOutput(coleccionGuardada);
-    return rta;
+    return this.mapperColeccionOutput.toColeccionDTOOutput(coleccionGuardada);
   }
 
 
@@ -117,19 +118,22 @@ public class ColeccionService implements IColeccionService{
   @Override
   @Transactional
   public Mono<Void> actualizarHechosColecciones() {
-    return Flux.fromIterable(this.coleccionRepository.findAll())
-                    .flatMap(coleccion -> {
-                      List<FuenteColeccion> fuenteColeccions = coleccion.getFuenteColeccions();
-                      return this.actualizarHechosFuentes(fuenteColeccions);
-                    }).then();
+    return Flux.fromIterable(this.getOrigenesAActualizar())
+                    .flatMap(this::actualizarHechosFuentes).then();
   }
 
-  private Mono<Void> actualizarHechosFuentes(List<FuenteColeccion> fuenteColeccions) {
-    return Flux.fromIterable(fuenteColeccions)
-            .flatMap(fuente -> {
-              List<Hecho> hechos = this.getHechosClient(fuente.getOrigen(), null);
+  private List<Origen> getOrigenesAActualizar() {
+    return this.origenRepository.findAllOrigenesFuente();
+  }
+
+  private Mono<Void> actualizarHechosFuentes(Origen origen) {
+    return Mono.just(origen)
+            .publishOn(Schedulers.boundedElastic())
+            .flatMap(origen1 -> {
+              List<Hecho> hechos = this.getHechosClient(origen, null);
               hechos.forEach(hecho -> hecho.setOrigen(this.saveOrigenHechoNuevo(hecho.getOrigen())));
-              hechos.forEach(this::verSiNormalizar);
+              hechos.forEach( h -> this.verSiNormalizar(h));
+              this.userRepository.saveAll(hechos.stream().map(Hecho::getUsuario).filter(Objects::nonNull).toList());
               this.categoriaRepository.saveAll(hechos.stream().map(Hecho::getCategoria).toList());
               this.hechoRepository.saveAll(hechos);
               return Mono.empty();
@@ -156,7 +160,7 @@ public class ColeccionService implements IColeccionService{
   }
 
   private void verSiNormalizar(Hecho hecho) {
-    Hecho hechoInterno =  this.hechoRepository.findByIdExternoAndOrigen(hecho.getIdExterno(), hecho.getOrigen());
+    Hecho  hechoInterno =  this.hechoRepository.findByIdExternoAndOrigen(hecho.getIdExterno(), hecho.getIdOrigen());
     if(hechoInterno != null) {
         hecho.setId(hechoInterno.getId());
         if (this.verificadorNormalizador.estaNormalizado(hechoInterno, hecho)) {

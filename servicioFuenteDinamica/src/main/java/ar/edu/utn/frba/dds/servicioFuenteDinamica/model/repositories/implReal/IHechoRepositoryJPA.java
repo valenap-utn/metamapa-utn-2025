@@ -5,7 +5,6 @@ import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.enums.Estado;
 
 import java.net.ContentHandler;
 import java.util.Collection;
-import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -15,15 +14,17 @@ import org.springframework.data.repository.query.Param;
 
 public interface IHechoRepositoryJPA extends JpaRepository<Hecho, Long> {
 
-  @Query("SELECT h FROM Hecho h WHERE h.estado = :estado1 ")
-  Page<Hecho> findHechosByEstado(Pageable pageable, @Param("estado1") Estado estado1);
+  @Query("SELECT h FROM Hecho h WHERE h.estado = :estado1 AND h.eliminado = :eliminado1")
+  Page<Hecho> findHechosByEstado(Pageable pageable, @Param("estado1") Estado estado1, @Param("eliminado1") Boolean eliminado);
 
-  @Query("SELECT h FROM Hecho h WHERE h.usuario.id = :idUsuario ")
-  Page<Hecho> findHechosByIdUsuario(Pageable pageable, @Param("idUsuario")Long idUsuario);
+  @Query("SELECT h FROM Hecho h WHERE h.usuario.id = :idUsuario and h.eliminado = :eliminado1")
+  Page<Hecho> findHechosByIdUsuario(Pageable pageable, @Param("idUsuario")Long idUsuario, @Param("eliminado1") Boolean eliminado);
 
-  @Query("SELECT h FROM Hecho h WHERE h.estado IN :estados")
-  Page<Hecho> findHechosByEstadoIn(Pageable pageable, @Param("estados") Collection<Estado> estados);
+  @Query("SELECT h FROM Hecho h WHERE h.estado IN :estados AND h.eliminado = :eliminado1")
+  Page<Hecho> findHechosByEstadoIn(Pageable pageable, @Param("estados") Collection<Estado> estados, @Param("eliminado1") Boolean eliminado);
 
-  @Query("SELECT h FROM Hecho h WHERE h.entregadoAAgregador = :entregadoAgregador")
-  Page<Hecho> findAllByEntregadoAAgregador(Pageable pageable, @Param("entregadoAgregador") Boolean entregadoAgregador);
+  @Query("SELECT h FROM Hecho h WHERE h.entregadoAAgregador = :entregadoAgregador AND h.eliminado = :eliminado1")
+  Page<Hecho> findAllByEntregadoAAgregador(Pageable pageable, @Param("entregadoAgregador") Boolean entregadoAgregador,@Param("eliminado1") Boolean eliminado);
+  @Query("SELECT h FROM Hecho h WHERE h.eliminado = :eliminado1")
+  Page<Hecho> findAllByEliminado(Pageable pageable,@Param("eliminado1") Boolean eliminado);
 }

@@ -323,7 +323,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     initMap();
     //await loadData();
     const hechos = getHechosReales()
-    populateCategoryFilter(hechos);
+    //populateCategoryFilter(hechos);
     render(hechos);
     $('#modoCurado')?.addEventListener('click', () => simularRadioButton('#modoIrrestricto', '#modoCurado'))
     $('#modoIrrestricto')?.addEventListener('click', () => simularRadioButton('#modoCurado', '#modoIrrestricto'))

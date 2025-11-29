@@ -2,6 +2,7 @@ package ar.edu.utn.frba.dds.metamapa_client.web;
 
 import ar.edu.utn.frba.dds.metamapa_client.clients.IServicioAgregador;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.ColeccionDTOOutput;
+import ar.edu.utn.frba.dds.metamapa_client.dtos.ConjuntoHechoDTO;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.FiltroDTO;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.HechoDTOOutput;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.UsuarioDTO;
@@ -68,8 +69,9 @@ public class PageController {
   @GetMapping("/colecciones/{id}/nav-hechos")
   public String coleccionesNavHechos(Model model, @PathVariable UUID id) {
     FiltroDTO filtroDTO = new FiltroDTO();
-    List<HechoDTOOutput> hechos =  this.cliente.findHechosByColeccionId(id, filtroDTO);
-    model.addAttribute("hechos", hechos);
+    ConjuntoHechoDTO conjHechos =  this.cliente.findHechosByColeccionId(id, filtroDTO);
+    model.addAttribute("hechos", conjHechos.getHechos());
+    model.addAttribute("categorias", conjHechos.getCategorias());
     model.addAttribute("filtros", filtroDTO);
     model.addAttribute("urlColeccion", "/colecciones/" + id + "/nav-hechos");
     return "hechos/nav-hechos";
@@ -77,8 +79,9 @@ public class PageController {
 
   @PostMapping("/colecciones/{id}/nav-hechos")
   public String coleccionesNavHechos(Model model, @PathVariable UUID id, @ModelAttribute("filtroDTO") FiltroDTO filtroDTO) {
-    List<HechoDTOOutput> hechos =  this.cliente.findHechosByColeccionId(id, filtroDTO);
-    model.addAttribute("hechos", hechos);
+    ConjuntoHechoDTO conjHechos =  this.cliente.findHechosByColeccionId(id, filtroDTO);
+    model.addAttribute("hechos", conjHechos.getHechos());
+    model.addAttribute("categorias", conjHechos.getCategorias());
     model.addAttribute("filtros", filtroDTO);
     model.addAttribute("urlColeccion", "/colecciones/" + id + "/nav-hechos");
     return "hechos/nav-hechos";

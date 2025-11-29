@@ -83,18 +83,18 @@ public class HechoServicio implements IHechoServicio {
         }
         PageRequest pageable = PageRequest.of(filtro.getNroPagina(), this.tamanioPagina);
         if (filtro.getPendientes() != null && filtro.getPendientes()) {
-            return hechoRepository.findHechosByEstado(pageable, Estado.EN_REVISION).getContent();
+            return hechoRepository.findHechosByEstado(pageable, Estado.EN_REVISION, Boolean.FALSE).getContent();
         }
         if (filtro.getIdUsuario() != null) {
-            return hechoRepository.findHechosByIdUsuario(pageable, filtro.getIdUsuario()).getContent();
+            return hechoRepository.findHechosByIdUsuario(pageable, filtro.getIdUsuario(), Boolean.FALSE).getContent();
         }
         if (filtro.getServicioAgregador() != null && filtro.getServicioAgregador()) {
-            List<Hecho> hechos =  this.hechoRepository.findAllByEntregadoAAgregador(pageable, Boolean.FALSE).getContent();
+            List<Hecho> hechos =  this.hechoRepository.findAllByEntregadoAAgregador(pageable, Boolean.FALSE, Boolean.FALSE).getContent();
             hechos.forEach(Hecho::marcarEntregadoAAgregador);
             this.hechoRepository.saveAll(hechos);
             return hechos;
         }
-        return this.hechoRepository.findAll(pageable).getContent();
+        return this.hechoRepository.findAllByEliminado(pageable, Boolean.FALSE).getContent();
     }
 
     private Usuario getOrSaveUsuario(UsuarioDTO usuarioDTO) {
@@ -120,6 +120,7 @@ public class HechoServicio implements IHechoServicio {
         if (estado == Estado.ACEPTADA) {
             hecho.setFechaAprobacion(LocalDateTime.now());
         }
+        hecho.marcarParaEnviarAgregador();
         return hechoRepository.save(hecho);
     }
 
@@ -164,14 +165,14 @@ public class HechoServicio implements IHechoServicio {
         }
         PageRequest pageable = PageRequest.of(nroPagina, this.tamanioPagina);
         if (estado.isEmpty() || "TODAS".equals(estado) || "TODOS".equals(estado)) {
-            return hechoRepository.findHechosByEstadoIn(pageable,estadosModerables).getContent();
+            return hechoRepository.findHechosByEstadoIn(pageable,estadosModerables, Boolean.FALSE).getContent();
         }
         try {
             Estado estadoFinal = Estado.valueOf(estado);
-            return hechoRepository.findHechosByEstado(pageable, estadoFinal).getContent();
+            return hechoRepository.findHechosByEstado(pageable, estadoFinal, Boolean.FALSE).getContent();
         } catch (IllegalArgumentException e) {
-            log.info("[HechoServicio] Valor inválido para estado='" + estado + "', devolviendo todos los estados moderables.");
-            return hechoRepository.findHechosByEstadoIn(pageable, estadosModerables).getContent();
+          log.error("[HechoServicio] Valor inválido para estado='{}', devolviendo todos los estados moderables.", estado);
+            return hechoRepository.findHechosByEstadoIn(pageable, estadosModerables, Boolean.FALSE).getContent();
         }
     }
 

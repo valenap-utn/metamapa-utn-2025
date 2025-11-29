@@ -152,4 +152,14 @@ public class AgregadorService {
     return this.webClient.get().uri(uriBuilder -> uriBuilder.path("/api/colecciones/{idColeccion}").build(idColeccion))
             .retrieve().bodyToMono(ColeccionDTOOutput.class).block();
   }
+
+  public Long getCantidadHechos() {
+    return this.webClient.get().uri(uriBuilder -> uriBuilder.path("/api/hechos/cantidad").build())
+            .retrieve().bodyToMono(Long.class).block();
+  }
+
+  public Long getCantidadFuentes() {
+    return this.webClient.get().uri(uriBuilder -> uriBuilder.path("/api/fuentes/cantidad").build())
+            .retrieve().bodyToMono(Long.class).block();
+  }
 }

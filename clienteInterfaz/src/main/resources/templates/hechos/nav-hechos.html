@@ -41,6 +41,9 @@
                         <option value="EventoSanitario">Evento sanitario</option>
                         <option value="Contaminación">Contaminación</option>
                         <option value="Derrame">Derrame</option>
+                        <th:block th:each="categoriaIndice : ${categorias}">
+                            <option th:value="${categoriaIndice}" th:text="${categoriaIndice}"></option>
+                        </th:block>
                     </select>
                 </div>
 

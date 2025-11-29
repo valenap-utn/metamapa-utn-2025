@@ -13,4 +13,7 @@ public interface IOrigenRepositoryJPA extends JpaRepository<Origen, Long> {
   List<Origen> findByUrlAndTipoAndClientNombre(@Param("url") String url, @Param("tipo") TipoOrigen tipo, @Param("clientNombre") String clientNombre);
 
   List<Origen> findByUrlAndTipo(String url, TipoOrigen tipo);
+
+  @Query("SELECT o FROM Origen  o JOIN FuenteColeccion f ON f.origen.id = o.id")
+  List<Origen> findAllOrigenesFuente();
 }

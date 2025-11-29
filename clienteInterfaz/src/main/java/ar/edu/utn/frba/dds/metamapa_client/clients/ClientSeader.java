@@ -5,6 +5,7 @@ import ar.edu.utn.frba.dds.metamapa_client.dtos.AuthResponseDTO;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.Categoria;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.ColeccionDTOInput;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.ColeccionDTOOutput;
+import ar.edu.utn.frba.dds.metamapa_client.dtos.ConjuntoHechoDTO;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.ContenidoMultimedia;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.CriterioDTO;
 import ar.edu.utn.frba.dds.metamapa_client.dtos.FiltroDTO;
@@ -373,23 +374,15 @@ public class ClientSeader implements IFuenteDinamica, IFuenteEstatica, IServicio
 
 
   @Override //retorna solo los hechos NO eliminados
-  public List<HechoDTOOutput> findAllHechos(FiltroDTO filtro) {
-    return this.hechos.values().stream()
-
-        //Excluimos a los que tienen la solicitud de eliminación aceptada
-        .filter(h -> this.solicitudesEliminacion.values().stream()
-            .noneMatch(sol ->
-                sol.getIdHecho().equals(h.getId()) &&
-                    "ACEPTAR".equalsIgnoreCase(sol.getEstado())))
-
-        .toList();
+  public ConjuntoHechoDTO findAllHechos(FiltroDTO filtro) {
+    return null;
   }
 
   @Override
-  public List<HechoDTOOutput> findHechosByColeccionId(UUID coleccionId, FiltroDTO filtro) {
+  public ConjuntoHechoDTO findHechosByColeccionId(UUID coleccionId, FiltroDTO filtro) {
     List<HechoDTOOutput> hechos = new ArrayList<>(this.hechos.values().stream().toList());
     Collections.shuffle(hechos);
-    return hechos.subList(0, 3);
+    return null;
   }
 
   // ---------- Solicitudes de ELIMINACION ----------
@@ -603,6 +596,16 @@ public class ClientSeader implements IFuenteDinamica, IFuenteEstatica, IServicio
   @Override
   public SolicitudEliminacionDTO crearSolicitud(Long idHecho, String justificacion, HttpSession session) {
     return null;
+  }
+
+  @Override
+  public Long getCantidadHechos() {
+    return 0L;
+  }
+
+  @Override
+  public long getCantidadFuentes() {
+    return 0;
   }
 
 

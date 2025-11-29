@@ -15,9 +15,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.servlet.server.Session;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
@@ -37,19 +35,15 @@ public class ServicioAgregador implements IServicioAgregador {
   }
 
 
-  public List<HechoDTOOutput> findAllHechos(FiltroDTO filtroDTO) {
+  public ConjuntoHechoDTO findAllHechos(FiltroDTO filtroDTO) {
     return this.agregadorWebClient.get().uri(uriBuilder -> this.uriConFiltros(filtroDTO, uriBuilder, "/api/agregador/hechos").build())
             .retrieve()
-            .bodyToMono(ConjuntoHechoDTO.class).map(
-                    ConjuntoHechoDTO::getHechos
-            ).block();
+            .bodyToMono(ConjuntoHechoDTO.class).block();
   }
 
-  public List<HechoDTOOutput> findHechosByColeccionId(UUID coleccionId, FiltroDTO filtroDTO) {
+  public ConjuntoHechoDTO findHechosByColeccionId(UUID coleccionId, FiltroDTO filtroDTO) {
     return this.agregadorWebClient.get().uri(uriBuilder -> this.uriConFiltros(filtroDTO, uriBuilder, "/api/agregador/colecciones/{id}/hechos").build(coleccionId))
-            .retrieve().bodyToMono(ConjuntoHechoDTO.class).map(
-                    ConjuntoHechoDTO::getHechos
-            ).block();
+            .retrieve().bodyToMono(ConjuntoHechoDTO.class).block();
   }
 
   private UriBuilder uriConFiltros(FiltroDTO filtroDTO, UriBuilder uriBuilder, String path) {
@@ -98,6 +92,22 @@ public class ServicioAgregador implements IServicioAgregador {
             .bodyValue(solicitud).retrieve()
             .bodyToMono(SolicitudEliminacionDTO.class)
             .block();
+  }
+
+  @Override
+  public Long getCantidadHechos() {
+    return this.webApiCallerService.get(
+            baseUrl + "/api/agregador/hechos/cantidad",
+            Long.class
+    );
+  }
+
+  @Override
+  public long getCantidadFuentes() {
+    return this.webApiCallerService.get(
+            baseUrl + "/api/agregador/fuentes/cantidad",
+            Long.class
+    );
   }
 
   public SolicitudEliminacionDTO cancelarSolicitud(Long idSolicitud, RevisionDTO revisionDTO) {

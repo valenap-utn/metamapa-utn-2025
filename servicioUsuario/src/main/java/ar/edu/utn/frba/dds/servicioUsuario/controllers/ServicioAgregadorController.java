@@ -15,6 +15,8 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,7 +38,7 @@ public class ServicioAgregadorController {
   }
 
   @GetMapping("/hechos")
-  public ConjuntoHechoDTO findAllHechos(@RequestParam(required = false) String categoria,
+  public ResponseEntity<ConjuntoHechoDTO> findAllHechos(@RequestParam(required = false) String categoria,
                                         @RequestParam(required = false) LocalDateTime fecha_reporte_desde,
                                         @RequestParam(required = false)  LocalDateTime fecha_reporte_hasta,
                                         @RequestParam(required = false) LocalDateTime fecha_acontecimiento_desde,
@@ -50,11 +52,11 @@ public class ServicioAgregadorController {
             .fecha_acontecimiento_desde(fecha_acontecimiento_desde).fecha_acontecimiento_hasta(fecha_acontecimiento_hasta)
             .provincia(provincia).municipio(municipio).departamento(departamento).nroPagina(nroPagina)
             .build();
-    return this.agregadorService.findAllHechos(filtros);
+    return ResponseEntity.ok(this.agregadorService.findAllHechos(filtros));
   }
 
   @GetMapping("/colecciones/{coleccionId}/hechos")
-  public  ConjuntoHechoDTO findHechosByColeccionId(@PathVariable UUID coleccionId,
+  public ResponseEntity<ConjuntoHechoDTO> findHechosByColeccionId(@PathVariable UUID coleccionId,
                                                    @RequestParam(required = false) String categoria,
                                                    @RequestParam(required = false) LocalDateTime fecha_reporte_desde,
                                                    @RequestParam(required = false)  LocalDateTime fecha_reporte_hasta,
@@ -69,67 +71,77 @@ public class ServicioAgregadorController {
             .fecha_acontecimiento_desde(fecha_acontecimiento_desde).fecha_acontecimiento_hasta(fecha_acontecimiento_hasta)
             .provincia(provincia).municipio(municipio).departamento(departamento)
             .nroPagina(nroPagina).build();
-    return this.agregadorService.findHechosByColeccionId(coleccionId, filtros);
+    return ResponseEntity.ok(this.agregadorService.findHechosByColeccionId(coleccionId, filtros));
   }
 
   @GetMapping("/solicitudes")
-  public ConjuntoSolicitudesEliminacionOutput findAllSolicitudes() {
-    return this.agregadorService.findAllSolicitudes();
+  public ResponseEntity<ConjuntoSolicitudesEliminacionOutput> findAllSolicitudes() {
+    return ResponseEntity.ok(this.agregadorService.findAllSolicitudes());
   }
 
   @PostMapping("/solicitudes")
-  public SolicitudEliminacionDTO crearSolicitud(@RequestBody SolicitudEliminacionDTO solicitudEliminacionDTO) {
-    return this.agregadorService.crearSolicitud(solicitudEliminacionDTO);
+  public ResponseEntity<SolicitudEliminacionDTO> crearSolicitud(@RequestBody SolicitudEliminacionDTO solicitudEliminacionDTO) {
+    return ResponseEntity.status(HttpStatus.CREATED).body(this.agregadorService.crearSolicitud(solicitudEliminacionDTO));
   }
 
   @PostMapping("/solicitudes/{idSolicitud}/eliminados")
-  public SolicitudEliminacionDTO cancelarSolicitud(@PathVariable Long idSolicitud, @RequestBody RevisionDTO revisionDTO) {
-    return this.agregadorService.cancelarSolicitud(idSolicitud, revisionDTO);
+  public ResponseEntity<SolicitudEliminacionDTO> cancelarSolicitud(@PathVariable Long idSolicitud, @RequestBody RevisionDTO revisionDTO) {
+    return ResponseEntity.ok( this.agregadorService.cancelarSolicitud(idSolicitud, revisionDTO));
   }
 
   @PostMapping("/solicitudes/{idSolicitud}/aceptados")
-  public SolicitudEliminacionDTO aceptarSolicitud(@PathVariable Long idSolicitud, @RequestBody RevisionDTO revisionDTO) {
-    return this.agregadorService.aceptarSolicitud(idSolicitud, revisionDTO);
+  public ResponseEntity<SolicitudEliminacionDTO> aceptarSolicitud(@PathVariable Long idSolicitud, @RequestBody RevisionDTO revisionDTO) {
+    return ResponseEntity.ok(this.agregadorService.aceptarSolicitud(idSolicitud, revisionDTO));
   }
 
   @PutMapping("/colecciones/{idColeccion}")
-  public ColeccionDTOOutput modificarColeccion(@RequestBody  ColeccionDTOInput coleccionDTOInput, @PathVariable UUID idColeccion) {
-    return this.agregadorService.modificarColeccion(coleccionDTOInput, idColeccion);
+  public ResponseEntity<ColeccionDTOOutput> modificarColeccion(@RequestBody  ColeccionDTOInput coleccionDTOInput, @PathVariable UUID idColeccion) {
+    return ResponseEntity.ok(this.agregadorService.modificarColeccion(coleccionDTOInput, idColeccion));
   }
 
   @DeleteMapping("/colecciones/{idColeccion}")
-  public ColeccionDTOOutput eliminarColeccion(@PathVariable UUID idColeccion){
-    return this.agregadorService.eliminarColeccion(idColeccion);
+  public ResponseEntity<ColeccionDTOOutput> eliminarColeccion(@PathVariable UUID idColeccion){
+    return ResponseEntity.status(HttpStatus.NO_CONTENT).body(this.agregadorService.eliminarColeccion(idColeccion));
   }
 
   @GetMapping("/colecciones/{idColeccion}")
-  public ColeccionDTOOutput findColeccion(@PathVariable UUID idColeccion){
-    return this.agregadorService.findColeccionById(idColeccion);
+  public ResponseEntity<ColeccionDTOOutput> findColeccion(@PathVariable UUID idColeccion){
+    return ResponseEntity.ok(this.agregadorService.findColeccionById(idColeccion));
   }
 
   @PostMapping("/colecciones")
-  public ColeccionDTOOutput crearColeccion(@RequestBody ColeccionDTOInput coleccion){
+  public ResponseEntity<ColeccionDTOOutput> crearColeccion(@RequestBody ColeccionDTOInput coleccion){
     log.info("[ServicioAgregadorController] coleccion a crear:{}", coleccion.getTitulo());
-    return this.agregadorService.crearColeccion(coleccion);
+    return ResponseEntity.status(HttpStatus.CREATED).body(this.agregadorService.crearColeccion(coleccion));
   }
 
   @GetMapping("/hechos/{idHecho}")
-  public HechoDTOOutput getHecho(@PathVariable  Long idHecho) {
-    return this.agregadorService.getHecho(idHecho);
+  public ResponseEntity<HechoDTOOutput> getHecho(@PathVariable  Long idHecho) {
+    return ResponseEntity.ok(this.agregadorService.getHecho(idHecho));
   }
 
   @GetMapping("/colecciones")
-  public ConjuntoColeccion findColecciones() {
-    return this.agregadorService.findColecciones();
+  public ResponseEntity<ConjuntoColeccion> findColecciones() {
+    return ResponseEntity.ok(this.agregadorService.findColecciones());
   }
 
   @GetMapping("/usuarios/{id}/hechos")
-  public ConjuntoHechoDTO findHechoByUsuarioId(@PathVariable Long id){
-    return this.agregadorService.findHechosByIdUsuario(id);
+  public ResponseEntity<ConjuntoHechoDTO> findHechoByUsuarioId(@PathVariable Long id){
+    return ResponseEntity.ok(this.agregadorService.findHechosByIdUsuario(id));
   }
 
   @GetMapping("/categorias")
-  public ConjuntoCategorias findAllCategorias(){
-    return this.agregadorService.findAllCategorias();
+  public ResponseEntity<ConjuntoCategorias> findAllCategorias(){
+    return ResponseEntity.ok(this.agregadorService.findAllCategorias());
+  }
+
+  @GetMapping("/hechos/cantidad")
+  public ResponseEntity<Long> getCantidadHechos() {
+    return ResponseEntity.ok(this.agregadorService.getCantidadHechos());
+  }
+
+  @GetMapping("/fuentes/cantidad")
+  public ResponseEntity<Long> getCantidadFuentes() {
+    return ResponseEntity.ok(this.agregadorService.getCantidadFuentes());
   }
 }

@@ -65,18 +65,10 @@ public class AdminController {
   @GetMapping
   @PreAuthorize("hasRole('ADMINISTRADOR')")
   public String dashboard(Model model) {
-
-    List<HechoDTOOutput> hechos = agregador.findAllHechos(new FiltroDTO());
-    long totalHechos = hechos.size();
+    long totalHechos = agregador.getCantidadHechos();
 
     //Por el momento al total de fuentes lo hacemos así (después vemos si lo terminamos poniendo o no)
-    long totalFuentes = hechos.stream()
-        .map(HechoDTOOutput::getOrigen)
-        .filter(Objects::nonNull)
-        .map(o -> o.getUrl() != null ? o.getUrl() : o.getTipo())
-        .filter(Objects::nonNull)
-        .distinct()
-        .count();
+    long totalFuentes = this.agregador.getCantidadFuentes();
 
     long totalSolEliminacion = agregador.findAllSolicitudes().size();
 

@@ -409,11 +409,11 @@
                 } else if (inputTipo === "CATEGORIA") {
                     const categoria = document.getElementById(`criterios[${indice}].categoria`).value
                     val = {text: categoria,  value: categoria}
-                } else if (inputTipo === "FECHACARGA") {
+                } else if (inputTipo === "FECHAACONTECIMIENTO") {
                     const fechaInicial = document.getElementById(`criterios[${indice}].fechaAcontecimientoInicial`).value
                     const fechaFinal = document.getElementById(`criterios[${indice}].fechaAcontecimientoFinal`).value
                     val = {desde: fechaInicial, hasta: fechaFinal }
-                } else if (inputTipo === "FECHAACONTECIMIENTO") {
+                } else if (inputTipo === "FECHACARGA") {
                     const fechaInicial = document.getElementById(`criterios[${indice}].fechaCargaInicial`).value
                     const fechaFinal = document.getElementById(`criterios[${indice}].fechaCargaFinal`).value
                     val = {desde: fechaInicial, hasta: fechaFinal}

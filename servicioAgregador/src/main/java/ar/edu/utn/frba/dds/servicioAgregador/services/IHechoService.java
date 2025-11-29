@@ -9,4 +9,6 @@ public interface IHechoService {
   ConjuntoHechoCompleto findAll(FiltroDTO filtro);
 
   HechoDTOCompleto findHechoById(Long id);
+
+  Long getCantidad();
 }

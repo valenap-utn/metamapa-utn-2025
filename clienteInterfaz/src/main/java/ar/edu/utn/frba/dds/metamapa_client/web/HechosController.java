@@ -66,9 +66,10 @@ public class HechosController {
   @GetMapping("/nav-hechos")
   public String navHechos(Model model) {
     FiltroDTO filtroDTO = new FiltroDTO();
-    List<HechoDTOOutput> hechos = this.agregador.findAllHechos(filtroDTO);
+    ConjuntoHechoDTO conjHechos = this.agregador.findAllHechos(filtroDTO);
 
-    model.addAttribute("hechos", hechos);
+    model.addAttribute("hechos", conjHechos.getHechos());
+    model.addAttribute("categorias", conjHechos.getCategorias());
     model.addAttribute("filtros", filtroDTO);
     model.addAttribute("titulo", "Listado de todos los hechos");
     return "hechos/nav-hechos";
@@ -76,8 +77,9 @@ public class HechosController {
 
   @PostMapping("/nav-hechos")
   public String navHechosPost(Model model, @ModelAttribute("filtros") FiltroDTO filtroDTO) {
-    List<HechoDTOOutput> hechos = this.agregador.findAllHechos(filtroDTO);
-    model.addAttribute("hechos", hechos);
+    ConjuntoHechoDTO conjHechos = this.agregador.findAllHechos(filtroDTO);
+    model.addAttribute("hechos", conjHechos.getHechos());
+    model.addAttribute("categorias", conjHechos.getCategorias());
     model.addAttribute("filtros", filtroDTO);
     model.addAttribute("titulo", "Listado de todos los hechos");
     return "hechos/nav-hechos";
