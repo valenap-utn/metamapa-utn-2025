@@ -1,0 +1,87 @@
+@startuml
+'https://plantuml.com/deployment-diagram
+
+
+component InstanciaMetaMapa
+component APICatedra
+
+
+frame Metamapa {
+    node servicioAgregador {
+        component APIAdministrador
+        component APIVisualizador
+        component APIService
+
+    }
+
+    database DBAgregador {
+            }
+            APIAdministrador "TCP"-(0- DBAgregador
+            APIVisualizador "TCP"-(0- DBAgregador
+            APIService "TCP"-(0- DBAgregador
+
+    APIAdministrador -(0- APIService
+    APIVisualizador -(0- APIService
+
+
+    node servicioFuenteDinamica {
+        component APIFuenteDinamica
+
+    }
+
+    database DBFDinamica {
+            }
+            APIFuenteDinamica "TCP"-(0- DBFDinamica
+
+
+
+
+    node servicioFuenteEstatica {
+    component APIFuenteEstatica
+
+    }
+
+    database DBFEstatica {
+    }
+            APIFuenteEstatica "TCP" -(0- DBFEstatica
+
+    node servicioFuenteProxy {
+        component APIFuenteProxy
+
+    }
+    database DBProxy {
+                }
+            APIFuenteProxy "TCP" -(0- DBProxy
+
+    APIService "API REST" -(0- APIFuenteDinamica
+        APIService "API REST" -(0- APIFuenteEstatica
+        APIService  "API REST" -(0- APIFuenteProxy
+
+    APIFuenteProxy "API REST" -(0- InstanciaMetaMapa
+    APIFuenteProxy "API REST" -(0- APICatedra
+
+    node servicioEstadistica {
+        component APIEstadistica
+    }
+    node serverFront {
+        component GeneradorDeVistas
+    }
+    node servicioUsuarios {
+        component APIServicioUsuarios
+    }
+    GeneradorDeVistas "API REST" -(0- APIServicioUsuarios
+    APIServicioUsuarios "API REST" -(0- APIVisualizador
+    APIServicioUsuarios "API REST" -(0- APIAdministrador
+    APIServicioUsuarios "API REST" -(0- APIFuenteDinamica
+    APIServicioUsuarios "API REST" -(0- APIEstadistica
+    APIEstadistica "API REST" -(0- APIAdministrador
+}
+
+node PCCliente-Smartphone {
+    component Browser {
+    }
+}
+
+Browser "API REST"-(0- GeneradorDeVistas
+
+@enduml

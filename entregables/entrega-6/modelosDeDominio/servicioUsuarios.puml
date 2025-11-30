@@ -1,0 +1,36 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+class Usuario{
+    - String nombre
+    - String apellido
+    - String password
+    - LocalDateTime fechaDeNacimiento
+    - List<Permiso> permisos
+    - String email
+    - String providerOAuth
+    - Rol rol
+}
+
+Usuario --> Rol
+Usuario -->"*" Permiso
+enum Rol{
+    ADMINISTRADOR,
+    CONTRIBUYENTE
+}
+
+enum Permiso {
+    CREARCOLECCION,
+      MODIFICARCOLECCION,
+      ELIMINARCOLECCION,
+      VISITARESTADISTICAS,
+      MODIFICARHECHO,
+      REVISARHECHO,
+      REVISARSOLICITUD,
+      SUBIDAARCHIVO,
+      VERHECHOSUSUARIO
+}
+
+
+
+@enduml

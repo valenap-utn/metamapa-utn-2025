@@ -1,0 +1,33 @@
+@startuml
+'https://plantuml.com/class-diagram
+entity hecho {
+    * id INTEGER(11) <<PK>>
+    * categoria_id INTEGER(11) <<FK>>
+    * usuario_id INTEGER(11) <<FK>>
+    --
+    * origen VARCHAR(255)
+    * titulo VARCHAR(255)
+    * descripcion TEXT
+    * fecha_acontecimiento DATETIME
+    * fecha_carga DATETIME
+    * latitud DECIMAL(12, 2)
+    * longitud DECIMAL(12, 2)
+    * eliminado TINYINT
+}
+entity usuario {
+    * id INTEGER(11) <<PK>>
+    --
+    * nombre VARCHAR(255)
+    * fecha_nacimiento DATETIME
+    * estado VARCHAR(255)
+}
+usuario |o--o{ hecho
+
+entity categoria {
+    * id INTEGER(11) <<PK>>
+    --
+    * nombre VARCHAR(255)
+}
+categoria ||--o{ hecho
+
+@enduml

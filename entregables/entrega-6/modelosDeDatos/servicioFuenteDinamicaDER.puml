@@ -1,0 +1,62 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+entity hecho {
+    * id INTEGER(11) <<PK>>
+    * categoria_id INTEGER(11) <<FK>>
+    * usuario_id INTEGER(11) <<FK>>
+    --
+    * titulo VARCHAR(255)
+    * descripcion TEXT
+    * fecha_acontecimiento DATETIME
+    * fecha_carga DATETIME
+    * latitud DECIMAL(12, 2)
+    * longitud DECIMAL(12, 2)
+    * eliminado TINYINT
+    * contenidoMultimedia_nombre VARCHAR(255)
+    * contenidoMultimedia_path VARCHAR(255)
+    * esAnonimo TINYINT
+    * comentario_revision VARCHAR(255)
+    * contenido VARCHAR(255)
+}
+entity usuario {
+    * id INTEGER(11) <<PK>>
+    --
+    * nombre VARCHAR(255)
+    * fecha_nacimiento DATETIME
+    * estado VARCHAR(255)
+}
+usuario |o--o{ hecho
+
+entity categoria {
+    * id INTEGER(11) <<PK>>
+    --
+    * nombre VARCHAR(255)
+}
+categoria ||--o{ hecho
+
+entity solicitud {
+    * id INTEGER(11) <<PK>>
+    --
+    * hecho_id INTEGER(11) <<FK>>
+    * justificacion VARCHAR(255)
+    * estado VARCHAR(255)
+    * usuario_id INTEGER(11) <<FK>>
+    * fueUsada TINYINT
+    * titulo VARCHAR(255)
+    * hechoMod_descripcion TEXT
+    * hechoMod_fecha_acontecimiento DATETIME
+    * latitud DECIMAL(12, 2)
+    * longitud DECIMAL(12, 2)
+    * contenidoMultimedia_nombre VARCHAR(255)
+    * contenidoMultimedia_path VARCHAR(255)
+    * hechoMod_titulo VARCHAR(255)
+    * hechoMod_contenido VARCHAR(255)
+    * categoria VARCHAR(255)
+}
+
+hecho ||--o{ solicitud
+
+
+
+@enduml

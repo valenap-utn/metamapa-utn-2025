@@ -1,0 +1,126 @@
+@startuml
+'https://plantuml.com/class-diagram
+class Hecho{
+    - Long Id
+    - String titulo
+    - Categoria categoria
+    - Ubicacion ubicacion
+    - LocalDateTime fechaAcontecimiento
+    - ContenidoMultimedia contenidoMultimedia
+    - LocalDate fechaDeCarga
+    - boolean eliminado
+    - Origen origen
+    - Set<String> etiquetas
+    - Estado estadoHecho
+    - String comentarioRevision;
+    - String contenido;
+    - Usuario usuario;
+    - Boolean entregadoAAgregador;
+    + marcarEntregadoAAgregador()
+    + marcarParaEnviarAgregador()
+}
+
+enum Estado {
+    EN_REVISION,
+    ACEPTADA,
+    ACEPTADA_CON_CAMBIOS,
+    RECHAZADA,
+    TODAS
+}
+
+Hecho --> Estado
+
+class Ubicacion {
+    - Float longitud
+    - Float latitud
+}
+
+Hecho --> Ubicacion
+
+
+class ContenidoMultimedia {
+    - String nombre
+    - String path
+}
+
+Hecho --> ContenidoMultimedia
+
+class Categoria {
+    -private String nombre;
+    +public boolean esIgualA(Categoria);
+}
+
+enum Origen {
+    DATASET,
+      PORCONTRIBUYENTE,
+      CARGAMANUAL,
+      PROXY
+}
+
+class Solicitud {
+    - Long id;
+    - Hecho hecho;
+    - String justificacion;
+    - Estado estado;
+    - Usuario usuario;
+    - Boolean fueUsada;
+    - HechoModificacion hechoModificacion;
+}
+
+ class HechoModificacion {
+  - String titulo;
+  - String descripcion;
+  - String categoria;
+  - Ubicacion ubicacion;
+  - LocalDateTime fechaAcontecimiento;
+  - ContenidoMultimedia contenidoMultimedia;
+  - String contenido;
+}
+
+interface Revisable {
+  + void setEstado(Estado estado);
+  + void setComentarioRevision(String comentario);
+}
+
+
+class RevisarEstado {
+    + Estado revisar(Revisable elemento, String estadoStr, String comentario);
+}
+
+RevisarEstado ..> Revisable
+
+enum Rol {
+  ADMINISTRADOR,
+  CONTRIBUYENTE
+}
+enum Permiso {
+  CREARCOLECCION,
+  MODIFICARCOLECCION,
+  ELIMINARCOLECCION,
+  VISITARESTADISTICAS,
+  MODIFICARHECHO,
+  REVISARHECHO,
+  REVISARSOLICITUD,
+  SUBIDAARCHIVO
+}
+
+class Usuario {
+      - Long id;
+      - String email;
+      - String nombre;
+      - String apellido;
+      - Rol rol;
+      - List<Permiso> permisos;
+}
+Hecho --> Usuario
+Usuario --> Rol
+Usuario --> "*" Permiso
+Solicitud ..|> Revisable
+Hecho ..|> Revisable
+Solicitud --> HechoModificacion
+
+
+
+Hecho --> Categoria
+Hecho --> Origen
+@enduml

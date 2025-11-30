@@ -1,0 +1,11 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+entity id_eliminado {
+  * id INTEGER(11) <<PK>>
+  --
+  * idAPI INTEGER(11)
+  * nombreAPI VARCHAR(255)
+}
+
+@enduml

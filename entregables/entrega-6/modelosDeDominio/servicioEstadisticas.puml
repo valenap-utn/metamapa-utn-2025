@@ -1,0 +1,179 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+class Categoria {
+  private Long id;
+  private String nombre;
+}
+
+class ContenidoMultimedia {
+  private String nombre;
+  private String path;
+}
+
+class Hecho {
+  - Long id;
+  - String titulo;
+  - String descripcion;
+  - Categoria categoria;
+  - Ubicacion ubicacion;
+  - LocalDateTime fechaAcontecimiento;
+  - LocalDateTime fechaCarga;
+  - Set<String> etiquetas;
+  - boolean eliminado;
+  - ContenidoMultimedia contenidoMultimedia;
+  - Long idUsuario;
+  - Origen origen;
+  - List<String> titulosColeccion
+}
+
+Hecho --> Categoria
+Hecho --> ContenidoMultimedia
+
+
+class Ubicacion {
+  private Float longitud;
+  private Float latitud;
+  private Direccion direccion;
+}
+
+class Direccion {
+  private String ciudad;
+  private String localidad;
+  private String municipio;
+  private String provincia;
+}
+Ubicacion --> Direccion
+Hecho --> Ubicacion
+enum Estado {
+  ACEPTADA,
+  RECHAZADA,
+  PENDIENTE,
+  SPAM
+}
+
+
+class Origen {
+  private String url;
+  private String tipo;
+}
+Hecho --> Origen
+
+class Solicitud {
+  private Long idHecho;
+  private String justificacion;
+  private Estado estado;
+  private Long idUsuario;
+  private Long id;
+}
+
+Solicitud --> Estado
+
+enum Rol {
+  ADMINISTRADOR,
+  CONTRIBUYENTE
+}
+enum Permiso {
+  CREARCOLECCION,
+  MODIFICARCOLECCION,
+  ELIMINARCOLECCION,
+  VISITARESTADISTICAS,
+  MODIFICARHECHO,
+  REVISARHECHO,
+  REVISARSOLICITUD,
+  SUBIDAARCHIVO
+}
+
+
+class Usuario {
+      - Long id;
+      - String email;
+      - String nombre;
+      - String apellido;
+      - Rol rol;
+      - List<Permiso> permisos;
+}
+
+Usuario --> Rol
+Usuario --> "*" Permiso
+Hecho --> Usuario
+
+class DatoCalculo {
+  private List<Hecho> hechos;
+  private List<Solicitud> solicitudes;
+  private List<String> titulosColeccion;
+}
+
+DatoCalculo --> "*" Hecho
+DatoCalculo --> "*" Solicitud
+
+abstract class CalculadorEstadisticas {
+    +  EstadisticaDTO calcular(DatoCalculo datoCalculo)
+
+    # List<DatoEstadisticoDTO> generarCalculo(DatoCalculo datoCalculo);
+
+    # String getNombreEstadistica();
+}
+CalculadorEstadisticas ..> "usa" DatoCalculo
+
+class CategoriaHoraMayorHechos extends CalculadorEstadisticas {
++  EstadisticaDTO calcular(DatoCalculo datoCalculo)
+
+    # List<DatoEstadisticoDTO> generarCalculo(DatoCalculo datoCalculo);
+
+    # String getNombreEstadistica();
+}
+class CategoriaMayorHechos extends CalculadorEstadisticas{
++  EstadisticaDTO calcular(DatoCalculo datoCalculo)
+
+    # List<DatoEstadisticoDTO> generarCalculo(DatoCalculo datoCalculo);
+
+    # String getNombreEstadistica();
+}
+class CategoriaProvinciaMayorHechos extends CalculadorEstadisticas{
++  EstadisticaDTO calcular(DatoCalculo datoCalculo)
+
+    # List<DatoEstadisticoDTO> generarCalculo(DatoCalculo datoCalculo);
+
+    # String getNombreEstadistica();
+}
+class ColeccionProvinciaMayorHechos extends CalculadorEstadisticas{
++  EstadisticaDTO calcular(DatoCalculo datoCalculo)
+
+    # List<DatoEstadisticoDTO> generarCalculo(DatoCalculo datoCalculo);
+
+    # String getNombreEstadistica();
+}
+
+class SolicitudesSpamTotal extends CalculadorEstadisticas{
++  EstadisticaDTO calcular(DatoCalculo datoCalculo)
+
+    # List<DatoEstadisticoDTO> generarCalculo(DatoCalculo datoCalculo);
+
+    # String getNombreEstadistica();
+}
+
+class ExportadorCSV {
+    + String generarCSV(List<EstadisticaDTO> data)
+}
+
+ExportadorCSV ..> "*" EstadisticaDTO
+
+class DatoEstadisticoDTO {
+  private String primerCriterio;
+  private String segundoCriterio;
+  private Integer hora;
+  private Long cantidad;
+  private Double porcentaje;
+  private Long total;
+}
+CalculadorEstadisticas ..> DatoEstadisticoDTO
+
+class EstadisticaDTO {
+  private String nombre;
+  private List<DatoEstadisticoDTO> datos;
+}
+
+EstadisticaDTO --> "*" DatoEstadisticoDTO
+CalculadorEstadisticas ..> EstadisticaDTO
+@enduml

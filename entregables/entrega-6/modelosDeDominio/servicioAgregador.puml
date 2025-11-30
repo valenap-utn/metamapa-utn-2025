@@ -1,0 +1,375 @@
+@startuml
+
+class Hecho{
+    - String titulo
+    - Categoria categoria
+    - Ubicacion ubicacion
+    - LocalDateTime fechaAcontecimiento
+    - ContenidoMultimedia contenidoMultimedia
+    - LocalDateTime fechaDeCarga
+    - boolean eliminado
+    - Origen origen
+    - Set<String> etiquetas
+    - Usuario usuario
+    - Boolean normalizado
+}
+
+
+enum Rol {
+  ADMINISTRADOR,
+  CONTRIBUYENTE
+}
+enum Permiso {
+  CREARCOLECCION,
+  MODIFICARCOLECCION,
+  ELIMINARCOLECCION,
+  VISITARESTADISTICAS,
+  MODIFICARHECHO,
+  REVISARHECHO,
+  REVISARSOLICITUD,
+  SUBIDAARCHIVO
+}
+
+
+class Usuario {
+      - Long id;
+      - String email;
+      - String nombre;
+      - String apellido;
+      - Rol rol;
+      - List<Permiso> permisos;
+}
+
+Usuario --> Rol
+Usuario --> "*" Permiso
+Hecho --> Usuario
+
+class Ubicacion {
+    - Float longitud
+    - Float latitud
+    - Direccion direccion
+}
+
+Hecho --> Ubicacion
+class Direccion {
+    - String ciudad
+    - String localidad;
+    - String municipio;
+    - String provincia;
+}
+Ubicacion --> Direccion
+
+class ContenidoMultimedia {
+    - String nombre
+    - String path
+}
+
+Hecho --> ContenidoMultimedia
+
+class Categoria {
+    -private String nombre;
+    +public boolean esIgualA(Categoria);
+}
+
+class Origen {
+    - TipoOrigen tipo
+    - String url
+    - Long idHechoExterno
+    - String clientProxy
+}
+
+
+
+enum TipoOrigen {
+    DATASET,
+      PORCONTRIBUYENTE,
+      CARGAMANUAL,
+      PROXY
+}
+Origen --> TipoOrigen
+
+
+enum Estado{
+    ACEPTADA,
+    RECHAZADA,
+    PENDIENTE
+}
+
+Hecho --> Categoria
+Hecho --> Origen
+
+
+' FUENTES y HECHOS
+
+class FuenteColeccion {
+    -Origen origen
+    -List<Hecho> hechos
+    + actualizarHechos(List<Hecho>)
+}
+
+FuenteColeccion --> Origen
+
+
+FuenteColeccion --> "*" Hecho
+
+class Coleccion{
+    - String titulo
+    - String descripcion
+    - List<FuenteColeccion> fuentes
+    - List<Filtro> criteriosPertenencia
+
+
+
+    + void agregarCriterios(Filtro ... filtros)
+    + Set<Hecho> getHechos()
+    + void agregarFuentes(Collection<Fuente> fuentes)
+}
+
+Coleccion --> "*" FuenteColeccion
+Coleccion --> "*" Filtro
+
+
+'FILTROS
+
+abstract class Filtro {
+    + hechoCumple(Hecho unHecho): boolean
+}
+
+class FiltroPorCategoria {
+    - categoria: Categoria
+
+    + hechoCumple(Hecho unHecho): boolean
+}
+
+class FiltroPorDescripcion {
+# String obtenerUnTipoString(Hecho unHecho)
+}
+
+abstract class FiltroPorFecha {
+    - desde: LocalDate
+    - hasta: LocalDate
+    + hechoCumple(Hecho hecho): boolean
+    # obtenerUnTipoFecha(Hecho unHecho): LocalDate
+}
+
+class FiltroPorFechaAcontecimiento {
+    # obtenerUnTipoFecha(Hecho unHecho): LocalDate
+}
+
+class FiltroPorFechaCarga {
+    # obtenerUnTipoFecha(Hecho unHecho): LocalDate
+}
+
+abstract class FiltroPorString {
+    - cadenaAComparar: String
+    + hechoCumple(Hecho unHecho): boolean
+    # obtenerUnTipoString(Hecho unHecho): String
+}
+
+class FiltroPorTitulo {
+   # obtenerUnTipoString(Hecho unHecho): String
+}
+
+class FiltroUbicacion {
+    - ubicacion: Ubicacion
+
+    + hechoCumple(Hecho unHecho): boolean
+}
+
+FiltroPorTitulo --|> FiltroPorString
+FiltroPorDescripcion --|> FiltroPorString
+
+
+FiltroPorFechaAcontecimiento --|> FiltroPorFecha
+FiltroPorFechaCarga --|> FiltroPorFecha
+class FiltroProvincia extends FiltroUbicacion{
+  # String getValorHechoUbicacion(Hecho unHecho)
+  + CriterioDTO toCriterioDTO()
+}
+
+abstract class FiltroUbicacion  extends Filtro{
+  - String valorUbicacion;
+  - Double cantidadAceptable;
+  + boolean hechoCumple(Hecho unHecho)
+
+  # abstract String getValorHechoUbicacion(Hecho unHecho);
+
+}
+class FiltroDepartamento extends FiltroUbicacion{
+  # String getValorHechoUbicacion(Hecho unHecho)
+  + CriterioDTO toCriterioDTO()
+}
+ class FiltroMunicipio extends FiltroUbicacion{
+  # String getValorHechoUbicacion(Hecho unHecho)
+  + CriterioDTO toCriterioDTO()
+}
+
+
+FiltroPorCategoria --|> Filtro
+FiltroPorFecha --|> Filtro
+FiltroPorString --|> Filtro
+
+
+
+class Solicitud {
+    - Hecho hecho
+    - Estado estado
+    - Usuario usuario
+    - String justificacion
+}
+
+
+Solicitud --> Hecho
+Solicitud --> Estado
+Solicitud --> Usuario
+
+
+'DETECCION DE SPAM
+
+interface DetectorDeSpam {
+  + esSpam(String texto): boolean;
+}
+
+class DetectorDeSpamBasico implements DetectorDeSpam {
+  - calculadoraTFIDF: TFIDFCalculadoraPalabras;
+  - nivelImportanciaMinimo: Double;
+
+  + esSpam(String texto): boolean;
+
+  - esPalabraPocoImportante(List<String> documento, String palabra): boolean
+}
+
+class TFIDFCalculadoraPalabras {
+  - documentosSpam: List<List<String>> ;
+
+  - prepararDocumento(String documento): List<String>;
+
+  + calcularTFIDFDePalabra(List<String> documento, String palabra): Double;
+
+  - calcularTFPalabra(List<String> documento, String palabra): Double;
+
+  - cantRepeticionesPalabraEnDocumento(List<String> documento, String palabra): Long;
+
+  - calcularIDFPalabra(String palabra): Double;
+}
+
+DetectorDeSpamBasico --> TFIDFCalculadoraPalabras
+
+
+interface AlgoritmoConsenso {
+    + consensuarHecho(Hecho hecho, Collection<FuenteColeccion> fuentes): boolean
+}
+
+AlgoritmoConsenso ..> "usa" Hecho
+AlgoritmoConsenso ..>"usa *" FuenteColeccion
+
+class Absoluta implements AlgoritmoConsenso {
+    + consensuarHecho(Hecho hecho, Collection<FuenteColeccion> fuentes): boolean
+}
+
+class MayoriaSimple implements AlgoritmoConsenso {
+    + consensuarHecho(Hecho hecho, Collection<FuenteColeccion> fuentes): boolean
+}
+
+class MultiplesMenciones implements AlgoritmoConsenso {
+    + consensuarHecho(Hecho hecho, Collection<FuenteColeccion> fuentes): boolean
+}
+
+class TodosConsensuados implements AlgoritmoConsenso {
+    + consensuarHecho(Hecho hecho, Collection<FuenteColeccion> fuentes): boolean
+}
+
+class Normalizador {
+    - IBuscadorFullTextSearch buscador
+    + normalizar(List<Hecho> hechos): List<Hecho>
+    - estandarizarFecha(Hecho, List<Hecho>): void
+    - estandarizarUbicacion(Hecho, List<Hecho>): void
+    - estandarizarCategoria(Hecho, List<Hecho>): void
+    - estandarizarTitulo(Hecho, List<Hecho>): void
+}
+Normalizador --> IBuscadorFullTextSearch
+Normalizador ..> Hecho
+
+class MapperComparaciones {
+  + ComparacionHechos crearComparacion(ComparacionDTO comparacion, TFIDFCalculadoraPalabras tfidfCalculadora)
+}
+
+class VerificadorNormalizador {
+  - List<ComparacionHechos> comparacionesAHacer;
+  - MapperComparaciones mapperComparaciones;
+  + boolean estaNormalizado(Hecho hecho, Hecho hechoExterno)
+}
+VerificadorNormalizador --> MapperComparaciones
+VerificadorNormalizador --> "*" ComparacionHechos
+abstract class ComparacionHechos {
+  - TFIDFCalculadoraPalabras calculadora;
+  - Double cantidadAceptable;
+  + boolean sonEquivalentes(Hecho hecho, Hecho hechoExterno)
+  # abstract Documento elementoAComparar(Hecho hechoExterno);
+}
+MapperComparaciones ..> ComparacionHechos
+ComparacionHechos --> TFIDFCalculadoraPalabras
+class CompararCategorias extends ComparacionHechos{
+    + boolean sonEquivalentes(Hecho hecho, Hecho hechoExterno)
+    #  Documento elementoAComparar(Hecho hechoExterno);
+}
+class CompararDirecciones extends ComparacionHechos{
+    + boolean sonEquivalentes(Hecho hecho, Hecho hechoExterno)
+    #  Documento elementoAComparar(Hecho hechoExterno);
+}
+class CompararTitulos extends ComparacionHechos {
+    + boolean sonEquivalentes(Hecho hecho, Hecho hechoExterno)
+    #  Documento elementoAComparar(Hecho hechoExterno);
+}
+class Documento {
+  - List<String> tokens;
+  - List<Double> medicionesTFIDF;
+  - Double cosenoActual;
+
+  + Documento ofStringSinNormalizar(String documentoALimpiar)
+
+  + Documento ofDocumento(Documento d)
+
+  + void calcularTFIDF(TFIDFCalculadoraPalabras calculadoraPalabras)
+
+  + Double calcularCosenoConRespectoA(Documento documentoPrimero)
+
+  - Double normaDocumento()
+
+  - Double getMedicion(int i)
+
+  + String getString()
+}
+
+Documento ..> TFIDFCalculadoraPalabras
+class DocumentoConCoseno {
+  - Double cosenoDeSimilitud;
+  - Documento documento;
+}
+
+DocumentoConCoseno --> Documento
+
+class FullTextSearchBasico implements IBuscadorFullTextSearch {
+  - final TFIDFCalculadoraPalabras calculadoraPalabras = new TFIDFCalculadoraPalabras();
+  - final Double minimoAceptableCoseno = 0.5;
+
+  + String crearNombreNormalizadoCon(String elemento, List<String> elementoHechos);
+}
+interface IBuscadorFullTextSearch {
+  + String crearNombreNormalizadoCon(String elemento, List<String> elementoHechos);
+}
+
+FullTextSearchBasico ..> MatrixSimilitudCoseno
+
+class MatrixSimilitudCoseno {
+  - final List<List<DocumentoConCoseno>> documentos;
+  - final List<Documento> documentosATrabajar;
+  + void calcularCosenos()
+  - void calcularCosenosDeFila(Documento documentoDeReferencia, List<Documento> filaDocumento)
+  + List<DocumentoConCoseno> getByIdDeDocumentoEnFilaConCoseno(int id)
+}
+
+MatrixSimilitudCoseno --> "*" Documento
+MatrixSimilitudCoseno --> "*" DocumentoConCoseno
+
+@enduml
