@@ -7,4 +7,5 @@ import lombok.Data;
 public class EstadisticaDTO {
   private String nombre;
   private List<DatoEstadisticoDTO> datos;
+  private Long totalDatos;
 }

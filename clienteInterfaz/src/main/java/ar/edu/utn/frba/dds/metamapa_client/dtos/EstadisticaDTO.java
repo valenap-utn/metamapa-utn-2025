@@ -8,7 +8,7 @@ import java.util.List;
 @Getter
 @Setter
 public class EstadisticaDTO {
-    private String clave;                       // "COLECCIONPROVINCIAMAYORHECHOS" | "CATEGORIATOP" | "SOLICITUDESSPAM" | ...
-//    private Object datos;
+    private String nombre;                       // "COLECCIONPROVINCIAMAYORHECHOS" | "CATEGORIATOP" | "SOLICITUDESSPAM" | ...
     private List<DatoEstadisticoDTO> datos;
+    private Long totalDatos;
 }

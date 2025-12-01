@@ -10,7 +10,6 @@ import ar.edu.utn.frba.dds.metamapa_client.services.ConexionServicioUser;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Stream;
 
@@ -149,7 +148,7 @@ public class AdminController {
     } catch (WebClientResponseException e) {
       // Muestra el cuerpo de error del backend
       String body = e.getResponseBodyAsString();
-      model.addAttribute("error", "Error del backend: " + e.getRawStatusCode() + " " + body);
+      model.addAttribute("error", "Error del backend: " + e.getStatusCode() + " " + body);
       model.addAttribute("coleccionId", id);
       model.addAttribute("titulo", "Modificar Colección");
       return "redirect:/colecciones";
@@ -429,7 +428,9 @@ public class AdminController {
 
   @GetMapping("/dashboard-estadisticas")
   @PreAuthorize("hasRole('ADMINISTRADOR')")
-  public String estadisticas() {
+  public String estadisticas(Model model) {
+    ConjuntoEstadisticasDTO conjuntoEstadisticasDTO = servicioDeEstadistica.obtenerEstadisticas();
+    model.addAttribute("estadisticas", conjuntoEstadisticasDTO.getEstadisticas());
     return "admins/dashboard-estadisticas";
   }
 

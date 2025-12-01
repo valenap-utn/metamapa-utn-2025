@@ -78,6 +78,19 @@
             <div class="back-container">
                 <a th:href="@{/admin}"><button class="btn btn-back btn-lg mb-3" aria-label="Volver a la página anterior">Volver atrás</button></a>
             </div>
+            <div style="display: none;">
+                <div th:each="estadistica : ${estadisticas}" th:id="${estadistica.getNombre()}">
+                    <p class="totalEstadistica" th:text="${estadistica.getTotalDatos()}">
+                    <div th:each="datoEstadistico, indice : ${estadistica.getDatos()}">
+                        <p th:class="${'datoEstadistico_' + indice.index +'_total' }" th:text="${datoEstadistico.getTotal()}"></p>
+                        <p th:class="${'datoEstadistico_' + indice.index +'_cantidad' }" th:text="${datoEstadistico.getCantidad()}"></p>
+                        <p th:class="${'datoEstadistico_' + indice.index +'_hora' }" th:text="${datoEstadistico.getHora()}"></p>
+                        <p th:class="${'datoEstadistico_' + indice.index +'_porcentaje' }" th:text="${datoEstadistico.getPorcentaje()}"></p>
+                        <p th:class="${'datoEstadistico_' + indice.index +'_primerCriterio' }" th:text="${datoEstadistico.getPrimerCriterio()}"></p>
+                        <p th:class="${'datoEstadistico_' + indice.index +'_segundoCriterio' }" th:text="${datoEstadistico.getSegundoCriterio()}"></p>
+                    </div>
+                </div>
+            </div>
 
             <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1"></script>
             <script type="module" th:src="@{/js/admins/dashboard-estadisticas.js}"></script>

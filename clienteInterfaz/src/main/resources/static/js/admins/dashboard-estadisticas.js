@@ -87,15 +87,31 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     */
-
     const findStat = (data,nombre) =>
-        (data.estadisticas || []).find(e => e.nombre === nombre) || {datos: []};
-    fetch('/api/admin/dashboard-estadisticas/data')
-        .then(res => {
-            if(!res.ok) throw new Error(`No se pudieron cargar las estadísticas`);
-            return res.json();
+        (data || []).find(e => e.nombre === nombre) || {datos: []};
+    const data = agregarDatos()
+    function agregarDatos() {
+        return ['COLECCIONPROVINCIAMAYORHECHOS', 'CATEGORIATOP', 'SOLICITUDESSPAM', 'CATEGORIAPROVINCIAMAYORHECHOS',
+        'CATEGORIAHORAMAYORHECHOS'].map(tipoEstadistica => {
+            const estadistica = document.getElementById(tipoEstadistica)
+            const totalDatos = Number(estadistica.querySelector('.totalEstadistica').textContent)
+            const resultado = {nombre: tipoEstadistica, datos: []}
+            if (totalDatos === 0)
+                return resultado
+
+            for (let i = 0; i< totalDatos; i++){
+                const total = Number(estadistica.querySelector('.datoEstadistico_' + i +'_total').textContent)
+                const cantidad = Number(estadistica.querySelector('.datoEstadistico_' + i +'_cantidad').textContent)
+                const hora = estadistica.querySelector('.datoEstadistico_' + i +'_hora').textContent
+                const porcentaje = Number(estadistica.querySelector('.datoEstadistico_' + i +'_porcentaje').textContent)
+                const primerCriterio = estadistica.querySelector('.datoEstadistico_' + i +'_primerCriterio').textContent
+                const segundoCriterio = estadistica.querySelector('.datoEstadistico_' + i +'_segundoCriterio').textContent
+                resultado.datos.push({total, cantidad, hora, porcentaje, primerCriterio, segundoCriterio})
+            }
+            return resultado
         })
-        .then(data => {
+
+    }
             // === Barras: Hechos por provincia (colección) ===
             const estProvCol = findStat(data, 'COLECCIONPROVINCIAMAYORHECHOS');
             const provLabels = estProvCol.datos.map(d => d.primerCriterio); // provincia
@@ -184,10 +200,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const chipSpamTotal = document.getElementById('chip-spam-total');
             chipSpamPorcentaje && (chipSpamPorcentaje.textContent = `${spamPct}%`);
             chipSpamTotal && (chipSpamTotal.textContent = totalCount);
-        })
-        .catch(err => {
-            console.error(err);
-        });
+
 
 });
 
