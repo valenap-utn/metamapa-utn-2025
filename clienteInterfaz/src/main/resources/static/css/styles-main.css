@@ -387,7 +387,13 @@ main {
 }
 
 .mm-main {
-    padding-top: 140px;
+    /*padding-top: 140px;*/
+    min-height: calc(100vh - 180px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 40px;
+    padding-bottom: 40px;
 }
 
 /* GRID */

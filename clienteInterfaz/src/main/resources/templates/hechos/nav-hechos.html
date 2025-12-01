@@ -9,9 +9,9 @@
 
 <!--    <div class="d-flex justify-content-center flex-column align-items-center vh-100">-->
 <!--<div class="container py-5">-->
-<section>
-    <form th:with="baseUrl=(${urlColeccion} != null ? ${urlColeccion} : '/hechos/nav-hechos')" th:action="@{${baseUrl}}" th:object="${filtros}" method="post" novalidate>
-        <!-- Modo de Navegación -->
+<section class="nav-main container py-5">
+<!--    <form th:with="baseUrl=(${urlColeccion} != null ? ${urlColeccion} : '/hechos/nav-hechos')" th:action="@{${baseUrl}}" th:object="${filtros}" method="post" novalidate>
+        &lt;!&ndash; Modo de Navegación &ndash;&gt;
         <h3 class="sub-title text-center mb-4">Modo de Navegación</h3>
         <div class="d-flex justify-content-center gap-4 mb-4" role="radiogroup"
              aria-labelledby="titulo-modo">
@@ -27,11 +27,11 @@
             </div>
         </div>
 
-        <!-- Aplicar Filtros -->
+        &lt;!&ndash; Aplicar Filtros &ndash;&gt;
         <h2 class="title-main text-center mb-3">Aplicar Filtros</h2>
 
         <div class="mm-filters mb-3">
-            <!-- Esenciales -->
+            &lt;!&ndash; Esenciales &ndash;&gt;
             <div class="mm-filters__row">
                 <div class="form-group col-cat">
                     <label for="fCategoria" class="form-label">Categoría</label>
@@ -60,7 +60,7 @@
                 </div>
             </div>
 
-            <!-- Avanzados plegados -->
+            &lt;!&ndash; Avanzados plegados &ndash;&gt;
             <details class="mm-adv mb-3">
                 <summary>Más filtros</summary>
                 <div class="mm-adv__body">
@@ -72,7 +72,7 @@
                                    class="form-control style-ap-filtros mm-kw-input"
                                    placeholder="Ej: Buenos Aires"
                                    th:field="*{provincia}"
-                                   style="box-shadow: var(--shadow-sm);">
+                                   style="box-shadow: var(&#45;&#45;shadow-sm);">
 
                             <div id="kwChipsProvincia" class="mm-chips" aria-live="polite"></div>
                         </div>
@@ -82,7 +82,7 @@
                             <input id="fMunicipio" type="text"
                                    class="form-control style-ap-filtros mm-kw-input"
                                    placeholder="Ej: La Matanza"
-                                   style="box-shadow: var(--shadow-sm);" th:field="*{municipio}">
+                                   style="box-shadow: var(&#45;&#45;shadow-sm);" th:field="*{municipio}">
                             <div id="kwChipsMunicipio" class="mm-chips" aria-live="polite"></div>
                         </div>
                         <div class="form-group col-search">
@@ -92,7 +92,7 @@
                                    class="form-control style-ap-filtros mm-kw-input"
                                    placeholder="Ej: Vicente Lopéz"
                                    th:field="*{departamento}"
-                                   style="box-shadow: var(--shadow-sm);">
+                                   style="box-shadow: var(&#45;&#45;shadow-sm);">
 
                             <div id="kwChipsDepartamento" class="mm-chips" aria-live="polite"></div>
                         </div>
@@ -121,7 +121,7 @@
                 </div>
             </details>
 
-            <!-- Aplicar || Limpiar filtros -->
+            &lt;!&ndash; Aplicar || Limpiar filtros &ndash;&gt;
             <div class="mm-filters__actions">
                 <button id="btnAplicar" class="btn btn-ap-filter" type="submit">Aplicar filtros</button>
                 <button id="btnLimpiar" class="btn btn-clear-filter" type="reset">Limpiar</button>
@@ -132,7 +132,7 @@
 
 
 
-    <!-- Imple. Mapa -->
+    &lt;!&ndash; Imple. Mapa &ndash;&gt;
     <div class="row justify-content-center">
         <div class="col-12 col-lg-10">
             <div id="map" aria-label="Mapa interactivo con los resultados filtrados"></div>
@@ -141,20 +141,207 @@
     </div>
 
     <div class="text-center mt-4">
-        <a th:with="baseUrl=(${urlColeccion} != null ? '/colecciones' : '/main-gral')" th:href="@{${baseUrl}}">
+        <a th:with="baseUrl=(${urlColeccion} != null ? '/colecciones' : '/')" th:href="@{${baseUrl}}">
             <button class="btn btn-ap-filter" aria-label="Volver a la página principal">
                 Volver atrás
             </button>
         </a>
-    </div>
+    </div>-->
 
-<!--    <div class="text-center mt-4">-->
-<!--        <a th:with="baseUrl=(${urlColeccion} != null ? '/colecciones' : '/')" th:href="@{${baseUrl}}">-->
-<!--            <button class="btn btn-ap-filter" aria-label="Volver a la página principal">-->
-<!--                Volver atrás-->
-<!--            </button>-->
-<!--        </a>-->
-<!--    </div>-->
+
+    <!-- Título -->
+    <h2 class="title-main text-center mb-2">Hechos</h2>
+    <p class="text-center text-muted mb-4">
+        Filtrá los hechos y explorá el mapa en tiempo real.
+    </p>
+
+    <!-- Layout 2 columnas -->
+    <div class="row g-4 align-items-start">
+
+        <!-- Columna filtros -->
+        <div class="col-12 col-lg-4">
+            <form th:with="baseUrl=(${urlColeccion} != null ? ${urlColeccion} : '/hechos/nav-hechos')"
+                  th:action="@{${baseUrl}}"
+                  th:object="${filtros}"
+                  method="post"
+                  novalidate>
+
+                <!-- Modo de navegación -->
+                <div class="mm-card-filters mb-3">
+
+                    <h3 class="mm-card-title text-center mb-3">Modo de navegación</h3>
+
+                    <div class="mm-nav-toggle d-flex justify-content-center gap-3 mb-3" role="radiogroup"
+                         aria-labelledby="titulo-modo">
+                        <label>
+                            <input class="form-check-input"
+                                   type="checkbox"
+                                   id="modoIrrestricto"
+                                   name="modo"
+                                   th:checked="${!filtros.curada}">
+                            <span>Irrestricto</span>
+                        </label>
+
+                        <label>
+                            <input class="form-check-input"
+                                   type="checkbox"
+                                   id="modoCurado"
+                                   th:checked="${filtros.curada}"
+                                   th:field="*{curada}">
+                            <span>Curado</span>
+                        </label>
+                    </div>
+
+                    <hr class="my-3">
+
+                    <h4 class="mm-card-subtitle mb-2 text-center">Filtros principales</h4>
+
+                    <!-- Filtros esenciales -->
+                    <div class="mm-filters mb-3">
+                        <div class="mb-3">
+                            <label for="fCategoria" class="form-label">Categoría</label>
+                            <select id="fCategoria"
+                                    class="form-select chip select-categoria"
+                                    aria-label="Filtrar por categoría"
+                                    th:field="*{categoria}">
+                                <option value="">Categoría</option>
+                                <option value="EventoSanitario">Evento sanitario</option>
+                                <option value="Contaminación">Contaminación</option>
+                                <option value="Derrame">Derrame</option>
+                                <th:block th:each="categoriaIndice : ${categorias}">
+                                    <option th:value="${categoriaIndice}"
+                                            th:text="${categoriaIndice}"></option>
+                                </th:block>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="fAcontDesde" class="form-label">Acontecimiento desde</label>
+                            <input id="fAcontDesde"
+                                   type="datetime-local"
+                                   class="form-control chip style-ap-filtros"
+                                   th:field="*{fecha_acontecimiento_desde}"/>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="fAcontHasta" class="form-label">Acontecimiento hasta</label>
+                            <input id="fAcontHasta"
+                                   type="datetime-local"
+                                   class="form-control chip style-ap-filtros"
+                                   th:field="*{fecha_acontecimiento_hasta}"/>
+                        </div>
+                    </div>
+
+                    <!-- Filtros avanzados -->
+                    <details class="mm-adv mb-3">
+                        <summary>
+                            <span>
+                                Más filtros
+                            </span>
+                        </summary>
+
+                        <div class="mm-adv__body mt-3">
+                            <div class="mm-adv__grid">
+
+                                <div class="form-group col-search">
+                                    <label for="fProvincia" class="form-label">Provincia</label>
+                                    <input id="fProvincia" type="text"
+                                           class="form-control style-ap-filtros mm-kw-input"
+                                           placeholder="Ej: Buenos Aires"
+                                           th:field="*{provincia}"
+                                           style="box-shadow: var(--shadow-sm);">
+                                    <div id="kwChipsProvincia" class="mm-chips" aria-live="polite"></div>
+                                </div>
+
+                                <div class="form-group col-search">
+                                    <label for="fMunicipio" class="form-label">Municipio</label>
+                                    <input id="fMunicipio" type="text"
+                                           class="form-control style-ap-filtros mm-kw-input"
+                                           placeholder="Ej: La Matanza"
+                                           th:field="*{municipio}"
+                                           style="box-shadow: var(--shadow-sm);">
+                                    <div id="kwChipsMunicipio" class="mm-chips" aria-live="polite"></div>
+                                </div>
+
+                                <div class="form-group col-search">
+                                    <label for="fDepartamento" class="form-label">Departamento</label>
+                                    <input id="fDepartamento" type="text"
+                                           class="form-control style-ap-filtros mm-kw-input"
+                                           placeholder="Ej: Vicente López"
+                                           th:field="*{departamento}"
+                                           style="box-shadow: var(--shadow-sm);">
+                                    <div id="kwChipsDepartamento" class="mm-chips" aria-live="polite"></div>
+                                </div>
+
+                                <div class="form-group col-crea-des">
+                                    <label for="fCreacionDesde" class="form-label">Creación desde</label>
+                                    <input id="fCreacionDesde" type="datetime-local"
+                                           class="form-control chip style-ap-filtros"
+                                           th:field="*{fecha_reporte_desde}">
+                                </div>
+
+                                <div class="form-group col-crea-has">
+                                    <label for="fCreacionHasta" class="form-label">Creación hasta</label>
+                                    <input id="fCreacionHasta" type="datetime-local"
+                                           class="form-control chip style-ap-filtros"
+                                           th:field="*{fecha_reporte_hasta}">
+                                </div>
+
+                                <div class="form-group col-crea-has" style="line-height: 1.5rem;">
+                                    <label for="fPaginado" class="form-label">Nº de página</label>
+                                    <input id="fPaginado" type="number" min="0"
+                                           class="form-control chip style-ap-filtros"
+                                           th:field="*{nroPagina}">
+                                </div>
+                            </div>
+                            <div class="form-check mt-2" style="padding-top: 10px">
+                                <input class="form-check-input"
+                                       type="checkbox"
+                                       id="fEnTiempoReal"
+                                       th:checked="${filtros.entiemporeal}"
+                                       th:field="*{entiemporeal}">
+                                <label class="form-check-label" for="fEnTiempoReal">En tiempo real</label>
+                            </div>
+                        </div>
+                    </details>
+
+                    <!-- Acciones filtros -->
+                    <div class="mm-filters__actions mt-3">
+                        <button id="btnAplicar"
+                                class="btn btn-ap-filter w-100 mb-2"
+                                type="submit">
+                            Aplicar filtros
+                        </button>
+                        <button id="btnLimpiar"
+                                class="btn btn-clear-filter w-100"
+                                type="reset">
+                            Limpiar
+                        </button>
+                    </div>
+
+                </div> <!-- /.mm-card-filters -->
+
+            </form>
+        </div>
+
+        <!-- Columna mapa -->
+        <div class="col-12 col-lg-8">
+            <div class="mm-map-card">
+                <div id="map" aria-label="Mapa interactivo con los resultados filtrados"></div>
+                <div id="resultInfo" class="mt-2 text-muted small" aria-live="polite"></div>
+            </div>
+
+            <div class="text-center mt-4">
+                <a th:with="baseUrl=(${urlColeccion} != null ? '/colecciones' : '/')"
+                   th:href="@{${baseUrl}}">
+                    <button class="btn btn-ap-filter" aria-label="Volver a la página principal">
+                        Volver atrás
+                    </button>
+                </a>
+            </div>
+        </div>
+
+    </div>
 
     <!--</div>-->
 

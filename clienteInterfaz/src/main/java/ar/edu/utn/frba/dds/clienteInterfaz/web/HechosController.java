@@ -94,7 +94,10 @@ public class HechosController {
   @GetMapping("/subir-hecho")
   public String subirHecho(Model model) {
     List<String> categorias = this.agregador.findAllCategorias();
-    model.addAttribute("hecho", new HechoDTOInput());
+    if (!model.containsAttribute("hecho")) {
+      model.addAttribute("hecho", new HechoDTOInput());
+    }
+//    model.addAttribute("hecho", new HechoDTOInput());
     model.addAttribute("categorias", categorias);
     return "hechos/subir-hecho";
   }
@@ -122,15 +125,17 @@ public class HechosController {
       hechoDtoInput.setIdUsuario(userId);
 
       log.info("[HechosController] Llamando a agregador.crearHecho() usuarioId={}", userId);
-      fuenteDinamica.crearHecho(hechoDtoInput, this.urlFuenteDinamica); // o la baseUrl que uses
+      fuenteDinamica.crearHecho(hechoDtoInput, this.urlFuenteDinamica);
       log.info("[HechosController] Hecho creado OK en agregador");
 
-      if (userId != null) {
-        redirectAttributes.addFlashAttribute("mensajeOk", "Hecho cargado exitosamente!");
-        return "redirect:/hechos/mis-hechos";
-      }
-      redirectAttributes.addFlashAttribute("exitoSubirHecho", true);
-      return "redirect:/main-gral";
+//      if (userId != null) {
+//        redirectAttributes.addFlashAttribute("mensajeOk", "Hecho cargado exitosamente!");
+        redirectAttributes.addFlashAttribute("exitoSubirHecho", true);
+//        return "redirect:/hechos/mis-hechos";
+        return "redirect:/hechos/subir-hecho";
+//      }
+//      redirectAttributes.addFlashAttribute("exitoSubirHecho", true);
+//      return "redirect:/main-gral";
     } catch (Exception e) {
       log.error("[HechosController] Error al crear el hecho", e);
       redirectAttributes.addFlashAttribute("error", "Ha ocurrido un error al crear el hecho. Volvé a intentarlo");

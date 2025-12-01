@@ -7,14 +7,14 @@
 </head>
 <body class="body-metamapa">
 
-<section class="container-mis-hechos">
+<!--<section class="container-mis-hechos">
 
     <h1 class="title-main" style="margin-top: 50px; text-align: center; font-weight: 700;">Mis Hechos</h1>
 
-    <!-- vacío -->
+    &lt;!&ndash; vacío &ndash;&gt;
     <div style="margin-top: 50px" th:if="${items == null or #lists.isEmpty(items)}">Aún no tienes hechos aprobados.</div>
 
-    <!-- tarjetas -->
+    &lt;!&ndash; tarjetas &ndash;&gt;
     <article class="mm-req"
              th:each="h : ${items}"
              th:with="ahora=${T(java.time.LocalDateTime).now()},
@@ -42,7 +42,7 @@
 
         <div class="mm-req__actions">
             <form th:action="@{'/hechos/' + ${h.id} + '/editar'}" method="get">
-                <button type="submit" class="mm-btn mm-btn--round" th:disabled="${!editable}" title="Editar">
+                <button type="submit" class="mm-btn mm-btn&#45;&#45;round" th:disabled="${!editable}" title="Editar">
                     <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
                         <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.9959.9959 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
                     </svg>
@@ -59,11 +59,11 @@
         </a>
     </div>
 
-<!--    <div class="back-container">-->
-<!--        <a th:href="@{/main-gral}"><button class="btn btn-back btn-lg mb-3" aria-label="Volver a la página anterior">Volver atrás</button></a>-->
-<!--    </div>-->
+&lt;!&ndash;    <div class="back-container">&ndash;&gt;
+&lt;!&ndash;        <a th:href="@{/main-gral}"><button class="btn btn-back btn-lg mb-3" aria-label="Volver a la página anterior">Volver atrás</button></a>&ndash;&gt;
+&lt;!&ndash;    </div>&ndash;&gt;
     <div class="back-container">
-        <!-- Si es ADMINISTRADOR -->
+        &lt;!&ndash; Si es ADMINISTRADOR &ndash;&gt;
         <a sec:authorize="hasRole('ADMINISTRADOR')"
            th:href="@{/admin}">
             <button class="btn btn-back btn-lg mb-3" aria-label="Volver al panel de administrador">
@@ -71,7 +71,7 @@
             </button>
         </a>
 
-        <!-- Si es CONTRIBUYENTE o VISUALIZADOR -->
+        &lt;!&ndash; Si es CONTRIBUYENTE o VISUALIZADOR &ndash;&gt;
         <a sec:authorize="hasAnyRole('CONTRIBUYENTE','VISUALIZADOR')"
            th:href="@{/main-gral}">
             <button class="btn btn-back btn-lg mb-3" aria-label="Volver al menú principal">
@@ -79,6 +79,100 @@
             </button>
         </a>
     </div>
+</section>-->
+<section class="container-mis-hechos">
+
+    <header class="mm-mis-header">
+        <h1 class="title-main">Mis Hechos</h1>
+        <p class="subtitle-main">
+            Revisá y editá los hechos que ya fueron aprobados en MetaMapa.
+        </p>
+    </header>
+
+    <!-- vacío -->
+    <div class="mm-empty-state"
+         th:if="${items == null or #lists.isEmpty(items)}">
+        <p class="mm-empty-title">Todavía no tenés hechos aprobados</p>
+        <p class="mm-empty-text">
+            Cuando un hecho que subas sea aprobado, lo vas a ver listado acá
+            y vas a poder editarlo durante los primeros 7 días.
+        </p>
+        <a th:href="@{/hechos/subir-hecho}" class="mm-btn mm-btn--primary url-subir-hecho">
+            Subir un nuevo hecho
+        </a>
+    </div>
+
+    <!-- lista de tarjetas -->
+    <div class="mm-req-list"
+         th:if="${items != null and !#lists.isEmpty(items)}">
+        <article class="mm-req"
+                 th:each="h : ${items}"
+                 th:with="ahora=${T(java.time.LocalDateTime).now()},
+                          fc=${h.fechaCarga},
+                          editable=${fc != null and ahora.isBefore(fc.plusDays(7))}">
+
+            <header class="mm-req__header">
+                <div class="mm-req__header-main">
+                    <h3 class="mm-req__title" th:text="${h.titulo}">Título</h3>
+
+                    <div class="mm-req__meta">
+                        <span class="badge badge-neutral">
+                          Creado el&nbsp;
+                          <span th:text="${h.fechaCarga} != null ? ${#temporals.format(h.fechaCarga,'dd/MM/yyyy')} : '—'">—</span>
+                        </span>
+
+                        <span class="badge"
+                              th:classappend="${editable} ? ' badge-brand' : ' badge-neutral badge-neutral--muted'">
+                          <span th:text="${editable} ? 'Editable' : 'Edición vencida'">Estado</span>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="mm-req__actions">
+                    <form th:action="@{'/hechos/' + ${h.id} + '/editar'}" method="get">
+                        <button type="submit"
+                                class="mm-btn mm-btn--round"
+                                th:disabled="${!editable}"
+                                title="Editar">
+                            <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.9959.9959 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                            </svg>
+                        </button>
+                    </form>
+                </div>
+            </header>
+
+            <div class="mm-req__body">
+                <p th:text="${h.descripcion} ?: '—'">—</p>
+            </div>
+
+            <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+        </article>
+    </div>
+
+    <div th:if="${hasMore}" class="mm-load-more">
+        <a class="mm-btn mm-btn--ghost"
+           th:href="@{/hechos/mis-hechos(limit=${nextLimit}, step=${step})}">
+            Cargar más
+        </a>
+    </div>
+
+    <div class="back-container">
+        <!-- Si es ADMINISTRADOR -->
+        <a sec:authorize="hasRole('ADMINISTRADOR')" th:href="@{/admin}">
+            <button class="btn btn-back btn-lg mb-3" aria-label="Volver al panel de administrador">
+                Volver atrás
+            </button>
+        </a>
+
+        <!-- Si es CONTRIBUYENTE o VISUALIZADOR -->
+        <a sec:authorize="hasAnyRole('CONTRIBUYENTE','VISUALIZADOR')" th:href="@{/main-gral}">
+            <button class="btn btn-back btn-lg mb-3" aria-label="Volver al menú principal">
+                Volver atrás
+            </button>
+        </a>
+    </div>
 </section>
+
 </body>
 </html>

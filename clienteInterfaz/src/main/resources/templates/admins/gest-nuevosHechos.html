@@ -50,11 +50,11 @@
                             EN REVISION
                         </span>
 
-                        <span class="badge badge-neutral" th:text="${'Creado por ' + (h.usuario != null ? ('Usuario ' + h.usuario.nombre + ' ' + h.usuario.apellido ) : 'Anónimo')}">
+                        <span class="badge badge-neutral" th:text="${'Creado por ' + (h.usuario != null ? ('Usuario ' + h.usuario.nombre + ' ' + (h.usuario.apellido != null ? h.usuario.apellido : '') ) : 'Anónimo')}">
                                 Creado por Anónimo
                         </span>
                         <span class="badge badge-neutral" th:text="${h.fechaCarga != null ? 'Cargado: ' + #temporals.format(h.fechaCarga, 'dd/MM/yyyy HH:mm') : ''}"></span>
-                        <span class="badge badge-neutral" th:text="${h.usuario != null ? 'Usuario ' + h.usuario.nombre + ' ' + h.usuario.apellido : 'Anónimo'}"></span>
+                        <span class="badge badge-neutral" th:text="${h.usuario != null ? 'Usuario ' + h.usuario.nombre + ' ' + (h.usuario.apellido != null ? h.usuario.apellido : '') : 'Anónimo'}"></span>
                     </div>
                 </div>
 

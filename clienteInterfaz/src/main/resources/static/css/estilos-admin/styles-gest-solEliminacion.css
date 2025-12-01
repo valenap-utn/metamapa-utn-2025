@@ -73,6 +73,8 @@ body.scrolled .mm-header-2 {
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
+    padding-top: 10px;
+    padding-bottom: 10px;
 }
 
 .badge {

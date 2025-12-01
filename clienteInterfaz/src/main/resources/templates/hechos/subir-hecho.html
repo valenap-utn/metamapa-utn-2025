@@ -192,16 +192,22 @@
                     <h5 class="modal-title">¡Hecho enviado con éxito!</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                 </div>
+
                 <div class="modal-body">
-                    El hecho fue cargado y se encuentra en proceso de revisión por un administrador.
+                    <p class="mb-2">
+                        El hecho fue enviado correctamente y se encuentra en proceso de revisión por un administrador.
+                    </p>
+                    <p class="mb-0">
+                        Cuando sea aprobado se publicará en el mapa y aparecerá en <strong>“Mis Hechos”</strong>.
+                    </p>
                 </div>
+
                 <div class="modal-footer">
-                    <a sec:authorize="hasAnyRole('CONTRIBUYENTE','VISUALIZADOR')"
+                    <a sec:authorize="hasRole('CONTRIBUYENTE') or isAnonymous()"
                        th:href="@{/main-gral}" class="btn btn-primary">Volver al inicio</a>
 
                     <a sec:authorize="hasRole('ADMINISTRADOR')"
                        th:href="@{/admin}" class="btn btn-primary">Volver al inicio</a>
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Seguir cargando</button>
                 </div>
             </div>
         </div>
@@ -214,18 +220,47 @@
             crossorigin="anonymous"></script>
 
     <script th:inline="javascript">
-        document.addEventListener("DOMContentLoaded", function () {
+        (function () {
             var exito = /*[[${exitoSubirHecho}]]*/ false;
+            console.log("[SubirHecho] exitoSubirHecho =", exito);
 
-            if (exito) {
-                var modalEl = document.getElementById('modalExitoHecho');
-                if (modalEl) {
-                    var modal = new bootstrap.Modal(modalEl);
-                    modal.show();
-                }
+            if (!exito) return;
+
+            var modalEl = document.getElementById('modalExitoHecho');
+            if (!modalEl) {
+                console.warn("[SubirHecho] No se encontró el elemento #modalExitoHecho");
+                return;
             }
-        });
+
+            // 1) Intentamos con Bootstrap (si está cargado)
+            if (window.bootstrap && bootstrap.Modal) {
+                console.log("[SubirHecho] Mostrando modal con Bootstrap.Modal");
+                var modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+                modal.show();
+                return;
+            }
+
+            // 2) Fallback SIN Bootstrap: lo forzamos a mano
+            console.warn("[SubirHecho] Bootstrap.Modal no disponible, usando fallback manual");
+
+            // mostrar el modal
+            modalEl.classList.add("show");
+            modalEl.style.display = "block";
+            modalEl.removeAttribute("aria-hidden");
+            modalEl.setAttribute("aria-modal", "true");
+            modalEl.setAttribute("role", "dialog");
+
+            // evitar scroll del body
+            document.body.classList.add("modal-open");
+
+            // crear un backdrop
+            var backdrop = document.createElement("div");
+            backdrop.className = "modal-backdrop fade show";
+            document.body.appendChild(backdrop);
+        })();
     </script>
+
+
 
 
     <script>

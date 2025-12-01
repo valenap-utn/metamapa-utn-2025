@@ -552,3 +552,117 @@ span.chip__label{
     background-color: var(--brand-500);
     box-shadow: 0 1px 2px rgba(59,79,97,.12);
 }
+
+/* NUEVO ESTILO PARA LA NAVEGACION */
+
+.nav-main {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Card de filtros */
+.mm-card-filters {
+    background: #ffffff;
+    border-radius: 18px;
+    border: 1px solid rgba(0,0,0,0.05);
+    box-shadow: 0 10px 35px rgba(15, 35, 52, 0.08);
+    padding: 20px 18px 18px;
+}
+
+/* Subtítulo dentro de la card */
+.mm-card-subtitle {
+    font-size: 0.95rem;
+    color: #6b7a8a;
+}
+
+/* Toggle pills (Irrestricto / Curado) */
+/* No lo uso */
+.mm-toggle-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.8);
+    border: 1px solid rgba(0,0,0,0.05);
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+/* Más filtros */
+.mm-adv summary {
+    list-style: none;
+    cursor: pointer;
+}
+
+.mm-adv summary::-webkit-details-marker {
+    display: none;
+}
+
+.mm-adv-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 999px;
+    background: var(--brand-500, #e5f0ff);
+    color: var(--brand-800, #325c88);
+    font-size: 0.9rem;
+}
+
+/* Card del mapa para que combine */
+.mm-map-card {
+    background: #ffffff;
+    border-radius: 18px;
+    border: 1px solid rgba(0,0,0,0.04);
+    box-shadow: 0 10px 35px rgba(15, 35, 52, 0.06);
+    padding: 12px;
+}
+
+#map {
+    width: 100%;
+    height: 520px;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .mm-card-filters {
+        padding: 16px 14px;
+    }
+    #map {
+        height: 500px;
+    }
+}
+
+
+/* No estoy segura de si dejar esto o no */
+/* Estilo para los inputs de fecha y hora */
+
+/*
+.mm-filters input[type="datetime-local"],
+.mm-adv input[type="datetime-local"] {
+    -webkit-appearance: none;
+    appearance: none;
+    background-image: url('data:image/svg+xml;utf8,\
+<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="%233B4F61" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\
+<rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>\
+</svg>');
+    background-repeat: no-repeat;
+    background-size: 18px;
+    background-position: right 14px center;
+    padding-right: 48px;
+}
+
+!* Ocultamos el icono nativo pero dejamos clickeable el costado derecho *!
+.mm-filters input[type="datetime-local"]::-webkit-calendar-picker-indicator,
+.mm-adv input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+    opacity: 0;
+    position: absolute;
+    right: 0;
+    width: 40px;
+    height: 100%;
+    cursor: pointer;
+}
+*/
