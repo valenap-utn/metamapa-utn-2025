@@ -48,7 +48,7 @@
                                 PENDIENTE
                             </span>
 
-                            <span class="badge badge-neutral" th:text="${'Creado por ' + (solicitudesVM.solicitud.usuario != null ? (solicitudesVM.solicitud.usuario.nombre + ' ' + solicitudesVM.solicitud.usuario.apellido + ' ' + solicitudesVM.solicitud.usuario.email) : 'Anónimo')}">
+                            <span class="badge badge-neutral" th:text="${'Creado por ' + (solicitudesVM.solicitud.usuario != null ? (solicitudesVM.solicitud.usuario.nombre + ' ' + (solicitudesVM.solicitud.usuario.apellido != null ? solicitudesVM.solicitud.usuario.apellido : '') + ' ' + solicitudesVM.solicitud.usuario.email) : 'Anónimo')}">
                                 Creado por Anónimo
                             </span>
                         </div>
