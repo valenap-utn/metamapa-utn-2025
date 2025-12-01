@@ -1,0 +1,16 @@
+package ar.edu.utn.frba.dds.clienteInterfaz.dtos;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+import lombok.Data;
+
+@Data
+public class ColeccionDTOOutput {
+  private UUID id;
+  private String titulo;
+  private String descripcion;
+  private List<FuenteDTO> fuentes;
+  private List<CriterioDTO> criterios = new ArrayList<>();
+  private String algoritmoDeConsenso;
+}

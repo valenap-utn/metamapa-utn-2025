@@ -56,7 +56,6 @@ public class SolicitudService implements ISolicitudService {
 
         if (detectorDeSpam.esSpam(solicitud.getJustificacion())) {
             solicitud.marcarComoSpam();
-            solicitud.rechazar();
             repo.save(solicitud);
             throw new SolicitudError("Justificacion Con Spam");
         }
