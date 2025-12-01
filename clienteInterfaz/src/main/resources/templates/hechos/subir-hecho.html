@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" xmlns:sec="https://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -196,7 +196,11 @@
                     El hecho fue cargado y se encuentra en proceso de revisión por un administrador.
                 </div>
                 <div class="modal-footer">
-                    <a th:href="@{/main-gral}" class="btn btn-primary">Volver al inicio</a>
+                    <a sec:authorize="hasAnyRole('CONTRIBUYENTE','VISUALIZADOR')"
+                       th:href="@{/main-gral}" class="btn btn-primary">Volver al inicio</a>
+
+                    <a sec:authorize="hasRole('ADMINISTRADOR')"
+                       th:href="@{/admin}" class="btn btn-primary">Volver al inicio</a>
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Seguir cargando</button>
                 </div>
             </div>
