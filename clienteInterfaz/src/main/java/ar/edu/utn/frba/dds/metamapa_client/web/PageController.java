@@ -135,7 +135,7 @@ public class PageController {
     return "terminos";
   }
 
-  @GetMapping("/main")
+/*  @GetMapping("/main")
   public String mainDeUsuario() {
     ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
     HttpServletRequest request = attributes.getRequest();
@@ -143,6 +143,16 @@ public class PageController {
     if(rol == null) return "redirect:/iniciar-sesion";
     return rol.startsWith("ADMIN") ? "redirect:/admin" : "redirect:/main-gral";
 //    return rol.startsWith("ADMINISTRADOR") ? "redirect:/admin" : "redirect:/main-gral";
+  }*/
+  @GetMapping("/main")
+  public String mainDeUsuario(Authentication auth) {
+    if (auth == null || !auth.isAuthenticated()) return "redirect:/iniciar-sesion";
+    var authorities = auth.getAuthorities();
+    boolean isAdmin = authorities.stream().anyMatch(a -> a.getAuthority().startsWith("ROLE_ADMINISTRADOR"));
+    if (isAdmin) return "redirect:/admin";
+    boolean isContribuyente = authorities.stream().anyMatch(a -> a.getAuthority().startsWith("ROLE_CONTRIBUYENTE"));
+    if (isContribuyente) return "redirect:/main-gral";
+    return "redirect:/iniciar-sesion";
   }
 
   @GetMapping("/mi-perfil")

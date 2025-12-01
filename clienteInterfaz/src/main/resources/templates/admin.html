@@ -38,27 +38,125 @@
     </div>
 
     <!-- Gestión de colecciones -->
-    <h2 class="h5 mt-4 mb-3">Gestión de Colecciones</h2>
+    <!--<h2 class="h5 mt-4 mb-3">Gestión de Colecciones</h2>
     <div class="mm-actions">
         <a class="btn btn-back btn-lg mb-3" aria-label="Crear coleccion" th:href="@{/admin/crear-coleccion}">Crear colección</a>
-        <!--            <button class="btn btn-back btn-lg mb-3" aria-label="Editar colección">Editar colección</button>-->
-        <!--            <button class="btn btn-back btn-lg mb-3" aria-label="Eliminar colección">Eliminar colección</button>-->
-    </div>
+        &lt;!&ndash;            <button class="btn btn-back btn-lg mb-3" aria-label="Editar colección">Editar colección</button>&ndash;&gt;
+        &lt;!&ndash;            <button class="btn btn-back btn-lg mb-3" aria-label="Eliminar colección">Eliminar colección</button>&ndash;&gt;
+    </div>-->
 
     <!-- Acciones sobre hechos y solicitudes -->
-<!--    <h2 class="h5 mt-4 mb-3">Acciones sobre hechos y solicitudes</h2>-->
-    <h2 class="h5 mt-4 mb-3">Gestión sobre Hechos</h2>
+    <!--    <h2 class="h5 mt-4 mb-3">Acciones sobre hechos y solicitudes</h2>-->
+    <!--<h2 class="h5 mt-4 mb-3">Gestión sobre Hechos</h2>-->
     <!--            <div class="d-flex gap-2 flex-wrap mb-3">-->
-    <div class="mm-actions">
+    <!--<div class="mm-actions">
         <a class="btn btn-back btn-lg mb-3" aria-label="Importar archivo CSV de hechos" th:href="@{/admin/importar-csv}">Importar CSV con hechos</a>
 
         <a class="btn btn-back btn-lg mb-3" aria-label="Revisar nuevos hechos subidos" th:href="@{/admin/gest-nuevosHechos}">Gestionar nuevos hechos</a>
-        <!-- Qué era esto de aceptar con modificaciones ? xd -->
+        &lt;!&ndash; Qué era esto de aceptar con modificaciones ? xd &ndash;&gt;
         <a class="btn btn-back btn-lg mb-3" aria-label="Gestionar solicitudes de edición de Hechos" th:href="@{/admin/gest-solEdicion}">Gestionar solicitudes de edición</a>
 
         <a class="btn btn-back btn-lg mb-3" aria-label="Gestionar solicitudes de eliminación de Hechos" th:href="@{/admin/gest-solEliminacion}">Gestionar solicitudes de eliminación</a>
         <a class="btn btn-back btn-lg mb-3" aria-label="Consultar estadísticas" th:href="@{/admin/dashboard-estadisticas}">Consultar estadísticas</a>
+    </div>-->
+
+    <!-- Acciones principales en cards -->
+    <div class="row g-3 mt-4 admin-actions-grid">
+
+        <!-- Card Colecciones -->
+        <div class="col-12 col-md-4 d-flex">
+            <div class="card mm-card w-100">
+                <div class="card-body d-flex flex-column">
+                    <h2 class="card-title h5 text-center mb-2">Colecciones</h2>
+                    <p class="text-center small mb-3">
+                        Agrupá hechos por temática y mantené el mapa organizado
+                    </p>
+                    <div class="mm-card__actions">
+                        <a class="btn btn-back btn-lg"
+                           aria-label="Ver todas las colecciones"
+                           th:href="@{/colecciones}">
+                            Ver colecciones
+                        </a>
+                        <a class="btn btn-back btn-lg"
+                           aria-label="Crear nueva colección de hechos"
+                           th:href="@{/admin/crear-coleccion}">
+                            Crear colección
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card Hechos -->
+        <div class="col-12 col-md-4 d-flex">
+            <div class="card mm-card w-100">
+                <div class="card-body d-flex flex-column">
+                    <h2 class="card-title h5 text-center mb-2">Hechos</h2>
+                    <p class="text-center small mb-3">
+                        Cargá nuevos hechos y revisá los que ya se encuentran en el sistema
+                    </p>
+                    <div class="mm-card__actions">
+                        <a class="btn btn-back btn-lg"
+                           aria-label="Navegar hechos"
+                           th:href="@{/hechos/nav-hechos}">
+                            Navegar hechos
+                        </a>
+                        <a class="btn btn-back btn-lg"
+                           aria-label="Subir nuevo hecho"
+                           th:href="@{/hechos/subir-hecho}">
+                            Subir hecho
+                        </a>
+                        <a class="btn btn-back btn-lg"
+                           aria-label="Ver mis hechos subidos"
+                           th:href="@{/hechos/mis-hechos}">
+                            Mis hechos
+                        </a>
+                        <a class="btn btn-back btn-lg"
+                           aria-label="Gestionar nuevos hechos subidos"
+                           th:href="@{/admin/gest-nuevosHechos}">
+                            Nuevos hechos
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card Moderación & Datos -->
+        <div class="col-12 col-md-4 d-flex">
+            <div class="card mm-card w-100">
+                <div class="card-body d-flex flex-column">
+                    <h2 class="card-title h5 text-center mb-2">Moderación y datos</h2>
+                    <p class="text-center small mb-3">
+                        Administrá solicitudes, importaciones y estadísticas del sistema
+                    </p>
+                    <div class="mm-card__actions">
+                        <a class="btn btn-back btn-lg"
+                           aria-label="Importar CSV"
+                           th:href="@{/admin/importar-csv}">
+                            Importar CSV
+                        </a>
+                        <a class="btn btn-back btn-lg"
+                           aria-label="Gestionar solicitudes de edición"
+                           th:href="@{/admin/gest-solEdicion}">
+                            Solicitudes de edición
+                        </a>
+                        <a class="btn btn-back btn-lg"
+                           aria-label="Gestionar solicitudes de eliminación"
+                           th:href="@{/admin/gest-solEliminacion}">
+                            Solicitudes de eliminación
+                        </a>
+                        <a class="btn btn-back btn-lg"
+                           aria-label="Ver dahsboard de estadisticas"
+                           th:href="@{/admin/dashboard-estadisticas}">
+                            Estadísticas
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
+
 
     <!-- ALERT DE CONFIRMACIÓN -->
     <th:block th:if="${success != null}">

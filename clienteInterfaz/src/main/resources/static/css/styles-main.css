@@ -350,3 +350,28 @@ main {
 @media (max-width: 480px){
     .mm-actions .btn-back{ flex-basis: 100%; }
 }
+
+/* Estilos para cards de /admin */
+.admin-actions-grid .card.mm-card{
+    height: 100%;
+}
+
+/* Contenedor vertical de botones dentro de cada card */
+.mm-card__actions{
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+/* Que los botones dentro de cards sean 100% de ancho */
+.mm-card__actions .btn-back{
+    width: 100%;
+}
+
+/* Ajuste pequeño en móviles */
+@media (max-width: 576px){
+    .admin-actions-grid .card.mm-card{
+        padding: 20px 16px;
+    }
+}
