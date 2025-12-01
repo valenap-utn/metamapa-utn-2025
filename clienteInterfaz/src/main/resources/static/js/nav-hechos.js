@@ -327,15 +327,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     render(hechos);
     $('#modoCurado')?.addEventListener('click', () => simularRadioButton('#modoIrrestricto', '#modoCurado'))
     $('#modoIrrestricto')?.addEventListener('click', () => simularRadioButton('#modoCurado', '#modoIrrestricto'))
-    // Botones
-    //$('#btnAplicar')?.addEventListener('click', applyFilters);
-    //$('#btnLimpiar')?.addEventListener('click', clearFilters);
-
-    // Enter aplica
-    /*['#fCategoria','#fAcontDesde','#fAcontHasta','#fCreacionDesde','#fCreacionHasta','#fTexto']
-        .forEach(sel => $(sel)?.addEventListener('keydown', e => {
-            if (e.key === 'Enter') { e.preventDefault(); applyFilters(); }
-        }));*/
 
     // Recalcular mapa al abrir/cerrar “Más filtros”
     document.querySelector('.mm-adv')?.addEventListener('toggle', () => {
@@ -437,7 +428,7 @@ document.addEventListener("click", (e) => {
 
 //Lógica interna del modal
 (() => {
-    const MIN = 500;
+    // const MIN = 500;
     const txt = document.getElementById("justificacion");
     const counter = document.getElementById("just-counter");
     const btnEnviar = document.getElementById("btn-enviar");
@@ -445,46 +436,27 @@ document.addEventListener("click", (e) => {
 
     if (!txt || !counter || !btnEnviar || !modalEl) return;
 
+    //Leemos el mínimo desde el HTML
+    const MIN = parseInt(counter.dataset.min || "0", 10);
+    const requiereMin = MIN > 0;
+
+    btnEnviar.disabled = requiereMin;
+
     txt.addEventListener("input", () => {
         const len = txt.value.trim().length;
-        counter.textContent = `${len} / ${MIN}`;
-        btnEnviar.disabled = len < MIN;
-        txt.classList.toggle("is-invalid", len < MIN);
-    });
-/*
-    btnEnviar.addEventListener("click", async () => {
-        const hechoId = window._hechoIdSeleccionado;
-        const justificacion = txt.value.trim();
-        if (!hechoId || justificacion.length < MIN) return;
 
-        btnEnviar.disabled = true;
-
-        const url = `/hechos/${hechoId}/solicitud-eliminacion`;
-        const body = new URLSearchParams({idHecho: String(hechoId), justificacion});
-
-        try {
-            const resp = await fetch(url, {method: "POST", body});
-            if (!resp.ok) {
-                const text = await resp.text();
-                showToast(`Error al enviar la solicitud: ${text || resp.status}`, "bg-danger");
-                btnEnviar.disabled = false;
-                return;
-            }
-
-            showToast("Solicitud enviada. Un administrador la revisará.", "bg-success");
-
-            const modal = bootstrap.Modal.getInstance(modalEl);
-            modal.hide();
-            txt.value = "";
-            counter.textContent = `0 / ${MIN}`;
-            btnEnviar.disabled = true;
-            txt.classList.remove("is-invalid");
-        } catch (err) {
-            showToast("Error de red. Intentá nuevamente.", "bg-danger");
+        if(requiereMin){
+            counter.textContent = `${len} / ${MIN}`;
+            btnEnviar.disabled = len < MIN;
+            txt.classList.toggle("is-invalid", len < MIN);
+        }else{
+            counter.textContent = `${len}`;
             btnEnviar.disabled = false;
+            txt.classList.remove("is-invalid");
         }
+
     });
-*/
+
     function showToast(message, cls = "bg-dark") {
         let area = document.getElementById("toastArea");
         if (!area) {

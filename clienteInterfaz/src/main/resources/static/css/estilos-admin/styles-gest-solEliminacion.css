@@ -98,7 +98,7 @@ body.scrolled .mm-header-2 {
 
 /* Cuerpo */
 .mm-req__body {
-    padding-right: 100px;
+    /*padding-right: 100px;*/
     /* fuerza el corte de palabras MUY largas dentro del card */
     overflow-wrap: anywhere;
     word-break: break-word;

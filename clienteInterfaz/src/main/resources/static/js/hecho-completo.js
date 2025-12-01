@@ -236,7 +236,6 @@ function initMap(h) {
 
 // Solicitud de eliminacion
 (() => { // IIFE (Immediately Invoked Function Expression) o sea, funcion que se define y se ejecuta automaticamente. Sirve para: aislar el scope (lo que declare dentro no queda global), ejecuta el setup una sola vez (corre apenas se carga el archivo y deja listo los listeners, contadores, etc).
-    const MIN = 500;
     const txt = document.getElementById('justificacion');
     const counter = document.getElementById('just-counter');
     const btnEnviar = document.getElementById('btn-enviar');
@@ -244,57 +243,30 @@ function initMap(h) {
 
     if (!txt || !counter || !btnEnviar || !modalEl) return;   // antes de empezar, si falta cualquiera de esos elementos, termina con la ejecucion.
 
+    //Leemos el mínimo desde el HTML
+    const MIN = parseInt(counter.dataset.min || "0", 10);
+    const requiereMin = MIN > 0;
+
+    btnEnviar.disabled = requiereMin;
+
     const hechoDiv = document.getElementById('hecho');
     const hechoId = document.getElementById('hechoId').textContent;
 
     // Contador + habilitar/deshabilitar botón
-    txt.addEventListener('input', () => {
+    txt.addEventListener("input", () => {
         const len = txt.value.trim().length;
-        counter.textContent = `${len} / ${MIN}`;
-        btnEnviar.disabled = (len < MIN);
-        txt.classList.toggle('is-invalid', len < MIN); // "prende/apaga" una clase CSS en un nodo.
-    });
 
-    // Enviar solicitud
-    /*
-    btnEnviar.addEventListener('click', async () => {
-        const justificacion = txt.value.trim(); // lee el texto y le saca espacios y saltos de linea al inicio y al final asi 500 espacios no cuentan
-        if (justificacion.length < MIN) return; // doble verificacion (front y back)
-
-        btnEnviar.disabled = true;
-
-        const url = `/hechos/${hechoId}/solicitud-eliminacion`;
-
-        const body = new URLSearchParams({
-            idHecho: String(hechoId),
-            justificacion
-        });
-
-        try {
-            const resp = await fetch(url, {method: 'POST', body});
-            if(!resp.ok) {
-                const text = await resp.text();
-                showToast(`Error al enviar la solicitud: ${text || resp.status}`, 'bg-danger');
-                btnEnviar.disabled = false;
-                return;
-            }
-
-            showToast('Solcitud enviada. Un administrador la revisará.', 'bg-success');
-
-            // Cerrar el modal y resetear
-            const modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
-            modal.hide();
-            txt.value = '';
-            counter.textContent = `0 / ${MIN}`;
-            btnEnviar.disabled = true;
-            txt.classList.remove('is-invalid');
-
-        } catch (err) {
-            showToast('Error de red. Intentá nuevamente.', 'bg-danger');
+        if(requiereMin){
+            counter.textContent = `${len} / ${MIN}`;
+            btnEnviar.disabled = len < MIN;
+            txt.classList.toggle("is-invalid", len < MIN);
+        }else{
+            counter.textContent = `${len}`;
             btnEnviar.disabled = false;
+            txt.classList.remove("is-invalid");
         }
     });
-*/
+
     // Toasts básicos con Bootstrap
     function showToast(message, cls = 'bg-dark') {
         // contenedor si no existe

@@ -80,7 +80,7 @@
         <!-- Creador -->
         <div class="mb-4">
             <h2 class="h6 mm-label mb-1">Creado por</h2>
-            <div id="hCreador" th:text="${hecho.usuario != null ? hecho.usuario.nombre + ' ' + hecho.usuario.apellido + ' ' + hecho.usuario.email  : 'Anonimo'}">-</div>
+            <div id="hCreador" th:text="${hecho.usuario != null ? hecho.usuario.nombre + ' ' + (hecho.usuario.apellido != null ? hecho.usuario.apellido : ' ') + ' ・ ' + hecho.usuario.email  : 'Anonimo'}">-</div>
             <div id="hRoles" class="mt-1 d-flex flex-wrap gap-2"></div>
         </div>
 
@@ -120,9 +120,20 @@
                 <div class="modal-body">
                     <p id="modalSolicitudDesc" class="mb-2">Explicanos por qué crees que este hecho debe eliminarse de MetaMapa.</p>
                     <label for="justificacion" class="form-label">Justificación</label>
-                    <textarea id="justificacion" class="form-control" rows="6" aria-describedby="just-counter" placeholder="Minimo 500 caracteres..." name="justificacion"></textarea>
+<!--                    <textarea id="justificacion" class="form-control" rows="6" aria-describedby="just-counter" placeholder="Minimo 500 caracteres..." name="justificacion"></textarea>-->
+                    <textarea id="justificacion" class="form-control" rows="6"
+                              aria-describedby="just-counter"
+                              th:placeholder="${#authorization.expr('isAuthenticated()')} ?
+                          'Comentanos la razón por la que queres eliminar este hecho.…' :
+                          'Mínimo 500 caracteres...'" name="justificacion" ></textarea>
 
-                    <div id="just-counter" class="form-text">0 / 500 </div>
+                    <div id="just-counter"
+                         class="form-text"
+                         th:attr="data-min=${#authorization.expr('isAuthenticated()')} ? 0 : 500"
+                         th:text="${#authorization.expr('isAuthenticated()')} ? ' ' : '0 / 500'">
+                        0 / 500
+                    </div>
+
                     <input style="display: none;" type="text" name="urlColeccion" th:value="${urlColeccion}">
                 </div>
 
