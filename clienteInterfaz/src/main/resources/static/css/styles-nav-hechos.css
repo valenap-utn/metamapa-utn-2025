@@ -212,12 +212,16 @@ body {
 
 /* Grid interno de filtros avanzados */
 .mm-adv__grid {
-    display: grid;
+    /*display: grid;*/
+    /*gap: 12px;*/
+    /*grid-template-columns: repeat(12, minmax(0, 1fr));*/
+    display: flex;
+    flex-direction: column;
     gap: 12px;
-    grid-template-columns: repeat(12, minmax(0, 1fr));
 }
 .mm-adv__grid .form-group {
-    grid-column: span 12;
+    /*grid-column: span 12;*/
+    width: 100%;
 }
 
 @media (min-width: 576px) {
