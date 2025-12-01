@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" xmlns:sec="https://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -58,7 +58,23 @@
             </p>
 
             <div class="mm-hero__actions d-flex justify-content-end">
-                <a class="mm-btn mm-btn--primary btn-cta" th:href="@{/iniciar-sesion}">Iniciar sesión <span class="arrow"><i class="fa-solid fa-arrow-right"></i></span></a>
+                <!-- Usuario NO autenticado -->
+                <a sec:authorize="isAnonymous() or hasRole('VISUALIZADOR')"
+                   class="mm-btn mm-btn--primary btn-cta"
+                   aria-label="Ir a inicio de sesión"
+                   th:href="@{/iniciar-sesion}">
+                    Iniciar sesión
+                    <span class="arrow"><i class="fa-solid fa-arrow-right"></i></span>
+                </a>
+
+                <!-- Usuario autenticado -->
+                <a sec:authorize="isAuthenticated() and !hasRole('VISUALIZADOR')"
+                   class="mm-btn mm-btn--primary btn-cta"
+                   aria-label="Ir a mi espacio"
+                   th:href="@{/main}">
+                    Ir a mi espacio
+                    <span class="arrow"><i class="fa-solid fa-arrow-right"></i></span>
+                </a>
             </div>
 
             <div class="mm-hero__scroll">
