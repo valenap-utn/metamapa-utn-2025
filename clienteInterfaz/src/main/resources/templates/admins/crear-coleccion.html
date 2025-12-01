@@ -27,7 +27,7 @@
                 <h1 class="mm-form-title">Crear Coleccion</h1>
                 <p class="mm-form-sub">Cargá la información del hecho para que quede disponible en MetaMapa</p>
 
-                <form id="form-hecho" th:object="${coleccion}" th:action="@{/admin/crear-coleccion}" method="post" class="mm-form" novalidate>
+                <form id="form-hecho" th:object="${coleccion}" th:action="@{/admin/crear-coleccion}" method="post" class="mm-form" >
                     <div class="mm-grid">
                         <!-- Título -->
                         <div class="mm-field mm-col-span-all">
@@ -63,7 +63,7 @@
                                     <!-- Tipo de fuente -->
                                     <div class="mm-field fi-tipo" >
                                         <label for="tipoFuente" class="mm-label">Tipo</label>
-                                        <select id="tipoFuente" name="tipoFuente" class="mm-input" required >
+                                        <select id="tipoFuente" name="tipoFuente" class="mm-input" >
                                             <option value="" disabled selected>Seleccioná la fuente necesitada</option>
                                             <option value="DINAMICA">Dinámica</option>
                                             <option value="DATASET">Estática</option>
@@ -77,7 +77,7 @@
                                         <input id="url" name="url" type="url" class="mm-input"
                                                placeholder="Ej: https://www.google.com"
                                                inputmode="url" autocomplete="url" spellcheck="false"
-                                               aria-describedby="url-help" required >
+                                               aria-describedby="url-help" >
                                         <small id="url-help" class="mm-help">Debe empezar con http(s)://</small>
                                     </div>
 
@@ -211,5 +211,22 @@
             }
         }
     </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('form-hecho');
+            const fuentesContainer = document.getElementById('fuentesContainer');
+
+            form.addEventListener('submit', (e) => {
+                // buscamos chips de fuentes agregadas
+                const chips = fuentesContainer.querySelectorAll('.chip, .mm-chip');
+
+                if (chips.length === 0) {
+                    e.preventDefault();
+                    alert('Agregá al menos una fuente a la colección antes de subirla.');
+                }
+            });
+        });
+    </script>
+
 </body>
 </html>
