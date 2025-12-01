@@ -10,8 +10,11 @@ import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.dtos.SolicitudDTO;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.Categoria;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.Solicitud;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.Hecho;
+import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.repositories.IMultimediaRepository;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.services.IHechoServicio;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.services.ISolicitudServicio;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,10 +27,11 @@ import java.util.List;
 public class HechoSolicitudController {
     private final IHechoServicio hechoServicio;
     private final ISolicitudServicio solicitudServicio;
-
-    public HechoSolicitudController(IHechoServicio hechoServicio, ISolicitudServicio solicitudServicio) {
+    private final IMultimediaRepository multimediaRepository;
+    public HechoSolicitudController(IHechoServicio hechoServicio, ISolicitudServicio solicitudServicio, IMultimediaRepository multimediaRepository) {
         this.hechoServicio = hechoServicio;
         this.solicitudServicio = solicitudServicio;
+      this.multimediaRepository = multimediaRepository;
     }
 
     @PostMapping(value = "/hechos", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -121,5 +125,13 @@ public class HechoSolicitudController {
         ConjuntoHechoDTODinamica conjunto = new ConjuntoHechoDTODinamica();
         conjunto.setHechos(hechos.stream().map(this::toHechoDTO).toList());
         return ResponseEntity.ok(conjunto);
+    }
+
+    @GetMapping("/multimedia/{filename:.+}")
+    @ResponseBody
+    public ResponseEntity<Resource> getFile(@PathVariable String filename) {
+        Resource file = this.multimediaRepository.cargarMultimedia(filename);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"").body(file);
     }
 }

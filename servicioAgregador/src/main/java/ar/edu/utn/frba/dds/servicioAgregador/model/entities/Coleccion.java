@@ -4,7 +4,6 @@ import ar.edu.utn.frba.dds.servicioAgregador.exceptions.ColeccionConDatosErroneo
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.algoritmosConsenso.AlgoritmoConsenso;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.algoritmosConsenso.TodosConsensuados;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.filtros.Filtro;
-import ar.edu.utn.frba.dds.servicioAgregador.model.entities.filtros.FiltroNoEstaEliminado;
 
 import java.util.*;
 import java.util.stream.Stream;
@@ -85,8 +84,8 @@ public class Coleccion {
         return this.criteriosDePertenencia.stream().allMatch(criterio -> criterio.hechoCumple(hecho));
     }
 
-    public void consensuarHechos(Set<FuenteColeccion> fuenteColeccions) {
-        this.getHechos().forEach(hecho -> this.consensuarHecho(hecho, fuenteColeccions));
+    public void consensuarHechos(List<Hecho> hechos, Set<FuenteColeccion> fuenteColeccions) {
+        hechos.forEach(hecho -> this.consensuarHecho(hecho, fuenteColeccions));
     }
 
     private void consensuarHecho(Hecho hecho, Set<FuenteColeccion> fuenteColeccions) {

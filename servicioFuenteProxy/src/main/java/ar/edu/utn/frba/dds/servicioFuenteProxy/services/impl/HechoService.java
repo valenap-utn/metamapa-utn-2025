@@ -56,7 +56,7 @@ public class HechoService implements IHechoService {
                 .flatMap(client -> client.getAllHechosExternos().stream()
                         .map(dto -> hechoMapper.toOutputDTO(dto, client.nombre())))
                 .filter(this::noEstaEliminado)
-                .filter(hecho -> categoria == null || hecho.getCategoria().equalsIgnoreCase(categoria))
+                .filter(hecho -> categoria == null || categoria.isEmpty() || hecho.getCategoria().equalsIgnoreCase(categoria))
                 .filter(hecho -> latitud == null || hecho.getLatitud().equals(latitud))
                 .filter(hecho -> longitud == null || hecho.getLongitud().equals(longitud))
                 .filter(hecho -> fechaReporteDesde == null || hecho.getFechaCarga().isAfter(fechaReporteDesde))

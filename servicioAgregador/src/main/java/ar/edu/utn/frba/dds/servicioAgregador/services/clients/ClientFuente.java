@@ -1,13 +1,17 @@
 package ar.edu.utn.frba.dds.servicioAgregador.services.clients;
 
+import ar.edu.utn.frba.dds.servicioAgregador.exceptions.ErrorAPIGobierno;
+import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.ErrorConexionFuente;
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.FiltroDTO;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
 import java.net.URI;
 import java.util.List;
 import lombok.Getter;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriBuilder;
+import reactor.core.publisher.Mono;
 
 public class ClientFuente {
   @Getter

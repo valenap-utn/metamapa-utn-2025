@@ -18,9 +18,9 @@ public class HechoRepositoryMySQL implements IHechoRepositoryFullTextSearch {
 
 
   @Override
-  public List<Hecho> findByFullTextSearch(String titulo) {
+  public List<String> findByFullTextSearch(String titulo) {
     try {
-      Query query = entityManager.createNativeQuery(this.queryFullTextSearch, Hecho.class);
+      Query query = entityManager.createNativeQuery(this.queryFullTextSearch, String.class);
       query.setParameter("titulo", titulo);
       return  query.getResultList();
     } catch (Exception e) {

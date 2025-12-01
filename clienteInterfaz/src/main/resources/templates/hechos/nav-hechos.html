@@ -96,7 +96,6 @@
 
                             <div id="kwChipsDepartamento" class="mm-chips" aria-live="polite"></div>
                         </div>
-
                         <div class="form-group col-crea-des">
                             <label for="fCreacionDesde" class="form-label">Creación desde</label>
                             <input id="fCreacionDesde" type="datetime-local"
@@ -112,6 +111,11 @@
                             <label for="fPaginado" class="form-label">Número de página</label>
                             <input id="fPaginado" type="number" min="0"
                                    class="form-control chip style-ap-filtros" th:field="*{nroPagina}">
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="fEnTiempoReal"
+                                   aria-label="Filtro en tiempo real" th:checked="${filtros.entiemporeal}" th:field="*{entiemporeal}"/>
+                            <label class="form-check-label" for="fEnTiempoReal">En Tiempo Real</label>
                         </div>
                     </div>
                 </div>

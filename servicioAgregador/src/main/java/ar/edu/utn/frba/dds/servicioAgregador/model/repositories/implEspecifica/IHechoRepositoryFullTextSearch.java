@@ -5,5 +5,5 @@ import java.util.List;
 import org.springframework.data.jpa.repository.NativeQuery;
 
 public interface IHechoRepositoryFullTextSearch {
-  List<Hecho> findByFullTextSearch(String titulo);
+  List<String> findByFullTextSearch(String titulo);
 }

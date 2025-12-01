@@ -122,7 +122,7 @@ public class Hecho {
     }
 
     public boolean estaCuradoPor(AlgoritmoConsenso algoritmoConsenso) {
-        return this.algosAceptados.contains(algoritmoConsenso);
+        return !this.algosAceptados.isEmpty() && this.algosAceptados.stream().allMatch(algo -> algo.getClass() == algoritmoConsenso.getClass());
     }
 
 

@@ -14,4 +14,7 @@ import java.util.UUID;
 public interface IColeccionRepositoryJPA extends JpaRepository<Coleccion, UUID> {
   @Query("SELECT c FROM Coleccion c WHERE c.eliminada = :estadoEliminada")
   List<Coleccion> findAllByEliminada(@Param("estadoEliminada")Boolean aFalse);
+
+  @Query("SELECT c FROM Coleccion c JOIN FETCH c.fuenteColeccions")
+  List<Coleccion> findAllWithFuentes();
 }

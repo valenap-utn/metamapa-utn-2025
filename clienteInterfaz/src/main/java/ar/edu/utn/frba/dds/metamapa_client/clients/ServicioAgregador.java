@@ -59,7 +59,9 @@ public class ServicioAgregador implements IServicioAgregador {
               .queryParam("provincia", filtroDTO.getProvincia())
               .queryParam("municipio", filtroDTO.getMunicipio())
               .queryParam("departamento", filtroDTO.getDepartamento())
-              .queryParam("nroPagina", filtroDTO.getNroPagina());
+              .queryParam("nroPagina", filtroDTO.getNroPagina())
+              .queryParam("curada", filtroDTO.getCurada())
+              .queryParam("entiemporeal", filtroDTO.getEntiemporeal());
     }
     return uriAMedioConstruir;
   }

@@ -14,6 +14,6 @@ public interface IOrigenRepositoryJPA extends JpaRepository<Origen, Long> {
 
   List<Origen> findByUrlAndTipo(String url, TipoOrigen tipo);
 
-  @Query("SELECT o FROM Origen  o JOIN FuenteColeccion f ON f.origen.id = o.id")
+  @Query("SELECT o FROM Origen o JOIN FuenteColeccion f ON f.origen.id = o.id WHERE EXISTS (select 1 FROM Coleccion c JOIN c.fuenteColeccions f2 ON f2.id = f.id)")
   List<Origen> findAllOrigenesFuente();
 }

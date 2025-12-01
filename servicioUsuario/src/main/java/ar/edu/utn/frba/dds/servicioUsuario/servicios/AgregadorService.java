@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriBuilder;
 
@@ -28,7 +29,12 @@ public class AgregadorService {
   private final IUsuarioRepositoryJPA usuarioRepository;
 
   public AgregadorService(@Value("${api.servicioAgregador.url}") String baseURL, IUsuarioRepositoryJPA usuarioRepository) {
-    this.webClient = WebClient.builder().baseUrl(baseURL).build();
+    this.webClient = WebClient.builder().baseUrl(baseURL).exchangeStrategies(ExchangeStrategies
+            .builder()
+            .codecs(codecs -> codecs
+                    .defaultCodecs()
+                    .maxInMemorySize(50 * 1024 * 1024))
+            .build()).build();
     this.usuarioRepository = usuarioRepository;
   }
 
@@ -58,7 +64,9 @@ public class AgregadorService {
               .queryParam("provincia", filtroDTO.getProvincia())
               .queryParam("municipio", filtroDTO.getMunicipio())
               .queryParam("departamento", filtroDTO.getDepartamento())
-              .queryParam("nroPagina", filtroDTO.getNroPagina());
+              .queryParam("nroPagina", filtroDTO.getNroPagina())
+              .queryParam("curada", filtroDTO.getCurada())
+              .queryParam("entiemporeal", filtroDTO.getEntiemporeal());
     }
     return uriAMedioConstruir;
   }

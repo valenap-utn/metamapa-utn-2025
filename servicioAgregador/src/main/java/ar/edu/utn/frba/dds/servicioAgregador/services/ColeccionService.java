@@ -132,7 +132,7 @@ public class ColeccionService implements IColeccionService{
             .flatMap(origen1 -> {
               List<Hecho> hechos = this.getHechosClient(origen, null);
               hechos.forEach(hecho -> hecho.setOrigen(this.saveOrigenHechoNuevo(hecho.getOrigen())));
-              hechos.forEach( h -> this.verSiNormalizar(h));
+              hechos.forEach(this::verSiNormalizar);
               this.userRepository.saveAll(hechos.stream().map(Hecho::getUsuario).filter(Objects::nonNull).toList());
               this.categoriaRepository.saveAll(hechos.stream().map(Hecho::getCategoria).toList());
               this.hechoRepository.saveAll(hechos);
@@ -279,19 +279,18 @@ public class ColeccionService implements IColeccionService{
   }
 
   public Mono<Void> consensuarHechos() {
-    List<Coleccion> colecciones = this.coleccionRepository.findAll();
+    List<Coleccion> colecciones = this.coleccionRepository.findAllWithFuentes();
     Set<FuenteColeccion> fuenteColeccions = new HashSet<>();
     colecciones.forEach(coleccion -> fuenteColeccions.addAll(coleccion.getFuenteColeccions()));
-    fuenteColeccions.forEach(fuente -> fuente.actualizarHechos(this.hechoRepository.findByOrigen(fuente.getOrigen())));
+    fuenteColeccions.forEach(fuente -> fuente.actualizarHechos(this.hechoRepository.findByOrigen(fuente.getOrigen().getUrl(), fuente.getOrigen().getTipo())));
+    List<Hecho> hechos = fuenteColeccions.stream().flatMap(f -> f.getHechos().stream()).collect(Collectors.toList());
     return Flux.fromIterable(colecciones).flatMap(
         coleccion -> {
-          coleccion.consensuarHechos(fuenteColeccions);
+          coleccion.consensuarHechos(hechos, fuenteColeccions);
           return Mono.just(coleccion);
         }
     ).flatMap(coleccion -> {
-      this.hechoRepository.saveAll(
-              fuenteColeccions.stream().flatMap( fuente -> fuente.getHechos().stream()).toList()
-      );
+      this.hechoRepository.saveAll(hechos);
       return Mono.empty();
     }).then();
   }

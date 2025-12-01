@@ -65,11 +65,13 @@ public class ServicioAgregadorController {
                                                    @RequestParam(required = false) String provincia,
                                                    @RequestParam(required = false) String departamento,
                                                    @RequestParam(required = false) String municipio,
-                                                   @RequestParam(required = false) Integer nroPagina) {
+                                                   @RequestParam(required = false) Integer nroPagina,
+                                                                  @RequestParam(required = false) boolean curada,
+                                                                  @RequestParam(required = false) boolean entiemporeal) {
     FiltroDTO filtros = FiltroDTO.builder()
             .categoria(categoria).fecha_reporte_desde(fecha_reporte_desde).fecha_reporte_hasta(fecha_reporte_hasta)
             .fecha_acontecimiento_desde(fecha_acontecimiento_desde).fecha_acontecimiento_hasta(fecha_acontecimiento_hasta)
-            .provincia(provincia).municipio(municipio).departamento(departamento)
+            .provincia(provincia).municipio(municipio).departamento(departamento).curada(curada).entiemporeal(entiemporeal)
             .nroPagina(nroPagina).build();
     return ResponseEntity.ok(this.agregadorService.findHechosByColeccionId(coleccionId, filtros));
   }

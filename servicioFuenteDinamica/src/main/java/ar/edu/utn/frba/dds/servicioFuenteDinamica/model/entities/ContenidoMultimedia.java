@@ -16,9 +16,7 @@ public class ContenidoMultimedia {
 
   @Column(name="contenidoMultimedia_path")
   private String path;
+  @Column(name="contenidoMultimedia_esVideo")
+  private Boolean esVideo = false;
 
-//  public ContenidoMultimedia(String nombre, String path) {
-//    this.nombre = nombre;
-//    this.path = path;
-//  }
 }

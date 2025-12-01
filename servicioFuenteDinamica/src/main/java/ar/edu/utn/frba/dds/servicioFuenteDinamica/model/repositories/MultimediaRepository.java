@@ -1,14 +1,19 @@
 package ar.edu.utn.frba.dds.servicioFuenteDinamica.model.repositories;
 
+import ar.edu.utn.frba.dds.servicioFuenteDinamica.controllers.HechoSolicitudController;
 import ar.edu.utn.frba.dds.servicioFuenteDinamica.model.entities.ContenidoMultimedia;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Objects;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 
 @Repository
 public class MultimediaRepository implements IMultimediaRepository {
@@ -37,6 +42,24 @@ public class MultimediaRepository implements IMultimediaRepository {
         throw new RuntimeException(e.getMessage());
       }
     }
-    return new ContenidoMultimedia(contenidoMultimedia.getOriginalFilename(), direccionFinal.toString());
+    System.out.println(contenidoMultimedia.getContentType());
+    String url = MvcUriComponentsBuilder
+            .fromMethodName(HechoSolicitudController.class, "getFile", contenidoMultimedia.getOriginalFilename()).build().toUriString();
+    return new ContenidoMultimedia(contenidoMultimedia.getOriginalFilename(), url, contenidoMultimedia.getContentType() == null ? Boolean.FALSE : !contenidoMultimedia.getContentType().startsWith("image"));
+  }
+  @Override
+  public Resource cargarMultimedia(String filename) {
+    try {
+      Path file = path.resolve(filename);
+      Resource resource = new UrlResource(file.toUri());
+
+      if (resource.exists() || resource.isReadable()) {
+        return resource;
+      } else {
+        throw new RuntimeException("Could not read the file!");
+      }
+    } catch (MalformedURLException e) {
+      throw new RuntimeException("Error: " + e.getMessage());
+    }
   }
 }

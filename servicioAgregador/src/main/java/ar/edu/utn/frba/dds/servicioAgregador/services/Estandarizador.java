@@ -1,5 +1,6 @@
 package ar.edu.utn.frba.dds.servicioAgregador.services;
 
+import ar.edu.utn.frba.dds.servicioAgregador.exceptions.ErrorAPIGobierno;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Categoria;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Direccion;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Hecho;
@@ -13,9 +14,11 @@ import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.implEspecifica.I
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.implReal.ICategoriaRepositoryJPA;
 import ar.edu.utn.frba.dds.servicioAgregador.model.repositories.implReal.IHechoRepositoryJPA;
 import ar.edu.utn.frba.dds.servicioAgregador.services.clients.ClientAPIGobierno;
+import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -46,6 +49,7 @@ public class Estandarizador implements IEstandarizador {
     this.apiGobierno = apiGobierno;
   }
   @Override
+  @Transactional
   public Mono<Void> estandarizarHechos() {
     return Flux.fromIterable(this.prepararHechos())
             .flatMap(hechoParaNormalizar -> this.estandarizarHecho(hechoParaNormalizar.getHecho(), hechoParaNormalizar.getHechosCopia()))
@@ -60,7 +64,7 @@ public class Estandarizador implements IEstandarizador {
             .then();
   }
   public List<HechoParaNormalizar> prepararHechos() {
-    List<Hecho> hechos = this.hechoRepository.findByNormalizado(false);
+    List<Hecho> hechos = this.hechoRepository.findByNormalizado(PageRequest.of(0, 50), false);
     List<Hecho> hechosCopia = new ArrayList<>(hechos);
     return hechos.stream().map(hecho -> new HechoParaNormalizar(hecho, hechosCopia)).toList();
   }
@@ -91,8 +95,8 @@ public class Estandarizador implements IEstandarizador {
   }
 
   private void estandarizarTitulo(Hecho hechoAmodificar, List<Hecho> hechosDesnormalizados) {
-    List<Hecho> hechos = this.hechoRepositoryFTS.findByFullTextSearch(hechoAmodificar.getTitulo());
-    String titulo = hechos.stream().map(Hecho::getTitulo).findFirst().orElse(null);
+    List<String> hechos = this.hechoRepositoryFTS.findByFullTextSearch(hechoAmodificar.getTitulo());
+    String titulo = hechos.stream().findFirst().orElse(null);
     if (titulo == null) {
       List<String> titulos =  hechosDesnormalizados.stream().map(Hecho::getTitulo).toList();
       titulo = this.buscadorFullTextSearch.crearNombreNormalizadoCon(hechoAmodificar.getTitulo(), titulos);
@@ -105,9 +109,14 @@ public class Estandarizador implements IEstandarizador {
     if (ubicacion == null || (ubicacion.getDireccion() == null && ubicacion.esNula())) {
       return;
     } else if (ubicacion.getDireccion() == null) {
-      Direccion direccion = this.apiGobierno.buscarUbicacion(hechoAmodificar.getUbicacion());
-      direccion.marcarNormalizada();
-      ubicacion.setDireccion(direccion);
+      try {
+        Direccion direccion = this.apiGobierno.buscarUbicacion(hechoAmodificar.getUbicacion());
+        direccion.marcarNormalizada();
+        ubicacion.setDireccion(direccion);
+      } catch (Exception e) {
+        System.out.println("Error en el API Gobierno: " + e.getMessage());
+        return;
+      }
     }
 
     List<Direccion> direcciones = this.direccionRepositoryFTS.findByFullTextSearch(hechoAmodificar.getDireccion());

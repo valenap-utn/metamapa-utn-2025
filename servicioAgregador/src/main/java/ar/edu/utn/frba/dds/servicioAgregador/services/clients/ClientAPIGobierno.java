@@ -1,11 +1,15 @@
 package ar.edu.utn.frba.dds.servicioAgregador.services.clients;
 
+import ar.edu.utn.frba.dds.servicioAgregador.exceptions.ErrorAPIGobierno;
 import ar.edu.utn.frba.dds.servicioAgregador.model.dtos.RespuestaAPIGobiernoDTO;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Direccion;
 import ar.edu.utn.frba.dds.servicioAgregador.model.entities.Ubicacion;
 import org.springframework.beans.factory.annotation.Value;
+
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 @Component
 public class ClientAPIGobierno {
@@ -21,7 +25,10 @@ public class ClientAPIGobierno {
             .queryParam("lat", ubicacion.getLatitud())
             .queryParam("lon", ubicacion.getLongitud())
                     .queryParam("campos", "departamento.nombre,provincia.nombre,gobierno_local.nombre")
-            .build()).retrieve().bodyToMono(RespuestaAPIGobiernoDTO.class)
+            .build()).retrieve()
+            .onStatus(HttpStatusCode::is5xxServerError, response ->
+                    Mono.error(new ErrorAPIGobierno("Server Error")))
+            .bodyToMono(RespuestaAPIGobiernoDTO.class)
             .block();
 
     direccion.setProvincia(respuestaAPIGobiernoDTO.getUbicacion().getProvincia().getNombre());

@@ -78,11 +78,11 @@ public class HechoService implements IHechoService {
     PageRequest pageable = PageRequest.of(nroPagina, this.tamanioPagina);
     List<Hecho> hechos = null;
     if (servicioAgregador != null && servicioAgregador) {
-      hechos = hechoRepository.findAllByEntregadoAAgregador(pageable, Boolean.FALSE).getContent();
+      hechos = hechoRepository.findAllByEntregadoAAgregador(pageable, Boolean.FALSE, Boolean.FALSE).getContent();
       hechos.forEach(Hecho::marcarEntregadoAAgregador);
       this.hechoRepository.saveAll(hechos);
     } else {
-     hechos = hechoRepository.findAll(pageable).getContent();
+     hechos = hechoRepository.findAll(pageable, Boolean.FALSE).getContent();
     }
     return hechos.stream().map(this::toHechoDTOEstatica).collect(Collectors.toSet());
   }

@@ -19,7 +19,9 @@ public class FiltroDTO {
   private LocalDateTime fecha_acontecimiento_hasta;
   private Float latitud;
   private Float longitud;
+  @Builder.Default
   private Boolean curada = false;
+  @Builder.Default
   private Boolean entiemporeal = false;
   private String provincia;
   private String departamento;
