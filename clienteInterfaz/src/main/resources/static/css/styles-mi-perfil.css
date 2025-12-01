@@ -76,3 +76,18 @@
     border-radius: 999px;
     box-shadow: 0 2px 6px rgba(59, 79, 97, 0.25);
 }
+
+.mm-profile-main {
+    min-height: calc(100vh - 180px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 40px;
+    padding-bottom: 40px;
+}
+
+/* para que la row no se achique rara */
+.mm-profile-main .row {
+    width: 100%;
+    justify-content: center;
+}
