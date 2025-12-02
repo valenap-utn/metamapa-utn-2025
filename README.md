@@ -1,80 +1,252 @@
-# java-base-project
+# 🗺️ Metamapa 
+![Java](https://img.shields.io/badge/Java-17+-orange)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-brightgreen)
+![Thymeleaf](https://img.shields.io/badge/Thymeleaf-View%20Engine-blue)
 
-Esta es una plantilla de proyecto diseñada para: 
+MetaMapa es una plataforma web compuesta por **microservicios**, diseñada para **agregar**, **procesar** y **visualizar** **hechos** provenientes de diversas fuentes: estáticas, dinámicas y externas.
+Fue desarrollada en **Java 17 + Spring Boot**, como parte de un trabajo práctico de Diseño de Sistemas (2025).
 
-* Java 17. :warning: Si bien el proyecto no lo limita explícitamente, el comando `mvn verify` no funcionará con versiones más antiguas de Java. 
-* JUnit 5. :warning: La versión 5 de JUnit es la más nueva del framework y presenta algunas diferencias respecto a la versión "clásica" (JUnit 4). Para mayores detalles, ver: 
-  *  [Apunte de herramientas](https://docs.google.com/document/d/1VYBey56M0UU6C0689hAClAvF9ILE6E7nKIuOqrRJnWQ/edit#heading=h.dnwhvummp994)
-  *  [Entrada de Blog (en inglés)](https://www.baeldung.com/junit-5-migration) 
-  *  [Entrada de Blog (en español)](https://www.paradigmadigital.com/dev/nos-espera-junit-5/)
-* Maven 3.8.1 o superior
+---
 
-## Ejecutar tests
+## 🧩 Overview
 
+El sistema permite:
+- Autenticación y administración de usuarios
+- Ingesta de hechos desde múltiples fuentes (Estática (CSV/TCP), Dinámica (API externa), Proxy (API de cátedra))
+- Normalización y agregación de información
+- Visualización web mediante un front MVC (Thymeleaf)
+- Generación y consulta de estadísticas
+
+Cada responsabilidad está encapsulada en un microservicio independiente que se comunica mediante API REST o TCP
+
+---
+
+## 🧱 Arquitectura del Sistema
+![Arquitectura](entregables/diagram-8430099056316119444.png)
+> La arquitectura fue diseñada siguiendo principios de separación de responsabilidades, bajo un esquema de microservicios desacoplados
+
+### 📝 Descripción general
+
+- **clienteInterfaz** : Front web MVC donde los usuarios navegan, inician sesión y visualizan hechos
+
+- **servicioUsuario** : Actúa como servicio de identidad (login/validación) y gateway lógico. Centraliza la autenticación y redirige solicitudes autorizadas hacia los demás servicios
+  
+- **servicioEstadistica** : Expone estadísticas agregadas desde la base del agregador
+
+- **servicioAgregador** : Núcleo de procesamiento: recibe hechos, los normaliza y los almacena
+
+- **servicioFuenteEstatica** : Fuente de datos estática (CSV) vía TCP
+
+- **servicioFuenteDinamica** : Fuente externa dinámica vía API REST
+
+- **servicioFuenteProxy** : Fuente externa provista por la cátedra, consumida vía REST
+
+---
+
+## 📦 Módulos del Proyecto
+
+| Módulo                     | Descripción                                             |
+| -------------------------- | ------------------------------------------------------- |
+| **clienteInterfaz**        | Front MVC con Thymeleaf, interacción con usuarios       |
+| **servicioUsuario**        | Servicio de identidad (auth) y punto de entrada hacia otros microservicios. Gestiona usuarios en MySQL             |
+| **servicioEstadistica**    | Generación y publicación de estadísticas                |
+| **servicioAgregador**      | Orquestación, normalización de hechos y almacenamiento  |
+| **servicioFuenteEstatica** | Ingesta de datos CSV vía TCP                            |
+| **servicioFuenteDinamica** | Ingesta de datos externos vía REST                      |
+| **servicioFuenteProxy**    | Integración con la API oficial de la cátedra            |
+| **entregables**            | Documentación y entregas académicas                     |
+
+---
+
+## 📥 Clonar el proyecto
+
+```bash
+git clone https://github.com/valenap-utn/metamapa-utn-2025.git
+cd metamapa-utn-2025
 ```
-mvn test
+
+---
+
+## 🚀 Cómo levantar el proyecto
+
+### 🧩 Requisitos
+
+| Sistema | Requisitos |
+|----------|-------------|
+| **macOS / Linux** | Tener instalados:<br>• [Java 17+](https://adoptium.net/)<br>• [Maven](https://maven.apache.org/) (`brew install openjdk@17 maven` en macOS)<br>• Acceso a internet para dependencias de Maven |
+| **Windows** | Instalar:<br>• [Java 17+](https://adoptium.net/)<br>• [Maven](https://maven.apache.org/download.cgi)<br>• Agregar `JAVA_HOME` y `MAVEN_HOME` al PATH si fuera necesario |
+
+Verificá la instalación con:
+```bash
+java -version
+mvn -version
 ```
 
-## Validar el proyecto de forma exahustiva
+---
 
-```
-mvn clean verify
-```
+## ⚙️ Configuración de MySQL
 
-Este comando hará lo siguiente:
+Ejemplo extraído del proyecto:
 
- 1. Ejecutará los tests
- 2. Validará las convenciones de formato mediante checkstyle
- 3. Detectará la presencia de (ciertos) code smells
- 4. Validará la cobertura del proyecto
-
-## Entrega del proyecto
-
-Para entregar el proyecto, crear un tag llamado `entrega-final`. Es importante que antes de realizarlo se corra la validación
-explicada en el punto anterior. Se recomienda hacerlo de la siguiente forma:
-
-```
-mvn clean verify && git tag entrega-final && git push origin HEAD --tags
+```properties
+spring.datasource.url=jdbc:mysql://localhost:3306/db_usuarios?useSSL=false&serverTimezone=UTC&createDatabaseIfNotExist=true
+spring.datasource.username=root
+spring.datasource.password=contrasenia
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
 ```
 
-## Configuración del IDE (IntelliJ)
 
-### Usar el SDK de Java 17
+Cada microservicio que use BD debe tener su propio esquema.
 
-1. En **File/Project Structure...**, ir a **Project Settings | Project**
-2. En **Project SDK** seleccionar la versión 17 y en **Project language level** seleccionar `17 - Sealed types, always-strict floating-point semantics`
+---
 
-![image](https://user-images.githubusercontent.com/39303639/228126065-221b9851-fb96-4f7f-a8e1-010732dc7ef6.png)
+### ⚙️ Configuración de OAuth2
+El módulo clienteInterfaz soporta autenticación vía OAuth2
 
-### Usar fin de linea unix
-1. En **File/Settings...**, ir a **Editor | Code Style**.
-2. En la lista **Line separator**, seleccionar `Unix and OS X (\n)`.
+Por lo tanto en application.properties debería de haber algo como esto:
 
-![image](https://user-images.githubusercontent.com/39303639/228126546-352289fa-8feb-4b39-99db-d8b860915fea.png)
+```properties
+# ---- OAuth2 (Google / GitHub) ----
+spring.security.oauth2.client.registration.google.client-id=${GOOGLE_CLIENT_ID}
+spring.security.oauth2.client.registration.google.client-secret=${GOOGLE_CLIENT_SECRET}
+spring.security.oauth2.client.registration.github.client-id=${GITHUB_CLIENT_ID}
+spring.security.oauth2.client.registration.github.client-secret=${GITHUB_CLIENT_SECRET}
+```
 
-### Tabular con dos espacios
+> 💡 Las credenciales (`GOOGLE_CLIENT_ID`, etc.) deben definirse como variables de entorno o en un archivo `.env` local (no versionado).
 
-1. En **File/Settings...**, ir a **Editor | Code Style | Java | Tabs and Indents**.
-2. Cambiar **Tab size**, **Indent** y **Continuation indent** a 2, 2 y 4 respectivamente:
+#### 🔧 Definir variables de entorno
 
-![image](https://user-images.githubusercontent.com/39303639/228127009-8c84ea72-969b-4e05-b311-45e3688a4164.png)
+**macOS / Linux**
 
-### Ordenar los imports
+```bash
+export GOOGLE_CLIENT_ID=tu_client_id
+export GOOGLE_CLIENT_SECRET=tu_client_secret
+export GITHUB_CLIENT_ID=tu_client_id
+export GITHUB_CLIENT_SECRET=tu_client_secret
+```
 
-1. En **File/Settings...**, ir a **Editor | Code Style | Java | Imports**.
-2. Cambiar **Class count to use import with '*'** y **Names count to use static import with '*'** a un número muy alto (ej: 99).
-3. En **Import Layout**, dejarlo como se muestra a continuación:
-    - `import static all other imports`
-    - `<blank line>`
-    - `import all other imports`
+**Windows (PowerShell)**
 
-![image](https://user-images.githubusercontent.com/39303639/228126787-36f9ecff-27f2-4b99-bf11-a6bd89f67087.png)
+```powershell
+setx GOOGLE_CLIENT_ID "tu_client_id"
+setx GOOGLE_CLIENT_SECRET "tu_client_secret"
+setx GITHUB_CLIENT_ID "tu_client_id"
+setx GITHUB_CLIENT_SECRET "tu_client_secret"
+```
 
-### Instalar y configurar Checkstyle
+---
 
-1. Instalar el plugin https://plugins.jetbrains.com/plugin/1065-checkstyle-idea:
-2. En **File/Settings...**, ir a **Tools | Checkstyle**.
-3. Configurarlo activando los Checks de Google y la versión de Checkstyle `== 9.0.1`:
+ ### 🔑 Cómo generar credenciales OAuth2
+ 
+<details><summary>Para Google</summary>
+   
+#### 🟦 Google
+1. Ingresá a [Google Cloud Console](https://console.cloud.google.com/).
+2. Creá un nuevo proyecto o usá uno existente.
+3. Activá la API **OAuth consent screen** (pantalla de consentimiento).
+4. En la sección **Credentials → Create credentials → OAuth client ID**, elegí:
+   - Application type: **Web application**
+   - Authorized redirect URI:  
+     ```
+     http://localhost:8080/login/oauth2/code/google
+     ```
+5. Guardá los valores generados (`Client ID` y `Client Secret`) y definilos como variables de entorno según tu sistema operativo:
 
-![image](https://github.com/dds-utn/java-base-project/assets/11719816/b1edc122-4675-4f8d-bffc-9e3d3366fac6)
+##### 💻 macOS / Linux
+```bash
+export GOOGLE_CLIENT_ID=tu_client_id
+export GOOGLE_CLIENT_SECRET=tu_client_secret
+```
 
+##### 🪟 Windows (PowerShell)
+
+```powershell
+setx GOOGLE_CLIENT_ID "tu_client_id"
+setx GOOGLE_CLIENT_SECRET "tu_client_secret"
+```
+
+</details>
+
+<details><summary>Para Github</summary>
+   
+#### 🐙 GitHub
+
+1. Ingresá a [GitHub Developer Settings → OAuth Apps](https://github.com/settings/developers).
+2. Clic en **New OAuth App**.
+3. Completá los campos:
+
+   * **Homepage URL:** `http://localhost:8080`
+   * **Authorization callback URL:**
+
+     ```
+     http://localhost:8080/login/oauth2/code/github
+     ```
+4. Una vez creado, copiá el `Client ID` y generá un nuevo `Client Secret`.
+5. Definilos como variables de entorno según tu sistema operativo:
+
+##### 💻 macOS / Linux
+
+```bash
+export GITHUB_CLIENT_ID=tu_client_id
+export GITHUB_CLIENT_SECRET=tu_client_secret
+```
+
+##### 🪟 Windows (PowerShell)
+
+```powershell
+setx GITHUB_CLIENT_ID "tu_client_id"
+setx GITHUB_CLIENT_SECRET "tu_client_secret"
+```
+
+</details>
+
+
+> ⚠️ **Importante:** nunca subas tus credenciales reales a GitHub.
+> Guardalas solo en tu entorno local (por ejemplo, en un archivo `.env` o en tu configuración de sistema) y asegurate de que estén incluidas en el `.gitignore`.
+
+---
+
+## ▶️ Ejecución
+
+Cada servicio se ejecuta por separado:
+
+```bash
+cd servicioAgregador
+mvn spring-boot:run
+```
+
+Levantar también:
+
+```bash
+clienteInterfaz
+servicioUsuario
+servicioEstadistica
+servicioFuenteEstatica
+servicioFuenteDinamica
+servicioFuenteProxy
+```
+
+
+Luego abrir:
+
+👉 http://localhost:8080
+
+---
+
+## 🛠 Tecnologías Principales
+
+- Java 17
+- Spring Boot 3
+- Spring MVC
+- Spring WebClient
+- Thymeleaf
+- MySQL
+- Maven
+- REST + TCP
+
+---
+
+## 🎓 Proyecto académico
+
+Trabajo práctico anual – Diseño de Sistemas (UTN - FRBA, 2025)
